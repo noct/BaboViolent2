@@ -36,7 +36,7 @@
 #ifndef DKGL_H
 #define DKGL_H
 
-#include "BrebisGL.h"
+#include <glad/glad.h>
 #include <SDL.h>
 
 #include "CVector.h"

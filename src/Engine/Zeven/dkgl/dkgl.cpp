@@ -19,7 +19,6 @@
 /* TCE (c) All rights reserved */
 
 
-#define BREBIS_GL_IMPLEMENTATION
 #include "dkgli.h"
 
 static SDL_GLContext glContext = nullptr;

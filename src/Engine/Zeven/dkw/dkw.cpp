@@ -3,23 +3,23 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
 /* TCE (c) All rights reserved */
 
 
-#include "BrebisGL.h"
+#include <glad/glad.h>
 #include "dkwi.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -35,7 +35,7 @@ static bool done = true;
 static CMainLoopInterface *mainLoopObject = nullptr;
 
 //
-// La plus importante. Cré la fenêtre et init les cossin
+// La plus importante. CrÃ© la fenÃªtre et init les cossin
 //
 int dkwInit(int width, int height, int mcolorDepth, char* mTitle, CMainLoopInterface *mMainLoopObject, bool fullScreen, int refreshRate)
 {
@@ -77,7 +77,9 @@ int dkwInit(int width, int height, int mcolorDepth, char* mTitle, CMainLoopInter
     gl_context = SDL_GL_CreateContext(window);
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
-    if (brebisGLInit() == KHRONOS_FALSE)
+    SDL_GL_MakeCurrent(window, gl_context);
+
+    if(gladLoadGLLoader(SDL_GL_GetProcAddress))
     {
         last_error = "Failed to initialize BrebisGL\n";
         return 0;
@@ -89,7 +91,7 @@ int dkwInit(int width, int height, int mcolorDepth, char* mTitle, CMainLoopInter
 }
 
 //
-// Pour forcer l'application à fermer
+// Pour forcer l'application Ã  fermer
 //
 void dkwForceQuit()
 {
@@ -105,7 +107,7 @@ SDL_GLContext dkwGetDC()
 }
 
 //
-// On obtien le handle de la fenêtre
+// On obtien le handle de la fenÃªtre
 //
 SDL_Window* dkwGetHandle()
 {
@@ -113,7 +115,7 @@ SDL_Window* dkwGetHandle()
 }
 
 //
-// Obtenir la dernière erreur
+// Obtenir la derniÃ¨re erreur
 //
 char* dkwGetLastError()
 {
@@ -121,7 +123,7 @@ char* dkwGetLastError()
 }
 
 //
-// Pour retourner la position de la sourie sur l'écran
+// Pour retourner la position de la sourie sur l'Ã©cran
 //
 CVector2i dkwGetCursorPos()
 {
@@ -129,7 +131,7 @@ CVector2i dkwGetCursorPos()
 }
 
 //
-// On retourne la résolution de la fenêtre
+// On retourne la rÃ©solution de la fenÃªtre
 //
 CVector2i dkwGetResolution()
 {

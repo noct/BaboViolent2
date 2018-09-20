@@ -24,7 +24,7 @@
 #include "Game.h"
 #include "Player.h"
 #include "Scene.h"
-#include <GL\gl.h>
+#include <glad/glad.h>
 #include <time.h>
 #include <stdio.h>
 
@@ -158,7 +158,7 @@ bool SaveScreenGrab(const char* filename) {
    int sw           =  res.x();
 	int sh           =  res.y();
    int bitdepth     =  32;
-   GLenum   format  =  GL_BGRA_EXT;
+   GLenum   format  =  GL_BGRA;
    int bpp          =  4;
 	//int bitdepth     =  gameVar.r_bitdepth;
 	//GLenum   format  =  (bitdepth==32) ? GL_BGRA_EXT : GL_BGR_EXT;

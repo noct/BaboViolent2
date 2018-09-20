@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -98,13 +98,7 @@ DLL_API(bool)			dkoSphereIntersection(unsigned int modelID, float *p1, float *p2
 
 #ifdef WIN32
 #ifndef DEDICATED_SERVER
-
-#include <windows.h>
-#ifndef _DX_
-#include <gl/gl.h>
-#include <gl/glu.h>
-#include "glext.h"
-#endif
+#include <glad/glad.h>
 #endif
 
 #else
@@ -113,9 +107,7 @@ DLL_API(bool)			dkoSphereIntersection(unsigned int modelID, float *p1, float *p2
 #ifdef __MACOSX__
 #include <SDL_opengl.h>
 #else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
+#include <glad/glad.h>
 #endif
 #endif
 

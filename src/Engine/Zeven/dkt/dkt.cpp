@@ -92,7 +92,7 @@ void			 dktBlurTexture(unsigned int textureID, int nbPass)
 			//gluBuild2DMipmaps(GL_TEXTURE_2D, texture->bpp, texture->size[0], texture->size[1],
 			//				  GL_RGB, GL_UNSIGNED_BYTE, imageData);
             glTexImage2D(GL_TEXTURE_2D, 0, level, texture->size[0], texture->size[1], 0, level, GL_UNSIGNED_BYTE, imageData);
-            glGenerateMipmapEXT(GL_TEXTURE_2D);
+            glGenerateMipmap(GL_TEXTURE_2D);
 
 			// On efface le data temporaire
 			delete [] imageData;
@@ -235,7 +235,7 @@ void reloadTGA(CTexture * texture)
 	//gluBuild2DMipmaps(GL_TEXTURE_2D, bytesPerPixel, width, height,
 	//				  Level, GL_UNSIGNED_BYTE, imageData);
     glTexImage2D(GL_TEXTURE_2D, 0, Level, width, height, 0, Level, GL_UNSIGNED_BYTE, imageData);
-    glGenerateMipmapEXT(GL_TEXTURE_2D);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
 	// On delete notre Data qu'on n'a pus besoin
 	delete [] imageData;
@@ -371,7 +371,7 @@ unsigned int createTextureTGA(char * filename, int filter){
 		//gluBuild2DMipmaps(GL_TEXTURE_2D, bytesPerPixel, width, height,
 		//				  Level, GL_UNSIGNED_BYTE, imageData);
         glTexImage2D(GL_TEXTURE_2D, 0, Level, width, height, 0, Level, GL_UNSIGNED_BYTE, imageData);
-        glGenerateMipmapEXT(GL_TEXTURE_2D);
+        glGenerateMipmap(GL_TEXTURE_2D);
 
 		// On delete notre Data qu'on n'a pus besoin
 		delete [] imageData;
@@ -470,7 +470,7 @@ unsigned int	 dktCreateEmptyTexture(int w, int h, int bpp, int filter)
 	//gluBuild2DMipmaps(GL_TEXTURE_2D, bpp, w, h,
 	//				  level, GL_UNSIGNED_BYTE, buffer);
     glTexImage2D(GL_TEXTURE_2D, 0, level, w, h, 0, level, GL_UNSIGNED_BYTE, buffer);
-    glGenerateMipmapEXT(GL_TEXTURE_2D);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
 	delete [] buffer;
 
@@ -550,7 +550,7 @@ void			 dktCreateTextureFromBuffer(unsigned int *textureID, unsigned char *buffe
 	//gluBuild2DMipmaps(GL_TEXTURE_2D, bpp, w, h,
 	//				  level, GL_UNSIGNED_BYTE, buffer);
     glTexImage2D(GL_TEXTURE_2D, 0, level, w, h, 0, level, GL_UNSIGNED_BYTE, buffer);
-    glGenerateMipmapEXT(GL_TEXTURE_2D);
+    glGenerateMipmap(GL_TEXTURE_2D);
 #endif
 }
 

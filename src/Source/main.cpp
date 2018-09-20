@@ -736,8 +736,8 @@ int WINAPI WinMain(	HINSTANCE	hInstance,				// Instance
 	// Restore system settings
 	if(gameVar.cl_affinityMode == 1)
 	{
-		DWORD procMask;
-		DWORD sysMask;
+        DWORD_PTR procMask;
+        DWORD_PTR sysMask;
 		::GetProcessAffinityMask(::GetCurrentProcess(), &procMask, &sysMask);
 		::SetProcessAffinityMask(::GetCurrentProcess(), sysMask);
 	}

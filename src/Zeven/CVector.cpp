@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -190,8 +190,8 @@ CVector4f::CVector4f(const CVector4f& vector)
 //
 // Parameters:	[in]:	float number	: the number to be 1/sqrt(number)
 //				[out]:	float y			: result of 1/sqrt(number)
-// 
-// Description: This is Carmack's fast inverse square root function. 
+//
+// Description: This is Carmack's fast inverse square root function.
 //				It will gives the inverse of the sqrt of a number by 1st taking
 //				a guess and calculate the right number with Newton's iteration.
 //
@@ -222,38 +222,38 @@ float dk_sqrtf(float number)
 float distance(const CVector2f &u, const CVector2f &v)
 {
 	return sqrtf(
-		(u[0]-v[0]) * (u[0]-v[0]) + 
+		(u[0]-v[0]) * (u[0]-v[0]) +
 		(u[1]-v[1]) * (u[1]-v[1]));
 }
 
 float distanceFast(const CVector2f &u, const CVector2f &v)
 {
 	return dk_sqrtf(
-		(u[0]-v[0]) * (u[0]-v[0]) + 
+		(u[0]-v[0]) * (u[0]-v[0]) +
 		(u[1]-v[1]) * (u[1]-v[1]));
 }
 
 float distance(const CVector3f &u, const CVector3f &v)
 {
 	return sqrtf(
-		(u[0]-v[0]) * (u[0]-v[0]) + 
-		(u[1]-v[1]) * (u[1]-v[1]) + 
+		(u[0]-v[0]) * (u[0]-v[0]) +
+		(u[1]-v[1]) * (u[1]-v[1]) +
 		(u[2]-v[2]) * (u[2]-v[2]));
 }
 
 float distanceFast(const CVector3f &u, const CVector3f &v)
 {
 	return dk_sqrtf(
-		(u[0]-v[0]) * (u[0]-v[0]) + 
-		(u[1]-v[1]) * (u[1]-v[1]) + 
+		(u[0]-v[0]) * (u[0]-v[0]) +
+		(u[1]-v[1]) * (u[1]-v[1]) +
 		(u[2]-v[2]) * (u[2]-v[2]));
 }
 
 float distanceSquared(const CVector3f &u, const CVector3f &v)
 {
 	return (
-		(u[0]-v[0]) * (u[0]-v[0]) + 
-		(u[1]-v[1]) * (u[1]-v[1]) + 
+		(u[0]-v[0]) * (u[0]-v[0]) +
+		(u[1]-v[1]) * (u[1]-v[1]) +
 		(u[2]-v[2]) * (u[2]-v[2]));
 }
 
@@ -364,7 +364,7 @@ float crossZ(const CVector2f &u, const CVector2f &v)
 CVector3f rotateAboutAxis(const CVector3f & point, float angle, const CVector3f & axis)
 {
 	angle *= TO_RADIANT;
-	float	costheta = cosf(angle), 
+	float	costheta = cosf(angle),
 			sintheta = sinf(angle);
 
 	return CVector3f(

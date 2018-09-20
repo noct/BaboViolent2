@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -74,7 +74,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 		glColor3f(1,1,1);
 		dkfBindFont(font);
 		glEnable(GL_BLEND);
-		
+
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		printCenterText(400, 268, 64, CString("LOADING"));
 
@@ -122,7 +122,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 		tex_grass = dktCreateTextureFromFile("main/textures/grass.tga", DKT_FILTER_BILINEAR);
 		tex_dirt = dktCreateTextureFromFile("main/textures/dirt1.tga", DKT_FILTER_BILINEAR);
 		tex_wall = dktCreateTextureFromFile("main/textures/dirt2.tga", DKT_FILTER_BILINEAR);
-	
+
 		tex_bombMark = dktCreateTextureFromFile("main/textures/BombMark.tga", DKT_FILTER_BILINEAR);
 
 		// Les models
@@ -160,7 +160,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 	else
 		fptr = &_game->mapBuffer;
 	FileIO&	file = *fptr;
-	
+
 #else
 	FileIO file(fullName, "rb");
 #endif
@@ -487,7 +487,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 	for (s=1;s<=512;s*=2)
 	{
 		if (aStarSize[0] == s) break;
-		if (aStarSize[0] > s && aStarSize[0] < s * 2) 
+		if (aStarSize[0] > s && aStarSize[0] < s * 2)
 		{
 			aStarSize[0] = s * 2;
 			break;
@@ -496,7 +496,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 	for (s=1;s<=512;s*=2)
 	{
 		if (aStarSize[1] == s) break;
-		if (aStarSize[1] > s && aStarSize[1] < s * 2) 
+		if (aStarSize[1] > s && aStarSize[1] < s * 2)
 		{
 			aStarSize[1] = s * 2;
 			break;
@@ -1064,7 +1064,7 @@ Map::~Map()
 		dktDeleteTexture(&tex_dirt);
 		dktDeleteTexture(&tex_wall);
 		dktDeleteTexture(&tex_bombMark);
-		
+
 	//	dktDeleteTexture(&tex_floor);
 	//	dktDeleteTexture(&tex_floor_dirt);
 	//	dktDeleteTexture(&tex_wall_bottom);
@@ -1180,7 +1180,7 @@ void Map::update(float delay, Player * thisPlayer)
 		}
 	#endif
 
-	if (introAnim < introAnimLenght && dko_cam) 
+	if (introAnim < introAnimLenght && dko_cam)
 	{
 		introAnim++;
 		if (introAnim == introAnimLenght)
@@ -1230,7 +1230,7 @@ void Map::update(float delay, Player * thisPlayer)
 			zoom += -dkiGetMouseWheelVel()*0.01f;
 			zoom = (zoom < -8)?-8:zoom;
 			zoom = (zoom > longestSide/2)?longestSide/2:zoom;
-			
+
 			// Set camera
 			camDest = camLookAt + CVector3f(0, 0, 14 + zoom); // On voit de plus loin pour mieux bombarder lol (joke)
 		}
@@ -1242,7 +1242,7 @@ void Map::update(float delay, Player * thisPlayer)
 		zoom += -dkiGetMouseWheelVel()*0.01f;
 		zoom = (zoom < -8)?-8:zoom;
 		zoom = (zoom > longestSide/2)?longestSide/2:zoom;
-		
+
 		// Set camera
 		camDest = camLookAt + CVector3f(0, 0, 14 + zoom); // On voit de plus loin pour mieux bombarder lol (joke)
 	}
@@ -1472,7 +1472,7 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
 		j >= 0 &&
 		j < size[1])
 	{
-		if (!cells[j*size[0]+i].passable && p1[2] < cells[j*size[0]+i].height) 
+		if (!cells[j*size[0]+i].passable && p1[2] < cells[j*size[0]+i].height)
 		{
 			p2 = p1;
 			return true;
@@ -1744,7 +1744,7 @@ bool IsMapValid(const Map & map, int gameType)
 	//--- game type specific map-check
 	switch(gameType)
 	{
-	case GAME_TYPE_DM: 
+	case GAME_TYPE_DM:
 	case GAME_TYPE_TDM:
 		// there must be at least 1 item in dm_spawns
 		isGoodMap = (map.dm_spawns.size() >= 1);

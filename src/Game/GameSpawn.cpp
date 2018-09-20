@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -164,16 +164,16 @@ bool Game::spawnPlayer(int playerID)
                }
                else
                {
-					// Find us a free slot                  
+					// Find us a free slot
                for (int i=0;i<MAX_PLAYER;++i)
-					{						
+					{
 						int nbPlayer = 0;
                   bool spawnUsed = false;
-						
+
                   // Pour chaque spawn point on check pour chaque player
 						for (int j=0;j<MAX_PLAYER;++j)
 						{
-							if (players[j] && (j != playerID) && (players[j]->spawnSlot == i) && 
+							if (players[j] && (j != playerID) && (players[j]->spawnSlot == i) &&
                         ((players[j]->teamID == PLAYER_TEAM_BLUE) || (players[j]->teamID == PLAYER_TEAM_RED)))
 							{
                         spawnUsed = true;
@@ -187,14 +187,14 @@ bool Game::spawnPlayer(int playerID)
                   break;
                   }
                }
-              
+
                }
 
                int spawnSize= 5;
                unsigned int spawnLocation = bestFound*spawnSize+ rand(0, spawnSize);
                if (spawnLocation > map->dm_spawns.size())
                   spawnLocation = (int)map->dm_spawns.size()-1;
-               
+
 					players[playerID]->spawn(CVector3f(map->dm_spawns[spawnLocation][0],map->dm_spawns[spawnLocation][1],.25f));
 #ifndef DEDICATED_SERVER
 					map->setCameraPos(players[playerID]->currentCF.position);
@@ -283,17 +283,17 @@ bool Game::spawnPlayer(int playerID)
 						}
 					}
                CVector3f spawnPosition(map->dm_spawns[bestFound][0],map->dm_spawns[bestFound][1],.25f);
-               
+
 #if defined(_PRO_)
                if ((gameType == GAME_TYPE_CTF)&&(spawnType == SPAWN_TYPE_LADDER))
                {
-               float timeElapsed = gameVar.sv_gameTimeLimit - gameTimeLeft;               
+               float timeElapsed = gameVar.sv_gameTimeLimit - gameTimeLeft;
                if (timeElapsed < 10.0f)
                   {
                   spawnPosition = map->flagPodPos[players[playerID]->teamID];
                   }
                }
-#endif               
+#endif
 
 					players[playerID]->spawn(spawnPosition);
 #ifndef DEDICATED_SERVER
@@ -566,7 +566,7 @@ void Game::spawnExplosion(CVector3f & position, CVector3f & normal, float size)
 	float duration = size*.5f;
 
 	float maxDuration = gameVar.r_reducedParticles ? 1.0f : 10.0f;
-   
+
 	if (duration > maxDuration) duration = maxDuration;
 
 	dkpCreateParticleEx(

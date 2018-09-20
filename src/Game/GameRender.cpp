@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -43,7 +43,7 @@ void Game::render()
 //	dkoEnable(DKO_RENDER_FACE);
 
 	// On render la map
-	if (map) 
+	if (map)
 	{
 		if (map->fogDensity > 0 && gameVar.r_weatherEffects)
 		{
@@ -81,11 +81,11 @@ void Game::render()
 						dkglSetProjection(80, .1f, 50, (float)res[1]*1.333f, (float)res[1]);
 #ifndef _DX_
 						gluLookAt(
-							thisPlayer->currentCF.position[0], 
-							thisPlayer->currentCF.position[1], 
-							.4f, 
-							thisPlayer->currentCF.mousePosOnMap[0], 
-							thisPlayer->currentCF.mousePosOnMap[1], .4f, 
+							thisPlayer->currentCF.position[0],
+							thisPlayer->currentCF.position[1],
+							.4f,
+							thisPlayer->currentCF.mousePosOnMap[0],
+							thisPlayer->currentCF.mousePosOnMap[1], .4f,
 							0, 0, 1);
 #endif
 						break;
@@ -104,8 +104,8 @@ void Game::render()
 				camTarget *= .1f;
 #ifndef _DX_
 					gluLookAt(
-						camPos[0], camPos[1], camPos[2], 
-						camTarget[0], camTarget[1], camTarget[2], 
+						camPos[0], camPos[1], camPos[2],
+						camTarget[0], camTarget[1], camTarget[2],
 						0, 0, 1);
 #endif
 			}
@@ -117,8 +117,8 @@ void Game::render()
 					{
 #ifndef _DX_
 						gluLookAt(
-							map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, map->camPos[2]/* + thisPlayer->shootShakeDis[2] * .25f*/, 
-							map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, 0/* + thisPlayer->shootShakeDis[2] * .25f*/, 
+							map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, map->camPos[2]/* + thisPlayer->shootShakeDis[2] * .25f*/,
+							map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, 0/* + thisPlayer->shootShakeDis[2] * .25f*/,
 							up[0], up[1], up[2]);
 #endif
 					}
@@ -126,8 +126,8 @@ void Game::render()
 					{
 #ifndef _DX_
 						gluLookAt(
-							map->camPos[0], map->camPos[1], map->camPos[2], 
-							map->camPos[0], map->camPos[1], 0, 
+							map->camPos[0], map->camPos[1], map->camPos[2],
+							map->camPos[0], map->camPos[1], 0,
 							up[0], up[1], up[2]);
 #endif
 					}
@@ -136,8 +136,8 @@ void Game::render()
 				{
 #ifndef _DX_
 					gluLookAt(
-						map->camPos[0], map->camPos[1]-4.0f, map->camPos[2], 
-						map->camPos[0], map->camPos[1]-1.0f, 0, 
+						map->camPos[0], map->camPos[1]-4.0f, map->camPos[2],
+						map->camPos[0], map->camPos[1]-1.0f, 0,
 						up[0], up[1], up[2]);
 #endif
 				}
@@ -303,7 +303,7 @@ void Game::render()
 					CVector2i mousePos = dkwGetCursorPos_main();
 
 					if(gameVar.r_widescreen > 1)
-						mousePos[0] = static_cast<int>(mousePos[0] * res[1]*1.333f / res[0] + (res[0] - res[1]*1.333f)/2); 
+						mousePos[0] = static_cast<int>(mousePos[0] * res[1]*1.333f / res[0] + (res[0] - res[1]*1.333f)/2);
 
 					mousePos[1] = res[1] - mousePos[1];
 					CVector3f nearMouse = dkglUnProject(mousePos, 0.0f);
@@ -503,11 +503,11 @@ void Game::render()
 #endif
 
 		// Sniper aiming point
-	/*	for (i=0;i<MAX_PLAYER;++i) 
+	/*	for (i=0;i<MAX_PLAYER;++i)
 		{
-			if (players[i]) 
+			if (players[i])
 			{
-				if (players[i]->status == PLAYER_STATUS_ALIVE && 
+				if (players[i]->status == PLAYER_STATUS_ALIVE &&
 					players[i]->weapon->weaponID == WEAPON_SNIPER &&
 					players[i] != thisPlayer)
 				{
@@ -697,7 +697,7 @@ void Game::render()
 
 //
 // Pour afficher la minimap (ouff, je mélange pomal les affaires, tk)
-// On la render ici et non dans l'objet map, 
+// On la render ici et non dans l'objet map,
 // car on a besoin de plein d'info comme la position des joueurs, flag, etc
 //
 void Game::renderMiniMap()
@@ -831,7 +831,7 @@ void Game::renderMiniMap()
 											case PLAYER_TEAM_BLUE:glColor4f(.3f,.3f,1,players[i]->firedShowDelay*.5f);break;
 											case PLAYER_TEAM_RED:glColor4f(1,0,0,players[i]->firedShowDelay*.5f);break;
 											}
-											
+
 											glBegin(GL_QUADS);
 												glTexCoord2f(0,1);
 												glVertex2f(-4/scalar,4/scalar);
@@ -856,7 +856,7 @@ void Game::renderMiniMap()
 				//		if (map->flagState[0] >= 0) if (players[map->flagState[0]]) map->flagPos[0] = players[map->flagState[0]]->currentCF.position;
 				//		if (map->flagState[1] >= 0) if (players[map->flagState[1]]) map->flagPos[1] = players[map->flagState[1]]->currentCF.position;
 
-						if (thisPlayer->teamID == PLAYER_TEAM_RED || 
+						if (thisPlayer->teamID == PLAYER_TEAM_RED ||
 							(thisPlayer->teamID == PLAYER_TEAM_BLUE && map->flagState[0] < 0))
 						{
 							glBindTexture(GL_TEXTURE_2D, scene->client->tex_blueFlag);
@@ -876,7 +876,7 @@ void Game::renderMiniMap()
 								glEnd();
 							glPopMatrix();
 						}
-						if (thisPlayer->teamID == PLAYER_TEAM_BLUE || 
+						if (thisPlayer->teamID == PLAYER_TEAM_BLUE ||
 							(thisPlayer->teamID == PLAYER_TEAM_RED && map->flagState[1] < 0))
 						{
 							glBindTexture(GL_TEXTURE_2D, scene->client->tex_redFlag);

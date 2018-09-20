@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -76,7 +76,7 @@ Game::Game(CString pMapName)
 #endif
 
 	// Le type de jeu
-	gameType = gameVar.sv_gameType;   
+	gameType = gameVar.sv_gameType;
    spawnType = gameVar.sv_spawnType;
    subGameType = gameVar.sv_subGameType;
 
@@ -150,7 +150,7 @@ void Game::resetGameType(int pGameType)
 {
 	// Server ony
 	gameType = pGameType;
-   
+
    spawnType = gameVar.sv_spawnType;
    subGameType = gameVar.sv_subGameType;
 
@@ -173,12 +173,12 @@ void Game::resetGameType(int pGameType)
 	// On remet les score des players à 0
 	for (int i=0;i<MAX_PLAYER;++i)
 	{
-		if (players[i]) 
+		if (players[i])
 		{
 			players[i]->reinit();
 		}
 	}
-   
+
 }
 
 
@@ -189,7 +189,7 @@ void Game::UpdateProSettings()
 	{
 		gameVar.weapons[WEAPON_NUCLEAR]->fireDelay = 12;
 		gameVar.weapons[WEAPON_SHIELD]->fireDelay = 2.5;
-		gameVar.weapons[WEAPON_CHAIN_GUN]->reculVel = 1.0f;         
+		gameVar.weapons[WEAPON_CHAIN_GUN]->reculVel = 1.0f;
 	}
 	else
 	{
@@ -229,7 +229,7 @@ void Game::resetRound()
 	// On respawn tout les players (le server va décider de tout ça)
 	for (i=0;i<MAX_PLAYER;++i)
 	{
-		if (players[i]) 
+		if (players[i])
 		{
 			players[i]->kill(true);
 			players[i]->timeToSpawn = 0;
@@ -273,7 +273,7 @@ void Game::createMap()
 		console->add("\x4> Invalid map");
 		ZEVEN_SAFE_DELETE(map);
 #ifndef DEDICATED_SERVER
-		if (scene->client) 
+		if (scene->client)
 		{
 			scene->client->needToShutDown = true;
 			scene->client->isRunning = false;
@@ -289,7 +289,7 @@ void Game::createMap()
 	else
 	{
 #ifndef DEDICATED_SERVER
-		if (thisPlayer) 
+		if (thisPlayer)
 		{
 			thisPlayer->map = map;
 			dkpReset();
@@ -390,7 +390,7 @@ void Game::update(float delay)
 	if (roundState == GAME_PLAYING)
 	{
 		// On update les players
-		for (int i=0;i<MAX_PLAYER;++i) 
+		for (int i=0;i<MAX_PLAYER;++i)
 		{
 			if (players[i])
 			{
@@ -573,7 +573,7 @@ void Game::update(float delay)
 	for (i=0;i<(int)nikeFlashes.size();++i)
 	{
 		nikeFlashes[i]->update(delay);
-		if (nikeFlashes[i]->life <= 0)	 
+		if (nikeFlashes[i]->life <= 0)
 		{
 			delete nikeFlashes[i];
 			nikeFlashes.erase(nikeFlashes.begin() + i);
@@ -606,7 +606,7 @@ void Game::update(float delay)
 		}
 
 		// On performe les collisions sur notre joueur
-		if (thisPlayer->status == PLAYER_STATUS_ALIVE) 
+		if (thisPlayer->status == PLAYER_STATUS_ALIVE)
 		{
 			for (int i=0;i<MAX_PLAYER;++i)
 			{
@@ -638,7 +638,7 @@ void Game::update(float delay)
 			int x = (int)thisPlayer->currentCF.position[0];
 			int y = (int)thisPlayer->currentCF.position[1];
 			if ((!map->dko_map && !map->cells[(y)*map->size[0]+(x)].passable) ||
-				(map->dko_map && 
+				(map->dko_map &&
 				(x < 0 || x > map->size[0] || y < 0 || y > map->size[1])))
 			{
 				// Respawn request!
@@ -668,7 +668,7 @@ void Game::update(float delay)
 	}
 
 	// On update la map
-	if (map && thisPlayer) 
+	if (map && thisPlayer)
 	{
 		map->update(delay, thisPlayer);
 
@@ -773,7 +773,7 @@ void Game::update(float delay)
 		scene->client->btn_guns[WEAPON_BAZOOKA]->enable = gameVar.sv_enableBazooka;
 		scene->client->btn_guns[WEAPON_PHOTON_RIFLE]->enable = gameVar.sv_enablePhotonRifle;
 		scene->client->btn_guns[WEAPON_FLAME_THROWER]->enable = gameVar.sv_enableFlameThrower;
-		
+
 		if(gameVar.sv_enableSecondary)
 		{
 			scene->client->btn_meleeguns[WEAPON_KNIVES-WEAPON_KNIVES]->enable = gameVar.sv_enableKnives;
@@ -872,7 +872,7 @@ void Game::update(float delay)
 			delete douille;
 		}
 	}
-#endif	
+#endif
 
 	// Update les particules
 //	gameVar.ro_nbParticle = dkpUpdate(delay);
@@ -921,7 +921,7 @@ int Game::assignPlayerTeam(int playerID, char teamRequested, Client * client)
 			{
 				teamRequested = PLAYER_TEAM_RED;
 			}
-			else 
+			else
 			{
 				// choose the losing team
 				if(blueScore < redScore)
@@ -1079,7 +1079,7 @@ void Douille::update(float pDelay, Map * map)
 		if (map->rayTest(p1, p2, normal))
 		{
 			// On dit à tout le monde de jouer le son (pour l'instant juste server side)
-			if (!soundPlayed) 
+			if (!soundPlayed)
 			{
 				if (type == DOUILLE_TYPE_DOUILLE) dksPlay3DSound(gameVar.sfx_douille[rand()%3],-1,1,position,255);
 				else if (type == DOUILLE_TYPE_GIB)
@@ -1267,8 +1267,8 @@ void Game::shootSV(net_clsv_player_shoot & playerShoot)
 		if (player->weapon->currentImp > player->weapon->impressision)
 			player->weapon->currentImp = player->weapon->impressision;
 
-      float imp = player->weapon->currentImp;      
-      
+      float imp = player->weapon->currentImp;
+
       if (gameVar.sv_serverType == SERVER_TYPE_PRO)
          {
          if (player->currentCF.vel.length() < 1.15f)
@@ -1388,16 +1388,16 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 		case 5:
 			oldP2 = rotateAboutAxis(p2, -10.0f, CVector3f(0.0f, 0.0f, 1.0f));
 			break;
-		};	
+		};
 		normalize(oldP2);
-	}	
+	}
 	if(player->weapon->weaponID == WEAPON_SHOTGUN)
 	{
 		imp = 3.5f;
 	}
 #if defined(_PRO_)
 	CVector3f dir = p2;
-    
+
 	if (player->weapon->projectileType == PROJECTILE_DIRECT && player->weapon->weaponID == WEAPON_FLAME_THROWER)
 	{
 		if(gameVar.sv_ftExpirationTimer > 0)
@@ -1430,16 +1430,16 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 		   //--- Clamp shot
 		   CVector3f dir = p2 - p1;
 		   normalize(dir);
-		   
+
          float clampShot;
 		 float variation = 0.01f;
-         if(gameVar.sv_serverType == SERVER_TYPE_PRO) 
+         if(gameVar.sv_serverType == SERVER_TYPE_PRO)
 		 {	//clampShot = gameVar.sv_shottyRange;
 			 CVector3f sinThetaVector = cross(dir,oldP2);
 			 float sinTheta = sinThetaVector.length();
 			 clampShot = gameVar.sv_shottyDropRadius/sinTheta;
 		 }
-		 else 
+		 else
 		 {
 	 		 switch(ident)
 	 		 {
@@ -1460,7 +1460,7 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 				 break;
 			 };
 		 }
-         
+
          p2 = p1 + dir * clampShot;
 	   }
 
@@ -1499,7 +1499,7 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
                if (players[i]->status == PLAYER_STATUS_ALIVE && (players[i]->teamID != player->teamID || gameType == GAME_TYPE_DM || gameType == GAME_TYPE_SND || gameVar.sv_friendlyFire || gameVar.sv_reflectedDamage))
 #else
                if (players[i]->status == PLAYER_STATUS_ALIVE && (players[i]->teamID != player->teamID || gameType == GAME_TYPE_DM || gameVar.sv_friendlyFire))
-#endif					
+#endif
 					{
 						// Ray to sphere test
 						if (segmentToSphere(p1, p3, players[i]->currentCF.position, (player->weapon->weaponID == WEAPON_FLAME_THROWER)?.50f:.25f))

@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -135,12 +135,12 @@ void Control::render()
 		float offset = 0;
 		switch (m_state)
 		{
-		case CONTROL_DOWN: 
-		case CONTROL_NOTHING: 
+		case CONTROL_DOWN:
+		case CONTROL_NOTHING:
 			glColor3f(.95f,.3f,.25f);
 			break;
 		case CONTROL_OVER:
-			glColor3f(.95f,1,.25f); 
+			glColor3f(.95f,1,.25f);
 			offset = 8;
 			break;
 		}
@@ -187,13 +187,13 @@ void Control::render()
 		// Le standard pour les bouton
 		switch (m_state)
 		{
-		case CONTROL_DOWN: 
-		case CONTROL_NOTHING: 
+		case CONTROL_DOWN:
+		case CONTROL_NOTHING:
 			glColor3f(1,1,1);
 			dkfPrint(m_textSize, m_rect[0]+m_leftOffset, m_rect[1], 0, m_caption.s);
 			break;
 		case CONTROL_OVER:
-			glColor3f(.5f,.5f,1); 
+			glColor3f(.5f,.5f,1);
 			dkfPrint(m_textSize, m_rect[0]+m_leftOffset, m_rect[1], 0, m_caption.s);
 			break;
 		}

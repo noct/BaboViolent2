@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -382,13 +382,13 @@ void CUserLogin::Paint(CControl * control)
 					{
 						offset = (float)res[0];
 						res[0] = (int)(res[1]*1.333f);
-						offset = (offset - res[0])/2;	
+						offset = (offset - res[0])/2;
 					}
 
 					glViewport(
-						(GLint)((((float)control->Rect[0]/800.0f) * (float)res[0]) + offset), 
+						(GLint)((((float)control->Rect[0]/800.0f) * (float)res[0]) + offset),
 						res[1] - (int)(((float)(control->Rect[1])/600.0f) * (float)res[1]) - (int)(((float)control->Rect[3]/600.0f) * (float)res[1] + 1),
-						(int)(((float)control->Rect[2]/800.0f) * (float)res[0]), 
+						(int)(((float)control->Rect[2]/800.0f) * (float)res[0]),
 						(int)(((float)control->Rect[3]/600.0f) * (float)res[1] + 1));
 
 					dkglSetProjection(70, 1, 1000, (float)control->size[0], (float)control->size[1]);
@@ -431,7 +431,7 @@ void CUserLogin::Paint(CControl * control)
 						//gluSphere(qObj, 5, 24, 24);
                         drawSphere(5, 24, 24, GL_TRIANGLES);
 					glPopMatrix();
-					
+
 				glPopAttrib();
 			glPopMatrix();
 			glMatrixMode(GL_PROJECTION);

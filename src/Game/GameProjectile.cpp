@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -254,7 +254,7 @@ void Projectile::update(float delay, Map* map)
 		{
 		//	scene->client->game->trails.push_back(new Trail(lastCF.position, currentCF.position, 1.5f, CVector4f(.6f,.6f,.6f,.5f), 4));
 //rotation
-			
+
 			float colorArg1 = 1.0;
 			float colorArg2 = 1.0;
 			float colorArg3 = 1.0;
@@ -509,7 +509,7 @@ void Projectile::update(float delay, Map* map)
 						}
 					}
 					stickFor -= delay;
-					if (stickFor <= 0) 
+					if (stickFor <= 0)
 					{
 						stickFor = 0;
 						stickToPlayer = -1;
@@ -552,7 +552,7 @@ void Projectile::update(float delay, Map* map)
 				if (damageTime >= 20)
 				{
 					damageTime = 0;
-					if (scene->server) 
+					if (scene->server)
 					{
 						scene->server->game->radiusHit(currentCF.position, .5f, fromID, WEAPON_COCKTAIL_MOLOTOV);
 					}
@@ -647,7 +647,7 @@ void Projectile::update(float delay, Map* map)
 		if (!remoteEntity)
 		{
 			duration -= delay;
-			if (duration <= 0) 
+			if (duration <= 0)
 			{
 
 				// KATABOOM
@@ -656,7 +656,7 @@ void Projectile::update(float delay, Map* map)
 					if(needToBeDeleted) return;
 
                     needToBeDeleted = true;
-					
+
 					// On se cré DA explosion :P
 					net_svcl_explosion explosion;
 					explosion.position[0] = currentCF.position[0];
@@ -1077,42 +1077,42 @@ void Projectile::render()
 			glEnable(GL_LIGHTING);
 			glPushMatrix();
 				glTranslatef(currentCF.position[0], currentCF.position[1], currentCF.position[2]);
-				if (projectileType == PROJECTILE_ROCKET) 
+				if (projectileType == PROJECTILE_ROCKET)
 				{
 					glRotatef(currentCF.angle, 0, 0, 1);
 					glScalef(.0025f,.0025f,.0025f);
 					dkoRender(gameVar.dko_rocket); // Voilà!
 				}
-				if (projectileType == PROJECTILE_GRENADE) 
+				if (projectileType == PROJECTILE_GRENADE)
 				{
 					glRotatef(rotation, currentCF.vel[0], currentCF.vel[1], 0);
 					glScalef(.0025f,.0025f,.0025f);
 					dkoRender(gameVar.dko_grenade); // Voilà!
 				}
-				if (projectileType == PROJECTILE_COCKTAIL_MOLOTOV) 
+				if (projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
 				{
 					glRotatef(rotation, currentCF.vel[0], currentCF.vel[1], 0);
 					glScalef(.0025f,.0025f,.0025f);
 					dkoRender(gameVar.dko_cocktailMolotov); // Voilà!
 				}
-				if (projectileType == PROJECTILE_DROPED_GRENADE) 
+				if (projectileType == PROJECTILE_DROPED_GRENADE)
 				{
 				//	glTranslatef(0,0,.30f);
 					glScalef(.0025f,.0025f,.0025f);
 					dkoRender(gameVar.dko_grenade); // Voilà!
 				}
-				if (projectileType == PROJECTILE_LIFE_PACK) 
+				if (projectileType == PROJECTILE_LIFE_PACK)
 				{
 					glTranslatef(0,0,-.20f);
 					glScalef(.0025f,.0025f,.0025f);
 					dkoRender(gameVar.dko_lifePack); // Voilà!
 				}
-				if (projectileType == PROJECTILE_DROPED_WEAPON) 
+				if (projectileType == PROJECTILE_DROPED_WEAPON)
 				{
 					glTranslatef(0,0,-.30f);
 					glRotatef(rotation, 0, 0, 1);
 					glScalef(.005f,.005f,.005f);
-					if (fromID >= 0) 
+					if (fromID >= 0)
 					{
 						if (gameVar.weapons[fromID]) dkoRender(gameVar.weapons[fromID]->dkoModel); // Voilà!
 					}
@@ -1206,7 +1206,7 @@ void Projectile::setCoordFrame(net_svcl_projectile_coord_frame & projectileCoord
 	netCF1.vel[2] = (float)projectileCoordFrame.vel[2] / 10.0f;
 
 	// Si notre frameID était à 0, on le copie direct
-	if (netCF0.frameID == 0) 
+	if (netCF0.frameID == 0)
 	{
 		netCF0 = netCF1;
 	}

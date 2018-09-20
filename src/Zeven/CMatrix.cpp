@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -85,8 +85,8 @@ void CMatrix3x3f::operator*=(CMatrix3x3f & matrix){
 //
 CVector3f CMatrix3x3f::operator*(const CVector3f &u){
 	return CVector3f(
-		s[0]*u.s[0] + s[1]*u.s[1] + s[2]*u.s[2], 
-		s[3]*u.s[0] + s[4]*u.s[1] + s[5]*u.s[2], 
+		s[0]*u.s[0] + s[1]*u.s[1] + s[2]*u.s[2],
+		s[3]*u.s[0] + s[4]*u.s[1] + s[5]*u.s[2],
 		s[6]*u.s[0] + s[7]*u.s[1] + s[8]*u.s[2]
 		);
 }
@@ -189,8 +189,8 @@ void CMatrix3x3f::normalize()
 	for (int i=0;i<3;i++)
 	{
 		float size = sqrtf(
-			s[i*3+0]*s[i*3+0] + 
-			s[i*3+1]*s[i*3+1] + 
+			s[i*3+0]*s[i*3+0] +
+			s[i*3+1]*s[i*3+1] +
 			s[i*3+2]*s[i*3+2]);
 		s[i*3+0] /= size;
 		s[i*3+1] /= size;

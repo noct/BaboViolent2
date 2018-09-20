@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -141,10 +141,10 @@ void CBrowser::updatePerso(float delay)
 			}
 			CControl* gameRow = new CControl(lst_browseList, CVector2i(10, 10 + nbGames*30), CVector2i(676,30), "", this, "LABEL");
 			gameRow->customData = holdRow; // Voilà pour ça
-	
+
 			CControl* Name = new CControl(gameRow, CVector2i(0, 5), CVector2i(350,20), holdRow->bv2Row->serverName, this, "LABEL");
 			CControl* Type = new CControl(gameRow, CVector2i(350, 5), CVector2i(150,20), gameType, this, "LABEL");
-		
+
 			CString players("%2i/%2i", holdRow->bv2Row->nbPlayer, holdRow->bv2Row->maxPlayer);
 			CControl* Players = new CControl(gameRow, CVector2i(500, 5), CVector2i(88,20), players, this, "LABEL");
 
@@ -177,7 +177,7 @@ void CBrowser::updatePerso(float delay)
 			nbGames++;
 		}
 
-		// Sort	
+		// Sort
 		std::sort(lst_browseList->children.begin(), lst_browseList->children.end(), SPingSort());
 
 		// Set positions

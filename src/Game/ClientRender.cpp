@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -45,7 +45,7 @@ void Client::render(float & alphaScope)
 			if (game->map)
 			{
 				game->map->camLookAt = (
-					game->thisPlayer->currentCF.position*5 + 
+					game->thisPlayer->currentCF.position*5 +
 					game->thisPlayer->currentCF.mousePosOnMap*4) / 9.0f;
 				if (game->map->camLookAt[0] < 0) game->map->camLookAt[0] = 0;
 				if (game->map->camLookAt[1] < -1) game->map->camLookAt[1] = -1;
@@ -393,7 +393,7 @@ void Client::render(float & alphaScope)
 					}
 				}
 				else if ((
-					game->thisPlayer->teamID == PLAYER_TEAM_BLUE || 
+					game->thisPlayer->teamID == PLAYER_TEAM_BLUE ||
 					game->thisPlayer->teamID == PLAYER_TEAM_RED) &&
 					game->thisPlayer->status == PLAYER_STATUS_DEAD  && !game->thisPlayer->spawnRequested)
 				{
@@ -562,8 +562,8 @@ void Client::render(float & alphaScope)
 
 					break;
 				}
-         
-#if defined(_PRO_)	      
+
+#if defined(_PRO_)
 
             float textSize = (float)gameVar.r_chatTextSize;
 #endif
@@ -584,8 +584,8 @@ void Client::render(float & alphaScope)
 					glDisable(GL_TEXTURE_2D);
 					glBegin(GL_QUADS);
 
-         
-#if defined(_PRO_)	      
+
+#if defined(_PRO_)
                float chatWidth = dkfGetStringWidth(textSize, chatMessages[i].message.s);
 
 					glVertex2f(8,yPos - (float)((chatMessages.size() - i - 1) * textSize)+1);
@@ -613,7 +613,7 @@ void Client::render(float & alphaScope)
 					// On l'écris à peut pret au tier de l'écran à gauche
 					glEnable(GL_TEXTURE_2D);
 
-#if defined(_PRO_)	
+#if defined(_PRO_)
 					printLeftText(10,yPos - (float)(chatMessages.size() - i - 1) * textSize, textSize, chatMessages[i].message);
 #else
                printLeftText(10,yPos - (float)(chatMessages.size() - i - 1) * 28, 28, chatMessages[i].message);
@@ -640,7 +640,7 @@ void Client::render(float & alphaScope)
 					else
 						chattingTo = "say : ";
 
-					
+
                float chattingToWidth = dkfGetStringWidth(28, chattingTo.s);
 					printLeftText(10,yPos + 32,28,chattingTo);
 					chatting.print(28, 10+chattingToWidth,yPos + 32, 0);
@@ -660,7 +660,7 @@ void Client::render(float & alphaScope)
 					}
 					// On l'écris à peut pret au 2 tier de l'écran à gauche
 
-#if defined(_PRO_)	                  
+#if defined(_PRO_)
             float eventTextSize = (float)gameVar.r_eventTextSize;
 
             if (gameVar.r_showEventText)
@@ -671,7 +671,7 @@ void Client::render(float & alphaScope)
             printLeftText(xPos,(float)res[1] - (float)(eventMessages.size() - i - 1) * 28-20-28, 28, eventMessages[i].message);
 #endif
 
-					
+
 				}
 
 			glPopAttrib();
@@ -717,7 +717,7 @@ void Client::render(float & alphaScope)
 		dkwClipMouse( false );
 		menuManager.render(clientRoot);
 	//	if (clientRoot) clientRoot->render();
-	
+
 	//	renderMenu();
 		dkglPushOrtho(800,600);
 			glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
@@ -799,7 +799,7 @@ void Client::render(float & alphaScope)
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glColor4f(1,.2f,.2f, hitIndicator);
-			renderTexturedQuad(xM-16,yM-16,32,32,tex_crossHit);			
+			renderTexturedQuad(xM-16,yM-16,32,32,tex_crossHit);
 		glPopAttrib();
 	dkglPopOrtho();
 #endif

@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -97,9 +97,9 @@ void Game::renderBlueTeam(std::vector<Player*> & blueTeam, int & vPos)
 
 		CString pingStr;
 		if (blueTeam[j]->ping*33 < 100) /*"Good"*/
-			pingStr = CString("\x2") + blueTeam[j]->ping*33; 
+			pingStr = CString("\x2") + blueTeam[j]->ping*33;
 		else if (blueTeam[j]->ping*33 < 200) /*"Average"*/
-			pingStr = CString("\x9") + blueTeam[j]->ping*33; 
+			pingStr = CString("\x9") + blueTeam[j]->ping*33;
 		else if (blueTeam[j]->ping*33 < 999) /*"Bad"*/
 			pingStr = CString("\x4") + blueTeam[j]->ping*33;
 		else
@@ -129,9 +129,9 @@ void Game::renderRedTeam(std::vector<Player*> & redTeam, int & vPos)
 
 		CString pingStr;
 		if (redTeam[j]->ping*33 < 100) /*"Good"*/
-			pingStr = CString("\x2") + redTeam[j]->ping*33; 
+			pingStr = CString("\x2") + redTeam[j]->ping*33;
 		else if (redTeam[j]->ping*33 < 200) /*"Average"*/
-			pingStr = CString("\x9") + redTeam[j]->ping*33; 
+			pingStr = CString("\x9") + redTeam[j]->ping*33;
 		else if (redTeam[j]->ping*33 < 999) /*"Bad"*/
 			pingStr = CString("\x4") + redTeam[j]->ping*33;
 		else
@@ -159,9 +159,9 @@ void Game::renderFFA(std::vector<Player*> & ffaTeam, int & vPos)
 		if (ffaTeam[j]->status == PLAYER_STATUS_DEAD) showName.insert((CString("(") + gameVar.lang_dead + ") ").s, 0);
 		CString pingStr;
 		if (ffaTeam[j]->ping*33 < 100) /*"Good"*/
-			pingStr = CString("\x2") + ffaTeam[j]->ping*33; 
+			pingStr = CString("\x2") + ffaTeam[j]->ping*33;
 		else if (ffaTeam[j]->ping*33 < 200) /*"Average"*/
-			pingStr = CString("\x9") + ffaTeam[j]->ping*33; 
+			pingStr = CString("\x9") + ffaTeam[j]->ping*33;
 		else if (ffaTeam[j]->ping*33 < 999) /*"Bad"*/
 			pingStr = CString("\x4") + ffaTeam[j]->ping*33;
 		else
@@ -184,9 +184,9 @@ void Game::renderSpectator(std::vector<Player*> & spectatorTeam, int & vPos)
 		showName.insert("\x8", 0);
 		CString pingStr;
 		if (spectatorTeam[j]->ping*33 < 100) /*"Good"*/
-			pingStr = CString("\x2") + spectatorTeam[j]->ping*33; 
+			pingStr = CString("\x2") + spectatorTeam[j]->ping*33;
 		else if (spectatorTeam[j]->ping*33 < 200) /*"Average"*/
-			pingStr = CString("\x9") + spectatorTeam[j]->ping*33; 
+			pingStr = CString("\x9") + spectatorTeam[j]->ping*33;
 		else if (spectatorTeam[j]->ping*33 < 999) /*"Bad"*/
 			pingStr = CString("\x4") + spectatorTeam[j]->ping*33;
 		else
@@ -314,7 +314,7 @@ void Game::renderStats()
 			case GAME_TYPE_TDM:
 				renderStatsSlice(CVector4f(0, 0, 0, .75f), gameVar.lang_playerNameC.s, "Kills", "Death", "Damage", "","", gameVar.lang_pingC.s, vPos);
 				vPos += 10;
-				if (blueScore >= redScore) 
+				if (blueScore >= redScore)
 				{
 					renderBlueTeam(blueTeam, vPos);
 					renderRedTeam(redTeam, vPos);
@@ -326,10 +326,10 @@ void Game::renderStats()
 				}
 				renderSpectator(spectatorTeam, vPos);
 				break;
-			case GAME_TYPE_CTF:			
+			case GAME_TYPE_CTF:
 				renderStatsSlice(CVector4f(0, 0, 0, .75f), gameVar.lang_playerNameC.s, "Kills", "Death", "Damage", "Retrn", "Caps", gameVar.lang_pingC.s, vPos);
 				vPos += 10;
-				if (blueWin >= redWin) 
+				if (blueWin >= redWin)
 				{
 					renderBlueTeam(blueTeam, vPos);
 					renderRedTeam(redTeam, vPos);

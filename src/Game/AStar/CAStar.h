@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -20,7 +20,7 @@
  	Author: David St-Louis (Alias Daivuk)
 	email: duktroa@hotmail.com
 	Date: 27/01/2007
-	Description: The goal of this class is to have a fast generic 2D A* 
+	Description: The goal of this class is to have a fast generic 2D A*
 				 quadtree pathfinding. Maps don't need to be power of two.
 
 
@@ -44,7 +44,7 @@ public:
 	/** Default Constructor */
 	CAStar();
 
-	/** Copy constructor 
+	/** Copy constructor
 	* @param in_aStar An another CAStar object.
 	*/
 	CAStar(const CAStar & in_aStar);
@@ -73,21 +73,21 @@ public:
 
 	/** To build it.
 	* @param in_mapArray The one dimensionnal array containing all the cells of
-						 the map. A cell should contain 0 for impassable, 255 
+						 the map. A cell should contain 0 for impassable, 255
 						 for fully passable. Values between will be heuristic.
 	* @param in_sizeX Size of the map on X axis. (Number of tiles)
 	* @param in_sizeY Size of the map on Y axis. (Number of tiles)
 	* @return 1 if sucessful, 0 if failed.
 	*/
-	int Build(const unsigned char * in_mapArray, 
-			  const int in_sizeX, 
+	int Build(const unsigned char * in_mapArray,
+			  const int in_sizeX,
 			  const int in_sizeY);
 
 	/** get/set the max path size */
 	int GetMaxPathSize() const {return m_maxPathSize;}
 
 	/** Must be power of 2 and at max 64 */
-	void SetMaxPathSize(int in_maxPathSize) 
+	void SetMaxPathSize(int in_maxPathSize)
 	{
 		m_maxPathSize = in_maxPathSize;
 		if (m_maxPathSize <= 1)
@@ -135,7 +135,7 @@ public:
 
 	/** Find the path !!! finally */
 	CPathNode *FindPath(CPathNode* in_start, CPathNode* in_end);
-	
+
 
 private:
 	/** To init the members. Used by contructors and Clean function.

@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -24,11 +24,11 @@
 //
 // Constructeur
 //
-Write::Write(CVector2i screenPosition, 
-			   CString caption, 
-			   unsigned int m_font, 
-			   float textSize, 
-			   control_justify justify, 
+Write::Write(CVector2i screenPosition,
+			   CString caption,
+			   unsigned int m_font,
+			   float textSize,
+			   control_justify justify,
 			   int flag)
 : Control(screenPosition, caption, m_font, textSize, justify)
 {
@@ -153,12 +153,12 @@ void Write::render()
 		float offset = 0;
 		switch (m_state)
 		{
-		case CONTROL_DOWN: 
-		case CONTROL_NOTHING: 
+		case CONTROL_DOWN:
+		case CONTROL_NOTHING:
 			glColor3f(.5f,1,0);
 			break;
 		case CONTROL_OVER:
-			glColor3f(0,1,.5f); 
+			glColor3f(0,1,.5f);
 			offset = 8;
 			break;
 		}
@@ -186,16 +186,16 @@ void Write::render()
 			// Le standard pour les bouton
 			switch (m_state)
 			{
-			case CONTROL_NOTHING: 
+			case CONTROL_NOTHING:
 				glColor3f(1,1,1);
 				print(m_textSize, m_rect[0]+m_leftOffset, m_rect[1], 0);
 				break;
 			case CONTROL_OVER:
-				glColor3f(.5f,.5f,1); 
+				glColor3f(.5f,.5f,1);
 				print(m_textSize, m_rect[0]+m_leftOffset, m_rect[1], 0);
 				break;
-			case CONTROL_DOWN: 
-				glColor3f(1,.5f,.5f); 
+			case CONTROL_DOWN:
+				glColor3f(1,.5f,.5f);
 				print(m_textSize, m_rect[0]+m_leftOffset+2, m_rect[1]+2, 0);
 				break;
 			}
@@ -205,16 +205,16 @@ void Write::render()
 			// Le standard pour les bouton
 			switch (m_state)
 			{
-			case CONTROL_NOTHING: 
+			case CONTROL_NOTHING:
 				glColor3f(1,1,1);
 				print(m_textSize, m_rect[0]+m_leftOffset, m_rect[1], 0);
 				break;
 			case CONTROL_OVER:
-				glColor3f(.5f,.5f,1); 
+				glColor3f(.5f,.5f,1);
 				print(m_textSize, m_rect[0]+m_leftOffset, m_rect[1], 0);
 				break;
-			case CONTROL_DOWN: 
-				glColor3f(1,.5f,.5f); 
+			case CONTROL_DOWN:
+				glColor3f(1,.5f,.5f);
 				print(m_textSize, m_rect[0]+m_leftOffset+2, m_rect[1]+2, 0);
 				break;
 			}

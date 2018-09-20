@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -36,7 +36,7 @@ extern Scene * scene;
 void Client::recvPacket(char * buffer, int typeID)
 {
 #if defined(_PRO_)
-   
+
 	if( typeID == NET_SVCL_HASH_SEED )
 	{
 		// we receive an hash seed, we need to send a response back
@@ -48,8 +48,8 @@ void Client::recvPacket(char * buffer, int typeID)
 #ifdef WIN32
       char pFile[512+1];
       GetModuleFileName(NULL, pFile, 512);
-		int result = md5_file(pFile, (unsigned char*)&output);		
-#else 
+		int result = md5_file(pFile, (unsigned char*)&output);
+#else
 		int result = md5_file("./bv2.exe", (unsigned char*)&output);
 #endif
 
@@ -57,7 +57,7 @@ void Client::recvPacket(char * buffer, int typeID)
 		//console->add(CString("\x03> client MD5 Output2 : %i",output[1]));
 		//console->add(CString("\x03> client MD5 Output3 : %i",output[2]));
 		//console->add(CString("\x03> client MD5 Output4 : %i",output[3]));
-		
+
 		int hashedOutput[4];
 		hashedOutput[0] = output[0] ^ (int)hashseed.s1;
 		hashedOutput[1] = output[1] ^ (int)hashseed.s2;
@@ -114,7 +114,7 @@ void Client::recvPacket(char * buffer, int typeID)
 						needToShutDown = true;
 						break;
 					}
-					
+
 					// Re-query server in case state has changed
 					net_clsv_gameversion_accepted gameVersionAccepted;
 					gameVersionAccepted.playerID = game->thisPlayer->playerID;
@@ -261,7 +261,7 @@ void Client::recvPacket(char * buffer, int typeID)
 				unsigned char mac[8];		// unsigned here is very important
 				bb_getMyMAC( mac );
 				sprintf( playerInfo.macAddr , "%.2x-%.2x-%.2x-%.2x-%.2x-%.2x" , (int)mac[0], (int)mac[1],(int)mac[2],(int)mac[3],(int)mac[4],(int)mac[5] );
-				
+
 				// On send le playerInfo
 				playerInfo.playerID = game->thisPlayer->playerID;
 				memcpy(playerInfo.playerName, game->thisPlayer->name.s, game->thisPlayer->name.len() + 1);
@@ -374,7 +374,7 @@ void Client::recvPacket(char * buffer, int typeID)
 				strcpy(request.mapName, serverInfo.mapName);
 				request.uniqueClientID = uniqueClientID;
                 bb_clientSend(uniqueClientID,(char*)&request,sizeof(net_clsv_map_request),NET_CLSV_MAP_REQUEST);
-				
+
 				break;
 			}
 			else if (!game->map->isValid)
@@ -575,7 +575,7 @@ void Client::recvPacket(char * buffer, int typeID)
 			if(sValue == "sv_nukeReload")
 			{
 				gameVar.weapons[WEAPON_NUCLEAR]->fireDelay = gameVar.sv_nukeReload;
-			}         
+			}
 			if(sValue == "sv_serverType")
 			{
 				game->UpdateProSettings();
@@ -632,7 +632,7 @@ void Client::recvPacket(char * buffer, int typeID)
 						game->spawnImpact(p1, p2, normal, gameVar.weapons[WEAPON_SMG], .08f, game->players[playerShoot.playerID]->teamID);
 
 						//--- Play a sound
-						dksPlay3DSound(gameVar.sfx_ric[2], -1, 5, 
+						dksPlay3DSound(gameVar.sfx_ric[2], -1, 5,
 							player->minibot->currentCF.position,255);
 					}
 					return;
@@ -715,9 +715,9 @@ void Client::recvPacket(char * buffer, int typeID)
 					// On décrémente sa vie
 				//	game->players[playerShoot.hitPlayerID]->hit(game->players[playerShoot.playerID]->weapon, game->players[playerShoot.playerID]);
 				}
-				
+
 				// Sinon on c'est un autre player, on spawn la trail et le feu de son gun
-				if (!itsMine) 
+				if (!itsMine)
 				{
 					game->players[playerShoot.playerID]->firedShowDelay = 2;
 					game->players[playerShoot.playerID]->weapon->shoot(playerShoot, game->players[playerShoot.playerID]);
@@ -733,7 +733,7 @@ void Client::recvPacket(char * buffer, int typeID)
 			if (game->players[playerProjectile.playerID])
 			{
 				if (game->thisPlayer)
-				{ 
+				{
 					if (playerProjectile.playerID == game->thisPlayer->playerID)
 					{
 						itsMine = true;
@@ -744,7 +744,7 @@ void Client::recvPacket(char * buffer, int typeID)
 						}
 					}
 				}
-				if (!itsMine && playerProjectile.projectileType != PROJECTILE_LIFE_PACK && playerProjectile.projectileType != PROJECTILE_DROPED_WEAPON) 
+				if (!itsMine && playerProjectile.projectileType != PROJECTILE_LIFE_PACK && playerProjectile.projectileType != PROJECTILE_DROPED_WEAPON)
 				{
 					game->players[playerProjectile.playerID]->firedShowDelay = 2;
 					net_svcl_player_shoot playerShoot;
@@ -842,7 +842,7 @@ void Client::recvPacket(char * buffer, int typeID)
 			{
 				game->thisPlayer->rocketInAir = false;
 #if defined(_PRO_) && defined(_MINIBOT_)
-				if(game->thisPlayer->meleeWeapon->weaponID == WEAPON_NUCLEAR && 
+				if(game->thisPlayer->meleeWeapon->weaponID == WEAPON_NUCLEAR &&
 					game->thisPlayer->minibot && explosion.radius >= 4.0f)
 				{
 					dksPlay3DSound(dksCreateSoundFromFile("main/sounds/BaboCreve3.wav", false), -1, 5, game->thisPlayer->minibot->currentCF.position,64);
@@ -1124,7 +1124,7 @@ void Client::recvPacket(char * buffer, int typeID)
 			game->mapName = mapChange.mapName;
 			game->gameType = mapChange.gameType;
 
-			if(isServer) 
+			if(isServer)
 			{
 				game->createMap();
 				if (!game->map)
@@ -1211,7 +1211,7 @@ void Client::recvPacket(char * buffer, int typeID)
 					((float)updateSkin.redDecal[2]) / 255.0f);
 				game->players[updateSkin.playerID]->updateSkin();
 			}
-		
+
 			break;
 		}
 

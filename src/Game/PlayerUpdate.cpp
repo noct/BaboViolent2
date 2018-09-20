@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -116,7 +116,7 @@ void Player::update(float delay)
 		if (screenHit < 0) screenHit = 0;
 	}
 
-	if (firedShowDelay > 0) 
+	if (firedShowDelay > 0)
 	{
 		firedShowDelay -= delay;
 		if (firedShowDelay < 0) firedShowDelay = 0;
@@ -273,7 +273,7 @@ void Player::update(float delay)
 				if (size < 0) size = 0;
 				normalize(currentCF.vel);
 				currentCF.vel = currentCF.vel * size;
-			} 
+			}
 
 			// Un ajustement obligatoire
 			currentCF.position[2] = .25f;
@@ -319,7 +319,7 @@ void Player::update(float delay)
 			timeToSpawn = gameVar.sv_timeToSpawn;
 		}
 #endif
-		
+
 		// On l'oriente
 		{
 #ifndef DEDICATED_SERVER
@@ -386,7 +386,7 @@ void Player::update(float delay)
 #endif
 	}
 	else if ((
-		teamID == PLAYER_TEAM_BLUE || 
+		teamID == PLAYER_TEAM_BLUE ||
 		teamID == PLAYER_TEAM_RED) &&
 		status == PLAYER_STATUS_DEAD && timeToSpawn >= 0)
 	{
@@ -405,7 +405,7 @@ void Player::update(float delay)
             if ((gameVar.sv_forceRespawn || ((dkiGetState(gameVar.k_shoot) == DKI_DOWN && !scene->client->showMenu) && !scene->client->chatting.haveFocus())) && !spawnRequested)
 #else
             if ((gameVar.sv_forceRespawn || ((dkiGetState(gameVar.k_shoot) == DKI_DOWN && !scene->client->showMenu) && !scene->client->chatting.haveFocus())) && !spawnRequested && game->gameType != GAME_TYPE_SND)
-#endif				
+#endif
 				{
 
          #if defined(_PRO_)
@@ -561,7 +561,7 @@ void Player::controlIt(float delay)
 	if (dkiGetState(gameVar.k_shoot) == DKI_DOWN) initedMouseClic = true;
 	if (dkiGetState(gameVar.k_shoot) && initedMouseClic)
 	{
-		if (weapon && grenadeDelay == 0 && meleeDelay == 0) 
+		if (weapon && grenadeDelay == 0 && meleeDelay == 0)
 		{
 			firedShowDelay = 2; // Ça c'est le ping sur la map qu'on voit quand L'autre tire
 
@@ -588,7 +588,7 @@ void Player::controlIt(float delay)
 #endif
 	if (dkiGetState(gameVar.k_melee) && grenadeDelay == 0 && meleeDelay == 0 && gameVar.sv_enableSecondary)
 	{
-		if (meleeWeapon && grenadeDelay == 0) 
+		if (meleeWeapon && grenadeDelay == 0)
 		{
 			firedShowDelay = 2; // Ça c'est le ping sur la map qu'on voit quand L'autre tire
 

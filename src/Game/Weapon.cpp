@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -312,7 +312,7 @@ void Weapon::shoot(Player * owner)
 		}
 		charge = 0;
 		modelAnim = 0;
-		chainOverHeat -= .052f;      
+		chainOverHeat -= .052f;
 		if (chainOverHeat < 0)
 		{
 			chainOverHeat = 0;
@@ -342,7 +342,7 @@ void Weapon::shoot(Player * owner)
 		shotInc++;
 		if (shotInc >= 6 && weaponID == WEAPON_SHOTGUN)
 		{
-			if (gameVar.sv_enableShotgunReload) 
+			if (gameVar.sv_enableShotgunReload)
 			{
 				currentFireDelay = 3;
 				fullReload = true;
@@ -394,7 +394,7 @@ void Weapon::shoot(Player * owner)
 			//for (int i=0;i<nbShot;++i)
 			{
 				owner->game->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
-			}			
+			}
 #else
 			{
 				currentImp += 3;
@@ -482,8 +482,8 @@ void Weapon::shootMeleeSV(Player * owner)
 // Le server shot le player Melee
 void Weapon::shootMelee(Player * owner)
 {
-	if(owner->meleeWeapon->weaponID == WEAPON_SHIELD || 
-		owner->meleeWeapon->weaponID == WEAPON_KNIVES 
+	if(owner->meleeWeapon->weaponID == WEAPON_SHIELD ||
+		owner->meleeWeapon->weaponID == WEAPON_KNIVES
 #if defined(_PRO_)
         || owner->minibot
 #endif

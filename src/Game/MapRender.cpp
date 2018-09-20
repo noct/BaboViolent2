@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -73,7 +73,7 @@ void Map::buildGround()
 		//--- No splatting, just render splat texture
 		builder.bind(splat);
 		buildGroundLayer(builder);
-	}		
+	}
 
 	groundMesh = builder.compile();
 }
@@ -653,7 +653,7 @@ void Map::collisionClip(CoordFrame & CF, float radius)
 
 	int x = (int)CF.position[0];
 	int y = (int)CF.position[1];
-	
+
 	// Là c simple, on check les 8 cases autour, pis on clip (pour éviter de se faire pousser dans le mur
 	if (cells)
 	{
@@ -715,17 +715,17 @@ void Map::collisionClip(CoordFrame & CF, float radius)
 		dis[3] = 1 - (CF.position[1] - (float)y);
 
 		float currentMin = 2;
-		if (possible[0] && dis[0] < currentMin) 
+		if (possible[0] && dis[0] < currentMin)
 		{
 			CF.position[0] = (float)x-radius-COLLISION_EPSILON;
 			currentMin = dis[0];
 		}
-		if (possible[1] && dis[1] < currentMin) 
+		if (possible[1] && dis[1] < currentMin)
 		{
 			CF.position[0] = (float)x+1+radius+COLLISION_EPSILON;
 			currentMin = dis[1];
 		}
-		if (possible[2] && dis[2] < currentMin) 
+		if (possible[2] && dis[2] < currentMin)
 		{
 			CF.position[1] = (float)y-radius-COLLISION_EPSILON;
 			currentMin = dis[2];

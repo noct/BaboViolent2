@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -84,15 +84,15 @@ CControl::CControl()
 	enable = true;
 }
 
-CControl::CControl(CControl * in_parent, 
-				   CVector2i in_pos, 
-				   CVector2i in_size, 
-				   CString in_text, 
-				   CListener * in_listener, 
-				   CString in_style, 
-				   CControl * snapTo, 
+CControl::CControl(CControl * in_parent,
+				   CVector2i in_pos,
+				   CVector2i in_size,
+				   CString in_text,
+				   CListener * in_listener,
+				   CString in_style,
+				   CControl * snapTo,
 				   int snapFlag,
-				   int spacer, 
+				   int spacer,
 				   bool in_partOfScroll)
 {
 	anim = 0;
@@ -484,7 +484,7 @@ void CControl::update(float delay)
 			if ((gameVar.cl_enableXBox360Controller &&
 				dkiGetState(DKI_JOY_BUTTON1) == DKI_DOWN) ||
 
-				(!gameVar.cl_enableXBox360Controller && 
+				(!gameVar.cl_enableXBox360Controller &&
 				(dkiGetState(DKI_MOUSE_BUTTON1) == DKI_DOWN && enable && !haveFocus())))
 			{
 				if (parent)
@@ -573,7 +573,7 @@ void CControl::update(float delay)
 		if ((gameVar.cl_enableXBox360Controller &&
 				dkiGetState(DKI_JOY_BUTTON1) == DKI_UP) ||
 
-			(!gameVar.cl_enableXBox360Controller && 
+			(!gameVar.cl_enableXBox360Controller &&
 				dkiGetState(DKI_MOUSE_BUTTON1) == DKI_UP))
 		{
 			hoverFreq = .1f;
@@ -648,17 +648,17 @@ void CControl::update(float delay)
 				selectedIndex = key;
 				menuManager.activeControl = 0;
 				loseFocus();
-				if (listener && enable) listener->Validate(this);	
+				if (listener && enable) listener->Validate(this);
 			}
 		}
 	}
 
 	//--- We are writting
-	if (haveFocus() && 
-		
+	if (haveFocus() &&
+
 		((dkiGetState(DKI_JOY_BUTTON1) == DKI_DOWN && gameVar.cl_enableXBox360Controller) ||
 		(dkiGetState(DKI_MOUSE_BUTTON1) == DKI_DOWN && !gameVar.cl_enableXBox360Controller))
-		
+
 		|| isActivated())
 	{
 		loseFocus();
@@ -670,7 +670,7 @@ void CControl::update(float delay)
 			if (value > valueMax) value = valueMax;
 			text = CString() + value;
 		}
-		if (listener && enable) listener->Validate(this);	
+		if (listener && enable) listener->Validate(this);
 	}
 }
 
@@ -707,7 +707,7 @@ void CControl::updateScrollRect()
 
 		if (scrollSize[0] > 0)
 		{
-			if (hscroll && hscrollBar) 
+			if (hscroll && hscrollBar)
 			{
 				scrollSize[0] += 40;
 				hscroll->visible = true;
@@ -722,9 +722,9 @@ void CControl::updateScrollRect()
 			if (hscroll) hscroll->visible = false;
 		}
 
-		if (scrollSize[1] > 0) 
+		if (scrollSize[1] > 0)
 		{
-			if (vscroll && vscrollBar) 
+			if (vscroll && vscrollBar)
 			{
 				scrollSize[1] += 40;
 				vscroll->visible = true;
@@ -800,14 +800,14 @@ void CControl::render()
 	{
 		offset = (float)res[0];
 		res[0] = (int)(res[1]*1.333f);
-		offset = (offset - res[0])/2;	
+		offset = (offset - res[0])/2;
 	}
 
 #ifndef _DX_
 	glScissor(
-		(GLint)((((float)Rect[0]/800.0f) * (float)res[0]) + offset), 
+		(GLint)((((float)Rect[0]/800.0f) * (float)res[0]) + offset),
 		res[1] - (int)(((float)(Rect[1])/600.0f) * (float)res[1]) - (int)(((float)Rect[3]/600.0f) * (float)res[1] + 1),
-		(int)(((float)Rect[2]/800.0f) * (float)res[0]), 
+		(int)(((float)Rect[2]/800.0f) * (float)res[0]),
 		(int)(((float)Rect[3]/600.0f) * (float)res[1] + 1));
 #endif
 
@@ -885,7 +885,7 @@ void CControl::render()
 #ifndef _DX_
 
 		glColor4f(1, 1, 1, .15f);
-		
+
 		glPushAttrib(GL_ENABLE_BIT);
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, texture);
@@ -900,7 +900,7 @@ void CControl::render()
 				glVertex2f(x+w,y);
 			glEnd();
 		glPopAttrib();
-		
+
 		glPushAttrib(GL_ENABLE_BIT);
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, texture);

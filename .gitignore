@@ -183,3 +183,6 @@ pip-log.txt
 .vs/
 ConsoleRelease
 build/
+
+*.sublime-workspace
+*.sublime-project

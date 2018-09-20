@@ -126,8 +126,8 @@ unsigned int loadMapPreview(CString mapFilename)
 		}
 	}
 
-	// On cré l'espace pour la texture
-	//--- Est-ce qu'on a une minimap possible de ça?
+	// On crÃ© l'espace pour la texture
+	//--- Est-ce qu'on a une minimap possible de Ã§a?
 	FileIO* fileTGA = new FileIO(CString("main/modelmaps___/") + mapFilename + "/minimap.tga", "rb");
 	unsigned int texMap = 0;
 	if (fileTGA->isValid())
@@ -398,7 +398,7 @@ CHost::CHost(CControl * in_parent, CControl * in_alignTo)
 
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
-		// Si on ne trouve pas le répertoire désiré.
+		// Si on ne trouve pas le rÃ©pertoire dÃ©sirÃ©.
 	}
 	else
 	{
@@ -472,7 +472,7 @@ CHost::CHost(CControl * in_parent, CControl * in_alignTo)
 		FindClose(hFind);
 		if (dwError != ERROR_NO_MORE_FILES)
 		{
-			// Si il y a une error en détectant qu'il n'y a plus de fichiers.
+			// Si il y a une error en dÃ©tectant qu'il n'y a plus de fichiers.
 		}
 	}
 
@@ -582,7 +582,7 @@ void CHost::Click(CControl * control)
 		gameVar.sv_forceRespawn = chk_forceRespawn->check;
 
 		//--- We launch the server, then add the maps
-		// On colle la première map
+		// On colle la premiÃ¨re map
 		CString command = "host ";
 		bool firstCheck = true;
 

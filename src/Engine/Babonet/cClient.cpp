@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -33,7 +33,7 @@ cClient::cClient()
 	sprintf(LastError,"");
 
 	isConnected			=	false;
-	
+
 	NetID				=	0;
 
 	//TCP
@@ -48,8 +48,8 @@ cClient::cClient()
 	PartialKey			=	false;
 
 	LastPacketID		=	0;
-	
-	
+
+
 	ReceivedPackets		=	0;
 	PacketsToSend		=	0;
 	UDPPacketsToSend	=	0;
@@ -171,21 +171,21 @@ cClient::cClient(const char *HostIP, unsigned short port,UINT4 netID)
 	PartialKey			=	false;
 
 	LastPacketID		=	0;
-	
-	
+
+
 	//UDP
 	//UDPlastPacket.Size		=	0;
 	//UDPlastPacket.data		=	0;
 	//UDPbytesRemaining		=	HEADER_SIZE;		//pour le header qui sen vient
 	//UDPWaitingForHeader		=	true;
 	//UDPPartialHeader		=	false;
-	
+
 	//par defaut on a pas de packet a envoyer
 	PacketsToSend		=	0;
 	UDPPacketsToSend	=	0;
 
 	DataRate			=	1000;
-	
+
 	ReceivedPackets		=	0;
 	PacketToKill		=	0;
 
@@ -209,12 +209,12 @@ int cClient::UpdateConnection(float elapsed)
 	if(Connection)
 	{
 		int r = Connection->Update(elapsed);
-		
+
 		if(r==2) // la connection s'est fait!
 		{
 			PendingID = LastPacketID + 1;
 
-			delete Connection; 
+			delete Connection;
 			Connection = 0;
 
 			sprintf(LastMessage,"Connection to server succesfull FD : %i UDPfd : %i",FileDescriptor,UDPfd);
@@ -247,7 +247,7 @@ int	cClient::ReceivePacketsFromServer()
 	if (select(fdmax+1, &read_fds, NULL, NULL, &Timeout) == -1)
 	{
 		//sprintf(LastError,"Error : Problem select()ing while cClient::ReceivePacketsFromServer() WSA : %i",WSAGetLastError());
-		sprintf(LastError,"Error : client, error while selecting, err no. %d", 
+		sprintf(LastError,"Error : client, error while selecting, err no. %d",
 		#ifdef WIN32
 		WSAGetLastError()
 		#else
@@ -262,12 +262,12 @@ int	cClient::ReceivePacketsFromServer()
 
 	if(UDPenabled)
 	{
-		
+
 		int isReady = 20;
 
 		while(isReady--)
 		{
-		
+
 			//est-ce que notre client est pret a recevoir du data UDP
 			if (FD_ISSET(UDPfd, &read_fds))
 			{
@@ -331,7 +331,7 @@ int	cClient::ReceivePacketsFromServer()
 		//on va recevoir des packets
 		//char		*buf = new char[3072];	//on se garde un buffer de 2048 byte
 		int			nbytes=0;	//nombre de byte recu
-		
+
 		if((nbytes = recv(FileDescriptor, buffer, 3072,0)) <= 0)
 		{
 			//un probleme est survenu
@@ -348,7 +348,7 @@ int	cClient::ReceivePacketsFromServer()
 				sprintf(LastError,"Error : Problem recv()ing packets from server TCP");
                     //delete [] buf;
 				return 1;
-			}	
+			}
 		}
 		else
 		{
@@ -369,7 +369,7 @@ int	cClient::ReceivePacketsFromServer()
 
 
 	return 0;
-	
+
 }
 
 INT4 cClient::IsReadyToSend()
@@ -471,7 +471,7 @@ void cClient::ReceiveDatagram(int nbytes,char *buf)
 
 int cClient::SendPacketsToServer()
 {
-	
+
 	write_fds = master; // copy it
 
 	if (select(fdmax+1, NULL, &write_fds, NULL, &Timeout) == -1)
@@ -479,7 +479,7 @@ int cClient::SendPacketsToServer()
 		sprintf(LastError,"Error : Problem select()ing while SendPacketsToServer()");
 		return 1;
 	}
-	
+
 	Timeout.tv_sec	=	0;
 	Timeout.tv_usec =	0;
 
@@ -498,7 +498,7 @@ int cClient::SendPacketsToServer()
 					//struct sockaddr_in remIP = RemoteIP;
 					//unsigned short port = ntohs(remIP.sin_port);
 					//remIP.sin_port = htons(port + 1);
-					
+
 					BytesSent += P->Size;
 					P->SendUDP(UDPfd,&RemoteIP);
 
@@ -545,7 +545,7 @@ int cClient::ReceiveStream(int nbytes,char *buf)
 	//tant quia des byte a lire
 	while(nread<nbytes)
 	{
-	
+
 		if(WaitingForKey)
 		{
 			//key partial
@@ -561,7 +561,7 @@ int cClient::ReceiveStream(int nbytes,char *buf)
 					//rnd key is corrupted, potential hacking
 					Disconnect();
 				}
-											
+
                 bytesRemaining = bytesRemaining - (unsigned short)(nbytes-nread);
 				nread += nbytes-nread;
 				PartialKey = true;
@@ -602,7 +602,7 @@ int cClient::ReceiveStream(int nbytes,char *buf)
 				if(stricmp("RND1",key)) return 1;	//RndLabs key is corrupted, potential hacker
 
 				memcpy(pid, lastKey + sizeof(UINT4), sizeof(UINT4));
-                               			
+
 				if(GetPendingID(pid)) return 1;		//potential hacker
 				PendingID++;
 
@@ -611,7 +611,7 @@ int cClient::ReceiveStream(int nbytes,char *buf)
 
 			}
 		}
-	
+
 		if(WaitingForHeader)
 		{
 			//on test si c un partial header ou complete
@@ -656,13 +656,13 @@ int cClient::ReceiveStream(int nbytes,char *buf)
 
 						//on va l'ajouter au queue des packet disponible
 						AddReceivedPacket(new cPacket(lastPacket.data,lastPacket.Size,lastPacket.TypeID));
-					
+
 							lastPacket.Size = 0;
 							delete [] lastPacket.data;
 							lastPacket.data = 0;
 
 						NbPacket--;
-						
+
 						//all sub packets have been received in the master packet
 						if(!NbPacket)
 						{
@@ -691,13 +691,13 @@ int cClient::ReceiveStream(int nbytes,char *buf)
 
 						//on va l'ajouter au queue des packet disponible
 						AddReceivedPacket(new cPacket(lastPacket.data,lastPacket.Size,lastPacket.TypeID));
-					
+
 							lastPacket.Size = 0;
 							delete [] lastPacket.data;
 							lastPacket.data = 0;
 
 						NbPacket--;
-						
+
 						//all sub packets have been received in the master packet
 						if(!NbPacket)
 						{
@@ -720,16 +720,16 @@ int cClient::ReceiveStream(int nbytes,char *buf)
 				bytesRemaining = TCP_HEADER_SIZE; //pour le prochain header
 
 				//ici le packet est complet
-					
+
 				//on va l'ajouter au queue des packet disponible
 				AddReceivedPacket(new cPacket(lastPacket.data,lastPacket.Size,lastPacket.TypeID));
-					
+
 					lastPacket.Size = 0;
 					delete [] lastPacket.data;
 					lastPacket.data = 0;
 
 				NbPacket--;
-				
+
 				//all sub packets have been received in the master packet
 				if(!NbPacket)
 				{
@@ -792,7 +792,7 @@ bool cClient::GetPendingID(char *pid)
 	pid[4] = '\0';
 
     return stricmp(pid , newID) ? true : false;
-        
+
 
 }
 
@@ -809,7 +809,7 @@ cPacket* cClient::GetReadyPacket()
 	if(!ReceivedPackets) return 0;
 
 	cPacket *P=ReceivedPackets;
-	
+
 	while(P->Next)
 	{
 		P=P->Next;
@@ -836,14 +836,14 @@ int cClient::Send(UINT4 &nbByte)
 		memcpy(buf + packed,&Key,sizeof(char)*4);
             //packed += sizeof(sizeof(char)*4);
             packed += sizeof(UINT4);
-	
+
 		//on parse le packetID
 		char pid[5];
 		GetLastPacketID(pid);
 		memcpy(buf + packed,&(pid),sizeof(char) * 4);
 		packed += (sizeof(char) * 4) + 1; //+1 pour laisser 1 place pour le nombre de packet
 	}
-	
+
 
 	cPacket *toKill=0;
 	for(cPacket *p=PacketsToSend;p;delete toKill)
@@ -854,7 +854,7 @@ int cClient::Send(UINT4 &nbByte)
 
 		header.Size		=	p->Size;
 		header.typeID	=	p->TypeID;
-				
+
 		memcpy(buf + packed,&header,sizeof(stHeader));
 		packed += sizeof(stHeader);
 
@@ -865,14 +865,14 @@ int cClient::Send(UINT4 &nbByte)
 			packed += header.Size;
 		}
 
-		
+
 		if(packed >= DataRate) //on est pret a envoyer une premier bacth
 		{
 			//on copie le nombre de packet qui sen vient
 			memcpy(&(buf[8]),&NbPacket,sizeof(char));
 
 			int sent	=	0;
-			
+
 			while(sent < packed)
 			{
 				int iSent=0;
@@ -893,7 +893,7 @@ int cClient::Send(UINT4 &nbByte)
 
 			toKill = p;
 			PacketsToSend=p=p->Next;
-			
+
 			delete [] buf;
 
 			delete toKill;
@@ -910,7 +910,7 @@ int cClient::Send(UINT4 &nbByte)
 		memcpy(&(buf[8]),&NbPacket,sizeof(char));
 
 		int sent	=	0;
-		
+
 		while(sent < packed)
 		{
 			int iSent=0;
@@ -974,7 +974,7 @@ int cClient::SendUDP(int UDPFD,UINT4 &nbByte)
 	for(cPacket *p=UDPPacketsToSend;p;delete toKill)
 	{
 		if(packed>=500) break; //si ca fais plus de 500 bytes qu'on pack, on sort
-		
+
 		//on setup une struct pour envoyer
 
 		stPacket Packet;
@@ -982,7 +982,7 @@ int cClient::SendUDP(int UDPFD,UINT4 &nbByte)
 
 		header.Size			=	p->Size;
 		header.typeID		=	p->TypeID;
-	
+
 		//si c juste un typeID qu'on veut passer
 		if(!header.Size)
 		{
@@ -996,7 +996,7 @@ int cClient::SendUDP(int UDPFD,UINT4 &nbByte)
 			memcpy(Packet.data, &header, UDP_HEADER_SIZE);
 			memcpy(Packet.data + UDP_HEADER_SIZE, p->Data, header.Size);
 		}
-	
+
 
 		memcpy(buffer + packed,Packet.data,p->Size + UDP_HEADER_SIZE);
 		packed += p->Size + UDP_HEADER_SIZE;
@@ -1013,7 +1013,7 @@ int cClient::SendUDP(int UDPFD,UINT4 &nbByte)
 	remip.sin_port = htons(UDPport);
 
 	//on envoie le packet
-	int sent = 0;	
+	int sent = 0;
 
 	//tant qui reste du data on va envoyer le size
 	int Remaining = packed;
@@ -1036,7 +1036,7 @@ int cClient::SendUDP(int UDPFD,UINT4 &nbByte)
 			//sprintf(LastError,"Error sending UDP packets to Client WSA : %i",WSAGetLastError());
 			return 1;
 		}
-		
+
 		Remaining -= sent;
 		tries -= 1;
 	}
@@ -1086,7 +1086,7 @@ void cClient::CreatePacket(cPacket *newPacket,bool isUDP)
 			UDPPacketsToSend = newPacket;
 		}
 	}
-}	
+}
 
 cClient::~cClient()
 {
@@ -1129,7 +1129,7 @@ cClient::~cClient()
 	}
 
 	Disconnect();
-	
+
 
 }
 

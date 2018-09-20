@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -56,7 +56,7 @@ public:
 	virtual ~CSound()
 	{
 #ifdef USE_FMODEX
-		if (fsound_sample) 
+		if (fsound_sample)
         {
             FMOD_Channel_Stop(channel);
             FMOD_Sound_Release(fsound_sample);
@@ -64,7 +64,7 @@ public:
         fsound_sample = 0;
         channel = 0;
 #else
-		//if (fsound_sample) 
+		//if (fsound_sample)
             //FSOUND_Sample_Free(fsound_sample);
 #endif
 	}
@@ -112,7 +112,7 @@ bool			dksInit(int mixrate, int maxsoftwarechannels)
         goto l_abort;
     }
 
-    result = FMOD_System_SetOutput(s_system, 
+    result = FMOD_System_SetOutput(s_system,
 #ifdef __MACOSX__
 	FMOD_OUTPUTTYPE_AUTODETECT
 #else
@@ -124,7 +124,7 @@ bool			dksInit(int mixrate, int maxsoftwarechannels)
         message = FMOD_ErrorString(result);
         goto l_abort;
     }
- 
+
     result = FMOD_System_Init(s_system, maxsoftwarechannels, FMOD_INIT_NORMAL | FMOD_INIT_3D_RIGHTHANDED, 0);
     if(result != FMOD_OK)
     {
@@ -202,12 +202,12 @@ void			dksShutDown()
     FMOD_RESULT r = FMOD_System_Close(s_system);
     if(r != FMOD_OK)
     {
-        printf("FMOD error: %d (%s)\n", r, FMOD_ErrorString(r));   
+        printf("FMOD error: %d (%s)\n", r, FMOD_ErrorString(r));
     }
     r = FMOD_System_Release(s_system);
     if(r != FMOD_OK)
     {
-        printf("FMOD error: %d (%s)\n", r, FMOD_ErrorString(r));   
+        printf("FMOD error: %d (%s)\n", r, FMOD_ErrorString(r));
     }
 
 #else
@@ -240,7 +240,7 @@ FSOUND_SAMPLE
 	for (i=0;i<sounds.size();i++)
 	{
 		CSound * sound = sounds.at(i);
-		if (sound->filename == filename) 
+		if (sound->filename == filename)
 		{
 			newSound = sound;
 			newSound->loadedXTime++;
@@ -283,8 +283,8 @@ void dksDeleteSound(
 #ifdef USE_FMODEX
     FMOD_SOUND
 #else
-    FSOUND_SAMPLE 
-#endif 
+    FSOUND_SAMPLE
+#endif
     * fsound_sample)
 {
 	// On le cherche
@@ -357,9 +357,9 @@ int dksPlaySound(
     {
         message = FMOD_ErrorString(r);
         goto l_abort;
-    }   
- 
-    r = FMOD_System_PlaySound(s_system, (FMOD_CHANNELINDEX) mchannel, fsound_sample, 1, & s->channel); 
+    }
+
+    r = FMOD_System_PlaySound(s_system, (FMOD_CHANNELINDEX) mchannel, fsound_sample, 1, & s->channel);
     if(r != FMOD_OK)
     {
         message = FMOD_ErrorString(r);
@@ -386,7 +386,7 @@ int dksPlaySound(
         channel = -1;
         goto l_abort;
     }
-    
+
 #else
 	//FSOUND_Sample_SetMode(fsound_sample, FSOUND_2D);
 	//int channel = FSOUND_PlaySoundEx(mchannel, fsound_sample, 0, TRUE);
@@ -454,9 +454,9 @@ void dksPlay3DSound(
     {
         message = FMOD_ErrorString(r);
         goto l_abort;
-    }   
- 
-    r = FMOD_System_PlaySound(s_system, (FMOD_CHANNELINDEX) mchannel, fsound_sample, 1, & s->channel); 
+    }
+
+    r = FMOD_System_PlaySound(s_system, (FMOD_CHANNELINDEX) mchannel, fsound_sample, 1, & s->channel);
     if(r != FMOD_OK)
     {
         message = FMOD_ErrorString(r);
@@ -525,7 +525,7 @@ void			dksPlayMusic(char* filename, int mchannel, int volume)
         goto l_abort;
     }
 
-    r = FMOD_System_PlaySound(s_system, (FMOD_CHANNELINDEX) mchannel, stream_music, 1, & music_channel); 
+    r = FMOD_System_PlaySound(s_system, (FMOD_CHANNELINDEX) mchannel, stream_music, 1, & music_channel);
     if(r != FMOD_OK)
     {
         message = FMOD_ErrorString(r);
@@ -538,7 +538,7 @@ void			dksPlayMusic(char* filename, int mchannel, int volume)
         message = FMOD_ErrorString(r);
         goto l_abort;
     }
-    
+
     r = FMOD_Channel_SetPaused(music_channel, 0);
     if(r != FMOD_OK)
     {
@@ -548,11 +548,11 @@ void			dksPlayMusic(char* filename, int mchannel, int volume)
 
 l_abort:
     if((r != FMOD_OK) && message)
-        printf("FMOD error: %d (%s)\n", r, message);    
+        printf("FMOD error: %d (%s)\n", r, message);
 
 #else
 	//stream_music = FSOUND_Stream_Open(filename,FSOUND_LOOP_NORMAL,0,0);
-	//if (stream_music) 
+	//if (stream_music)
 	//{
 	//	int channel = FSOUND_Stream_PlayEx(mchannel, stream_music, 0, TRUE);
 	//	FSOUND_SetVolume(channel, volume);
@@ -565,7 +565,7 @@ l_abort:
 
 //
 // Arr�ter la music
-// 
+//
 void			dksStopMusic()
 {
 	if (stream_music)
@@ -588,7 +588,7 @@ void dksSet3DListenerAttributes(const CVector3f * pos, const CVector3f * vel, co
     FMOD_RESULT r;
 
     if(!s_system) return;
-    
+
     FMOD_VECTOR v[4] = {0};
     FMOD_VECTOR * pv = v;
 
@@ -599,7 +599,7 @@ void dksSet3DListenerAttributes(const CVector3f * pos, const CVector3f * vel, co
     if(vel)
         memcpy(pv, vel->s, sizeof(*pv));
     pv ++;
-    
+
     if(forward)
         memcpy(pv, forward->s, sizeof(*pv));
     pv ++;
@@ -637,7 +637,7 @@ void dksSetSfxMasterVolume(float volume)
 
     if(r != FMOD_OK)
         printf("FMOD error: %d (%s)\n", r, FMOD_ErrorString(r));
-  
+
 }
 
 void dksStopSound(FMOD_SOUND * s)

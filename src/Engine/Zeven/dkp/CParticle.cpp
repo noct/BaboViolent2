@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -58,7 +58,7 @@ CParticle::CParticle(
 	rotationSpeed = mrotationSpeed;
 	srcBlend = msrcBlend;
 	dstBlend = mdstBlend;
-//	transitionFunc = mtransitionFunc;  // Pas utilisé
+//	transitionFunc = mtransitionFunc;  // Pas utilisÃ©
 	(void)mtransitionFunc;// No need to show the warning about unreferenced parameter
 	airResistanceInfluence = mairResistanceInfluence;
 	billboard = false;
@@ -71,7 +71,7 @@ CParticle::CParticle(
 	textureArray = 0;
 	nbFrame = 1;
 
-	// Ici on la calcul tout suite pour pouvoir la placer tout suite à bonne place dans le array
+	// Ici on la calcul tout suite pour pouvoir la placer tout suite Ã  bonne place dans le array
 	if (CDkp::sorting) camDis = dot((CDkp::camPos - position),(CDkp::camPos - position));
 }
 
@@ -123,10 +123,10 @@ int CParticle::update()
 		// Sa rotation
 		angle += rotationSpeed * CDkp::delay;
 
-		// On affecte la gravité
+		// On affecte la gravitÃ©
 		vel += CDkp::gravity * density * CDkp::delay;
 
-		// On l'affecte à la densité de l'air
+		// On l'affecte Ã  la densitÃ© de l'air
 
 		// On anim finalement sa position
 		position += vel * CDkp::delay;
@@ -172,7 +172,7 @@ void CParticle::render()
 			glColor4fv((curColor*CColor4f(1,1,1,1-midFrame)).s);
 			glPushAttrib(GL_ENABLE_BIT);
 			//	glDisable(GL_LIGHTING);
-				if (dstBlend == DKP_ONE || dstBlend == DKP_ZERO) 
+				if (dstBlend == DKP_ONE || dstBlend == DKP_ZERO)
 				{
 					glDisable(GL_FOG);
 					glDisable(GL_LIGHTING);
@@ -207,14 +207,14 @@ void CParticle::render()
 		//		glDisableClientState(GL_NORMAL_ARRAY);
 		//		glDisableClientState(GL_VERTEX_ARRAY);
 		}
-		else 
+		else
 		{
 			if (CDkp::lastTexture != texture) glBindTexture(GL_TEXTURE_2D, texture);
 			CDkp::lastTexture = texture;
 			glColor4fv(curColor.s);
 			glPushAttrib(GL_ENABLE_BIT);
 				glDisable(GL_LIGHTING);
-				if (dstBlend == DKP_ONE || dstBlend == DKP_ZERO) 
+				if (dstBlend == DKP_ONE || dstBlend == DKP_ZERO)
 				{
 					glDisable(GL_FOG);
 					glDisable(GL_LIGHTING);

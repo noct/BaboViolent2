@@ -51,7 +51,7 @@ Write::~Write()
 
 
 //
-// L'updater le gèrer
+// L'updater le gÃ¨rer
 //
 void Write::update(float delay)
 {

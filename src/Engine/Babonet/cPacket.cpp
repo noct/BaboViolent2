@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -45,7 +45,7 @@ cPacket::cPacket(cPacket *packet)
 	else
 	{
 		Data	=	new char[Size];
-		memcpy(Data,packet->Data,Size);	
+		memcpy(Data,packet->Data,Size);
 	}
 
 	Remaining	=	Size;
@@ -68,7 +68,7 @@ cPacket::cPacket(char *data,int size,unsigned short typeID)
 	else
 	{
 		Data	=	new char[size];
-		memcpy(Data,data,size);	
+		memcpy(Data,data,size);
 	}
 
 	Remaining	=	Size;
@@ -84,10 +84,10 @@ int cPacket::Send(int socketFD)
 
 	stPacket Packet;
 	stHeader header;
-	
+
 	header.Size		=	Size;
 	header.typeID	=	TypeID;
-	
+
 	//si c juste un typeID qu'on veut passer
 	if(!Size)
 	{
@@ -102,9 +102,9 @@ int cPacket::Send(int socketFD)
 		memcpy(Packet.data + TCP_HEADER_SIZE, Data, header.Size);
 	}
 
-	
+
 	//on envoie le packet
-	int sent = 0;	
+	int sent = 0;
 
 	//tant qui reste du data on va envoyer le size
 	Remaining = header.Size + TCP_HEADER_SIZE;
@@ -129,7 +129,7 @@ int cPacket::Send(int socketFD)
 			delete [] Packet.data;
 			return 1;
 		}
-		
+
 		Remaining -= sent;
 		tries -= 1;
 	}
@@ -145,11 +145,11 @@ int cPacket::SendUDP(int socketFD,sockaddr_in *ip)
 
 	stPacket Packet;
 	stHeader header;
-	
+
 	header.Size			=	Size;
 	header.typeID		=	TypeID;
 	//char interfaceID	=	toClient ? INTERFACE_CLIENT : INTERFACE_SERVER;
-	
+
 	//si c juste un typeID qu'on veut passer
 	if(!Size)
 	{
@@ -164,9 +164,9 @@ int cPacket::SendUDP(int socketFD,sockaddr_in *ip)
 		memcpy(Packet.data + UDP_HEADER_SIZE, Data, header.Size);
 	}
 
-	
+
 	//on envoie le packet
-	int sent = 0;	
+	int sent = 0;
 
 	//tant qui reste du data on va envoyer le size
 	Remaining = header.Size + UDP_HEADER_SIZE;
@@ -194,7 +194,7 @@ int cPacket::SendUDP(int socketFD,sockaddr_in *ip)
 			delete [] Packet.data;
 			return 1;
 		}
-		
+
 		Remaining -= sent;
 		tries -= 1;
 	}

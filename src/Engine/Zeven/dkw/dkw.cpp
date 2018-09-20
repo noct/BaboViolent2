@@ -79,7 +79,7 @@ int dkwInit(int width, int height, int mcolorDepth, char* mTitle, CMainLoopInter
 
     SDL_GL_MakeCurrent(window, gl_context);
 
-    if(gladLoadGLLoader(SDL_GL_GetProcAddress))
+    if(!gladLoadGLLoader(SDL_GL_GetProcAddress))
     {
         last_error = "Failed to initialize BrebisGL\n";
         return 0;

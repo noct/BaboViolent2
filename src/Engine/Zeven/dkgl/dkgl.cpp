@@ -203,7 +203,7 @@ void dkglEnableVsync(bool vsync)
 }
 
 //
-// Pour vÈrifier une extension de la carte
+// Pour v√©rifier une extension de la carte
 //
 bool dkglCheckExtension(char * extension)
 {
@@ -212,7 +212,7 @@ bool dkglCheckExtension(char * extension)
 
 
 //
-// Pour crÈer le context openGL (rendering context)
+// Pour cr√©er le context openGL (rendering context)
 //
 int dkglCreateContext(SDL_GLContext mDC, int colorDepth)
 {
@@ -221,7 +221,7 @@ int dkglCreateContext(SDL_GLContext mDC, int colorDepth)
 }
 
 //
-// Pour dessiner le system de coordonnÈe
+// Pour dessiner le system de coordonn√©e
 //
 void dkglDrawCoordSystem()
 {
@@ -391,7 +391,7 @@ void dkglSetBlendingFunc(int blending)
 
 
 //
-// Pour rapidement crÈer une lumiËre dans votre scene (trËs basic)
+// Pour rapidement cr√©er une lumi√®re dans votre scene (tr√®s basic)
 //
 void dkglSetPointLight(int ID, float x, float y, float z, float r, float g, float b)
 {
@@ -413,15 +413,15 @@ void dkglSetPointLight(int ID, float x, float y, float z, float r, float g, floa
 
 
 //
-// On set la vue de la perspective l‡
+// On set la vue de la perspective l√†
 //
 void dkglSetProjection(float mFieldOfView, float mNear, float mFar, float mWidth, float mHeight)
 {
 #ifndef _DX_
-	// On met la matrice de projection pour ce crÈer une vue perspective
+	// On met la matrice de projection pour ce cr√©er une vue perspective
 	glMatrixMode(GL_PROJECTION);
 
-	// On remet cette matrice ‡ identity
+	// On remet cette matrice √† identity
 	glLoadIdentity();
 
 	// On ajuste la matrice de projection
@@ -432,7 +432,7 @@ void dkglSetProjection(float mFieldOfView, float mNear, float mFar, float mWidth
 	// On remet cette de model view (qui est celle de la position et l'orientation)
 	glMatrixMode(GL_MODELVIEW);
 
-	// La model view ‡ identity
+	// La model view √† identity
 	glLoadIdentity();
 #endif
 }
@@ -734,7 +734,7 @@ int glhInvertMatrixf2(float *m, float *out)
 }
 
 //
-// Pour bien fermer tout Áa
+// Pour bien fermer tout √ßa
 //
 void dkglShutDown()
 {

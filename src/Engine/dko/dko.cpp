@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -511,7 +511,7 @@ float*			dkoGetVertexArray(unsigned int modelID, float frameID, int & nbVertex, 
 		}
 	}
 
-	if (CDko::modelArray[modelID]) 
+	if (CDko::modelArray[modelID])
 	{
 		CDko::modelArray[modelID]->framef = frameID;
 		if (CDko::modelArray[modelID]->framef > CDko::modelArray[modelID]->timeInfo[2]-1)
@@ -543,10 +543,10 @@ void			dkoInit()
 
 	CDko::renderStateBitField = 0;
 	dkoEnable(
-		DKO_TEXTURE_MAP | 
-		DKO_DETAIL_MAP | 
-		DKO_BUMP_MAP | 
-		DKO_SPECULAR_MAP | 
+		DKO_TEXTURE_MAP |
+		DKO_DETAIL_MAP |
+		DKO_BUMP_MAP |
+		DKO_SPECULAR_MAP |
 		DKO_SELFILL_MAP |
 		DKO_DYNAMIC_LIGHTING |
 		DKO_SPECULAR |
@@ -716,7 +716,7 @@ void			dkoPushRenderState()
 //
 bool			dkoRayIntersection(unsigned int modelID, float *mp1, float *mp2, float *intersect, float *normal, int &n)
 {
-	if (CDko::modelArray[modelID]) 
+	if (CDko::modelArray[modelID])
 	{
 		if (CDko::modelArray[modelID]->octree)
 		{
@@ -765,7 +765,7 @@ void			dkoRender(unsigned int modelID)
 #ifndef _DX_
 	glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
 		glEnable(GL_RESCALE_NORMAL);
-		if (CDko::modelArray[modelID]) 
+		if (CDko::modelArray[modelID])
 		{
 			CDko::modelArray[modelID]->framef=-1;
 			CDko::modelArray[modelID]->currentFrame = 0; // Le frame par default
@@ -904,7 +904,7 @@ void			dkoRender(unsigned int modelID, unsigned short frameID)
 #ifndef _DX_
 	glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
 		glEnable(GL_RESCALE_NORMAL);
-		if (CDko::modelArray[modelID]) 
+		if (CDko::modelArray[modelID])
 		{
 			CDko::modelArray[modelID]->framef=-1;
 			CDko::modelArray[modelID]->currentFrame = frameID % (CDko::modelArray[modelID]->timeInfo[2]);
@@ -1043,7 +1043,7 @@ void			dkoRender(unsigned int modelID, float frameID)
 #ifndef _DX_
 	glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
 		glEnable(GL_RESCALE_NORMAL);
-		if (CDko::modelArray[modelID]) 
+		if (CDko::modelArray[modelID])
 		{
 			CDko::modelArray[modelID]->framef = frameID;
 			if (CDko::modelArray[modelID]->framef > CDko::modelArray[modelID]->timeInfo[2]-1)
@@ -1205,7 +1205,7 @@ void			dkoShutDown()
 //
 bool			dkoSphereIntersection(unsigned int modelID, float *mp1, float *mp2, float rayon, float *intersect, float *normal, int &n)
 {
-	if (CDko::modelArray[modelID]) 
+	if (CDko::modelArray[modelID])
 	{
 		if (CDko::modelArray[modelID]->octree)
 		{

@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -40,7 +40,7 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
 {
 	if (mapName.len() > 15)
 		mapName.resize(15);
-	else if (mapName.isNull()) 
+	else if (mapName.isNull())
 	{
 		needToShutDown = true;
 		return;
@@ -48,7 +48,7 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
 
 	// Lets ensure that the maps size in the interval [16; 64]
 	// (i think this interval covers it all)
-	
+
 	if(sizeX < 16)
 		sizeX = 16;
 	else if(sizeX > 64)
@@ -58,7 +58,7 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
 		sizeY = 16;
 	else if(sizeY > 64)
 		sizeY = 64;
-	
+
 	map = new Map(mapName, 0, font, true, sizeX, sizeY);
 	if (!map->isValid)
 	{
@@ -200,7 +200,7 @@ void Editor2::ActivateTool(std::vector< ITool* >::size_type tool)
 
 bool Editor2::isCursorInControl(CControl * control) const
 {
-	return 
+	return
 		control->visible &&
 		(
 			(control->pos[0] <= menuManager.mousePos[0]) && (menuManager.mousePos[0] <= (control->pos[0] + control->size[0])) &&
@@ -384,15 +384,15 @@ void Editor2::render()
 		if (gameVar.sv_topView)
 		{
 			gluLookAt(
-				map->camPos[0], map->camPos[1], map->camPos[2], 
-				map->camPos[0], map->camPos[1], 0, 
+				map->camPos[0], map->camPos[1], map->camPos[2],
+				map->camPos[0], map->camPos[1], 0,
 				up[0], up[1], up[2]);
 		}
 		else
 		{
 			gluLookAt(
-				map->camPos[0], map->camPos[1]-4.0f, map->camPos[2], 
-				map->camPos[0], map->camPos[1]-1.0f, 0, 
+				map->camPos[0], map->camPos[1]-4.0f, map->camPos[2],
+				map->camPos[0], map->camPos[1]-1.0f, 0,
 				up[0], up[1], up[2]);
 		}
 
@@ -401,7 +401,7 @@ void Editor2::render()
 		CVector2i mousePos = dkwGetCursorPos_main();
 
 		if(gameVar.r_widescreen > 1)
-			mousePos[0] = static_cast<int>(mousePos[0] * res[1]*1.333f / res[0] + (res[0] - res[1]*1.333f)/2); 
+			mousePos[0] = static_cast<int>(mousePos[0] * res[1]*1.333f / res[0] + (res[0] - res[1]*1.333f)/2);
 
 		mousePos[1] = res[1] - mousePos[1];
 		CVector3f nearMouse = dkglUnProject(mousePos, 0.0f);

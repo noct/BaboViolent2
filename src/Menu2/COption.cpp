@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -134,7 +134,7 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
 			if (gameVar.r_resolution == CVector2i(1280, 960)) lst_resolution->selectChild(3);
 			if (gameVar.r_resolution == CVector2i(1600, 1200)) lst_resolution->selectChild(4);
 		}
-		
+
 
 		//--- Color depth resolution
 		label1 = new CControl(instance, CVector2i(20,10), CVector2i(200,70),"Color depth:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
@@ -435,7 +435,7 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
 			keyManager.getKeyName(gameVar.k_menuAccess), this, "KEY", label1, CONTROL_SNAP_RIGHT);
 		key_menuAccess->selectedIndex = gameVar.k_menuAccess;
 
-#if defined(_PRO_)	
+#if defined(_PRO_)
 		//--- Key
 		label1 = new CControl(instance, CVector2i(20,10), CVector2i(200,25),"Screen shot:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
 		label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -671,7 +671,7 @@ void COption::Click(CControl * control)
 				lst_resolution->children[3]->text = "1280 x 800";
 				lst_resolution->children[4]->text = "1440 x 900";
 				lst_resolution->children[5]->text = "1680 x 1050";
-				lst_resolution->children[6]->text = "1920 x 1200";		
+				lst_resolution->children[6]->text = "1920 x 1200";
 			}
 			else
 			{
@@ -782,7 +782,7 @@ void COption::Click(CControl * control)
 		gameVar.k_showScore = key_showScore->selectedIndex;
 		gameVar.k_menuAccess = key_menuAccess->selectedIndex;
 
-#if defined(_PRO_)	
+#if defined(_PRO_)
       gameVar.k_screenShot = key_screenShot->selectedIndex;
       gameVar.k_stats = key_stats->selectedIndex;
 #endif

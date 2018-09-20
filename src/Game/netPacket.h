@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -138,7 +138,7 @@ struct net_svcl_server_info
 	// Pas grand truc � mettre ici ! Me semble que le message est clair ;)
 };*/
 
-// Le client fou le camp, le server le sait tout suite, et le shoot au autres 
+// Le client fou le camp, le server le sait tout suite, et le shoot au autres
 // (en moins quil plante l�)
 #define NET_SVCL_PLAYER_DISCONNECT 104
 struct net_svcl_player_disconnect
@@ -146,7 +146,7 @@ struct net_svcl_player_disconnect
 	char playerID; // Le ID du joueur
 };
 
-// Le client fou le camp, le server le sait tout suite, et le shoot au autres 
+// Le client fou le camp, le server le sait tout suite, et le shoot au autres
 // (en moins quil plante l�)
 #define NET_SVCL_PLAYER_ENUM_STATE 105
 struct net_svcl_player_enum_state
@@ -429,7 +429,7 @@ struct net_svcl_bad_checksum_info
 };
 
 
-// Le client recois son ID, il envoit ses info (player name, etc), 
+// Le client recois son ID, il envoit ses info (player name, etc),
 // et le server le renvois aux autres
 #define NET_CLSV_SVCL_PLAYER_INFO 201
 struct net_clsv_svcl_player_info
@@ -589,7 +589,7 @@ struct net_clsv_broadcast_query
 struct net_svcl_broadcast_game_info
 {
 	char		key[16];	//unique bv2 key for broadcasting
-	stBV2row	GameInfo;	
+	stBV2row	GameInfo;
 };
 
 

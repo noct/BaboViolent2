@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -98,8 +98,8 @@ public:
 	int sv_winLimit;
 	int sv_gameType;
    int sv_serverType;
-   int sv_spawnType;   
-   int sv_subGameType;   
+   int sv_spawnType;
+   int sv_subGameType;
 	float sv_bombTime;
 	CString sv_gameName;
 	int sv_port;
@@ -245,7 +245,7 @@ public:
 	int r_widescreen;
 	int r_maxNameLenOverBabo;
 
-#if defined(_PRO_)	
+#if defined(_PRO_)
    int r_chatTextSize;
    int r_eventTextSize;
    bool r_showEventText;
@@ -269,7 +269,7 @@ public:
 	int k_showScore;
 	int k_menuAccess;
 	int k_melee;
-#if defined(_PRO_)	
+#if defined(_PRO_)
    int k_screenShot;
    int k_stats;
 #endif
@@ -433,7 +433,7 @@ public:
 	CString lang_gameNameS;
 	CString lang_gameType;
    CString lang_serverType;
-#if defined(_PRO_)   
+#if defined(_PRO_)
    CString lang_spawnType;
    CString lang_subGameType;
 #endif

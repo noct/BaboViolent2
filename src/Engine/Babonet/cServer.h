@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -53,7 +53,7 @@ private:
 	unsigned short		ListenPort;			// le port sur lequel on ecoute pour les new connections
 
 	UINT4		NewConnID;			// un ID qu'on emet a une nouvelle connection
-	
+
 	bool			UDPenabled;			// on est a tu UDP pour le server ?
 
 public:
@@ -84,9 +84,9 @@ public:
 
 	~cServer();
 
-	
+
 	int		Send(char* dataToSend,int dataSize,int typeID,INT4 destination,int protocol=0);		//pour envoyer du server vers un client, protocol 0 = TCP(safe), 1 = UDP(unsafe)
-	
+
 
 	INT4		ReceivePacketsFromClients();						//recevoir les packet qui viennent des clients
 	int		ReceiveDatagram(cPacket *packet,sockaddr_in fromIP);//permet de recevoir un packet UDP d'un client
@@ -101,7 +101,7 @@ public:
 	cClient*	getClientByFD(int fd);								//permet d'obtenir la reference a un client grace a son file descriptor, le bool determine si c un file descriptor udp ou tcp
 	cClient*	getClientByID(UINT4 netid);					//permet d'obtenir un client par son baboNet ID
 	cClient*	getClientByIP(char *ip,unsigned short port);		//permet d'obtenir un client par son IP/port
-	
+
 	char*		getLastError()		{	return LastError;	}		//permet dobtenir une version textuel de la derniere erreur cote serveur
 	char*		getLastMessage()	{	return LastMessage;	}		//permet dobtenir une version textuel de ce qui c passer au dernier cycle
 
@@ -109,7 +109,7 @@ public:
 	void		AcceptConnection(UINT4 id);					//va starter une thread pour accepter la nouvelle connection, avec son id unique
 	INT4		UpdateConnections(char *newIP);						//va checker si tel tel connection a terminer, retourne le new babonetID si yen a une quia reussi
 	int		GetMaxFD();							// simple function to update our max FD
-};	
+};
 
 
 

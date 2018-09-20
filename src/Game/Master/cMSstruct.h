@@ -16,12 +16,12 @@
 #define		SERVER_REGISTER	1007	//used to try registering with master server
 
 #define		IM_SERVER	1008	//used to tell master server, we are a server (no struct needed)
-#define		IM_PLAYER	1009	//used to tell master server, we are a player (no struct needed)	
+#define		IM_PLAYER	1009	//used to tell master server, we are a player (no struct needed)
 
 
 #define		CACHE_BAN	1010	// tell the master we are sending him a cache ban, also to send a server requestiong cacheban
 #define		CACHE_BAN_LIST	1011	// tell the master we want the list of cached bans ( with a filter for name if any present )
-#define		CACHE_UNBAN	1012	// tell the master we want to unban someone 
+#define		CACHE_UNBAN	1012	// tell the master we want to unban someone
 #define		CACHE_BANNED	1013	// ask the master if the player is banned
 #define		CACHE_ANSWER	1014	// tell the server who ask for a banned player if it is actually banned
 
@@ -274,10 +274,10 @@
 		char	Version[5]; //exemple :  2.02  + '\0'
 	};
 
-	
 
 
-	
+
+
 	//struct received by master server after a query
 	//if NbGames == -1 : Wrong version  ... else : Number of games
 	//struct typeID 1002
@@ -298,7 +298,7 @@
 		char			serverName[64]; // 63 + '\0'			//TEXT
 		char			password[16]; // 15 + '\0'			//TEXT
 		char			ip[16];						//TEXT		lors d'un update vers le master, IP peut etre vide, le master va catcher le IP anyway en pognant le packet
-		unsigned short		port;						//NUMERIC	
+		unsigned short		port;						//NUMERIC
 		char			nbPlayer;					//NUMERIC
 		char			maxPlayer;					//NUMERIC
 		unsigned short		flags;						//NUMERIC
@@ -310,7 +310,7 @@
 		unsigned short		Padding;
 	};
 
-	
+
 
 
 
@@ -375,7 +375,7 @@
 	//or failure is returned here
 	//on success, ID is != 0
 	//Struct typeID 1005
-	
+
 	/* :Result: can be one of these:
 
 		On creation :
@@ -399,7 +399,7 @@
 	struct stRegisterResult
 	{
 		char	Result;
-		long	ID;			
+		long	ID;
 	};
 
 

@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -35,11 +35,11 @@
 #include "CListener.h"
 
 
-// Nos message qu'on affiche à l'écran
+// Nos message qu'on affiche Ã  l'Ã©cran
 struct TimedMessage
 {
 	CString message;
-	float duration; // Sa vie quil lui reste, on laisse les message 10sec ( si sont rendu trop haut, on les force à closer )
+	float duration; // Sa vie quil lui reste, on laisse les message 10sec ( si sont rendu trop haut, on les force Ã  closer )
 	TimedMessage(CString pMessage)
 	{
 		duration = 10;
@@ -75,7 +75,7 @@ public:
 	bool isDownloadingMap;
 
 	float timeSinseLastQMsg;
-	// Les messages chat ou events à printer à l'écran
+	// Les messages chat ou events Ã  printer Ã  l'Ã©cran
 	std::vector<TimedMessage> chatMessages;
 	std::vector<TimedMessage> eventMessages;
 
@@ -92,7 +92,7 @@ public:
 	// Si on montre le menu
 	bool showMenu;
 
-	// Si on est connecté
+	// Si on est connectÃ©
 	bool isConnected;
 
 	CString server_ip;
@@ -120,7 +120,7 @@ public:
 	// Si il cohabite avec un server
 	bool isServer;
 
-	// Quand on écris
+	// Quand on Ã©cris
 	Writting chatting;
 	bool isChattingTeam;
 
@@ -135,7 +135,7 @@ public:
 	// Le hit indicator
 	float hitIndicator;
 
-	// Quand on se fait toucher, l'écran devient rouge
+	// Quand on se fait toucher, l'Ã©cran devient rouge
 	unsigned int tex_screenHit;
 	unsigned int tex_grenadeLeft;
 	unsigned int tex_shotgunLeft;
@@ -144,7 +144,7 @@ public:
 	unsigned int tex_redFlag;
 	unsigned int tex_crossHit;
 
-	// Il a reçu le gamestate
+	// Il a reÃ§u le gamestate
 	bool gotGameState;
 
 	long serverFrameID;
@@ -175,7 +175,7 @@ public:
 	// Pour printer un chat message
 	void printMessage(CString message);
 
-	// On a reçu un message yéé !
+	// On a reÃ§u un message yÃ©Ã© !
 	void recvPacket(char * buffer, int typeID);
 
 	void MouseEnter(CControl * control);

@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -46,7 +46,7 @@
 /// \brief Racine carre inverse de Carmack
 ///
 /// Cette fonction permet de calculer 1/sqrt(number) par l'approximation de Carmack.
-/// 
+///
 /// \param number qu'on veut obtenir la racine carre inverse.
 /// \return reponse du calcul 1/sqrt(number)
 float dk_sqrtf(float number);
@@ -72,7 +72,7 @@ public:
 	CVector2i(int x, int y);		///< constructeur avec initialisation: coord (x,y)
 	CVector2i(int* in_v);			///< constructeur par tableau
 	CVector2i(const CVector2i& vector);	///< constructeur copie
-	
+
 	/// Fonctions d'affectation
 	void set(int x, int y){s[0] = x; s[1] = y;}				///< affectation par x,y
 	void set(int* in_v){s[0] = in_v[0]; s[1] = in_v[1];}	///< affectation par tableau[2]
@@ -109,7 +109,7 @@ public:
 	void operator/=(CVector2i vector) {s[0]/=vector.s[0]; s[1]/=vector.s[1];}	///< surcharge la division de 2 vecteurs???
 	void operator*=(int scalar) {s[0]*=scalar; s[1]*=scalar;}	///< surcharge du produit scalaire du vecteur
 	void operator/=(int scalar) {s[0]/=scalar; s[1]/=scalar;}	///< surcharge de la division scalaire du vecteur
-	
+
 	bool operator==(const CVector2i &vector) {return (s[0]==vector.s[0] && s[1]==vector.s[1]);}		///< surcharge de l'operateur de comparaison	positive
 	bool operator!=(const CVector2i &vector) {return !(s[0]==vector.s[0] && s[1]==vector.s[1]);}	///< surcharge de l'operateur de comparaison negative
 	//@}
@@ -299,7 +299,7 @@ public:
 	/// \name Surcharge d'operators vectoriels avec retour d'un CVector3f
 	/// \param CVector3f
 	/// \return CVector3f
-	//@{ 
+	//@{
 	CVector3f operator-() {return CVector3f(-s[0],-s[1],-s[2]);}		///< inverser la direction du vecteur
 	CVector3f operator+(const CVector3f& vector) const {return CVector3f(s[0]+vector.s[0], s[1]+vector.s[1], s[2]+vector.s[2]);}	///< addition de 2 vecteurs
 	CVector3f operator-(const CVector3f& vector) const {return CVector3f(s[0]-vector.s[0], s[1]-vector.s[1], s[2]-vector.s[2]);}	///< soustraction de 2 vecteurs
@@ -310,7 +310,7 @@ public:
 	/// \name Surcharge d'operators scalaire avec retour d'un CVector3f
 	///	\param float scalar
 	///	\return CVector3f
-	//@{ 
+	//@{
 	CVector3f operator*(float scalar) const {return CVector3f(s[0]*scalar, s[1]*scalar, s[2]*scalar);}	///< multiplication scalaire
 	CVector3f operator/(float scalar) const {return CVector3f(s[0]/scalar, s[1]/scalar, s[2]/scalar);}	///< division scalaire
 	CVector3f operator+(float scalar) const {return CVector3f(s[0]+scalar, s[1]+scalar, s[2]+scalar);}	///< addition scalaire
@@ -475,7 +475,7 @@ float distance(const CVector2f &u, const CVector2f &v);
 float distanceFast(const CVector2f &u, const CVector2f &v);
 
 /// \brief Rotation par rapport a un pivot
-///	
+///
 ///	permet de faire la rotation autour d'un point(vecteur 2d) donne.
 ///
 /// \param CVector2f & p: point a faire tourner autour du pivot
@@ -511,7 +511,7 @@ void normalizeFast(CVector3f &u);
 
 /// \brief cross product en 2d
 ///
-/// Donne le determinant d'une matrice 2x2. 
+/// Donne le determinant d'une matrice 2x2.
 ///	Disons une matrice A = [u v] =	[u1 v1]
 ///									[u2 v2]
 /// det(A) = |u v| = u1v2 - u2v1
@@ -523,7 +523,7 @@ float crossZ(const CVector2f &u, const CVector2f &v);
 
 /// \brief cross product en 3d
 ///
-/// Donne le vecteur perpendiculaire au plan forme par les 2 vecteurs. 
+/// Donne le vecteur perpendiculaire au plan forme par les 2 vecteurs.
 /// Le nouveau vecteur pointe dans la direction selon la regle de la main droite.
 ///
 /// \param CVector3f &u
@@ -560,7 +560,7 @@ float distanceFast(const CVector3f &u, const CVector3f &v);
 float distanceSquared(const CVector3f &u, const CVector3f &v);
 
 /// \brief Rotation par rapport a un axe
-///	
+///
 ///	permet de faire la rotation autour d'un axe(vecteur 3d) donne.
 ///
 /// \param CVector3f & p: point a faire tourner autour du pivot
@@ -573,10 +573,10 @@ CVector3f rotateAboutAxis(const CVector3f & p, float Angle, const CVector3f & Ax
 ///
 /// On obtient un systeme d'axe en se basant sur un seul vecteur (v-front).
 /// Le vecteur de reference peut pointer dans n'importe quelle direction.
-/// On obtient le 1er vecteur perpendiculaire (v-right) en faisant un cross product 
+/// On obtient le 1er vecteur perpendiculaire (v-right) en faisant un cross product
 ///	de v-front avec l'axe des y de reference. On refait un cross product entre
 /// le nouveau vecteur (v-right) et v-front pour obtenir le dernier vecteur (v-up).
-/// 
+///
 /// \param CVector3f & right: vecteur de droite dans le nouveau systeme de coordonnees
 /// \param const CVector3f & front: vecteur de direction dans le nouveau systeme de coordonnees
 /// \param CVector & up: vecteur du haut dans le nouveau systeme de coordonnees
@@ -591,7 +591,7 @@ CVector3f reflect(const CVector3f &u, const CVector3f &normal);
 ///
 ///	Obtention de vecteurs aleatoires en 2d,3d et 4d pour des int et float
 //@{
-/// 
+///
 /// \brief rand pour v2d-int
 ///
 ///	\param CVector2i & from

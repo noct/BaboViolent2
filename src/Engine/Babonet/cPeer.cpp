@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -159,7 +159,7 @@ int cPeer::SendPackets(int fd,float elapsed,fd_set master, UINT4 & nbBytes)
 
 	Timeout.tv_sec	=	0;
 	Timeout.tv_usec =	0;
-	
+
     if(FD_ISSET(fd,&fdwrite))
 	{
 
@@ -176,7 +176,7 @@ int cPeer::SendPackets(int fd,float elapsed,fd_set master, UINT4 & nbBytes)
 
 
 		for(cUDPpacket *P=PacketsToSend;P;P=P->Next)
-		{	
+		{
 			nbBytes += P->Size;
 
 			if(toKill)
@@ -283,7 +283,7 @@ int cPeer::SendPackets(int fd,float elapsed,fd_set master, UINT4 & nbBytes)
 		//fclose(fp);
 	}
 
-	
+
 	return 0;
 }
 
@@ -318,7 +318,7 @@ void cPeer::DeletePacket(cUDPpacket *p)
 {
 	if(p->Previous)		p->Previous->Next	=	p->Next;
 	if(p->Next)			p->Next->Previous	=	p->Previous;
-	
+
 	delete p;
 }
 
@@ -381,7 +381,7 @@ void cPeer::AddReceivedPacket(cUDPpacket *newPacket)
 					ReceivedPackets->Previous = newPacket;
 					newPacket->Next = ReceivedPackets;
 					ReceivedPackets = newPacket;
-	                
+
 					return;
 			}
 			else
@@ -400,13 +400,13 @@ void cPeer::AddReceivedPacket(cUDPpacket *newPacket)
 
 					//on va envoyer un ack pour ce packet
 					if(newPacket->ID)	AddAck(newPacket->ID);
-	                
+
 					return;
 				}
 				else if(newPacket->ID > P->ID)
 				{
 					if(P->Next) continue;
-					
+
 					P->Next = newPacket;
 					newPacket->Previous = P;
 

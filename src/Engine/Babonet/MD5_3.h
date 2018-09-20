@@ -33,9 +33,9 @@ documentation and/or software.
 #include "global.h"
 
 
-typedef struct 
+typedef struct
 #ifndef WIN32
-__attribute__((packed)) 
+__attribute__((packed))
 #endif
 {
 	UINT4 state[4];                                   /* state (ABCD) */
@@ -44,7 +44,7 @@ __attribute__((packed))
 } MD5_CTX;
 
 #ifdef __cplusplus	//added by Jim Howard so that these functions can be called from c++
-extern "C" 
+extern "C"
 {
 #endif
 	void MD5Init PROTO_LIST ((MD5_CTX *));

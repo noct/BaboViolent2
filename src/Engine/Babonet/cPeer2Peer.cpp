@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -72,13 +72,13 @@ int cPeer2Peer::PrepareSockets()
 	if(BCfd)	CloseSocket(BCfd);
 
 	//get UDP socket
-    if ((UDPfd = (int)socket(PF_INET, SOCK_DGRAM, 0)) == -1) 
+    if ((UDPfd = (int)socket(PF_INET, SOCK_DGRAM, 0)) == -1)
 	{
 		sprintf(LastError,"Error : Problem Creating UDPfd Socket UDP");
         return 1;
     }
 
-	if ((BCfd = (int)socket(PF_INET, SOCK_DGRAM, 0)) == -1) 
+	if ((BCfd = (int)socket(PF_INET, SOCK_DGRAM, 0)) == -1)
 	{
 		sprintf(LastError,"Error : Problem Creating BCfd Socket UDP");
         return 1;
@@ -96,7 +96,7 @@ int cPeer2Peer::PrepareSockets()
 		sprintf(LastError,"Error : setsockopt() failed UDPfd");
         return 1;
     }
-	
+
 	if (setsockopt(BCfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
 	{
 		sprintf(LastError,"Error : setsockopt() failed BCfd");
@@ -160,8 +160,8 @@ int cPeer2Peer::BindPort(unsigned short port)
 		sprintf(LastError,"Invalid Port, 11111 is baboNet reserved!");
 		return 1;
 	}
-	
-	//on reset les socket de base (broadcast + communication)	
+
+	//on reset les socket de base (broadcast + communication)
 	if(PrepareSockets())
 	{
 		sprintf(LastError,"Error while cP2P::PrepareSockets()");
@@ -223,7 +223,7 @@ int cPeer2Peer::CreatePeer(struct sockaddr_in ip,bool *exist)
 
 	}
 	else
-	{ 
+	{
 		PeerList	=	new cPeer(ip,LastPeerID);
 	}
 
@@ -233,7 +233,7 @@ int cPeer2Peer::CreatePeer(struct sockaddr_in ip,bool *exist)
 
 char* cPeer2Peer::GetBroadcastAdress()
 {
-		
+
 	struct sockaddr_in ipAdress;
 	struct sockaddr_in NetMask;
 	struct sockaddr_in Subnet;
@@ -244,7 +244,7 @@ char* cPeer2Peer::GetBroadcastAdress()
 	gethostname(buffer,sizeof(buffer));
 	hostent *phe = gethostbyname(buffer);
     memcpy(&ipAdress.sin_addr, phe->h_addr_list[0], sizeof(struct in_addr));
-	
+
 	//on va checker c quoi le subnet mask
 		char *IP = inet_ntoa(ipAdress.sin_addr);	//pogne le IP
 		char Class[4]; //on va garder les 3 premier chiffres qui definisse la classe du network ici
@@ -258,7 +258,7 @@ char* cPeer2Peer::GetBroadcastAdress()
 		}
 		Class[i] = '\0';
 		int ClassNum = atoi(Class);
-		
+
 
 		//est-ce que c un reseau de class A
 		if(ClassNum <= 126)
@@ -301,7 +301,7 @@ int cPeer2Peer::SendTo(INT4 peerID,cUDPpacket *newPacket,UINT4 exception)
 		newPacket->Safe = false; //on force le broadcast packet a etre unsafe
 		newPacket->InterfaceID	=	INTERFACE_P2P;
 		BCPeer->CreatePacket(newPacket);
-		
+
 		return 0;
 	}
 
@@ -380,11 +380,11 @@ int cPeer2Peer::ReceiveFromPeers()
 		Timeout.tv_sec	=	0;
 		Timeout.tv_usec =	0;
 
-		//est-ce quon est pret a lire un packet udp 
+		//est-ce quon est pret a lire un packet udp
 		if(FD_ISSET(UDPfd,&fdread))
 		{
 			int				nbytes	=	0;
-			
+
 			#ifdef WIN32
 				int	len	=	sizeof(sockaddr_in);
 			#else
@@ -402,14 +402,14 @@ int cPeer2Peer::ReceiveFromPeers()
 			else
 			{
 				//cPeer *P	=	GetPeerByIP(fromIP);
-		
+
 				int nread=0;
 				while(nread < nbytes) //tant quia du data a lire
 				{
 					cUDPpacket *packet = ExtractPacket(buf,&nread);
 
 					BytesReceived += packet->Size;
-					
+
 					ReceiveDatagram(packet,fromIP);
 
 
@@ -460,8 +460,8 @@ int cPeer2Peer::ReceiveFromPeers()
 				{
 					cUDPpacket *packet = ExtractPacket(buf,&nread);
 					BytesReceived += packet->Size;
-					
-					BCPeer->AddReceivedPacket(new cUDPpacket(packet));				
+
+					BCPeer->AddReceivedPacket(new cUDPpacket(packet));
 
 					delete packet;
 				}
@@ -490,7 +490,7 @@ void cPeer2Peer::ReceiveDatagram(cUDPpacket *packet,sockaddr_in fromIP)
 		memcpy(&id,packet->Data,sizeof(UINT4));
 
 		P = GetPeerByID(id);
-		
+
 		if(!P) return; //on a recu une confirmation dun peer qui vient de se faire delter
 
 		P->AddAck(packet->ID);
@@ -549,10 +549,10 @@ void cPeer2Peer::ReceiveDatagram(cUDPpacket *packet,sockaddr_in fromIP)
 			//fp = fopen("_netDebug.txt","a");
 			//fprintf(fp,"> CREATION DUN PEER VIA RECEPTION DE PACKET %s:%i     exist = %i\n",ip,port,(int)exist);
 			//fclose(fp);
-			
+
 			//si le peer existe, on est en presence d'un dupliquer du premier packet avant la publoication du peer
 			if(exist) return;
-			
+
 			P = GetPeerByID(newID);
 			P->Need2Publish = true;
 			//P->Confirmed = true;
@@ -589,18 +589,18 @@ void cPeer2Peer::ReceiveDatagram(cUDPpacket *packet,sockaddr_in fromIP)
 				newPacket->Safe			=	true;
 				newPacket->Sent			=	false;
 				newPacket->Data			=	new char[18];
-				
+
 				//pogne le IP
 				char ip[16];
 				sprintf(ip,inet_ntoa(fromIP.sin_addr));
-				
+
 				//pogne le port
 				unsigned short port = ntohs(fromIP.sin_port);
-				
+
 				//on parse le data
 				memcpy(newPacket->Data,ip,16);
 				memcpy(newPacket->Data + 16,&port,2);
-		        
+
 				SendTo(0,newPacket,newID);
 			}
 		}
@@ -615,7 +615,7 @@ cUDPpacket* cPeer2Peer::ExtractPacket(char* buf,int *nread)
 	//on extract l'interface ID
 	memcpy(&(packet->InterfaceID),buf + (*nread),sizeof(char));
 	(*nread) += sizeof(char);
-	
+
 	//on va extraire le ID du packet
 	memcpy(&(packet->ID),buf + (*nread),sizeof(UINT4));
 	(*nread) += sizeof(UINT4);
@@ -708,7 +708,7 @@ void cPeer2Peer::AnalyzeSystemDatagram(cUDPpacket *packet,cPeer *fromPeer)
 			memcpy(&port,packet->Data + 16,2);
 
 			sockaddr_in ipAdress;
-			
+
 			ipAdress.sin_family			=	AF_INET;
 			ipAdress.sin_addr.s_addr	=	inet_addr(ip);
 			ipAdress.sin_port			=	htons(port);
@@ -730,11 +730,11 @@ void cPeer2Peer::AnalyzeSystemDatagram(cUDPpacket *packet,cPeer *fromPeer)
 			//fp = fopen("_netDebug.txt","a");
 			//fprintf(fp,"	>ON RECOIT UNE DEMANDE DE %s:%i \n",inet_ntoa(fromPeer->IpAdress.sin_addr),ntohs(fromPeer->IpAdress.sin_port));
 			//fclose(fp);
-			
+
 
 			fromPeer->AddAck(packet->ID);
 			if(fromPeer->Confirmed) return;
-			
+
 			//fp = fopen("_netDebug.txt","a");
 			//fprintf(fp,"	>ON ENVOIE UNE CONFIRMATION \n");
 			//fclose(fp);
@@ -786,7 +786,7 @@ int cPeer2Peer::CheckUnpublishedPeers(float elapsed,bool &isNew)
 
 				//sinon on peut le deleter
 				UINT4 id = P->ID;
-				
+
 				isNew = false;
 
 				//fp = fopen("_netDebug.txt","a");
@@ -798,10 +798,10 @@ int cPeer2Peer::CheckUnpublishedPeers(float elapsed,bool &isNew)
 			}
 			else
 			{
-			
+
 				//sinon on peut le deleter
 				UINT4 id = P->ID;
-				
+
 
 				isNew = false;
 
@@ -837,7 +837,7 @@ int cPeer2Peer::CheckUnpublishedPeers(float elapsed,bool &isNew)
 
 			//on va updater le peer
 			cPeer *p = GetPeerByID(id);
-			
+
 			if(p)
 			{
 				p->IpAdress.sin_addr = q->IP.sin_addr;
@@ -850,7 +850,7 @@ int cPeer2Peer::CheckUnpublishedPeers(float elapsed,bool &isNew)
 
 			delete q;
 			return 0;
-            
+
 		}
 		else if(i<0)
 		{

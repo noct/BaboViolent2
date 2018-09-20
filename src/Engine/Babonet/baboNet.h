@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -77,7 +77,7 @@
 #ifdef WIN32
 
 	#define amax max	//by-pass an STL bug on linux
-	
+
 	#ifndef DLL_EXPORTS
 		#define BBNET_DLL_API(p) __declspec(dllexport) p
 	#else
@@ -93,21 +93,21 @@
 
 
 //fonction prototypes---------------------------------------------------------------------------------------------
-	
-	
+
+
 	//Startup / Shutdown
 	BBNET_DLL_API(int)			bb_init();																		//init la bbnet et winsock
 	BBNET_DLL_API(void)			bb_shutdown();																	//ferme bbnet et winsock
-	
-	
-	//Peer-2-Peer functions	
+
+
+	//Peer-2-Peer functions
 	BBNET_DLL_API(int)			bb_peerUpdate(float elapsed,bool & isNew);															//donne de lattention a la partie p2p de la net... important pour que les message senvoie, la fonction retourne le id dun nouveau peer avec qui on peut communiquer ou un peer qui vient de se delter, voir isNew, 0 si tout va bien et -1 on error
 	BBNET_DLL_API(int)			bb_peerBindPort(unsigned short listenPort);															//cette fonction permet decouter les packets UDP sur un port, premordial pour "faker" un serveur, 0 on success, 1 on error
 	BBNET_DLL_API(int)			bb_peerSend(INT4 peerID,char *data,int typeID,int dataSize,bool safe=false);						//peerID est lidentificateur du peer, un peerID de -1 signifie broadcast packet,safe/unsafe si on tien a ce que le message se rende.
 	BBNET_DLL_API(int)			bb_peerSend(char *IPdomain,unsigned short port,char *data,int typeID,int dataSize,bool safe=false);	//IP ou DomainName/port du peer avec qui on veux communiquer,safe/unsafe si on tien a ce que le message se rende, timeout avant de discarter le message safe qui c pas rendu, si c le cas. Ca retourne un index pour communiquer avec ce peer par la suite, ou -1 on error
 	BBNET_DLL_API(char*)		bb_peerReceive(INT4 *fromPeerID,int *typeID);														//va recevoir un packet de tel tel peer
-	BBNET_DLL_API(int)			bb_peerGetIPport(UINT4 babonetID,char *IP,unsigned short *Port);							//permet d'obtenir le IP et le Port d'un Peer	
-	BBNET_DLL_API(int)			bb_peerDelete(UINT4 baboNetID,bool instant=false);											//permet de retirer un peer dla liste des peers, si instant, le peer n'attendra pas 
+	BBNET_DLL_API(int)			bb_peerGetIPport(UINT4 babonetID,char *IP,unsigned short *Port);							//permet d'obtenir le IP et le Port d'un Peer
+	BBNET_DLL_API(int)			bb_peerDelete(UINT4 baboNetID,bool instant=false);											//permet de retirer un peer dla liste des peers, si instant, le peer n'attendra pas
 	BBNET_DLL_API(int)			bb_peerShutdown();																					//clear la memoire utiliser par la p2p
 	BBNET_DLL_API(char*)		bb_peerGetLastError();																				//permet d'obtenir une version textuelle de la derniere erreur
 	BBNET_DLL_API(char*)		bb_peerGetLastMessage();																			//permet d'obtenir une version textuelle du dernier message

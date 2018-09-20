@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -75,7 +75,7 @@ void printCenterText(float x, float y, float size, const CString & text)
 void printLeftText(float x, float y, float size, const CString & text)
 {
 
-	
+
 	if ((enableShadow) && (gameVar.r_simpleText != true))
 	{
 		int shadowDis = (size > 32) ? 2 : 1;
@@ -96,10 +96,10 @@ void printLeftText(float x, float y, float size, const CString & text)
 
 void printRightText(float x, float y, float size, const CString & text)
 {
-	
+
 	float width = dkfGetStringWidth(size, text.s);
-	
-	
+
+
 	if ((enableShadow) && (gameVar.r_simpleText != true))
 	{
 		float curColor[4];
@@ -114,7 +114,7 @@ void printRightText(float x, float y, float size, const CString & text)
 		glColor4fv(curColor);
 #endif
 	}
-	
+
 	dkfPrint(size,x-width,y,0,text.s);
 }
 
@@ -308,7 +308,7 @@ void renderMenuQuad(int x, int y, int w, int h)
 		{
 			glBegin(GL_QUADS);
 				glColor4f(0, 0, 0, .25f);
-				
+
 				glVertex2i(x - 1, y);
 				glVertex2i(x - 1, y + h);
 				glVertex2i(x + w, y + h);
@@ -457,14 +457,14 @@ bool sphereToBox(CVector3f& p1, CVector3f& p2, CVector3f& omin, CVector3f& omax,
         return false;
     if (fabsf(c[2]) > e[2] + ad[2])
         return false;
-  
+
     if (fabsf(d[1] * c[2] - d[2] * c[1]) > e[1] * ad[2] + e[2] * ad[1]/* + EPSILON*/)
         return false;
     if (fabsf(d[2] * c[0] - d[0] * c[2]) > e[2] * ad[0] + e[0] * ad[2]/* + EPSILON*/)
         return false;
     if (fabsf(d[0] * c[1] - d[1] * c[0]) > e[0] * ad[1] + e[1] * ad[0]/* + EPSILON*/)
         return false;
-            
+
     return true;
 }
 

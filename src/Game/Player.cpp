@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -71,8 +71,8 @@ Player::Player(char pPlayerID, Map * pMap, Game * pGame): pingLogInterval(0.05f)
 	mfElapsedSinceLastShot = 9999.0f;
 
 	miNbCoord = 0;
-    mfCFTimer = 0.0f; 
-	mfCumulativeVel = 0.0f; 
+    mfCFTimer = 0.0f;
+	mfCumulativeVel = 0.0f;
 	shootShakeDis.set(0,0,0);
 
 #if defined(_PRO_)
@@ -125,7 +125,7 @@ Player::Player(char pPlayerID, Map * pMap, Game * pGame): pingLogInterval(0.05f)
 	returns = 0;
 	damage = 0;
 	flagAttempts = 0;
-	
+
 	timePlayedCurGame = 0.0f;
 	waitForPong = false;
 	sendPosFrame=0;
@@ -253,12 +253,12 @@ void Player::kill(bool silenceDeath)
 			game->spawnBloodMinibot(minibot->currentCF.position, .5f);
 		}
 #endif
-		
+
 		//--- Spawn some gibs :D
 	/*	for (int i=0;i<10;++i)
 		{
-			if (game) game->douilles.push_back(new Douille(currentCF.position, 
-				rand(CVector3f(-2.5,-2.5,1),CVector3f(2.5,2.5,2.5)), 
+			if (game) game->douilles.push_back(new Douille(currentCF.position,
+				rand(CVector3f(-2.5,-2.5,1),CVector3f(2.5,2.5,2.5)),
 				CVector3f(1,0,0), DOUILLE_TYPE_GIB));
 		}*/
 	}
@@ -475,8 +475,8 @@ void Player::render()
 				}
 #endif
 			}
-			if( (game->gameType != GAME_TYPE_DM) &&	
-				(game->gameType != GAME_TYPE_SND) && 
+			if( (game->gameType != GAME_TYPE_DM) &&
+				(game->gameType != GAME_TYPE_SND) &&
 				(gameVar.cl_teamIndicatorType == 1 || (gameVar.cl_teamIndicatorType == 2 && teamID == game->thisPlayer->teamID) || (gameVar.cl_teamIndicatorType > 0 && game->thisPlayer->teamID == PLAYER_TEAM_SPECTATOR) ) )
 			{
 				//--- Get up & right vectors
@@ -513,8 +513,8 @@ void Player::render()
 				{
 					glColor3f(1, 1, 1);
 				}
-	 
-	 
+
+
 				glPushMatrix();
 				glTranslatef(currentCF.position[0], currentCF.position[1], currentCF.position[2]);
 				glBindTexture(GL_TEXTURE_2D, tex_baboHalo);
@@ -966,20 +966,20 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 				dksPlay3DSound(gameVar.sfx_hit[rand()%2], -1, 5, currentCF.position, 255);
 				game->spawnBlood(currentCF.position, cdamage);
 				if (from != this)
-               {               
+               {
                   from->dmg += (cdamage<life)?cdamage:life;
                }
 				life -= cdamage;
 				screenHit += cdamage;
 				if (screenHit > 1.0) screenHit = 1.0;
 				if (cdamage > 1) screenHit = 0;
-				if (from->isThisPlayer) 
+				if (from->isThisPlayer)
 				{
 					scene->client->hitIndicator = 1;
 					dksPlaySound(scene->client->sfxHit, -1, 250);
 				}
 			}
-			if (gameVar.sv_reflectedDamage && from->playerID != playerID) 
+			if (gameVar.sv_reflectedDamage && from->playerID != playerID)
 			{
 				from->hit(fromWeapon, from, damage);
 			}
@@ -1015,7 +1015,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 					else if(from->teamID == PLAYER_TEAM_RED)
 						game->redScore--;
 				}//If we do a friendly fire kill, reduce score
-				if ((game->gameType == GAME_TYPE_DM || game->gameType == GAME_TYPE_SND) && from != this) 
+				if ((game->gameType == GAME_TYPE_DM || game->gameType == GAME_TYPE_SND) && from != this)
 				{
 					if (from->teamID == PLAYER_TEAM_BLUE)
 					{
@@ -1030,7 +1030,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 					from->kills++;
 					deaths++;
 				}
-				else 
+				else
 				{
 					from->deaths++;
 					if(game->gameType != GAME_TYPE_CTF)
@@ -1048,7 +1048,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 			screenHit += cdamage;
 			if (screenHit > 1.0) screenHit = 1.0;
 			if (cdamage > 1) screenHit = 0;
-			if (from->isThisPlayer) 
+			if (from->isThisPlayer)
 			{
 				scene->client->hitIndicator = 1;
 				dksPlaySound(scene->client->sfxHit, -1, 250);
@@ -1078,7 +1078,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 					scene->client->eventMessages.push_back(TimedMessage(message));
 				}
 				kill(false);
-				if (from != this) 
+				if (from != this)
 				{
 					if (from->teamID == PLAYER_TEAM_BLUE && game->gameType != GAME_TYPE_CTF)
 					{
@@ -1093,7 +1093,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 					from->kills++;
 					deaths++;
 				}
-				else 
+				else
 				{
 					from->deaths++;
 					if(game->gameType != GAME_TYPE_CTF)
@@ -1115,7 +1115,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
 {
 	float cdamage = damage;
-	if (damage == -1) 
+	if (damage == -1)
 	{
 		if(gameVar.sv_serverType == 1)
 		{
@@ -1193,7 +1193,7 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
 #if defined(_PRO_)
    if ((gameVar.sv_subGameType == SUBGAMETYPE_INSTAGIB) && (fromWeapon->weaponID != WEAPON_GRENADE) &&  (fromWeapon->weaponID != WEAPON_KNIVES) && (fromWeapon->weaponID != WEAPON_COCKTAIL_MOLOTOV))
       {
-      cdamage = life; 
+      cdamage = life;
       }
 #endif
 
@@ -1220,7 +1220,7 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
 				playerHit.vel[2] = 1;
 				bb_serverSend((char*)&playerHit,sizeof(net_svcl_player_hit),NET_SVCL_PLAYER_HIT,0);
 			}
-			if (gameVar.sv_reflectedDamage && from->playerID != playerID) 
+			if (gameVar.sv_reflectedDamage && from->playerID != playerID)
 			{
 					from->hitSV(fromWeapon, from, cdamage);
 			}
@@ -1315,7 +1315,7 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
 					}
 				}
 				kill(true);
-				if (game->gameType == GAME_TYPE_DM && from != this) 
+				if (game->gameType == GAME_TYPE_DM && from != this)
 				{
 					if (from->teamID == PLAYER_TEAM_BLUE)
 					{
@@ -1330,7 +1330,7 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
 					from->kills++;
 					deaths++;
 				}
-				else 
+				else
 				{
 					if(game->gameType == GAME_TYPE_TDM)
 					{
@@ -1368,7 +1368,7 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
 			bb_serverSend((char*)&playerHit,sizeof(net_svcl_player_hit),NET_SVCL_PLAYER_HIT,0);
 
 			// Oups, on cr�e?
-			if (life <= std::numeric_limits<float>::epsilon())    
+			if (life <= std::numeric_limits<float>::epsilon())
 			{
 #ifndef DEDICATED_SERVER
 				if (scene->client || (scene->server && gameVar.sv_showKills))
@@ -1457,7 +1457,7 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
 					}
 				}
 				kill(true);
-				if (from != this) 
+				if (from != this)
 				{
 					if (from->teamID == PLAYER_TEAM_BLUE && game->gameType != GAME_TYPE_CTF)
 					{
@@ -1472,7 +1472,7 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
 					from->kills++;
 					deaths++;
 				}
-				else 
+				else
 				{
 					from->deaths++;
 					if(game->gameType != GAME_TYPE_CTF)
@@ -1546,7 +1546,7 @@ void Player::setCoordFrame(net_clsv_svcl_player_coord_frame & playerCoordFrame)
 	netCF1.mousePosOnMap[2] = (short)playerCoordFrame.mousePos[2] / 100.0f;
 
 	// Si notre frameID �ait �0, on le copie direct
-	if (netCF0.frameID == 0) 
+	if (netCF0.frameID == 0)
 	{
 		netCF0 = netCF1;
 	}
@@ -1571,7 +1571,7 @@ void Player::setCoordFrameMinibot(net_svcl_minibot_coord_frame & minibotCoordFra
 		mousePos[0] = (short)minibotCoordFrame.mousePos[0] / 100.0f;
 		mousePos[1] = (short)minibotCoordFrame.mousePos[1] / 100.0f;
 		mousePos[2] = (short)minibotCoordFrame.mousePos[2] / 100.0f;
-		
+
 		SpawnMiniBot(pos, mousePos);
 	}
 
@@ -1607,7 +1607,7 @@ void Player::setCoordFrameMinibot(net_svcl_minibot_coord_frame & minibotCoordFra
 	minibot->netCF1.mousePosOnMap[2] = (short)minibotCoordFrame.mousePos[2] / 100.0f;
 
 	// Si notre frameID �ait �0, on le copie direct
-	if (minibot->netCF0.frameID == 0) 
+	if (minibot->netCF0.frameID == 0)
 	{
 		minibot->netCF0 = minibot->netCF1;
 	}

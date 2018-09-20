@@ -59,10 +59,10 @@ public:
 	// La date de modification du fichier
 	INT4 modifDate;
 
-	// Sa résolution
+	// Sa rÃ©solution
 	CVector2i size;
 
-	// Le nombre de fois quelle a été loadé
+	// Le nombre de fois quelle a Ã©tÃ© loadÃ©
 	int nbInstance;
 
 	// Le nombre de Byte per pixel de la texture
@@ -91,10 +91,10 @@ public:
 class CDkt
 {
 public:
-	// Pour tenir la dernière erreur
+	// Pour tenir la derniÃ¨re erreur
 	static char *lastErrorString;
 
-	// Le vector de nos textures initialisé
+	// Le vector de nos textures initialisÃ©
 	static std::vector<CTexture*> textures;
 
 	// La texture qu'on check pour le auto updating

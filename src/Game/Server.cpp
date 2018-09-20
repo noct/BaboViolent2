@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -150,12 +150,12 @@ bool Server::validateVote(CString vote)
 int Server::host()
 {
 	//permet de spawner un serveur
-	if (bb_serverCreate(false, MAX_PLAYER, gameVar.sv_port)) 
+	if (bb_serverCreate(false, MAX_PLAYER, gameVar.sv_port))
 	{
 		isRunning = false;
 		return 0;
 	}
-	else 
+	else
 	{
 		srand((unsigned int)time(0));
 		game->mapSeed = rand()%1000000; // Quin, 1000000 maps, c tu assez �?
@@ -428,7 +428,7 @@ CString Server::queryNextMap()
 	if (mapList.size() > 0)
 	{
 		return mapList[0];
-	} 
+	}
 	return "";
 }
 
@@ -664,7 +664,7 @@ void Server::update(float delay)
 						console->add(CString("\x2Report Sent: %s", response.c_str()), true);
 					else
 						console->add("\x2Report Failure: Sent, but no response recieved.", true);
-					
+
 					delete (*it);
 					it = reportUploads.erase(it);
 				}
@@ -745,7 +745,7 @@ void Server::update(float delay)
 				it++;
 		}
 #endif
-		
+
 		// On update le server
 		updateNet(delay, false);
 
@@ -773,7 +773,7 @@ void Server::update(float delay)
 					game->mapName = queryNextMap();
 					game->createMap();
 				}
-				if (!game->map) 
+				if (!game->map)
 				{
 					needToShutDown = true;
 					isRunning = false;
@@ -1009,7 +1009,7 @@ void Server::update(float delay)
 		UINT4 babonetID;
 		while (buffer = bb_serverReceive(babonetID, messageID))
 		{
-			// On g�e les messages re�the 
+			// On g�e les messages re�the
 			recvPacket(buffer, messageID, babonetID);
 		}
 
@@ -1179,7 +1179,7 @@ void Server::update(float delay)
 										minibotCoordFrame.vel[0] = (char)(game->players[j]->minibot->currentCF.vel[0] * 10);
 										minibotCoordFrame.vel[1] = (char)(game->players[j]->minibot->currentCF.vel[1] * 10);
 										minibotCoordFrame.vel[2] = (char)(game->players[j]->minibot->currentCF.vel[2] * 10);
-										
+
 										bb_serverSend((char*)&minibotCoordFrame, sizeof(net_svcl_minibot_coord_frame), NET_SVCL_MINIBOT_COORD_FRAME, game->players[i]->babonetID, NET_UDP);
 									}
 								}
@@ -1325,9 +1325,9 @@ void Server::update(float delay)
 				            playerHit.vel[1] = 0;
 				            playerHit.vel[2] = 1;
 				            bb_serverSend((char*)&playerHit,sizeof(net_svcl_player_hit),NET_SVCL_PLAYER_HIT,0);
-                        }                        
+                        }
                   }
-               }               
+               }
 #else
                updateSnD(delay);
 #endif
@@ -1375,7 +1375,7 @@ void Server::update(float delay)
                 bytesSent += 250;
 
                 // If some data was sent, keep this transfer
-                if(chunk.size != 0) 
+                if(chunk.size != 0)
                 {
                     mapTransfers[i].chunkNum++;
                     temp.push_back(mapTransfers[i]);
@@ -1398,7 +1398,7 @@ bool Server::filterMapFromRotation(const mapInfo & map)
 	int nbPlayer = 0;
 	for (int i = 0; i <MAX_PLAYER; ++i)
 	{
-		if ((game->players[i]) && 
+		if ((game->players[i]) &&
 			((game->players[i]->teamID == PLAYER_TEAM_BLUE)||(game->players[i]->teamID == PLAYER_TEAM_RED)))
 		{
 			nbPlayer++;
@@ -1441,7 +1441,7 @@ void Server::autoBalance()
 		//--- On balance!
 		int nbToSwitch = (int)blues.size() - 1 - (int)reds.size();
 
-		//--- Bon... comment on choisi les candidats, c'est simple, 
+		//--- Bon... comment on choisi les candidats, c'est simple,
 		//    on switch les 2 plus poche en bas de la liste ^^
 		while (nbToSwitch > 0)
 		{
@@ -1468,7 +1468,7 @@ void Server::autoBalance()
 		//--- On balance
 		int nbToSwitch = (int)reds.size() - 1 - (int)blues.size();
 
-		//--- Bon... comment on choisi les candidats, c'est simple, 
+		//--- Bon... comment on choisi les candidats, c'est simple,
 		//    on switch les 2 plus poche en bas de la liste ^^
 		while (nbToSwitch > 0)
 		{
@@ -1564,8 +1564,8 @@ void Server::sayall(CString message)
 	//	chat_message.fromID = game->thisPlayer->playerID;
 		chat_message.teamID = PLAYER_TEAM_SPECTATOR - 1; // All player!
 
-		// On insert la couleur d�endament du team 
-		// (une fois apres le nom du joueur, parce que ce dernier a surement 
+		// On insert la couleur d�endament du team
+		// (une fois apres le nom du joueur, parce que ce dernier a surement
 		// mis plein de caract�es de couleurs)
 		message.insert(" : \x8", 0);
 
@@ -1665,9 +1665,9 @@ void Server::deleteInvalidChecksums()
 {
 	sqlite3 *DB=0;
 	sqlite3_open("./bv2.db",&DB);
-	
+
 	sqlite3_exec(DB,"delete from BadChecksum",0,0,0);
-	
+
 	sqlite3_close(DB);
 }
 
@@ -1770,7 +1770,7 @@ void Server::updateStatsCache()
 		if (found == false)
 			newCache.insert(StatsCachePair(it->first, it->second));
 		else
-			delete it->second;	
+			delete it->second;
 		statsCache.erase(it++);
 	}
 

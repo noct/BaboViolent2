@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -57,7 +57,7 @@ void Key::setKeyValue(int keyValue)
 
 
 //
-// L'updater le gèrer
+// L'updater le gÃ¨rer
 //
 void Key::update(float delay)
 {
@@ -130,7 +130,7 @@ void Key::update(float delay)
 //
 void Key::onClic()
 {
-	if (m_isWaitingForKey == false) 
+	if (m_isWaitingForKey == false)
 	{
 		dksPlaySound(m_sfxClic, -1, 200);
 		m_isWaitingForKey = true;

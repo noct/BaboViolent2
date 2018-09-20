@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -184,7 +184,7 @@ void Scene::sayall(CString message)
 {
 #ifndef DEDICATED_SERVER
 	if (client) client->sayall(message);
-	else 
+	else
 #endif
 		if (server) server->sayall(message);
 }
@@ -275,7 +275,7 @@ void Scene::ban(int ID)
 		if( master ) master->RA_DisconnectedPlayer( textColorLess(server->game->players[ID]->name).s, server->game->players[ID]->playerIP, (long)server->game->players[ID]->playerID );
 		bb_serverDisconnectClient(server->game->players[ID]->babonetID);
 		server->banList.push_back(std::pair<CString,CString>(server->game->players[ID]->name,server->game->players[ID]->playerIP) );
-		
+
 		std::ofstream file("main/banlist", std::ios::app | std::ios::binary);
 		CString name = server->game->players[ID]->name;
 		name.resize(32);
@@ -322,7 +322,7 @@ void Scene::unban(int banID)
 			// Ensure name is 32 characters
 			name = server->banList[i].first;
 			name.resize(32);
-			
+
 			// Write data
 			file.write(name.s, sizeof(char)*32);
 			file.write(server->banList[i].second.s, sizeof(char)*16);

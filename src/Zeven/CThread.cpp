@@ -3,29 +3,29 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
 #include "CThread.h"
 
 // OS dependant
-#ifdef WIN32				//Win32   
+#ifdef WIN32				//Win32
 	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>		
+	#include <windows.h>
 #else
 	#include <sched.h>		//Linux
 	#include "LinuxHeader.h"
-		
+
 	typedef void* (*PTHREAD_START_ROUTINE)(
 
    		 void* lpThreadParameter
@@ -49,7 +49,7 @@ int createThread(unsigned long (*pFuncter)(void*), void * pParam, unsigned long 
 
 		// If its not valid, just return false
 		if (hThread == NULL) return 0;
-		
+
 		// We set the priority for the thread
 		switch (pPriority)
 		{
@@ -83,7 +83,7 @@ int createThread(unsigned long (*pFuncter)(void*), void * pParam, unsigned long 
 		//sched_param schedparam;
  		//schedparam.sched_priority = DEFAULT_PRIO;
 		//pthread_attr_setschedparam(threadAttr, &schedparam);
-		
+
 		int rc = pthread_create( &threadID,0,(PTHREAD_START_ROUTINE)pFuncter, pParam);
 		if (rc)
 		{
@@ -92,14 +92,14 @@ int createThread(unsigned long (*pFuncter)(void*), void * pParam, unsigned long 
       		}
 		pThreadID = threadID;
 		//pthread_detach(threadID);
-		
-		
+
+
 		return threadID;
 	#endif
 
-	
 
-	
+
+
 
 	// Everything is ok
 	return 1;

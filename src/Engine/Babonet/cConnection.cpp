@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -90,7 +90,7 @@ int cConnection::PrepareSocket()
 
 
 	//on va creer le socket TCP avec le quel on va communiquer avec le remote host
-	if ((*FileDescriptor = (int)socket(PF_INET, SOCK_STREAM, 0)) == -1) 
+	if ((*FileDescriptor = (int)socket(PF_INET, SOCK_STREAM, 0)) == -1)
 	{
 
 		#ifdef USING_LOG
@@ -105,7 +105,7 @@ int cConnection::PrepareSocket()
         return 1;
     }
 
-	
+
 	#ifndef WIN32
 		int yes = 1;
 	#else
@@ -113,7 +113,7 @@ int cConnection::PrepareSocket()
 	#endif
 
     // lose the pesky "address already in use" error message
-    if (setsockopt(*FileDescriptor, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) 
+    if (setsockopt(*FileDescriptor, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
 	{
 		#ifdef USING_LOG
 			LogFile = fopen( "log.txt" , "a" );
@@ -152,14 +152,14 @@ int cConnection::PrepareUDP()
 	//Unused: int Tio = 10; //10 ms timeout
 
 	//on va creer le socket UDP avec le quel on va communiquer avec le remote host
-	if ((*UDPfd = (int)socket(PF_INET, SOCK_DGRAM, 0)) == -1) 
+	if ((*UDPfd = (int)socket(PF_INET, SOCK_DGRAM, 0)) == -1)
 	{
 		sprintf(LastError,"Error : Problem creating ClientSocket UDP");
         return 1;
     }
 
 	// lose the pesky "address already in use" error message
-    if (setsockopt(*UDPfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) 
+    if (setsockopt(*UDPfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
 	{
         sprintf(LastError,"Error : Problem on setsockopt() for the ClientSocket SO_REUSEADDR UDP");
         return 1;
@@ -188,7 +188,7 @@ int cConnection::StartConnection()
 			sprintf(LastError,"Error : error while starting connection (#2).");
 			return 1;
 		}
-		rc |= O_NONBLOCK; 
+		rc |= O_NONBLOCK;
 
 		if( fcntl(*FileDescriptor, F_SETFL, rc) == -1)
 		{
@@ -200,7 +200,7 @@ int cConnection::StartConnection()
 
 	// call connect, which should return with the EINPROGRESS errno on Linux/Mac and a WSAEWOULDBLOCK on Windows
 	connect(*FileDescriptor, (sockaddr *)RemoteIP, sizeof(sockaddr_in));
-	
+
 	#ifdef WIN32
 		if( WSAGetLastError() != WSAEWOULDBLOCK )
 	#else
@@ -294,7 +294,7 @@ int cConnection::UpdateConnecting(float elapsed)
 
 int cConnection::Update(float elapsed)
 {
-	
+
 	//on va supdater selon notre state
 
 	switch(State)
@@ -336,13 +336,13 @@ int cConnection::Update(float elapsed)
 				State	=	2;
 				connID	=	0;
 				ToRecv	=	37;	//on a 37 byte a recevoir du serveur
-	
+
 				FD_SET(*FileDescriptor,Master);
 				*FDmax	=	*FileDescriptor;
-			
+
 
 				return 0;
-				
+
 			}
 			else
 			{
@@ -386,7 +386,7 @@ int cConnection::Update(float elapsed)
 
 			if(FD_ISSET(*FileDescriptor,Read))
 			{
-				
+
 				//on va recevoir notre id de connection du server
 				int r = recv(*FileDescriptor,RecvBuf + (37 - ToRecv),37 - (37 - ToRecv),0);
 
@@ -418,12 +418,12 @@ int cConnection::Update(float elapsed)
 
 					memcpy(Lpid , &(junk[28]) , sizeof(UINT4) );
 
-					
+
 // 					if(udp)
 // 					{
-// 
+//
 // 						*UDPenabled = true;
-// 
+//
 // 						if(PrepareUDP())
 // 						{
 // 							sprintf(LastError,"Error : Problem Preapring UDP socket");
@@ -431,13 +431,13 @@ int cConnection::Update(float elapsed)
 // 						}
 // 						FD_SET(*UDPfd,Master);
 // 						*FDmax	=	amax(*FileDescriptor,*UDPfd);
-// 
+//
 // 						State = 3; //on va se mettre en mode qu'on renvoie le ID
 // 					}
 					//else
 					//{
 // 						int Tiio = 10;
-// 
+//
 // 						if(setsockopt(*FileDescriptor, SOL_SOCKET, SO_RCVTIMEO,(const char*)&Tiio,sizeof(Tiio)) == -1)
 // 						{
 // 							//int Error = WSAGetLastError();
@@ -448,8 +448,8 @@ int cConnection::Update(float elapsed)
 						*UDPenabled = false;
 						return 2; //la connection s'est etablie!
 					//}
-					
-					
+
+
 				}
         	}
 
@@ -477,11 +477,11 @@ int cConnection::Update(float elapsed)
 				//char interfaceID = INTERFACE_SERVER;
 				char buf[20];
 				int nwrite=0;	//garde le nombre de byte ecrites
-				
+
 				//on copy linterface
 				//memcpy(buf,(char*)&interfaceID,sizeof(char));
 				//nwrite += sizeof(char);
-				
+
 				//on copy le header
 				stHeader header;
 				header.Size		=	sizeof(UINT4);
@@ -490,8 +490,8 @@ int cConnection::Update(float elapsed)
 				//copy le header
 				memcpy(buf + nwrite, &header, sizeof(stHeader));
 				nwrite += sizeof(stHeader);
-                
-				
+
+
 				memcpy(buf + nwrite, &connID, sizeof(UINT4));
 				nwrite += sizeof(UINT4);
 
@@ -560,11 +560,11 @@ int cConnection::Update(float elapsed)
 
 				ToRecv -= r;
 			}
-		
+
 			if(ToRecv<=0) //on a recu tout ce qu'on attendait
 			{
 // 				int Tiio = 10;
-// 
+//
 // 				if(setsockopt(*FileDescriptor, SOL_SOCKET, SO_RCVTIMEO,(const char*)&Tiio,sizeof(Tiio)) == -1)
 // 				{
 // 					//int Error = WSAGetLastError();

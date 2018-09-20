@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -160,7 +160,7 @@ GameVar::GameVar()
    langs.push_back(SLangText("lang_spawnType", &lang_spawnType));
    langs.push_back(SLangText("lang_subGameType", &lang_subGameType));
 #endif
-	
+
    langs.push_back(SLangText("lang_freeForAll", &lang_freeForAll));
 	langs.push_back(SLangText("lang_teamDeathmatch", &lang_teamDeathmatch));
 	langs.push_back(SLangText("lang_captureTheFlag", &lang_captureTheFlag));
@@ -269,7 +269,7 @@ GameVar::GameVar()
 
 #ifndef DEDICATED_SERVER
 	loadLanguage(languageFile.s);
-	weapons[WEAPON_DUAL_MACHINE_GUN] = new Weapon("main/models/DualMachineGun.DKO", "main/sounds/DualMachineGun.wav", .1f, gameVar.lang_dualMachineGun.s, 
+	weapons[WEAPON_DUAL_MACHINE_GUN] = new Weapon("main/models/DualMachineGun.DKO", "main/sounds/DualMachineGun.wav", .1f, gameVar.lang_dualMachineGun.s,
 		.13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
 	weapons[WEAPON_SMG] = new Weapon("main/models/SMG.DKO", "main/sounds/SMG.wav", .1f, gameVar.lang_subMachineGun.s,
 		.1f, 8, 1, .5f, 1, WEAPON_SMG, PROJECTILE_DIRECT);
@@ -393,7 +393,7 @@ GameVar::GameVar()
 		LIMIT_MIN | LIMIT_MAX, true);
 	sv_maxPlayer = 16; // Max player in the game
 	dksvarRegister(CString("sv_maxPlayer [int : 1 to 32 (default 16)]"), &sv_maxPlayer, 1, 32,
-		LIMIT_MIN | LIMIT_MAX, true);	   
+		LIMIT_MIN | LIMIT_MAX, true);
    sv_maxPlayerInGame = 0; // Max player in the game
    dksvarRegister(CString("sv_maxPlayerInGame [int : 0 to 32 (default 0, no limit)]"), &sv_maxPlayerInGame, 0, 32,
 		LIMIT_MIN | LIMIT_MAX, true);
@@ -551,7 +551,7 @@ GameVar::GameVar()
 
 	sv_spawnImmunityTime = 2.0f;
 	dksvarRegister(CString("sv_spawnImmunityTime [float : 0 to 3 (default 2.0)]"), &sv_spawnImmunityTime, 0, 3, LIMIT_MIN | LIMIT_MAX, true);
-	
+
 	db_accountServer = "http://ladder.rndlabs.ca/bv2link.php";
 	db_version = 0;
 	FetchDBInfos();
@@ -693,10 +693,10 @@ GameVar::GameVar()
 	dksvarRegister(CString("r_maxNameLenOverBabo [int : (default 0=no limit)]"), &r_maxNameLenOverBabo, 0, 0, LIMIT_MIN, true);
 
 #if defined(_PRO_)
-	r_chatTextSize = 28;   
+	r_chatTextSize = 28;
 	dksvarRegister(CString("r_chatTextSize [int : (default 28)]"), &r_chatTextSize,
 		8, 28, LIMIT_MIN | LIMIT_MAX, true);
-	r_eventTextSize = 28;   
+	r_eventTextSize = 28;
 	dksvarRegister(CString("r_eventTextSize [int : (default 28)]"), &r_eventTextSize,
 		8, 28, LIMIT_MIN | LIMIT_MAX, true);
    r_showEventText = true;
@@ -1007,7 +1007,7 @@ void GameVar::sendOne(char * varName, UINT4 babonetID)
 //
 void GameVar::loadModels()
 {
-#ifndef DEDICATED_SERVER	
+#ifndef DEDICATED_SERVER
 	dko_rocket = dkoLoadFile("main/models/Rocket.DKO");
 	dko_grenade = dkoLoadFile("main/models/Grenade.DKO");
 	dko_douille = dkoLoadFile("main/models/Douille.DKO");
@@ -1092,7 +1092,7 @@ void GameVar::loadModels()
 	tex_drip = dktCreateTextureFromFile("main/textures/drip.tga", DKT_FILTER_LINEAR);
 	tex_sky = dktCreateTextureFromFile("main/textures/sky.tga", DKT_FILTER_LINEAR);
 	tex_glowTrail = dktCreateTextureFromFile("main/textures/glowTrail.tga", DKT_FILTER_LINEAR);
-	
+
 	sfx_ric[0] = dksCreateSoundFromFile("main/sounds/ric1.wav", false);
 	sfx_ric[1] = dksCreateSoundFromFile("main/sounds/ric2.wav", false);
 	sfx_ric[2] = dksCreateSoundFromFile("main/sounds/ric3.wav", false);
@@ -1144,7 +1144,7 @@ void GameVar::loadModels()
 #endif
 }
 
- 
+
 
 //
 // pour effacer les models du jeu
@@ -1241,7 +1241,7 @@ bool GameVar::loadLanguage(char * filename)
 {
   int i;
 	FILE * fic = fopen(filename, "r");
-	
+
 	if (!fic) return false;
 
 	char varName[256];

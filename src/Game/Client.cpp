@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -206,14 +206,14 @@ void Client::update(float delay)
 
 		timeSinseLastQMsg += delay;
 
-      // Enable you to set the maximum number of players allowed to be playing         
+      // Enable you to set the maximum number of players allowed to be playing
       bool bEnableJoin = true;
          if (gameVar.sv_maxPlayerInGame != 0)
          {
 	      int nbPlayer = 0;
 	      for (i=0;i<MAX_PLAYER;++i)
 	      {
-            if ((game->players[i]) && 
+            if ((game->players[i]) &&
                 ((game->players[i]->teamID == PLAYER_TEAM_BLUE)||(game->players[i]->teamID == PLAYER_TEAM_RED)))
 		      {
 			      nbPlayer++;
@@ -226,7 +226,7 @@ void Client::update(float delay)
             bEnableJoin = false;
             }
          }
-      
+
       // Disable joining
       if (bEnableJoin)
          {
@@ -466,7 +466,7 @@ void Client::update(float delay)
 	}
 	for (i=0;i<(int)eventMessages.size();++i)
 	{
-		if ((int)eventMessages.size() - i > 5 && eventMessages[i].duration > 1) 
+		if ((int)eventMessages.size() - i > 5 && eventMessages[i].duration > 1)
 		{
 			eventMessages.erase(eventMessages.begin() + i);
 			i--;
@@ -873,8 +873,8 @@ void Client::sayall(CString message)
 		//	chat_message.fromID = game->thisPlayer->playerID;
 			chat_message.teamID = PLAYER_TEAM_SPECTATOR - 1; // All player!
 
-			// On insert la couleur d�pendament du team 
-			// (une fois apres le nom du joueur, parce que ce dernier a surement 
+			// On insert la couleur d�pendament du team
+			// (une fois apres le nom du joueur, parce que ce dernier a surement
 			// mis plein de caract�res de couleurs)
 			message.insert(" : \x8", 0);
 
@@ -926,8 +926,8 @@ void Client::sayteam(CString message)
 		//	chat_message.fromID = game->thisPlayer->playerID;
 			chat_message.teamID = game->thisPlayer->teamID;
 
-			// On insert la couleur d�pendament du team 
-			// (une fois apres le nom du joueur, parce que ce dernier a surement 
+			// On insert la couleur d�pendament du team
+			// (une fois apres le nom du joueur, parce que ce dernier a surement
 			// mis plein de caract�res de couleurs)
 			message.insert(" : \x8", 0);
 
@@ -951,7 +951,7 @@ void Client::sayteam(CString message)
 			// C'est un team message
 			message.insert(CString("(%s)", gameVar.lang_team.s).s, 0);
 
-			if (game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR) 
+			if (game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
 			{
 				// On insert son �tat (mort)
 				if (game->thisPlayer->status == PLAYER_STATUS_DEAD)

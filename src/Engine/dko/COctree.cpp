@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -55,7 +55,7 @@ COctreeNode::COctreeNode(CFace **mFaceArray, int mNbFace, CVector mCenter, float
 		faceArray = new CFace*[nbFace];
 		for (i=0;i<mNbFace;i++)
 		{
-			if (faceIntersection(mFaceArray[i])) 
+			if (faceIntersection(mFaceArray[i]))
 			{
 				faceArray[j] = mFaceArray[i]; // On l'ajoute yea!
 				j++;
@@ -82,9 +82,9 @@ COctreeNode::COctreeNode(CFace **mFaceArray, int mNbFace, CVector mCenter, float
 				}
 
 				child[i] = new COctreeNode(faceArray, nbFace, newPos, size/2, recurs+1);
-				if (child[i]->nbFace == 0) 
+				if (child[i]->nbFace == 0)
 				{
-					delete child[i]; 
+					delete child[i];
 					child[i] = 0;
 				}
 				else haveChild = true;
@@ -443,7 +443,7 @@ void COctreeNode::render()
 	glPopAttrib();
 #endif
 #endif
-	
+
 	// On dessine le cube genreeee
 	if (haveChild)
 	{
@@ -472,14 +472,14 @@ bool SegmentToBox(const CVector& p1, const CVector& p2, const CVector& min, cons
         return false;
     if (fabsf(c[2]) > e[2] + ad[2])
         return false;
-  
+
     if (fabsf(d[1] * c[2] - d[2] * c[1]) > e[1] * ad[2] + e[2] * ad[1]/* + EPSILON*/)
         return false;
     if (fabsf(d[2] * c[0] - d[0] * c[2]) > e[2] * ad[0] + e[0] * ad[2]/* + EPSILON*/)
         return false;
     if (fabsf(d[0] * c[1] - d[1] * c[0]) > e[0] * ad[1] + e[1] * ad[0]/* + EPSILON*/)
         return false;
-            
+
     return true;
 }
 
@@ -503,13 +503,13 @@ bool SphereToBox(const CVector& p1, const CVector& p2, const CVector& omin, cons
         return false;
     if (fabsf(c[2]) > e[2] + ad[2])
         return false;
-  
+
     if (fabsf(d[1] * c[2] - d[2] * c[1]) > e[1] * ad[2] + e[2] * ad[1]/* + EPSILON*/)
         return false;
     if (fabsf(d[2] * c[0] - d[0] * c[2]) > e[2] * ad[0] + e[0] * ad[2]/* + EPSILON*/)
         return false;
     if (fabsf(d[0] * c[1] - d[1] * c[0]) > e[0] * ad[1] + e[1] * ad[0]/* + EPSILON*/)
         return false;
-            
+
     return true;
 }

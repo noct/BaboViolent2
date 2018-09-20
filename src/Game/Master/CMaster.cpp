@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -69,12 +69,12 @@ void CMaster::UpdateDB()
 	sqlite3 *DB=0;
 	sqlite3_open("bv2.db",&DB);
 	char	SQL[300];
-	
+
 	sprintf(SQL,"Update LauncherSettings Set Value = '%i' Where Name = 'DBVersion';", gameVar.db_version);
 	sqlite3_exec(DB,SQL,0,0,0);
 
 	sprintf(SQL,"Update LauncherSettings Set Value = '%s' Where Name = 'AccountURL';", gameVar.db_accountServer.s);
-	sqlite3_exec(DB,SQL,0,0,0);	
+	sqlite3_exec(DB,SQL,0,0,0);
 
 	sqlite3_close(DB);
 }
@@ -122,7 +122,7 @@ void CMaster::pingReceived(int ping)
 		browsableGame->bv2Row = new stBV2row();
 		memcpy(browsableGame->bv2Row, m_games[0], sizeof(stBV2row));
 		browsableGame->ping = ping;
-		
+
 #ifndef DEDICATED_SERVER
 		//--- Push it into the lobby
 		if (lobby) lobby->pushGame(browsableGame);
@@ -188,7 +188,7 @@ void CMaster::update(float in_delay)
 	ReceivePeersPacket();
 
 	//--- Update le ping
-	if (m_ping) 
+	if (m_ping)
 	{
 		int ping = m_ping->update(in_delay);
 
@@ -232,7 +232,7 @@ void CMaster::update(float in_delay)
 	// check if we have gam einfos to send to the master
 	if( m_isConnected && uniqueClientID && messageStack.size() > 0 )
 	{
-		for (std::vector<SMasterMessage*>::iterator it = messageStack.begin(); 
+		for (std::vector<SMasterMessage*>::iterator it = messageStack.begin();
 			it != messageStack.end(); ++it)
 		{
 			bb_clientSend(uniqueClientID, (*it)->buffer, (*it)->size, (*it)->typeID);
@@ -289,7 +289,7 @@ void CMaster::ReceivePeersPacket()
 	int typeID;
 
 	while( buf = bb_peerReceive( &peerID, &typeID ))
-	{		
+	{
 		switch( typeID )
 		{
 			case NET_BROADCAST_GAME_INFO:
@@ -297,7 +297,7 @@ void CMaster::ReceivePeersPacket()
 				net_svcl_broadcast_game_info lanGame;
 
 				memcpy( &lanGame , buf , sizeof(net_svcl_broadcast_game_info));
-				
+
 				if( !stricmp( lanGame.key , "3333113333" ) )
 				{
 
@@ -305,10 +305,10 @@ void CMaster::ReceivePeersPacket()
 					//--- Add that BV2 to the GUIs
 					browsableGame->bv2Row = new stBV2row();
 
-					
+
 					memcpy(browsableGame->bv2Row, &(lanGame.GameInfo) , sizeof(stBV2row));
 					browsableGame->ping = 0;
-			
+
 					#ifndef DEDICATED_SERVER
 						//--- Push it into the lobby
 						if (lobby) lobby->pushGame(browsableGame);
@@ -333,9 +333,9 @@ void CMaster::ReceivePeersPacket()
 					net_svcl_broadcast_game_info gameInfos;
 
 					sprintf( gameInfos.key , "3333113333" );
-					
-					
-					
+
+
+
 					strncpy(gameInfos.GameInfo.map, RunningServer->game->mapName.s, 16);
 
 					char srvName[63];
@@ -393,7 +393,7 @@ void CMaster::ReceivePeersPacket()
 
 						CString log = CString("Remote admin logged in from IP %s",ip);
 						console->add( log );
-						
+
 						for( unsigned int z=0; z<m_peers.size(); z++ )
 						{
 							if( m_peers[z].peerId == peerID)
@@ -428,7 +428,7 @@ void CMaster::ReceivePeersPacket()
 
 				// tell him its over
 				bb_peerSend( peerID, 0, RA_VAR_END, 0, true );
-				
+
 				return;
 			}
 			case RA_DISCONNECT:
@@ -522,7 +522,7 @@ void CMaster::ReceivePeersPacket()
 						sprintf(map.mapName,"%s",maps[i].s);
 
 						// send the map entry
-						bb_peerSend( peerID, (char*)&map, RA_MAP_LIST_ENTRY, sizeof(net_ra_map_entry), true);	
+						bb_peerSend( peerID, (char*)&map, RA_MAP_LIST_ENTRY, sizeof(net_ra_map_entry), true);
 					}
 				}
 				return;
@@ -542,7 +542,7 @@ void CMaster::ReceivePeersPacket()
 						sprintf(map.mapName,"%s",maps[i].s);
 
 						// send the map entry
-						bb_peerSend( peerID, (char*)&map, RA_MAP_ROTATION_ENTRY, sizeof(net_ra_map_entry), true);	
+						bb_peerSend( peerID, (char*)&map, RA_MAP_ROTATION_ENTRY, sizeof(net_ra_map_entry), true);
 					}
 				}
 				return;
@@ -554,7 +554,7 @@ void CMaster::ReceivePeersPacket()
 				// a new file coming for us
 				net_ra_map_file_header header;
 				memcpy( &header , buf , sizeof(net_ra_map_file_header));
-				
+
 				// find our peer
 				for( unsigned int i=0; i<m_peers.size(); i++ )
 				{
@@ -608,7 +608,7 @@ void CMaster::ReceivePeersPacket()
 
 
 bool CMaster::IsRemoteAdmin( long in_peerId )
-{				
+{
 	for( unsigned int i=0; i<m_peers.size(); i++ )
 	{
 		if( m_peers[i].peerId == in_peerId)
@@ -759,10 +759,10 @@ void CMaster::recvPacket(const char * buffer, int typeID)
 			break;
 		}
 	case CACHE_ANSWER:
-		{	
+		{
 			stCacheAnswer ca;
 			memcpy(&ca,buffer,sizeof(stCacheAnswer));
-	
+
 			//add the answer to our list of cached answer for the server to check them later.
 			for( int i=0; i<64; i++ )
 			{
@@ -816,7 +816,7 @@ void CMaster::recvPacket(const char * buffer, int typeID)
 
 			// update the db
 			UpdateDB();
-			
+
 			break;
 		}
 	case SURVEY_CONFIRM:
@@ -827,11 +827,11 @@ void CMaster::recvPacket(const char * buffer, int typeID)
 			sqlite3 *DB=0;
 			sqlite3_open("bv2.db",&DB);
 			char	SQL[300];
-			
+
 			sprintf(SQL,"Update LauncherSettings Set Value = '1' Where Name = 'DidSurvey';");
 			sqlite3_exec(DB,SQL,0,0,0);
-			
-			
+
+
 			sqlite3_close(DB);
 			break;
 		}
@@ -931,7 +931,7 @@ void CMaster::GetMasterInfos()
 {
 	//connect to database
 	sqlite3 *db = 0;
-	
+
 	int rc = sqlite3_open("bv2.db",&db);
 	if(rc)
 	{
@@ -954,7 +954,7 @@ void CMaster::GetMasterInfos()
 	sprintf(SQL,"Select * From MasterServers;");
 	sqlite3_get_table(db,SQL,&azResult,&nRow,&nColumn,&zErrMsg);
 
-	
+
 	int i,best=9999,bestIndex=0;
 	for(i=0;i<nRow;i++)
 	{
@@ -974,7 +974,7 @@ void CMaster::GetMasterInfos()
 	sqlite3_get_table(db,SQL,&azResult,&nRow,&nColumn,&zErrMsg);
 
 	sprintf( m_CurrentVersion , azResult[1] );
-	
+
 	sqlite3_free_table(azResult);
 	sqlite3_close( db );
 }
@@ -1094,7 +1094,7 @@ void CMaster::requestRemoteCacheList(CString& strFilter, CString& serverIP, CStr
 	sprintf( clr.Filter , "%s", strFilter.s );
 	sprintf( clr.ServerIP , "%s", serverIP.s );
 	sprintf( clr.ServerPort , "%s", serverPort.s );
-	
+
 	sendPacket( (char*)&clr , sizeof(stCacheListRemote) , CACHE_LIST_REMOTE );
 }
 

@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -93,7 +93,7 @@ Scene::Scene()
 //	menu = new Menu();
 //	createSurvey();
 //	createMenu();
-	
+
 	//--- Overall control
 	/*menuManager.root = new CControl();
 	menuManager.root->font = font;
@@ -132,7 +132,7 @@ Scene::Scene()
 	int didSurvey = atoi(azResult[1]);
 	sqlite3_free_table(azResult);
 	sqlite3_close( DB );
-	
+
 	surveySent = (didSurvey == 0 ? false : true);
 
 #endif
@@ -194,7 +194,7 @@ void Scene::update(float delay)
 	{
 		introScreen->update(delay);
 	//	menu->update(delay); // ??? wtf
-		if (introScreen->showDelay <= 0) 
+		if (introScreen->showDelay <= 0)
 		{
 			ZEVEN_SAFE_DELETE(introScreen);
 		//	menu->isReady = true;
@@ -430,7 +430,7 @@ void Scene::render()
 					//--- Copyrights (replaced by head games logo)
 				//	printRightText((float)res[0]-5, (float)res[1]-100-5, 16, CString("Copyright (c) RndLabs Inc. 2006-2007"));
 				//	printRightText((float)res[0]-5, (float)res[1]-100-5+16, 16, CString("All Rights Reserved"));
-					
+
 				//	printRightText((float)res[0]-5, (float)res[1]-32-5-32, 32, CString("server version %01i.%02i.%02i", (int)GAME_VERSION_SV/10000, (int)(GAME_VERSION_SV%1000)/100, ((int)GAME_VERSION_SV%100)));
 				//	printRightText((float)res[0]-5, (float)res[1]-32-5-64, 32, CString("Babonet version %s", bbNetVersion));
 				}
@@ -519,7 +519,7 @@ void Scene::render()
 					//--- Copyrights (replaced by head games logo)
 				//	printRightText((float)res[0]-5, (float)res[1]-100-5, 16, CString("Copyright (c) RndLabs Inc. 2006-2007"));
 				//	printRightText((float)res[0]-5, (float)res[1]-100-5+16, 16, CString("All Rights Reserved"));
-					
+
 				//	printRightText((float)res[0]-5, (float)res[1]-32-5-32, 32, CString("server version %01i.%02i.%02i", (int)GAME_VERSION_SV/10000, (int)(GAME_VERSION_SV%1000)/100, ((int)GAME_VERSION_SV%100)));
 				//	printRightText((float)res[0]-5, (float)res[1]-32-5-64, 32, CString("Babonet version %s", bbNetVersion));
 				}

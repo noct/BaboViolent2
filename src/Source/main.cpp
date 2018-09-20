@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -275,7 +275,7 @@ public:
   //       throw(0);
   //       }
       #endif
-      #endif  
+      #endif
       #endif
 	}
 
@@ -334,7 +334,7 @@ public:
 			ts.tv_sec = 0;
 			ts.tv_nsec = 1000000;
 		#endif
-	
+
 
 		while (!quit)
 		{
@@ -439,8 +439,8 @@ public:
 				}
 				ts.tv_sec = 0;
 				ts.tv_nsec = 1000000;
-				
-				
+
+
 			#endif
 		//	printf("--- internalLock (lock)\n");
 		}
@@ -467,7 +467,7 @@ int main(int argc, const char* argv[])
 	printf("* to configure your server            *\n");
 	printf("***************************************\n\n\n");
 
-	
+
 	// Example on how to get the mac adress
 	//unsigned char mac[8];		// unsigned here is very important
 	//bb_getMyMAC( mac );
@@ -540,7 +540,7 @@ int main(int argc, const char* argv[])
 			ts.tv_sec = 0;
 			ts.tv_nsec = 1000000;
 		#endif
-	
+
 
 		float tim = 0;
 
@@ -703,7 +703,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,				// Instance
 
 
 	//--- Windowed mode requires special handling
-	if (!dkwInit(gameVar.r_resolution[0], gameVar.r_resolution[1], gameVar.r_bitdepth, gameVar.lang_gameName.s, &mainLoopInterface, gameVar.r_fullScreen, gameVar.r_refreshRate)) 
+	if (!dkwInit(gameVar.r_resolution[0], gameVar.r_resolution[1], gameVar.r_bitdepth, gameVar.lang_gameName.s, &mainLoopInterface, gameVar.r_fullScreen, gameVar.r_refreshRate))
 	{
 		char * error = dkwGetLastError();
 		MessageBox(NULL, error, "Error", 0);
@@ -725,7 +725,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,				// Instance
 	}
 
 	// On cr�notre API openGL (This does nothing anymore
-	if (!dkglCreateContext(dkwGetDC(), gameVar.r_bitdepth)) 
+	if (!dkglCreateContext(dkwGetDC(), gameVar.r_bitdepth))
 	{
 		dkiShutDown();
 		dkwShutDown();

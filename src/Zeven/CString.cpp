@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -39,7 +39,7 @@ CString::CString(char* fmt, ...)
 {
     static char mString[MAX_CARAC];
 
-    
+
 	if (!fmt)
 	{
 		s = new char [1];
@@ -76,7 +76,7 @@ CString::CString(char* fmt, ...)
 ///
 /// \param newSize : Nouvelle taille.
 ///
-/// \see 
+/// \see
 /// http://www.cplusplus.com/ref/cstdio/sprintf.html
 ////////////////////////////////////////////////////////////////////////////////////////
 void CString::resize(int newSize)
@@ -180,7 +180,7 @@ void CString::set(char* fmt, ...){
 bool CString::checkExtension(char * extension)
 {
 	// On v�ifie que le string est bon
-	if (!extension) 
+	if (!extension)
 	{
 		return false;
 	}
@@ -360,7 +360,7 @@ CString CString::getFirstToken(int caracterSeparator)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Recherche de caract�es
 ///
-///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de 
+///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
 /// la trouver dans la cha�e (s). (Seule la premi�e occurence de la cha�e est trouv�)
 ///
 /// \param string : Cha�e de caract�e �trouver.
@@ -381,7 +381,7 @@ bool CString::find(CString string)
 	//on parcours la cha�e pour essayer de trouver la sub-string
 	for (int i=0; i < (len_1 - len_2 + 1); i++)
 	{
-		if (strnicmp(&(s[i]), string.s, len_2) == 0) 
+		if (strnicmp(&(s[i]), string.s, len_2) == 0)
 		{
 			return true;
 		}
@@ -393,7 +393,7 @@ bool CString::find(CString string)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Recherche de caract�es avec pointeur sur la string trouv�
 ///
-///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de 
+///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
 /// la trouver dans la cha�e (s). La fonction recoit aussi un pointeur en param�re qui
 /// va pointer au d�ut de la cha�e trouv�. (Seule la premi�e occurence de la cha�e est trouv�)
 ///
@@ -426,7 +426,7 @@ bool CString::find(CString string, char* strFound)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Recherche de caract�es avec position de la string trouv�
 ///
-///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de 
+///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
 /// la trouver dans la cha�e (s). La position de la cha�e est aussi retourn�
 /// (Seule la premi�e occurence de la cha�e est trouv�.)
 ///
@@ -459,7 +459,7 @@ bool CString::find(CString string, int & index)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Recherche de caract�es avec pointeur et position de la string trouv�
 ///
-///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de 
+///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
 /// la trouver dans la cha�e (s). La position de la cha�e est aussi retourn�
 /// (Seule la premi�e occurence de la cha�e est trouv�.)
 ///
@@ -495,7 +495,7 @@ bool CString::find(CString string, char* strFound, int & index)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Recherche de caract�es
 ///
-///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de 
+///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
 /// la trouver dans la cha�e (s). (Seule la premi�e occurence de la cha�e est trouv�)
 ///
 /// \param string_ : Cha�e de caract�e �trouver.
@@ -513,7 +513,7 @@ bool CString::find(char* string_)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Recherche de caract�es avec pointeur sur la string trouv�
 ///
-///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de 
+///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
 /// la trouver dans la cha�e (s). La fonction recoit aussi un pointeur en param�re qui
 /// va pointer au d�ut de la cha�e trouv�. (Seule la premi�e occurence de la cha�e est trouv�)
 ///
@@ -534,7 +534,7 @@ bool CString::find(char* string_, char* strFound)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Recherche de caract�es avec position de la string trouv�
 ///
-///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de 
+///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
 /// la trouver dans la cha�e (s). La position de la cha�e est aussi retourn�
 /// (Seule la premi�e occurence de la cha�e est trouv�.)
 ///
@@ -554,7 +554,7 @@ bool CString::find(char* string_, int & index)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Recherche de caract�es avec pointeur et position de la string trouv�
 ///
-///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de 
+///	Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
 /// la trouver dans la cha�e (s). La position de la cha�e est aussi retourn�
 /// (Seule la premi�e occurence de la cha�e est trouv�.)
 ///

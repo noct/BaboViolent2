@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -45,15 +45,15 @@ private:
 		FILE * LogFile;
 	#endif
 
-	
+
 		//une struct qu'on va se servir pour envoyer du data
-	struct stPacket			
+	struct stPacket
 	{
 		unsigned short	Size;		//le Size du packet TOTAL
 		unsigned short	TypeID;		//le type du packet
         char			*data;		//un array dynamique qui tien le data a envoyer
 	};
-	
+
 
 	//TCP streaming
 	stPacket		lastPacket;			// garde le data du packet qui se fait recevoir
@@ -72,7 +72,7 @@ private:
 	//char			UDPlastHeader[4];		// va garder le dernier header ( pour les receptions partielle )
 	//bool			UDPWaitingForHeader;	// est-ce que c un header qu'on attend
 	//bool			UDPPartialHeader;		// savoir si on est entrain de completer un header partiel
-	
+
 
 
 
@@ -94,7 +94,7 @@ public:
 	bool			UDPenabled;			//savoir si on a une gestion de UDP a faire
 
 	//FILE *fp;							//pour debugger
-	
+
 	cConnection		*Connection;		//pointeur sur notre objet qui fait la connection
 	bool			isConnected;		//va etre a true juste si une connexion a pu setablir
 
@@ -112,10 +112,10 @@ public:
 	cPacket			*UDPPacketsToSend;	// liste des packet a envoyer en UDP
 
 	cPacket			*ReceivedPackets;	// garde les packet pret a etre pris par bb_serverReceive ou bb_clientReveive
-	
+
 	char			LastError[256];		// garde la derniere erreur cote serveur
 	char			LastMessage[256];	// garde le dernier message cote serveur
-	
+
 	int				UDPfd;			// garde le file descriptor pour communiquer en udp
 	int				FileDescriptor;	// garde le file descriptor creer par le socket pour communiquer avec ce client
 	int				FileDescriptorS;// garde le file descriptor creer par le socket pour communiquer avec ce client, persu du serveur
@@ -136,9 +136,9 @@ public:
 	void			CloseSocket(int socketFD);						//closes a socket
 	int				ReceivePacketsFromServer();						//permet de lire ce qui sen vient du serveur, 0 tout est beau, 1 erreur, 2 = connection perdu
 	int				SendPacketsToServer();							//permet denvoyer les packets au serveur
-	
+
 	int				UpdateConnection(float elapsed);				//donne de lattention au connection process
-	
+
 	INT4			IsReadyToSend();								//to know if the server can send data to this client, returns BBNET_ERROR in case of an error, 1 in case of a 'yes', and 0 in case of a 'No'
 	INT4			IsReadyToReceive();								//to know if the server can receive data from this client, returns BBNET_ERROR in case of an error, 1 in case of a 'yes', and 0 in case of a 'No'
 

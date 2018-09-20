@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -29,7 +29,7 @@
 class CParticle
 {
 public:
-	// Sa texture utilisé
+	// Sa texture utilisÃ©
 	unsigned int texture;
 
 	// La position de la particle
@@ -38,28 +38,28 @@ public:
 	// Sa position au dernier frame
 	CPoint3f lastPosition;
 
-	// Sa couleur au début
+	// Sa couleur au dÃ©but
 	CColor4f startColor;
 
-	// Sa couleur à la fin
+	// Sa couleur Ã  la fin
 	CColor4f endColor;
 
-	// Sa velocité
+	// Sa velocitÃ©
 	CVector3f vel;
 
-	// Sa vie (0 à 1) (1 étant mort)
+	// Sa vie (0 Ã  1) (1 Ã©tant mort)
 	float life;
 
-	// Sa duré de vie, sec / duré
+	// Sa durÃ© de vie, sec / durÃ©
 	float fadeSpeed;
 
-	// Sa grosseur au début
+	// Sa grosseur au dÃ©but
 	float startSize;
 
-	// Sa grosseur à la fin
+	// Sa grosseur Ã  la fin
 	float endSize;
 
-	// Sa densité (1 = fully attracted by gravity)
+	// Sa densitÃ© (1 = fully attracted by gravity)
 	float density;
 
 	// Son angle de rotation
@@ -68,11 +68,11 @@ public:
 	// La vitesse de rotation de son angle
 	float rotationSpeed;
 
-	// La fonction de blending utilisé
+	// La fonction de blending utilisÃ©
 	unsigned int srcBlend;
 	unsigned int dstBlend;
 
-	// Pour la résistance de l'air
+	// Pour la rÃ©sistance de l'air
 	float airResistanceInfluence;
 
 	// La distance avec la camera
@@ -113,7 +113,7 @@ public:
 		unsigned int dstBlend,
 		int transitionFunc);
 	virtual ~CParticle();
-	
+
 	// Pour l'updater
 	int update();
 

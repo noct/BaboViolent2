@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -65,7 +65,7 @@
 
 //quelques proprietes globale
 
-	
+
 	float			ConnCheck=0;		// va mesurer le delay avant qu'on update les incoming connections
 	UINT4		LastClientID=0;		// keep last emitted client ID
 
@@ -82,7 +82,7 @@
 	FILE * LogFile=0;
 #endif
 
-#ifdef __MACOSX__		
+#ifdef __MACOSX__
 static struct ifaddrs * ifdevices = 0;
 static char iface[8];
 #endif
@@ -123,16 +123,16 @@ int bb_init()
 	#ifdef WIN32
 		// Tiens les infos sur winsock, dont la version
 			WSADATA		WinSockInfo;
-				
-			int error = WSAStartup (0x0202, &WinSockInfo);  
-            	
+
+			int error = WSAStartup (0x0202, &WinSockInfo);
+
 		// Si il y a une erreur
 			if (error)
 			{
 				//sprintf(LastError,"Error : Problem loading Winsock infos");
 				return 1;
 			}
-	
+
 		// On check si c'est la bonne version de winsock
 			if (WinSockInfo.wVersion != 0x0202)
 			{
@@ -161,7 +161,7 @@ int bb_init()
 		Server		=	0;
 		MainClients	=	0;
 		P2P			=	0;
-		
+
 #ifdef __MACOSX__
 		getifaddrs(& ifdevices);
 		struct ifaddrs * a = ifdevices;
@@ -178,7 +178,7 @@ int bb_init()
 			a =	 a->ifa_next;
 		}
 #endif
- 	
+
 
 		//UDPserver	=	new cUDPserver();
 
@@ -200,11 +200,11 @@ int	bb_serverCreate(bool UDPenabled,int maxClients,unsigned short listenPort)
 	//si un serveur etait existant on va le deleter dabord
 	if(Server) delete Server;
 
-	
+
 	//UDPserver->BindPort(listenPort);
 	Server = new cServer(UDPenabled,maxClients,listenPort);
 	//UDPserver->Server	=	Server;
-	
+
 	if(listenPort==11111)
 	{
 		sprintf(Server->LastError,"Error spawning server, invalid port, 11111 is bbnet reserved");
@@ -274,17 +274,17 @@ INT4 bb_serverUpdate(float elapsed,int updateMsg,char* newIP)
 		{
 			//envoyer le stock TCP/UDP
 			if(Server->SendPacketsToClients()) return BBNET_ERROR;
-			
+
 			//recevoir TCP/UDP
 			INT4 r = Server->ReceivePacketsFromClients();
 			if(r) return r;
 
-			
+
 			//on update les connections
 			if(ConnCheck >= 0.5f)
 			{
 				ConnCheck = 0;
-				
+
 				if(Server->PendingConnections)
 				{
 					return Server->UpdateConnections(newIP);
@@ -305,12 +305,12 @@ INT4 bb_serverUpdate(float elapsed,int updateMsg,char* newIP)
 			INT4 r = Server->ReceivePacketsFromClients();
 			if(r) return r;
 
-			
+
 			//on update les connections
 			if(ConnCheck >= 0.5f)
 			{
 				ConnCheck = 0;
-				
+
 				if(Server->PendingConnections)
 				{
 					return Server->UpdateConnections(newIP);
@@ -430,7 +430,7 @@ int bb_clientUpdate(UINT4 clientID,float elapsed,int updateMsg)
 				//on recois TCP/UDP du serveur
 				int r = c->ReceivePacketsFromServer();
 				if(r) return r;
-			
+
 				//on envoi au serveur TCP/UDP
 				if(c->SendPacketsToServer()) return 1;
 
@@ -457,7 +457,7 @@ int bb_clientUpdate(UINT4 clientID,float elapsed,int updateMsg)
 	else	//on est pas encore connecter
 	{
 		int r = c->UpdateConnection(elapsed);
-		
+
 		if(r==2)	//connection reussi!
 		{
 			c->isConnected = true;
@@ -581,7 +581,7 @@ void bb_shutdown()
 {
 	if(Server)		delete Server;
 	Server		=	0;
-	
+
 	cClient *toKill = 0;
 	for(cClient *c = MainClients;c;delete toKill)
 	{
@@ -593,7 +593,7 @@ void bb_shutdown()
 
 	if(P2P)			delete P2P;
 	P2P			=	0;
-	
+
 	#ifdef WIN32
 		WSACleanup();
 	#endif
@@ -622,7 +622,7 @@ int bb_clientDisconnect(UINT4 clientID)
 	if(c == MainClients) MainClients = MainClients->Next;
 
 	delete c;
-	
+
 	return 0;
 }
 
@@ -637,7 +637,7 @@ int bb_serverShutdown()
 	if(!Server) return 1;
 	delete Server;
 	Server = 0;
-	
+
 	//if(MainClient) delete MainClient;
 	//MainClient = 0;
 
@@ -678,7 +678,7 @@ char *bb_getMyIP()
     	}
     }
     return ip;
-    
+
 #else
 		unsigned char      *u;
 		int                sockfd, size  = 1;
@@ -691,10 +691,10 @@ char *bb_getMyIP()
 			perror("Socket Creation");
 			return 0;
 		}
-		
+
 		ifc.ifc_len = IFRSIZE;
 		ifc.ifc_req = NULL;
-		
+
 		do
 		{
 			++size;
@@ -704,7 +704,7 @@ char *bb_getMyIP()
 				perror("Realloc buffer size");
 				return 0;
 			}
-	
+
 			ifc.ifc_len = IFRSIZE;
 			if (ioctl(sockfd, SIOCGIFCONF, &ifc))
 			{
@@ -713,24 +713,24 @@ char *bb_getMyIP()
 			}
 		} while  (IFRSIZE <= ifc.ifc_len);
 
-		
+
 		ifr = ifc.ifc_req;
 		int ii = 0;
 		for (;(char *) ifr < (char *) ifc.ifc_req + ifc.ifc_len; ++ifr)
 		{
-		
+
 			if (ifr->ifr_addr.sa_data == (ifr+1)->ifr_addr.sa_data)
 			{
 				continue;  /* duplicate, skip it */
 			}
-		
+
 			if (ioctl(sockfd, SIOCGIFFLAGS, ifr))
 			{
 				continue;  /* failed to get flags, skip it */
 			}
 
 			ii++;
-			
+
 			if(ii==2)
 			{
 				CloseSocket(sockfd);
@@ -766,7 +766,7 @@ void bb_getMyMAC(unsigned char * AddrOut)
 			PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo;	// Contains pointer to
 															// current adapter info
 
-			
+
 
 
 			do
@@ -783,7 +783,7 @@ void bb_getMyMAC(unsigned char * AddrOut)
 #elif __MACOSX__
     struct sockaddr_dl * sdl;
     struct ifaddrs * a = ifdevices;
-	
+
 	while(a)
 	{
 		if(a->ifa_addr->sa_family == AF_LINK)
@@ -792,7 +792,7 @@ void bb_getMyMAC(unsigned char * AddrOut)
 			{
 				sdl = (struct sockaddr_dl *) a->ifa_addr;
 				if(memcmp(sdl->sdl_data, iface, sdl->sdl_nlen) == 0)
-				{ 
+				{
 					memcpy(AddrOut, sdl->sdl_data, sdl->sdl_alen);
 					break;
 				}
@@ -800,11 +800,11 @@ void bb_getMyMAC(unsigned char * AddrOut)
 		}
 		a = a->ifa_next;
 	}
-	
+
 #else
 
 		// temporarly we dont do it on linux
-	
+
 		//unsigned char      *u;
 		//int                sockfd, size  = 1;
 		//struct ifreq       *ifr;
@@ -829,7 +829,7 @@ void bb_getMyMAC(unsigned char * AddrOut)
 		//		perror("Realloc buffer size");
 		//		return 0;
 		//	}
-	
+
 		//	ifc.ifc_len = IFRSIZE;
 		//	if (ioctl(sockfd, SIOCGIFADDR, &ifc))
 		//	{
@@ -855,7 +855,7 @@ void bb_getMyMAC(unsigned char * AddrOut)
 		//	}
 
 		//	ii++;
-		//	
+		//
 		//	if(ii==2)
 		//	{
 		//		CloseSocket(sockfd);
@@ -889,7 +889,7 @@ int	bb_peerBindPort(unsigned short listenPort)
 	P2P->BindPort(listenPort);
 
 	/*UDPserver->BindPort(listenPort);
-	
+
 	FD_ZERO(&(P2P->master));
 	FD_ZERO(&(P2P->BCmaster));
 	FD_SET(UDPserver->UDPfd,&(P2P->master));
@@ -916,7 +916,7 @@ int	bb_peerSend(char *IP,unsigned short port,char *data,int typeID,int dataSize,
 	if(!(IP[0] >= 48 && IP[0] <= 57))
 	{
 		//si on est pas numeric, on part une thread qui va pogner le host by name
-		
+
 		ipAdress.sin_addr.s_addr = 0;
 
 		bool exist=false;
@@ -929,7 +929,7 @@ int	bb_peerSend(char *IP,unsigned short port,char *data,int typeID,int dataSize,
 
 		memcpy(newData,&newid,sizeof(UINT4));
 
-        
+
 		if(P2P->SendTo(newID,new cUDPpacket(0,0,(char*)newData,TYPE_DEMAND,sizeof(UINT4),true)))
 		{
 			//une erreur s'est produite
@@ -959,7 +959,7 @@ int	bb_peerSend(char *IP,unsigned short port,char *data,int typeID,int dataSize,
 	//fprintf(fp,"> CREATION DUN PEER VIA bb_peerSend %s:%i     exist = %i\n",IP,port,(int)exist);
 	//fclose(fp);
 
-	
+
 	//on va envoyer un message au Peer dans lequel on pack simplement son new id
 	if(!exist)
 	{
@@ -968,7 +968,7 @@ int	bb_peerSend(char *IP,unsigned short port,char *data,int typeID,int dataSize,
 
 		memcpy(newData,&newid,sizeof(UINT4));
 
-        
+
 		if(P2P->SendTo(newID,new cUDPpacket(0,0,(char*)newData,TYPE_DEMAND,sizeof(UINT4),true)))
 		{
 			//une erreur s'est produite
@@ -991,7 +991,7 @@ int	bb_peerSend(char *IP,unsigned short port,char *data,int typeID,int dataSize,
 
 
 	return exist ? 0 : newID;
-	
+
 }
 
 int	bb_peerSend(INT4 peerID,char *data,int typeID,int dataSize,bool safe)
@@ -1064,7 +1064,7 @@ int bb_peerUpdate(float elapsed,bool & isNew)
 	{
 		P2P = new cPeer2Peer();
 	}
-	
+
 	//on va recevoir le stock upd
 	if(P2P->ReceiveFromPeers()) return -1;
 
@@ -1100,7 +1100,7 @@ int	bb_peerDelete(UINT4 baboNetID,bool instant)
 
 
 	}
-	
+
 	return 0;
 }
 
@@ -1127,7 +1127,7 @@ int	bb_peerDelete(UINT4 baboNetID,bool instant)
 //	else
 //	{
 //		delete P2P->BCPeer;
-//		
+//
 //		P2P->BCport					=	broadcastPort;
 //
 //		sockaddr_in newIp;

@@ -1,7 +1,7 @@
 /**************************************************************************
- * 3D Studio File Toolkit for Release 3 
- * 
- * (C) Copyright 1997 by Autodesk, Inc. 
+ * 3D Studio File Toolkit for Release 3
+ *
+ * (C) Copyright 1997 by Autodesk, Inc.
  *
  * License Agreement
  *
@@ -23,11 +23,11 @@
  *           Program, (iv) contain the disclaimer of warranty and all
  *           notices that refer to this License and to the absence of
  *           any warranty;
- *     (v)   add substantial value in addition to the Autodesk Program. 
+ *     (v)   add substantial value in addition to the Autodesk Program.
  *
  * Any derivative or modification of this Autodesk Program must be
  * distributed, published and licensed under the same conditions as
- * this License.  
+ * this License.
  *
  * You may not license or distribute the Autodesk Program as a standalone
  * program or product including OEM and private label.
@@ -35,12 +35,12 @@
  * You may not use, copy, modify, sublicense or distribute the Autodesk
  * Program or any portion thereof in any form if such use or distribution
  * is not expressly licensed and or is expressly prohibited under this
- * License. 
- * 
+ * License.
+ *
  * You acknowledge and agree that Autodesk shall own all right, title
  * and interest in the Autodesk Program and all rights in patents whether
  * now known or hereafter discovered. You do not hold and shall not claim
- * any interest whatsoever in the Autodesk Program.  
+ * any interest whatsoever in the Autodesk Program.
  *
  * You agree that the Autodesk Program, any portion or derivative
  * thereof will not be shipped, transferred or exported into any country
@@ -70,7 +70,7 @@
  * DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR
  * THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
  * SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
+ * POSSIBILITY OF SUCH DAMAGES.
  *
  * This License will be governed by the laws of the State of California,
  * U.S.A., excluding the application of its conflicts of law rules.
@@ -82,7 +82,7 @@
  * automatically if you fail to comply with the terms herein.  All
  * sublicenses to the Autodesk Program which are properly granted shall
  * survive any termination of this license.
- *************************************************************************/ 
+ *************************************************************************/
 
 #ifndef CHUNK_INF_3DS_H
 #define CHUNK_INF_3DS_H
@@ -92,7 +92,7 @@
 /* Private Typedefs */
 
 /* chunktag3ds - enumeration of all possible chunk type identifiers. See appendix for */
-/* more information concerning chunk structures */   
+/* more information concerning chunk structures */
 typedef enum
 {
         /* Trick Chunk Flags For ChunkSyntax function */
@@ -124,7 +124,7 @@ typedef enum
    MORPH_TRACK_TAG_KEY    = 0xF026,
    HOT_TRACK_TAG_KEY      = 0xF027,
    FALL_TRACK_TAG_KEY     = 0xF028,
-   
+
    /* 3DS File Chunk IDs */
 
    M3DMAGIC               = 0x4D4D,
@@ -162,9 +162,9 @@ typedef enum
    SHADOW_RANGE           = 0x1440,
    SHADOW_FILTER          = 0x1450,
    RAY_BIAS               = 0x1460,
- 
+
    O_CONSTS               = 0x1500,
- 
+
    AMBIENT_LIGHT          = 0x2100,
 
    FOG                    = 0x2200,
@@ -207,7 +207,7 @@ typedef enum
    TEX_VERTS              = 0x4140,
    SMOOTH_GROUP           = 0x4150,
    MESH_MATRIX            = 0x4160,
-   MESH_COLOR             = 0x4165,   
+   MESH_COLOR             = 0x4165,
    MESH_TEXTURE_INFO      = 0x4170,
    PROC_NAME              = 0x4181,
    PROC_DATA              = 0x4182,
@@ -215,7 +215,7 @@ typedef enum
 
    N_D_L_OLD              = 0x4400,
 
-   N_CAM_OLD              = 0x4500,   
+   N_CAM_OLD              = 0x4500,
 
    N_DIRECT_LIGHT         = 0x4600,
    DL_SPOTLIGHT           = 0x4610,
@@ -311,7 +311,7 @@ typedef enum
    XDATA_RFU3 = 0x800D,
    XDATA_RFU2 = 0x800E,
    XDATA_RFU1 = 0x800F,
-   
+
    PARENT_NAME = 0x80F0,
 
    /* Material Chunk IDs */
@@ -427,7 +427,7 @@ typedef enum
    FALL_TRACK_TAG         = 0xB028,
    HIDE_TRACK_TAG         = 0xB029,
    NODE_ID                = 0xB030,
-   
+
    CMAGIC = 0xC23D,
 
    C_MDRAWER = 0xC010,

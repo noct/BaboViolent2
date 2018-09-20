@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -67,7 +67,7 @@ CdkoMaterial::~CdkoMaterial()
 
 
 //
-// Les pass pour les différentes couches du rendu
+// Les pass pour les diffÃ©rentes couches du rendu
 //
 void CdkoMaterial::setDiffusePass()
 {
@@ -75,9 +75,9 @@ void CdkoMaterial::setDiffusePass()
 #ifndef _DX_
 	glMaterialfv(GL_FRONT,GL_AMBIENT,ambient); // L'ambient
 	glMaterialfv(GL_FRONT,GL_DIFFUSE,diffuse); // La couleur diffuse
-	glMaterialfv(GL_FRONT,GL_SPECULAR,specular); // La couleur et intensité spécular
+	glMaterialfv(GL_FRONT,GL_SPECULAR,specular); // La couleur et intensitÃ© spÃ©cular
 	glMaterialfv(GL_FRONT,GL_EMISSION,emissive); // Le seft illumination
-	glMateriali(GL_FRONT,GL_SHININESS, shininess); // L'intensité du spécular : reflet de lumière
+	glMateriali(GL_FRONT,GL_SHININESS, shininess); // L'intensitÃ© du spÃ©cular : reflet de lumiÃ¨re
 
 	glPushAttrib(GL_POLYGON_BIT | GL_LINE_BIT | GL_ENABLE_BIT);
 	glMatrixMode(GL_TEXTURE);
@@ -137,7 +137,7 @@ void CdkoMaterial::setDetailPass()
 	glBlendFunc(GL_DST_COLOR,GL_ZERO);
 
 	if (twoSided) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE);
-	if (wire || CDko::renderStateBitField & DKO_FORCE_WIREFRAME) 
+	if (wire || CDko::renderStateBitField & DKO_FORCE_WIREFRAME)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glLineWidth(wireSize);
@@ -155,9 +155,9 @@ void CdkoMaterial::setSpecularPass()
 	float zero[] = {0,0,0,1};
 	glMaterialfv(GL_FRONT,GL_AMBIENT,zero); // L'ambient
 	glMaterialfv(GL_FRONT,GL_DIFFUSE,zero); // La couleur diffuse
-	glMaterialfv(GL_FRONT,GL_SPECULAR,specular); // La couleur et intensité spécular
+	glMaterialfv(GL_FRONT,GL_SPECULAR,specular); // La couleur et intensitÃ© spÃ©cular
 	glMaterialfv(GL_FRONT,GL_EMISSION,zero); // Le seft illumination
-	glMateriali(GL_FRONT,GL_SHININESS, shininess); // L'intensité du spécular : reflet de lumière
+	glMateriali(GL_FRONT,GL_SHININESS, shininess); // L'intensitÃ© du spÃ©cular : reflet de lumiÃ¨re
 
 	glPushAttrib(GL_POLYGON_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -166,7 +166,7 @@ void CdkoMaterial::setSpecularPass()
 	if ((textureMat || texSpecular) && CDko::renderStateBitField & DKO_SPECULAR_MAP)
 	{
 	//	float one[] = {1,1,1,1};
-	//	glMaterialfv(GL_FRONT,GL_SPECULAR,one); // La texture remplace la couleur spéculaire
+	//	glMaterialfv(GL_FRONT,GL_SPECULAR,one); // La texture remplace la couleur spÃ©culaire
 		glEnable(GL_TEXTURE_2D);
 		if (textureMat)
 		{
@@ -187,7 +187,7 @@ void CdkoMaterial::setSpecularPass()
 	glBlendFunc(GL_DST_ALPHA, GL_ONE);
 
 	if (twoSided) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE);
-	if (wire || CDko::renderStateBitField & DKO_FORCE_WIREFRAME) 
+	if (wire || CDko::renderStateBitField & DKO_FORCE_WIREFRAME)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glLineWidth(wireSize);
@@ -221,7 +221,7 @@ void CdkoMaterial::setSelfIllPass()
 	glBlendFunc(GL_ONE, GL_ONE);
 
 	if (twoSided) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE);
-	if (wire || CDko::renderStateBitField & DKO_FORCE_WIREFRAME) 
+	if (wire || CDko::renderStateBitField & DKO_FORCE_WIREFRAME)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glLineWidth(wireSize);
@@ -239,7 +239,7 @@ void CdkoMaterial::setSelfIllPass()
 //
 int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
 {
-	// On load chunk par chunk jusqu'à ce qu'on pogne le chunk End
+	// On load chunk par chunk jusqu'Ã  ce qu'on pogne le chunk End
 	short chunkID = readChunk(ficIn);
 
 	while (chunkID != CHUNK_DKO_END)

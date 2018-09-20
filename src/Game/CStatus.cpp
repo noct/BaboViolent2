@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -36,9 +36,9 @@ CStatus::~CStatus()
 	if(m_status != OFFLINE)
 	{
 		set(OFFLINE);
-		while(m_requests.size() > 0) 
+		while(m_requests.size() > 0)
 		{
-			processQueue(); 
+			processQueue();
 		}
 	}
 }
@@ -93,7 +93,7 @@ void CStatus::update()
 		data.add("server_ip", m_ip.s);
 		data.add("server_port", m_port);
 	}
-	
+
 	CCurl* request = new CCurl(gameVar.db_accountServer, data.get());
 	request->start();
 	m_requests.push_back(request);
@@ -108,7 +108,7 @@ void CStatus::processQueue()
 	{
 		// Iterate through requests
 		int i;
-		for (i=0;i<(int)m_requests.size();++i)	
+		for (i=0;i<(int)m_requests.size();++i)
 		{
 			if (m_requests[i])
 			{

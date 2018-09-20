@@ -11,7 +11,7 @@ typedef unsigned int UINT4;
 #else
 typedef long int INT4;
 typedef unsigned long int UINT4;
-#endif 
+#endif
 #endif
 #endif
 

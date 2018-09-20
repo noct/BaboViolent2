@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -41,8 +41,8 @@ cServer::cServer()
 	BytesSent		=	0;
 	BytesReceived	=	0;
 
-	
-	
+
+
 }
 
 cServer::cServer(bool udpenabled,int maxclients,unsigned short port)
@@ -83,8 +83,8 @@ cServer::cServer(bool udpenabled,int maxclients,unsigned short port)
 	Timeout.tv_usec =	0;
 
 	Listener = 0;
-	
-	
+
+
 	if(PrepareHosting())
 	{
 		sprintf(LastMessage,"Error spawning server - See bb_serverGetLastError");
@@ -110,7 +110,7 @@ int cServer::PrepareHosting()
 	}
 
     	// get the listener TCP
-    	if ((Listener = (int)socket(PF_INET, SOCK_STREAM, 0)) == -1) 
+    	if ((Listener = (int)socket(PF_INET, SOCK_STREAM, 0)) == -1)
 	{
 		printf("Error : Problem Creating Listener Socket TCP\n");
 		//sprintf(LastError,"Error : Problem Creating Listener Socket TCP");
@@ -118,7 +118,7 @@ int cServer::PrepareHosting()
     	}
 
 	// lose the pesky "address already in use" error message
-	#ifdef WIN32	
+	#ifdef WIN32
 		char yes = '1';
 	#else
 		int yes = 1;
@@ -135,14 +135,14 @@ int cServer::PrepareHosting()
 	if(UDPenabled)
 	{
 		//on va creer le socket UDP
-		if ((UDPfd = (int)socket(PF_INET, SOCK_DGRAM, 0)) == -1) 
+		if ((UDPfd = (int)socket(PF_INET, SOCK_DGRAM, 0)) == -1)
 		{
 			sprintf(LastError,"Error : Problem creating ServerSocket UDP");
 			return 1;
 		}
 
 		// lose the pesky "address already in use" error message
-		if (setsockopt(UDPfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) 
+		if (setsockopt(UDPfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
 		{
 			sprintf(LastError,"Error : Problem on setsockopt() for the ServerSocket SO_REUSEADDR UDP");
 			return 1;
@@ -168,7 +168,7 @@ int cServer::PrepareHosting()
 	}
 
 
-	
+
 	//Setup les infos sur notre connection
     	ipAdress.sin_family			=	AF_INET;
 	ipAdress.sin_addr.s_addr		=	INADDR_ANY;
@@ -226,10 +226,10 @@ int cServer::SendPacketsToClients()
 {
 
 	//on va checker qui quier pret pour ecrire
-	
+
 	//fd_set writeUDP;
 	//if(UDPenabled)
-	//{	
+	//{
 	//	FD_ZERO(&writeUDP);
 	//	writeUDP	=	UDPmaster;	// UDP set
 	//}
@@ -240,7 +240,7 @@ int cServer::SendPacketsToClients()
 	//if (select(fdmax+1, NULL, &write_fds, NULL, &Timeout) == -1)
 	//{
 	//	printf("Error : Problem select()ing while cServer::SendPacketsToClients() TCP errno = %i \n", errno);
-	//	
+	//
 	//	// an invalid socket is in the fd_set
 	//	if( errno == 9 )
 	//	{
@@ -260,7 +260,7 @@ int cServer::SendPacketsToClients()
 	//			if( C->FileDescriptor != BAD_SOCKET )
 	//			{
 	//				FD_SET(C->FileDescriptor , &master);
-	//				
+	//
 	//				if(C->FileDescriptor > fdmax)
 	//				{
 	//					fdmax = C->FileDescriptor;
@@ -291,7 +291,7 @@ int cServer::SendPacketsToClients()
 		//		//sprintf(LastError,"Error : Problem select()ing while cServer::SendPacketsToClients() UDP WSA : %i",WSAGetLastError());
 		//		return 1; //erreur
 		//	}
-		//	
+		//
 		//	Timeout.tv_sec	=	0;
 		//	Timeout.tv_usec =	0;
 
@@ -362,8 +362,8 @@ int	cServer::ReceiveDatagram(cPacket *packet,sockaddr_in fromIP)
 INT4 cServer::ReceivePacketsFromClients()
 {
 
-	
-	
+
+
 	//TCP part-----------------------------------
 	read_fds = master; // copy it
 	if (select(Listener+1, &read_fds, NULL, NULL, &Timeout) == -1)
@@ -377,10 +377,10 @@ INT4 cServer::ReceivePacketsFromClients()
 	Timeout.tv_usec =	0;
 
     // run through the existing connections looking for data to read
-    
+
 		//check if we need to accept a new connection
 		if (FD_ISSET(Listener, &read_fds))
-		{	
+		{
 			AcceptConnection(++NewConnID);
 		}
 
@@ -411,7 +411,7 @@ INT4 cServer::ReceivePacketsFromClients()
 					{
 						// connection closed
 						//sprintf(LastMessage,"Server : client on socket %i disconnected", c->FileDescriptor);
-					} 
+					}
 					else
 					{
 						//printf(" error recv()ing while cServer::ReceivePacketsFromClients() error = %i \n", nbytes);
@@ -419,14 +419,14 @@ INT4 cServer::ReceivePacketsFromClients()
 					}
 					//getClientByFD((UINT4)i)->CloseSocket(i); // bye!
 					//FD_CLR(i, &master); // remove from master set
-		
+
 					int disconnectedClient = c->NetID * -1;
-		
+
 					//on va enlever le client de la liste des clients
 					RemoveClient(c);
 
 					//fdmax = GetMaxFD();
-		
+
 					return disconnectedClient;
 				}
 				else
@@ -436,19 +436,19 @@ INT4 cServer::ReceivePacketsFromClients()
 					{
 						//potential hacking detected
 						sprintf(LastMessage,"Server : client disconnected due to potential hacking");
-		
+
 						//getClientByFD(i)->CloseSocket(i); // bye!
 						//FD_CLR(i, &master); // remove from master set
-		
+
 						int disconnectedClient = c->NetID * -1;
-		
+
 						//on va enlever le client de la liste des clients
 						RemoveClient(c);
 
 						//fdmax = GetMaxFD();
-		
+
 						return disconnectedClient;
-					}	
+					}
 					BytesReceived += nbytes;
 				}
 			}
@@ -459,7 +459,7 @@ INT4 cServer::ReceivePacketsFromClients()
 		//	{
 		//		int nbytes=0;		//garde le nombre de bytes retourner par recv()
 		//		char buf[2048];		//buffer for client data
-	
+
 		//		// handle data from a client
 		//		if ((nbytes = recv(i, buf, sizeof(buf), 0)) <= 0)
 		//		{
@@ -468,7 +468,7 @@ INT4 cServer::ReceivePacketsFromClients()
 		//			{
 		//				// connection closed
 		//				sprintf(LastMessage,"Server : client on socket %i disconnected", i);
-		//			} 
+		//			}
 		//			else
 		//			{
 		//				//printf(" error recv()ing while cServer::ReceivePacketsFromClients() n = %i \n", nbytes);
@@ -505,10 +505,10 @@ INT4 cServer::ReceivePacketsFromClients()
 		//				fdmax = GetMaxFD();
 		//
 		//				return disconnectedClient;
-		//			}	
+		//			}
 		//			BytesReceived += nbytes;
 		//		}
-		//	} 
+		//	}
 		//}
   //  	}
 
@@ -534,7 +534,7 @@ INT4 cServer::ReceivePacketsFromClients()
 	//	{
 	//		if(FD_ISSET(UDPfd,&read_fds))
 	//		{
-	//		
+	//
 	//			int nbytes=0;		//garde le nombre de bytes retourner par recv()
 	//			char buf[2048];		//buffer for client data
 	//			sockaddr_in remip;	//remoteip
@@ -552,7 +552,7 @@ INT4 cServer::ReceivePacketsFromClients()
 	//				{
 	//					// connection closed
 	//					sprintf(LastMessage,"Server : client on socket %i disconnected while recvfrom()", UDPfd);
-	//				} 
+	//				}
 	//				else
 	//				{
 	//					//sprintf(LastError,"Error : Problem recv()ingfrom, WSA : %i",WSAGetLastError());
@@ -572,7 +572,7 @@ INT4 cServer::ReceivePacketsFromClients()
 	//				}
 	//				else
 	//				{
-	//				
+	//
 	//					//on pogne le id dla pending connection
 	//					UINT4 pid;
 	//					memcpy(&pid,buf + sizeof(stHeader),sizeof(UINT4));
@@ -620,7 +620,7 @@ INT4 cServer::UpdateConnections(char *newIP)
 		if(u==-1)
 		{
 			//un probleme est survenu pendant que la connection se negociait
-			
+
 			//fp = fopen("_sdebug.txt","a");
 			//fprintf(fp,"Probleme en updatant une connection : LE : %s",LastError);
 			//fclose(fp);
@@ -665,7 +665,7 @@ INT4 cServer::UpdateConnections(char *newIP)
 			{
 				return BBNET_ERROR;
 			}
-			
+
 			if(newIP)
 			{
 				sprintf(newIP,"%s",inet_ntoa(c->IP.sin_addr));
@@ -682,7 +682,7 @@ INT4 cServer::UpdateConnections(char *newIP)
 			}
 
 			delete c;
-			
+
 
 
 			return newID;
@@ -715,7 +715,7 @@ int cServer::CreateListener()
 	Timeout.tv_usec =	0;
 
     // get the listener TCP
-    if ((Listener = (int)socket(PF_INET, SOCK_STREAM, 0)) == -1) 
+    if ((Listener = (int)socket(PF_INET, SOCK_STREAM, 0)) == -1)
 	{
 		sprintf(LastError,"Error : Problem Creating Listener Socket TCP");
         return 1;
@@ -729,7 +729,7 @@ int cServer::CreateListener()
         return 1;
     }
 
-		
+
 	//Setup les infos sur notre connection
     ipAdress.sin_family			=	AF_INET;
 	ipAdress.sin_addr.s_addr	=	INADDR_ANY;
@@ -759,7 +759,7 @@ int cServer::CreateListener()
 
 	//par defaut on accept les nouveaux clients
 	//NetBitField		|=		NET_ACCEPT_CLIENTS;
-	
+
 	return 0;
 }
 
@@ -796,8 +796,8 @@ void cServer::AcceptConnection(UINT4 id)
 	if( u )
 	{
 		printf("problem accepting new incoming connection\n");
-	
-		
+
+
 		//on enleve la connection du queue
 		if(ic->Previous) 	ic->Previous->Next	=	ic->Next;
 		if(ic->Next)		ic->Next->Previous	=	ic->Previous;
@@ -824,7 +824,7 @@ INT4 cServer::CreateClient(sockaddr_in *ip, int fileDescriptor,unsigned short ud
 	{
 		cClient *C=0;
 		for(C=Clients;C->Next;C=C->Next){}
-		
+
 		C->Next = new cClient(ip,fileDescriptor,++LastNetID);
 		C->Next->Previous = C;
 
@@ -841,7 +841,7 @@ INT4 cServer::CreateClient(sockaddr_in *ip, int fileDescriptor,unsigned short ud
 	#else
 		int yes = 1;
 	#endif
-	
+
 	if(setsockopt(fileDescriptor, IPPROTO_TCP, TCP_NODELAY,&yes,sizeof(yes)) == -1)
 	{
 		printf(" Error : Problem on setsockopt() for the new client socket TCP_NODELAY \n");
@@ -856,7 +856,7 @@ INT4 cServer::CreateClient(sockaddr_in *ip, int fileDescriptor,unsigned short ud
 // 		sprintf(LastError,"Error : Problem on setsockopt() for the new client socket SO_SNDTIMEO TCP");
 // 		return 1;
 // 	}
-// 
+//
 // 	if(setsockopt(fileDescriptor, SOL_SOCKET, SO_RCVTIMEO,(char*)&To,sizeof(To)) == -1)
 // 	{
 // 		sprintf(LastError,"Error : Problem on setsockopt() for the new client socket SO_RCVTIMEO TCP");
@@ -872,7 +872,7 @@ INT4 cServer::CreateClient(sockaddr_in *ip, int fileDescriptor,unsigned short ud
 
 	Cli->LastPacketID = pid;
 	Cli->PendingID = pid + 1;
-	
+
 	//tout est beau retourne le babonetID emis
 	return LastNetID;
 }
@@ -891,7 +891,7 @@ int cServer::Send(char *dataToSend,int dataSize,int typeID,INT4 destination,int 
 	{
 		//envoie a un client specifique
 		cClient *client = getClientByID((UINT4)destination);
-		
+
 		//si le netID du client est invalid
 		if(!client)
 		{
@@ -912,7 +912,7 @@ cClient* cServer::getClientByID(UINT4 netid)
 	{
 		if(C->NetID==netid) return C;
 	}
-	
+
 	return 0;
 }
 
@@ -925,7 +925,7 @@ cClient* cServer::getClientByFD(int fd)
 			return C;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -977,7 +977,7 @@ int cServer::RemoveClient(cClient *clientToKill)
 			{
 				Clients = Clients->Next;
 			}
-			
+
 			delete C;
 			return 0;
 
@@ -1069,7 +1069,7 @@ int cServer::GetQueueCount(int protocol)
 
 cServer::~cServer()
 {
-	
+
 	//on va deleter toute les clients
 	cClient *toKill=0;
 	for(cClient *c = Clients;c;delete toKill)
@@ -1077,7 +1077,7 @@ cServer::~cServer()
 		toKill = c;
 		c = c->Next;
 	}
-	
+
 
 	//on va fermer les listener
 	CloseSocket(Listener);

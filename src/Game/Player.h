@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -115,16 +115,16 @@ struct CoordFrame
 				if (gameVar.cl_cubicMotion)
 				{
 					position = cubicSpline(
-						from.position, 
-						from.position + from.vel * animTime, 
-						to.position - to.vel * animTime, 
-						to.position, 
+						from.position,
+						from.position + from.vel * animTime,
+						to.position - to.vel * animTime,
+						to.position,
 						t);
 					mousePosOnMap = cubicSpline(
-						from.mousePosOnMap, 
-						from.mousePosOnMap + (to.mousePosOnMap-from.mousePosOnMap) * animTime, 
-						to.mousePosOnMap - (from.mousePosOnMap-to.mousePosOnMap) * animTime, 
-						to.mousePosOnMap, 
+						from.mousePosOnMap,
+						from.mousePosOnMap + (to.mousePosOnMap-from.mousePosOnMap) * animTime,
+						to.mousePosOnMap - (from.mousePosOnMap-to.mousePosOnMap) * animTime,
+						to.mousePosOnMap,
 						t);
 				}
 				else
@@ -196,7 +196,7 @@ public:
 	float m_fireRate;
 
 public:
-	CMiniBot(); 
+	CMiniBot();
 	CMiniBot(bool nuker);
 	virtual ~CMiniBot();
 
@@ -240,7 +240,7 @@ public:
 
 	// time since player is alive , if < 3, collisions with other baboes are diabled
 	float timeAlive;
-	
+
 	//time since player joined the server
 	float timeInServer;
 
@@ -362,7 +362,7 @@ public:
 #endif
 	// On va garder un pointeur sur la map
 	Map * map;
-	
+
 	// Notre game
 	Game * game;
 #ifndef DEDICATED_SERVER

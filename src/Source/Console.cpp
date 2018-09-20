@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -275,11 +275,11 @@ void Console::render()
 
 					// Render first normally
 					dkfPrint(30, 40, 45, 0, recognitionVar[0]);
-					glTranslatef(0,dkfGetStringHeight(30, recognitionVar[0]),0);					
+					glTranslatef(0,dkfGetStringHeight(30, recognitionVar[0]),0);
 
 					// If we are cycling, get the other matches
 					CString temp = CString(recognitionVar[0]).getFirstToken(' ');
-					if(lastRecognitionVar != "") 
+					if(lastRecognitionVar != "")
 						dksvarGetFilteredVar(lastRecognitionVar.s, recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
 
 					// Render the rest
@@ -291,7 +291,7 @@ void Console::render()
 					}
 
 					// Restore the recognition vars
-					if(lastRecognitionVar != "") 
+					if(lastRecognitionVar != "")
 						dksvarGetFilteredVar(temp.s, recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
 
 					glPopMatrix();
@@ -314,7 +314,7 @@ void Console::update(float delay)
 
 	while ((int)m_chatMessages.size() > m_maxMsgHistorySize)
 		m_chatMessages.erase(m_chatMessages.begin());
-    
+
 #ifndef DEDICATED_SERVER
 	if (m_isActive)
 	{
@@ -369,7 +369,7 @@ void Console::update(float delay)
 			CString prefix;
 
 			// Support remote admin
-			if(token == "-") 
+			if(token == "-")
 			{
 				token = textCpy.getNextToken(' ');
 				prefix = "- set ";
@@ -422,7 +422,7 @@ void Console::update(float delay)
 						curRecognitionVar = 0;
 					}
 				}
-				else 
+				else
 				{
 					// Reset if no match
 					curRecognitionVar = 0;
@@ -451,15 +451,15 @@ void Console::update(float delay)
 
 		if (dkiGetState(KeyDown) == DKI_DOWN)
 		{
-			if (m_cmdHistoryID != -1) 
+			if (m_cmdHistoryID != -1)
 				m_cmdHistoryID++;
 
 			if (m_cmdHistoryID >= int(m_cmdHistory.size()))
 			{
 				m_cmdHistoryID = -1;
 				m_currentText->replaceText("");
-			} 
-			else if (m_cmdHistoryID != -1)	
+			}
+			else if (m_cmdHistoryID != -1)
 			{
 				m_currentText->replaceText(m_cmdHistory[m_cmdHistoryID]);
 			}
@@ -629,7 +629,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 		}
 	}
 #endif
-	
+
 
 	commandLine.trim('\n');
 
@@ -823,7 +823,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 
 		// only set to true when changing sv_gameTimeLimit
 		bool updateTimer = (command == "sv_gameTimeLimit");
-		
+
 		// only set true when changing weather effects setting
 		bool reloadWeather = (command == "r_weatherEffects");
 
@@ -929,7 +929,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 	// Pour hoster une game
 	if (command == "dedicate")
 	{
-		// If already running, only change map, since if the server recieves an 
+		// If already running, only change map, since if the server recieves an
 		if(scene->server && scene->server->isRunning)
 			 scene->server->changeMap(tokenize);
 		else
@@ -944,7 +944,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 		CString command("%s", tokenize.getFirstToken(' ').s);
 		command.toLower();
 
-		if(scene->server) 
+		if(scene->server)
 		{
 			scene->server->voteList.push_back(command);
 			add(CString("\x3> %s can now be voted on", command.s), true);
@@ -956,7 +956,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 	// Remove all commands from vote list
 	if (command == "novote")
 	{
-		if(scene->server) 
+		if(scene->server)
 		{
 			// Clear list
 			std::vector<CString> temp;
@@ -1442,7 +1442,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 						file.Close();
 						return;
 					}
-					
+
 					file.Open(path, "wb");
 					if (file.isValid())
 					{
@@ -1925,7 +1925,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 			add( str );
 		}
 
-		
+
 		return;
 	}
 
@@ -1983,8 +1983,8 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 		if( !scene->server ) return;
 		if( !scene->server->game ) return;
 		if( !master ) return;
-		
-		
+
+
 		// send to remote admin all player positions (compressed to shorts)
 		for( unsigned int i=0; i<MAX_PLAYER; i++ )
 		{
@@ -2149,7 +2149,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 // 			{
 // 				return;
 // 			}
-				
+
 			CString strID = tokenize.getFirstToken(' ');
 			if( strID == "" )
 			{
@@ -2178,7 +2178,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 			sprintf( cb.Nick , "%s", scene->server->CachedPlayers[ID].NickName );
 			memcpy( cb.Pass, strPass.s, 7 );
 			cb.Pass[7] = '\0';
-			
+
 			// we have everything, tell the master server to ban him!
 			master->sendPacket( (char*)&cb , sizeof(stCacheBan) , CACHE_BAN );
 
@@ -2196,7 +2196,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 			CString strFilter = tokenize.getFirstToken(' ');
 			stCacheList cl;
 			sprintf( cl.Filter , "%s", strFilter.s );
-			
+
 			// we have everything, tell the master server to send us the cachebanned
 			master->sendPacket( (char*)&cl , sizeof(stCacheList) , CACHE_BAN_LIST );
 
@@ -2229,7 +2229,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 			cu.ID	=	ID;
 			memcpy( cu.Pass, strPass.s, 7 );
 			cu.Pass[7] = '\0';
-			
+
 			// we have everything, tell the master server to unban this guy
 			master->sendPacket( (char*)&cu , sizeof(stCacheUnban) , CACHE_UNBAN );
 
@@ -2289,7 +2289,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
 			sprintf( cb.Nick , "%s", master->CachedPlayersRemote[ID].NickName );
 			memcpy( cb.Pass, strPass.s, 7 );
 			cb.Pass[7] = '\0';
-			
+
 			// we have everything, tell the master server to ban him!
 			master->sendPacket( (char*)&cb , sizeof(stCacheBan) , CACHE_BAN );
 		}

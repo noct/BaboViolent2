@@ -52,7 +52,7 @@ Game::Game(CString pMapName)
 	players = new Player*[MAX_PLAYER];
 	for (int i=0;i<MAX_PLAYER;++i) players[i] = 0;
 #ifndef DEDICATED_SERVER
-	// On ne crÈ pas notre player tout de suite, on attends confirmation du server
+	// On ne cr√© pas notre player tout de suite, on attends confirmation du server
 	thisPlayer = 0;
 
 	// Pour afficher les stats multiplayers
@@ -90,7 +90,7 @@ Game::Game(CString pMapName)
 	teamApproveAll[PLAYER_TEAM_RED] = true;
 	teamApproveAll[PLAYER_TEAM_BLUE] = true;
 
-	// «a Áa va Ítre utilise quand on va Èquilibrer les teams
+	// √áa √ßa va √™tre utilise quand on va √©quilibrer les teams
 	bluePing = 0;
 	redPing = 0;
 	ffaPing = 0;
@@ -170,7 +170,7 @@ void Game::resetGameType(int pGameType)
 		bb_serverSend((char*)&changeGameType, sizeof(net_svcl_change_game_type), NET_SVCL_CHANGE_GAME_TYPE, 0);
 	}
 
-	// On remet les score des players ‡ 0
+	// On remet les score des players √† 0
 	for (int i=0;i<MAX_PLAYER;++i)
 	{
 		if (players[i]) 
@@ -226,7 +226,7 @@ void Game::resetRound()
 
 #endif
 
-	// On respawn tout les players (le server va dÈcider de tout Áa)
+	// On respawn tout les players (le server va d√©cider de tout √ßa)
 	for (i=0;i<MAX_PLAYER;++i)
 	{
 		if (players[i]) 
@@ -241,7 +241,7 @@ void Game::resetRound()
 
 
 //
-// Pour lui dire : ok, tu peux crÈer la map
+// Pour lui dire : ok, tu peux cr√©er la map
 //
 void Game::createMap()
 {
@@ -401,7 +401,7 @@ void Game::update(float delay)
 					players[i]->incShot--;
 					if (players[i]->incShot%3 == 0)
 					{
-						// On test premiËrement si on touche un autre joueur!
+						// On test premi√®rement si on touche un autre joueur!
 						Player * hitPlayer = 0;
 						CVector3f p3 = players[i]->p2;
 						for (int j=0;j<MAX_PLAYER;j++)
@@ -422,7 +422,7 @@ void Game::update(float delay)
 											hitPlayer = players[j];
 											p3 = players[i]->p2; // Full length
 
-											// On dÈcrÈmente sa vie
+											// On d√©cr√©mente sa vie
 											hitPlayer->hitSV(gameVar.weapons[WEAPON_PHOTON_RIFLE], players[i], gameVar.weapons[WEAPON_PHOTON_RIFLE]->damage / 2.0f);
 										}
 									}
@@ -585,8 +585,8 @@ void Game::update(float delay)
 	{
 		if (thisPlayer->teamID == PLAYER_TEAM_SPECTATOR && !console->isActive() && !writting && !showMenu && !(menuManager.root && menuManager.root->visible))
 		{
-			// On est spectateur, alors on peut se dÈplacer comme on veut dans la map
-			// Pour l'instant les flËches (a,s,w,d, pomal temp)
+			// On est spectateur, alors on peut se d√©placer comme on veut dans la map
+			// Pour l'instant les fl√®ches (a,s,w,d, pomal temp)
 			if (dkiGetState(gameVar.k_moveRight))
 			{
 				map->camLookAt[0] += 10 * delay;
@@ -644,7 +644,7 @@ void Game::update(float delay)
 				// Respawn request!
 				if (!thisPlayer->spawnRequested)
 				{
-					// Ici on le call juste une fois, isshh sinon Áa sera pas trop bon...
+					// Ici on le call juste une fois, isshh sinon √ßa sera pas trop bon...
 					// On request to spawn
 					thisPlayer->spawnRequested = true;
 					net_clsv_spawn_request spawnRequest;
@@ -711,7 +711,7 @@ void Game::update(float delay)
 			}
 		}
 
-		//--- Si on roule dans la lave, on spawn de la fumÈ :D
+		//--- Si on roule dans la lave, on spawn de la fum√© :D
 		if (map->theme == THEME_LAVA)
 		{
 			//--- Spawn des drip sous les players
@@ -881,7 +881,7 @@ void Game::update(float delay)
 
 
 //
-// pour donner un team ‡ un player
+// pour donner un team √† un player
 //
 int Game::assignPlayerTeam(int playerID, char teamRequested, Client * client)
 {
@@ -893,7 +893,7 @@ int Game::assignPlayerTeam(int playerID, char teamRequested, Client * client)
 
 		if (teamRequested == PLAYER_TEAM_AUTO_ASSIGN)
 		{
-			// On va Èquilibrer les team :)
+			// On va √©quilibrer les team :)
 			int blueCount = 0;
 			int redCount = 0;
 			for (int i=0;i<MAX_PLAYER;++i)
@@ -984,7 +984,7 @@ int Game::assignPlayerTeam(int playerID, char teamRequested, Client * client)
 	}
 	else
 	{
-		return PLAYER_TEAM_SPECTATOR; // Pas suposer en arriver l‡!
+		return PLAYER_TEAM_SPECTATOR; // Pas suposer en arriver l√†!
 	}
 }
 
@@ -1078,7 +1078,7 @@ void Douille::update(float pDelay, Map * map)
 		CVector3f normal;
 		if (map->rayTest(p1, p2, normal))
 		{
-			// On dit ‡ tout le monde de jouer le son (pour l'instant juste server side)
+			// On dit √† tout le monde de jouer le son (pour l'instant juste server side)
 			if (!soundPlayed) 
 			{
 				if (type == DOUILLE_TYPE_DOUILLE) dksPlay3DSound(gameVar.sfx_douille[rand()%3],-1,1,position,255);
@@ -1103,7 +1103,7 @@ void Game::shoot(const CVector3f & position, const CVector3f & direction, float 
 {
 	if (map)
 	{
-		CVector3f p2 = direction * 128; // «a c'est le range, 128 c'est assez, grosseur max de map (c fucking big Áa)
+		CVector3f p2 = direction * 128; // √áa c'est le range, 128 c'est assez, grosseur max de map (c fucking big √ßa)
 		if (projectileType == PROJECTILE_DIRECT && from->weapon->weaponID == WEAPON_FLAME_THROWER)
 		{
 			p2 = direction * 3;
@@ -1135,7 +1135,7 @@ void Game::shoot(const CVector3f & position, const CVector3f & direction, float 
 		}
 		else if (projectileType == PROJECTILE_ROCKET && from->weapon)
 		{
-			// On demande au server de crÈer une instance d'une rocket
+			// On demande au server de cr√©er une instance d'une rocket
 			net_clsv_svcl_player_projectile playerProjectile;
 			playerProjectile.playerID = from->playerID;
 			playerProjectile.nuzzleID = (char)from->weapon->firingNuzzle;
@@ -1144,7 +1144,7 @@ void Game::shoot(const CVector3f & position, const CVector3f & direction, float 
 			playerProjectile.position[0] = (short)(position[0] * 100.0f);
 			playerProjectile.position[1] = (short)(position[1] * 100.0f);
 			playerProjectile.position[2] = (short)(position[2] * 100.0f);
-		//	CVector3f dir = from->currentCF.mousePosOnMap - position; // Pas une bonne idÈe Áa, trop facile
+		//	CVector3f dir = from->currentCF.mousePosOnMap - position; // Pas une bonne id√©e √ßa, trop facile
 		//	normalize(dir);
 			playerProjectile.vel[0] = (char)(direction[0] * 10.0f);
 			playerProjectile.vel[1] = (char)(direction[1] * 10.0f);
@@ -1162,7 +1162,7 @@ void Game::shoot(const CVector3f & position, const CVector3f & direction, float 
 		{
 		//	for (int i=0;i<20;++i)
 		//	{
-				// On demande au server de crÈer une instance d'une grenade
+				// On demande au server de cr√©er une instance d'une grenade
 				net_clsv_svcl_player_projectile playerProjectile;
 				playerProjectile.playerID = from->playerID;
 				playerProjectile.nuzzleID = (char)from->weapon->firingNuzzle;
@@ -1171,7 +1171,7 @@ void Game::shoot(const CVector3f & position, const CVector3f & direction, float 
 				playerProjectile.position[0] = (short)(position[0] * 100.0f);
 				playerProjectile.position[1] = (short)(position[1] * 100.0f);
 				playerProjectile.position[2] = (short)(position[2] * 100.0f);
-			//	CVector3f dir = from->currentCF.mousePosOnMap - position; // Pas une bonne idÈe Áa, trop facile
+			//	CVector3f dir = from->currentCF.mousePosOnMap - position; // Pas une bonne id√©e √ßa, trop facile
 			//	normalize(dir);
 				playerProjectile.vel[0] = (char)(direction[0] * 10.0f);
 				playerProjectile.vel[1] = (char)(direction[1] * 10.0f);
@@ -1181,7 +1181,7 @@ void Game::shoot(const CVector3f & position, const CVector3f & direction, float 
 		}
 		else if (projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
 		{
-			// On demande au server de crÈer une instance d'une grenade
+			// On demande au server de cr√©er une instance d'une grenade
 			net_clsv_svcl_player_projectile playerProjectile;
 			playerProjectile.playerID = from->playerID;
 			playerProjectile.nuzzleID = (char)from->weapon->firingNuzzle;
@@ -1190,7 +1190,7 @@ void Game::shoot(const CVector3f & position, const CVector3f & direction, float 
 			playerProjectile.position[0] = (short)(position[0] * 100.0f);
 			playerProjectile.position[1] = (short)(position[1] * 100.0f);
 			playerProjectile.position[2] = (short)(position[2] * 100.0f);
-		//	CVector3f dir = from->currentCF.mousePosOnMap - position; // Pas une bonne idÈe Áa, trop facile
+		//	CVector3f dir = from->currentCF.mousePosOnMap - position; // Pas une bonne id√©e √ßa, trop facile
 		//	normalize(dir);
 			playerProjectile.vel[0] = (char)(direction[0] * 10.0f);
 			playerProjectile.vel[1] = (char)(direction[1] * 10.0f);
@@ -1222,7 +1222,7 @@ Player * Game::playerInRadius(CVector3f position, float radius, int ignore )
 
 
 //
-// Quand un client shot, mais que le server le vÈrifie puis le shoot aux autres joueurs
+// Quand un client shot, mais que le server le v√©rifie puis le shoot aux autres joueurs
 //
 void Game::shootSV(net_clsv_player_shoot & playerShoot)
 {
@@ -1309,7 +1309,7 @@ void Game::shootMinibotSV(CMiniBot * minibot, float imp, CVector3f p1, CVector3f
 	// On test s'il y a une collision
 	map->rayTest(p1, p2, normal);
 
-	// On test premiËrement si on touche un autre joueur!
+	// On test premi√®rement si on touche un autre joueur!
 	Player * hitPlayer = 0;
 	for (int i=0;i<MAX_PLAYER;i++)
 	{
@@ -1332,14 +1332,14 @@ void Game::shootMinibotSV(CMiniBot * minibot, float imp, CVector3f p1, CVector3f
 		}
 	}
 
-	// On envoit le rÈsultat ‡ TOUT les joueurs y compris celui qui l'a tirÈ
+	// On envoit le r√©sultat √† TOUT les joueurs y compris celui qui l'a tir√©
 	net_svcl_player_shoot playerShootSV;
 	if (hitPlayer)
 	{
 		playerShootSV.hitPlayerID = hitPlayer->playerID;
 		playerShootSV.weaponID = WEAPON_MINIBOT_WEAPON;
 
-		// On dÈcrÈmente sa vie
+		// On d√©cr√©mente sa vie
 		hitPlayer->hitSV(gameVar.weapons[WEAPON_MINIBOT], players[minibot->owner->playerID]);
 	}
 	else
@@ -1472,7 +1472,7 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 		p1 += normal * .01f;
 	}
 
-	// On test s'il y a une collision, sinon, fuck it on envoit pas Áa
+	// On test s'il y a une collision, sinon, fuck it on envoit pas √ßa
 	if (map->rayTest(p1, p2, normal))
 	{
 		isCollision = true;
@@ -1487,7 +1487,7 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 			player->incShot = 30;
 		}
 		CVector3f p3 = p2;
-		// On test premiËrement si on touche un autre joueur!
+		// On test premi√®rement si on touche un autre joueur!
 		Player * hitPlayer = 0;
 		for (int i=0;i<MAX_PLAYER;i++)
 		{
@@ -1510,7 +1510,7 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 							p3 = p2; // Full length
 							normalize(normal);
 
-							// On dÈcrÈmente sa vie
+							// On d√©cr√©mente sa vie
 							hitPlayer->hitSV(gameVar.weapons[player->weapon->weaponID], player, gameVar.weapons[player->weapon->weaponID]->damage);
 						}
 					}
@@ -1518,7 +1518,7 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 			}
 		}
 
-		// On envoit le rÈsultat ‡ TOUT les joueurs y compris celui qui l'a tirÈ
+		// On envoit le r√©sultat √† TOUT les joueurs y compris celui qui l'a tir√©
 		net_svcl_player_shoot playerShootSV;
 		playerShootSV.hitPlayerID = -1;
 		playerShootSV.playerID = player->playerID;
@@ -1537,7 +1537,7 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 	}
 	else
 	{
-		// On test premiËrement si on touche un autre joueur!
+		// On test premi√®rement si on touche un autre joueur!
 		Player * hitPlayer = 0;
 		for (int i=0;i<MAX_PLAYER;i++)
 		{
@@ -1560,14 +1560,14 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 			}
 		}
 
-		// On envoit le rÈsultat ‡ TOUT les joueurs y compris celui qui l'a tirÈ
+		// On envoit le r√©sultat √† TOUT les joueurs y compris celui qui l'a tir√©
 		net_svcl_player_shoot playerShootSV;
 		if (hitPlayer)
 		{
 			playerShootSV.hitPlayerID = hitPlayer->playerID;
 			playerShootSV.weaponID = player->weapon->weaponID;
 
-			// On dÈcrÈmente sa vie
+			// On d√©cr√©mente sa vie
 			hitPlayer->hitSV(gameVar.weapons[playerShootSV.weaponID], players[player->playerID]);
 		}
 		else
@@ -1657,13 +1657,13 @@ int Game::createNewPlayerSV(int babonetID)
 			players[i] = new Player((char)i, map, this);
 			players[i]->babonetID = babonetID;
 
-			// On envoit l'info ‡ tout les clients (y compris lui)
+			// On envoit l'info √† tout les clients (y compris lui)
 			net_svcl_newplayer newPlayer;
 			newPlayer.newPlayerID = players[i]->playerID;
 			newPlayer.baboNetID = babonetID;
 			bb_serverSend((char*)&newPlayer, sizeof(net_svcl_newplayer), NET_SVCL_NEWPLAYER, 0);
 
-			// On lui envoi premiËrement la version du jeu
+			// On lui envoi premi√®rement la version du jeu
 			net_svcl_gameversion gameVersion;
 			gameVersion.gameVersion = GAME_VERSION_SV;
 			bb_serverSend((char*)&gameVersion, sizeof(net_svcl_gameversion), NET_SVCL_GAMEVERSION, babonetID);
@@ -1701,7 +1701,7 @@ void Game::createNewPlayerCL(int playerID, long babonetID)
 	}
 	else
 	{
-		// On l'efface au cas quil existe dÈj‡ (trËs pas bon Áa)
+		// On l'efface au cas quil existe d√©j√† (tr√®s pas bon √ßa)
 		ZEVEN_SAFE_DELETE(players[playerID]);
 		players[playerID] = new Player(playerID, map, this);
 		players[playerID]->babonetID = babonetID;

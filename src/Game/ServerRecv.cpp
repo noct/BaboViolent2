@@ -3,16 +3,16 @@
 
 	This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
+	The BaboViolent 2 source code is free software: you can redistribute it and/or
+	modify it under the terms of the GNU General Public License as published by the
+	Free Software Foundation, either version 3 of the License, or (at your option)
 	any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+	The BaboViolent 2 source code is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
+	You should have received a copy of the GNU General Public License along with the
 	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
@@ -54,7 +54,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 
 			// Add to list, server will send chunks on each update
 			mapTransfers.push_back(mtrans);
-            
+
 			break;
 		};
 	case NET_CLSV_VOTE:
@@ -501,8 +501,8 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 						banned.ID	=	playerInfo.playerID;
 						sprintf( banned.IP , "%s" , playerInfo.playerIP );
 						sprintf( banned.MAC , "%s", playerInfo.macAddr );
-	
-	
+
+
 						if ( master )
 						{
 							master->sendPacket( (char*)&banned , sizeof(stCacheBanned) , CACHE_BANNED );
@@ -552,14 +552,14 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 	case NET_CLSV_SVCL_CHAT:
 		{
 			net_clsv_svcl_chat chat;
-			memcpy(&chat, buffer, sizeof(net_clsv_svcl_chat));			
+			memcpy(&chat, buffer, sizeof(net_clsv_svcl_chat));
 			chat.message[129] = '\0';
 			// On print dans console
 			console->add(chat.message, false, false);
 
 			// if everybody can see the messagem send it to everyone!
 			if( chat.teamID == -2 )
-			{			
+			{
 				bb_serverSend((char*)&chat, sizeof(net_clsv_svcl_chat), NET_CLSV_SVCL_CHAT, 0);
 			}
 			else if( chat.teamID == PLAYER_TEAM_SPECTATOR )
@@ -622,7 +622,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 				}
 				master->RA_Chat( chatString.s, playerid );
 			}
-		
+
 			break;
 		}
 	case NET_CLSV_SVCL_TEAM_REQUEST:
@@ -855,7 +855,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 						}
 						game->players[playerCoordFrame.playerID]->setCoordFrame(playerCoordFrame);
 
-						
+
 						// Check for teleportation hack * Not anymore , too many problems
 						//CVector3f vDiff;
 						//vDiff = game->players[playerCoordFrame.playerID]->currentCF.position - game->players[playerCoordFrame.playerID]->lastCF.position;
@@ -895,7 +895,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 
 
 						//if( fabsf(vDiff.x()) > 5.0f || fabsf(vDiff.y()) > 5.0f )
-						//{	
+						//{
 						//	// hax0rz
 						//	bb_serverDisconnectClient(game->players[playerCoordFrame.playerID]->babonetID);
 						//	ZEVEN_SAFE_DELETE(game->players[playerCoordFrame.playerID]);
@@ -905,7 +905,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 						//	return;
 						//}
 
-						
+
 					}
 					// Sinon ce babonet ID est d�uet
 				}
@@ -970,7 +970,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 							//we are ok to shoot our first bullet
 							game->players[playerShoot.playerID]->shotCount = 1;
 							game->players[playerShoot.playerID]->mfElapsedSinceLastShot = 0.0f;
-							
+
 						}
 						else
 						{
@@ -1016,7 +1016,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 								return;
 							//}
 						}
-				
+
 						game->shootSV(playerShoot);
 						game->players[playerShoot.playerID]->firedShowDelay = 2;
 					}
@@ -1032,7 +1032,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 			{
 				//--- Is he alive? Else we ignore it
 				if (game->players[playerProjectile.playerID]->status == PLAYER_STATUS_ALIVE || ( game->players[playerProjectile.playerID]->status == PLAYER_STATUS_DEAD
-					&& (playerProjectile.weaponID == WEAPON_GRENADE || playerProjectile.weaponID == WEAPON_COCKTAIL_MOLOTOV || playerProjectile.projectileType == PROJECTILE_ROCKET ) && game->players[playerProjectile.playerID]->timeDead < 0.2f ) 
+					&& (playerProjectile.weaponID == WEAPON_GRENADE || playerProjectile.weaponID == WEAPON_COCKTAIL_MOLOTOV || playerProjectile.projectileType == PROJECTILE_ROCKET ) && game->players[playerProjectile.playerID]->timeDead < 0.2f )
 					)
 				{
 					if (playerProjectile.projectileType == PROJECTILE_COCKTAIL_MOLOTOV && !gameVar.sv_enableMolotov)
@@ -1058,12 +1058,12 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 							}
 						}
 					}
-					
+
 					// Ignore nades and moltov since they are separate from other weapons
 					if (playerProjectile.weaponID != WEAPON_GRENADE &&
-						playerProjectile.weaponID != WEAPON_COCKTAIL_MOLOTOV ) 
+						playerProjectile.weaponID != WEAPON_COCKTAIL_MOLOTOV )
 					{
-					
+
 						// Check if shotsPerSecond is set by Player::Update
 						//if(game->players[playerProjectile.playerID]->shotsPerSecond > 0)
 
@@ -1093,7 +1093,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 						}
 					}
 
-					
+
 
 					// On l'envoit aux autres joueurs
 					bb_serverSend((char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE, 0);
@@ -1196,11 +1196,11 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 						sqlite3 *DB=0;
 						sqlite3_open("bv2.db",&DB);
 						char	SQL[300];
-						
+
 						sprintf(SQL,"Insert into BadChecksum(IP,Name) Values('%s','%s')", game->players[m_checksumQueries[y]->GetID()]->playerIP,game->players[m_checksumQueries[y]->GetID()]->name.s);
 						sqlite3_exec(DB,SQL,0,0,0);
-						
-						sqlite3_close(DB);						
+
+						sqlite3_close(DB);
 					}
 					delete m_checksumQueries[y];
 					m_checksumQueries.erase( m_checksumQueries.begin() + y );

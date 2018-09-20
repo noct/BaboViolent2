@@ -186,3 +186,9 @@ build/
 
 *.sublime-workspace
 *.sublime-project
+
+*.dll
+*.lib
+*.exp
+*.db
+.build

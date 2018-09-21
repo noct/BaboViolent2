@@ -7,9 +7,9 @@ solution "BaboViolent"
     targetdir (".build/".._ACTION.."/lib")
     flags {
         "NoPCH",
-        "EnableSSE2",
         "ExtraWarnings",
-        "Symbols"
+        "Symbols",
+        "WinMain"
     }
 
     configuration {"Debug"}
@@ -18,6 +18,14 @@ solution "BaboViolent"
     configuration {"Release"}
         defines {"NDEBUG"}
         flags   {"Optimize"}
+
+    configuration {"vs*"}
+        defines {
+            "NOMINMAX",
+            "_CRT_SECURE_NO_WARNINGS",
+            "_WINSOCK_DEPRECATED_NO_WARNINGS",
+            "_CRT_NONSTDC_NO_DEPRECATE"
+        }
 
     configuration {"Windows"}
         defines {
@@ -29,11 +37,56 @@ solution "BaboViolent"
             "-std=c++11"
         }
 
+    project "Zeven"
+        kind "StaticLib"
+        language "C++"
+
+        includedirs {
+            "src/Zeven",
+            "src/Zeven/API",
+            "src/Zeven/dkc",
+            "src/Zeven/dkf",
+            "src/Zeven/dkgl",
+            "src/Zeven/dki",
+            "src/Zeven/dko",
+            "src/Zeven/dkp",
+            "src/Zeven/dks",
+            "src/Zeven/dksvar",
+            "src/Zeven/dkt",
+            "src/Zeven/dkw",
+            "thirdparty/glad/include",
+            "thirdparty/imgui",
+            "thirdparty/imgui/examples",
+        }
+
+        files {
+            "src/Zeven/**.hpp",
+            "src/Zeven/**.cpp",
+            "src/Zeven/**.h",
+            "src/Zeven/**.c",
+        }
+
+    project "Babonet"
+        kind "StaticLib"
+        language "C++"
+
+        includedirs {
+            "src/Zeven",
+            "src/Babonet",
+        }
+
+        files {
+            "src/Babonet/**.hpp",
+            "src/Babonet/**.cpp",
+            "src/Babonet/**.h",
+            "src/Babonet/**.c",
+        }
+
     project "bv2"
         kind "WindowedApp"
         language "C++"
         targetdir "."
-        debugdir "."
+        debugdir "Content"
 
         defines {
             "SDL_MAIN_HANDLED",
@@ -43,50 +96,45 @@ solution "BaboViolent"
 
         configuration {"Debug"}
             links {
-                "opengl32",
                 "SDL2d",
-                "libcurl"
             }
 
         configuration {"Release"}
             links {
+                "SDL2"
+            }
+
+        configuration {}
+            links {
+                "Babonet",
+                "Zeven",
                 "opengl32",
-                "SDL2",
                 "libcurl"
             }
 
-        configuration {"vs*"}
-            defines {
-                "NOMINMAX",
-                "_CRT_SECURE_NO_WARNINGS",
-                "_WINSOCK_DEPRECATED_NO_WARNINGS",
-                "_CRT_NONSTDC_NO_DEPRECATE"
-            }
-        configuration {}
-
         includedirs {
-            "src/Engine/Babonet",
-            "src/Engine/dko",
-            "src/Engine/Zeven/dkc",
-            "src/Engine/Zeven/dkf",
-            "src/Engine/Zeven/dkgl",
-            "src/Engine/Zeven/dki",
-            "src/Engine/Zeven/dkp",
-            "src/Engine/Zeven/dks",
-            "src/Engine/Zeven/dksvar",
-            "src/Engine/Zeven/dkt",
-            "src/Engine/Zeven/dkw",
-            "src/External",
-            "src/Game",
-            "src/Game/AStar",
-            "src/Game/Master",
-            "src/Menu",
-            "src/Menu2",
-            "src/Menu2/Dialogs",
-            "src/Source",
-            "src/Weather",
+            "src/Babonet",
+            "src/bv2/External",
+            "src/bv2/Game",
+            "src/bv2/Game/AStar",
+            "src/bv2/Game/Master",
+            "src/bv2/Menu",
+            "src/bv2/Menu2",
+            "src/bv2/Menu2/Dialogs",
+            "src/bv2/Source",
+            "src/bv2/Weather",
             "src/Zeven",
             "src/Zeven/API",
+            "src/Zeven/dkc",
+            "src/Zeven/dkf",
+            "src/Zeven/dkgl",
+            "src/Zeven/dki",
+            "src/Zeven/dko",
+            "src/Zeven/dkp",
+            "src/Zeven/dks",
+            "src/Zeven/dksvar",
+            "src/Zeven/dkt",
+            "src/Zeven/dkw",
             "thirdparty/glad/include",
             "thirdparty/imgui",
             "thirdparty/imgui/examples",
@@ -94,10 +142,10 @@ solution "BaboViolent"
         }
 
         files {
-            "src/**.hpp",
-            "src/**.cpp",
-            "src/**.h",
-            "src/**.c",
+            "src/bv2/**.hpp",
+            "src/bv2/**.cpp",
+            "src/bv2/**.h",
+            "src/bv2/**.c",
             "thirdparty/imgui/imgui_demo.cpp",
             "thirdparty/imgui/imgui_draw.cpp",
             "thirdparty/imgui/imgui_internal.h",

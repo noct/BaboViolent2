@@ -192,3 +192,4 @@ build/
 *.exp
 *.db
 .build
+./Content/main/bv2.cfg

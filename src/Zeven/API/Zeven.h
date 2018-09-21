@@ -19,89 +19,22 @@
 #ifndef ZEVEN_H
 #define ZEVEN_H
 
+#include "CMatrix.h"
+#include "CString.h"
+#include "CVector.h"
+#include "dkc.h"
+#include "dko.h"
+#include "dksvar.h"
 
-#define WIN32_LEAN_AND_MEAN
-#define DIRECTINPUT_VERSION 0x0800
-
-
-#ifdef DEDICATED_SERVER
-//	#pragma comment (lib, "dkc.lib")
-//	#pragma comment (lib, "dksvar.lib")
-//	#pragma comment (lib, "baboNet.lib")
-//	#pragma comment (lib, "dkolight.lib")
-
-	#include "dko.h"
-	#include "dkc.h"
-	#include "dksvar.h"
-	#include "baboNet.h"
-	#include "cMSstruct.h"
-
-	#include "CVector.h"
-	#include "CMatrix.h"
-	#include "CString.h"
-#else
-#ifdef _DX_ // No intention of continuing on DX. we should switch to OGL 2.0 instead
-	//#pragma comment (lib, "dkw.lib")
-	//#pragma comment (lib, "dki.lib")
-	//#pragma comment (lib, "dkgl_dx.lib")
-	//#pragma comment (lib, "dkt_dx.lib")
-	//#pragma comment (lib, "dkf_dx.lib")
-	//#pragma comment (lib, "dko_dx.lib")
-	//#pragma comment (lib, "dkp_dx.lib")
-	//#pragma comment (lib, "dks.lib")
-	//#pragma comment (lib, "dkc.lib")
-	//#pragma comment (lib, "dksvar.lib")
-	//#pragma comment (lib, "baboNet.lib")
-
-	#include "dkc.h"
-	#include "dkw.h"
-	#include "dki.h"
-	#include "dkgl.h"
-	#include "dkt.h"
-	#include "dkf.h"
-	#include "dko.h"
-	#include "dkp.h"
-	#include "dks.h"
-	#include "dksvar.h"
-	#include "baboNet.h"
-	#include "cMSstruct.h"
-
-	#include "CVector.h"
-	#include "CMatrix.h"
-	#include "CString.h"
-#else
-	// [dsl] No more pragma comment, lets include them in the game directly!
-//	#pragma comment (lib, "dkw.lib") // No more pragma comment, lets include them in the engine directly!
-//	#pragma comment (lib, "dki.lib")
-//	#pragma comment (lib, "dkgl.lib")
-//	#pragma comment (lib, "dkt.lib")
-//	#pragma comment (lib, "dkf.lib")
-//	#pragma comment (lib, "dko.lib")
-//	#pragma comment (lib, "dkp.lib")
-//	#pragma comment (lib, "dks.lib")
-//	#pragma comment (lib, "dkc.lib")
-//	#pragma comment (lib, "dksvar.lib")
-//	#pragma comment (lib, "baboNet.lib")
-
-	#include "dkc.h"
-	#include "dkw.h"
-	#include "dki.h"
-	#include "dkgl.h"
-	#include "dkt.h"
-	#include "dkf.h"
-	#include "dko.h"
-	#include "dkp.h"
-	#include "dks.h"
-	#include "dksvar.h"
-	#include "baboNet.h"
-	#include "cMSstruct.h"
-
-	#include "CVector.h"
-	#include "CMatrix.h"
-	#include "CString.h"
+#ifndef DEDICATED_SERVER
+#include "dkf.h"
+#include "dkgl.h"
+#include "dki.h"
+#include "dkp.h"
+#include "dks.h"
+#include "dkt.h"
+#include "dkw.h"
 #endif
-#endif
-
 
 #define ZEVEN_SAFE_DELETE(a) if (a) {delete a; a = 0;}
 #define ZEVEN_SAFE_DELETE_ARRAY(a) if (a) {delete [] a; a = 0;}
@@ -114,18 +47,11 @@
 #define ZEVEN_SUCCESS 1
 #define ZEVEN_FAIL 0
 
-#ifdef WIN32
-	#define ZEVEN_DELETE_VECTOR(a, cpt) for (cpt=0;cpt<(int)a.size();delete a[cpt++]); a.clear();
-	#define ZEVEN_VECTOR_CALL(a, cpt, func) for (cpt=0;cpt<(int)a.size();++cpt) a[cpt]->func;
-#else
-	#define ZEVEN_DELETE_VECTOR(a, cpt) for (int cpt=0;cpt<(int)a.size();delete a[cpt++]); a.clear();
-	#define ZEVEN_VECTOR_CALL(a, cpt, func) for (int cpt=0;cpt<(int)a.size();++cpt) a[cpt]->func;
-#endif
-
+#define ZEVEN_DELETE_VECTOR(a, cpt) for (int cpt=0;cpt<(int)a.size();delete a[cpt++]); a.clear();
+#define ZEVEN_VECTOR_CALL(a, cpt, func) for (int cpt=0;cpt<(int)a.size();++cpt) a[cpt]->func;
 
 ///---- Prototype
 CVector2i dkwGetCursorPos_main();
-
 
 #endif
 

@@ -329,11 +329,6 @@ public:
 	// To send the position at each x frame
 	int sendPosFrame;
 #ifndef DEDICATED_SERVER
-#ifndef _DX_
-	// Pour dessiner notre sphere
-	//GLUquadricObj* qObj;
-#endif
-
 	// Si on est le joueur controll�
 	bool isThisPlayer;
 #endif

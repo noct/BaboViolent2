@@ -68,9 +68,7 @@ public:
 	virtual ~_typLayer()
 	{
 #ifndef DEDICATED_SERVER
-#ifndef _DX_
 		if (textureID == 0) glDeleteTextures(1, &textureID);
-#endif
 #endif
 	}
 };

@@ -242,41 +242,14 @@ public:
             nbFrameElapsed--;
         }
 
-#ifdef _DX_
-        if (dkglGetDXDevice())
-        {
-            dkglGetDXDevice()->BeginScene();
-#endif
         // On render le tout
         scene->render();
-#ifdef _DX_
-        dkglGetDXDevice()->EndScene();
-#endif
 
         // Swap buffers if valid context is found
-#ifndef _DX_
         if( dkwGetDC() )
         {
             SDL_GL_SwapWindow(dkwGetHandle());
         }
-#else
-        dkglGetDXDevice()->Present( NULL,
-                                    NULL,
-                                    NULL,
-                                    NULL);
-        }
-#endif
-
-      #ifdef NDEBUG
-      #ifdef WIN32
-      #if defined(_PRO_)
-  //    if (IsDebuggerPresent() == TRUE)
-  //       {
-  //       throw(0);
-  //       }
-      #endif
-      #endif
-      #endif
     }
 
     void textWrite(unsigned int caracter)

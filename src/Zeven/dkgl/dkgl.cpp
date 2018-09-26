@@ -1,19 +1,19 @@
 /*
-	Copyright 2012 bitHeads inc.
+    Copyright 2012 bitHeads inc.
 
-	This file is part of the BaboViolent 2 source code.
+    This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or 
-	modify it under the terms of the GNU General Public License as published by the 
-	Free Software Foundation, either version 3 of the License, or (at your option) 
-	any later version.
+    The BaboViolent 2 source code is free software: you can redistribute it and/or
+    modify it under the terms of the GNU General Public License as published by the
+    Free Software Foundation, either version 3 of the License, or (at your option)
+    any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful, 
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
-	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    The BaboViolent 2 source code is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the 
-	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
+    You should have received a copy of the GNU General Public License along with the
+    BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
 /* TCE (c) All rights reserved */
@@ -217,7 +217,7 @@ bool dkglCheckExtension(char * extension)
 int dkglCreateContext(SDL_GLContext mDC, int colorDepth)
 {
     glContext = mDC;
-	return 1;
+    return 1;
 }
 
 //
@@ -225,56 +225,54 @@ int dkglCreateContext(SDL_GLContext mDC, int colorDepth)
 //
 void dkglDrawCoordSystem()
 {
-#ifndef _DX_
-	glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT);
-		glLineWidth(2);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_LIGHTING);
-		glColor3f(1,0,0);
-		glBegin(GL_LINES);
-			glVertex3f(0,0,0);
-			glVertex3f(1,0,0);
+    glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT);
+        glLineWidth(2);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_LIGHTING);
+        glColor3f(1,0,0);
+        glBegin(GL_LINES);
+            glVertex3f(0,0,0);
+            glVertex3f(1,0,0);
 
-			glVertex3f(1,0,0);
-			glVertex3f(.9f,.1f,.1f);
-			glVertex3f(1,0,0);
-			glVertex3f(.9f,-.1f,.1f);
-			glVertex3f(1,0,0);
-			glVertex3f(.9f,-.1f,-.1f);
-			glVertex3f(1,0,0);
-			glVertex3f(.9f,.1f,-.1f);
-		glEnd();
-		glColor3f(0,1,0);
-		glBegin(GL_LINES);
-			glVertex3f(0,0,0);
-			glVertex3f(0,1,0);
+            glVertex3f(1,0,0);
+            glVertex3f(.9f,.1f,.1f);
+            glVertex3f(1,0,0);
+            glVertex3f(.9f,-.1f,.1f);
+            glVertex3f(1,0,0);
+            glVertex3f(.9f,-.1f,-.1f);
+            glVertex3f(1,0,0);
+            glVertex3f(.9f,.1f,-.1f);
+        glEnd();
+        glColor3f(0,1,0);
+        glBegin(GL_LINES);
+            glVertex3f(0,0,0);
+            glVertex3f(0,1,0);
 
-			glVertex3f(0,1,0);
-			glVertex3f(.1f,.9f,.1f);
-			glVertex3f(0,1,0);
-			glVertex3f(-.1f,.9f,.1f);
-			glVertex3f(0,1,0);
-			glVertex3f(-.1f,.9f,-.1f);
-			glVertex3f(0,1,0);
-			glVertex3f(.1f,.9f,-.1f);
-		glEnd();
-		glColor3f(0,0,1);
-		glBegin(GL_LINES);
-			glVertex3f(0,0,0);
-			glVertex3f(0,0,1);
+            glVertex3f(0,1,0);
+            glVertex3f(.1f,.9f,.1f);
+            glVertex3f(0,1,0);
+            glVertex3f(-.1f,.9f,.1f);
+            glVertex3f(0,1,0);
+            glVertex3f(-.1f,.9f,-.1f);
+            glVertex3f(0,1,0);
+            glVertex3f(.1f,.9f,-.1f);
+        glEnd();
+        glColor3f(0,0,1);
+        glBegin(GL_LINES);
+            glVertex3f(0,0,0);
+            glVertex3f(0,0,1);
 
-			glVertex3f(0,0,1);
-			glVertex3f(.1f,.1f,.9f);
-			glVertex3f(0,0,1);
-			glVertex3f(-.1f,.1f,.9f);
-			glVertex3f(0,0,1);
-			glVertex3f(-.1f,-.1f,.9f);
-			glVertex3f(0,0,1);
-			glVertex3f(.1f,-.1f,.9f);
-		glEnd();
-	glPopAttrib();
-#endif
+            glVertex3f(0,0,1);
+            glVertex3f(.1f,.1f,.9f);
+            glVertex3f(0,0,1);
+            glVertex3f(-.1f,.1f,.9f);
+            glVertex3f(0,0,1);
+            glVertex3f(-.1f,-.1f,.9f);
+            glVertex3f(0,0,1);
+            glVertex3f(.1f,-.1f,.9f);
+        glEnd();
+    glPopAttrib();
 }
 
 
@@ -284,37 +282,35 @@ void dkglDrawCoordSystem()
 //
 void dkglDrawWireCube()
 {
-#ifndef _DX_
-	glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT);
-		glLineWidth(2);
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_LIGHTING);
-		glColor3f(1,1,0);
-		glBegin(GL_LINE_LOOP);
-			glVertex3f(-1,-1,-1);
-			glVertex3f(-1,1,-1);
-			glVertex3f(1,1,-1);
-			glVertex3f(1,-1,-1);
-		glEnd();
-		glBegin(GL_LINE_LOOP);
-			glVertex3f(-1,1,1);
-			glVertex3f(-1,-1,1);
-			glVertex3f(1,-1,1);
-			glVertex3f(1,1,1);
-		glEnd();
-		glBegin(GL_LINES);
-			glVertex3f(-1,1,1);
-			glVertex3f(-1,1,-1);
-			glVertex3f(-1,-1,1);
-			glVertex3f(-1,-1,-1);
-			glVertex3f(1,-1,1);
-			glVertex3f(1,-1,-1);
-			glVertex3f(1,1,1);
-			glVertex3f(1,1,-1);
-		glEnd();
-	glPopAttrib();
-#endif
+    glPushAttrib(GL_ENABLE_BIT | GL_LINE_BIT | GL_CURRENT_BIT);
+        glLineWidth(2);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_LIGHTING);
+        glColor3f(1,1,0);
+        glBegin(GL_LINE_LOOP);
+            glVertex3f(-1,-1,-1);
+            glVertex3f(-1,1,-1);
+            glVertex3f(1,1,-1);
+            glVertex3f(1,-1,-1);
+        glEnd();
+        glBegin(GL_LINE_LOOP);
+            glVertex3f(-1,1,1);
+            glVertex3f(-1,-1,1);
+            glVertex3f(1,-1,1);
+            glVertex3f(1,1,1);
+        glEnd();
+        glBegin(GL_LINES);
+            glVertex3f(-1,1,1);
+            glVertex3f(-1,1,-1);
+            glVertex3f(-1,-1,1);
+            glVertex3f(-1,-1,-1);
+            glVertex3f(1,-1,1);
+            glVertex3f(1,-1,-1);
+            glVertex3f(1,1,1);
+            glVertex3f(1,1,-1);
+        glEnd();
+    glPopAttrib();
 }
 
 
@@ -324,16 +320,14 @@ void dkglDrawWireCube()
 //
 void dkglPopOrtho()
 {
-#ifndef _DX_
-	// On pop nos matrice
-			glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+    // On pop nos matrice
+            glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 
-	// On pop nos attribs
-	glPopAttrib();
-#endif
+    // On pop nos attribs
+    glPopAttrib();
 }
 
 
@@ -343,23 +337,21 @@ void dkglPopOrtho()
 //
 void dkglPushOrtho(float mWidth, float mHeight)
 {
-#ifndef _DX_
-	// On push les attribs pour certaines modifications
-	glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
-//	glCullFace(GL_BACK);
+    // On push les attribs pour certaines modifications
+    glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
+//  glCullFace(GL_BACK);
 
-	// En mode 2D on ne veux pas de z-buffer
-	glDisable(GL_DEPTH_TEST);
+    // En mode 2D on ne veux pas de z-buffer
+    glDisable(GL_DEPTH_TEST);
 
-	// On push nos matrice et on set la matrice ortho
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-		glLoadIdentity();
-		glOrtho(0,mWidth,mHeight,0,-9999,9999);
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-			glLoadIdentity();
-#endif
+    // On push nos matrice et on set la matrice ortho
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+        glLoadIdentity();
+        glOrtho(0,mWidth,mHeight,0,-9999,9999);
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+            glLoadIdentity();
 }
 
 
@@ -369,23 +361,21 @@ void dkglPushOrtho(float mWidth, float mHeight)
 //
 void dkglSetBlendingFunc(int blending)
 {
-#ifndef _DX_
-	switch (blending)
-	{
-	case DKGL_BLENDING_ADD_SATURATE:
-		glBlendFunc(GL_ONE, GL_ONE);
-		break;
-	case DKGL_BLENDING_ADD:
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		break;
-	case DKGL_BLENDING_MULTIPLY:
-		glBlendFunc(GL_DST_COLOR, GL_ZERO);
-		break;
-	case DKGL_BLENDING_ALPHA:
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		break;
-	}
-#endif
+    switch (blending)
+    {
+    case DKGL_BLENDING_ADD_SATURATE:
+        glBlendFunc(GL_ONE, GL_ONE);
+        break;
+    case DKGL_BLENDING_ADD:
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        break;
+    case DKGL_BLENDING_MULTIPLY:
+        glBlendFunc(GL_DST_COLOR, GL_ZERO);
+        break;
+    case DKGL_BLENDING_ALPHA:
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        break;
+    }
 }
 
 
@@ -395,19 +385,17 @@ void dkglSetBlendingFunc(int blending)
 //
 void dkglSetPointLight(int ID, float x, float y, float z, float r, float g, float b)
 {
-#ifndef _DX_
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0 + ID);
-	float pos[] = {x,y,z,1};
-	float amb[] = {r/6,g/6,b/6,1};
-	float diff[] = {r,g,b,1};
-	float spec[] = {r,g,b,1};
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0 + ID);
+    float pos[] = {x,y,z,1};
+    float amb[] = {r/6,g/6,b/6,1};
+    float diff[] = {r,g,b,1};
+    float spec[] = {r,g,b,1};
 
-	glLightfv(GL_LIGHT0 + ID, GL_POSITION, pos);
-	glLightfv(GL_LIGHT0 + ID, GL_AMBIENT, amb);
-	glLightfv(GL_LIGHT0 + ID, GL_DIFFUSE, diff);
-	glLightfv(GL_LIGHT0 + ID, GL_SPECULAR, spec);
-#endif
+    glLightfv(GL_LIGHT0 + ID, GL_POSITION, pos);
+    glLightfv(GL_LIGHT0 + ID, GL_AMBIENT, amb);
+    glLightfv(GL_LIGHT0 + ID, GL_DIFFUSE, diff);
+    glLightfv(GL_LIGHT0 + ID, GL_SPECULAR, spec);
 }
 
 
@@ -417,24 +405,22 @@ void dkglSetPointLight(int ID, float x, float y, float z, float r, float g, floa
 //
 void dkglSetProjection(float mFieldOfView, float mNear, float mFar, float mWidth, float mHeight)
 {
-#ifndef _DX_
-	// On met la matrice de projection pour ce créer une vue perspective
-	glMatrixMode(GL_PROJECTION);
+    // On met la matrice de projection pour ce créer une vue perspective
+    glMatrixMode(GL_PROJECTION);
 
-	// On remet cette matrice à identity
-	glLoadIdentity();
+    // On remet cette matrice à identity
+    glLoadIdentity();
 
-	// On ajuste la matrice de projection
+    // On ajuste la matrice de projection
     float proj[4][4];
     createPerspectiveFieldOfView(mFieldOfView, mWidth / mHeight, mNear, mFar, proj);
     glMultMatrixf(&proj[0][0]);
 
-	// On remet cette de model view (qui est celle de la position et l'orientation)
-	glMatrixMode(GL_MODELVIEW);
+    // On remet cette de model view (qui est celle de la position et l'orientation)
+    glMatrixMode(GL_MODELVIEW);
 
-	// La model view à identity
-	glLoadIdentity();
-#endif
+    // La model view à identity
+    glLoadIdentity();
 }
 
 int glhInvertMatrixf2(float *m, float *out);
@@ -467,7 +453,7 @@ int glhProjectf(float objx, float objy, float objz, float *modelview, float *pro
     windowCoordinate[0] = (fTempo[4] * 0.5f + 0.5f)*viewport[2] + viewport[0];
     windowCoordinate[1] = (fTempo[5] * 0.5f + 0.5f)*viewport[3] + viewport[1];
     // This is only correct when glDepthRange(0.0, 1.0)
-    windowCoordinate[2] = (1.0f + fTempo[6])*0.5f;	// Between 0 and 1
+    windowCoordinate[2] = (1.0f + fTempo[6])*0.5f;  // Between 0 and 1
     return 1;
 }
 
@@ -695,12 +681,12 @@ int glhInvertMatrixf2(float *m, float *out)
     /* last check */
     if (0.0f == r3[3])
         return 0;
-    s = 1.0f / r3[3];		/* now back substitute row 3 */
+    s = 1.0f / r3[3];       /* now back substitute row 3 */
     r3[4] *= s;
     r3[5] *= s;
     r3[6] *= s;
     r3[7] *= s;
-    m2 = r2[3];			/* now back substitute row 2 */
+    m2 = r2[3];         /* now back substitute row 2 */
     s = 1.0f / r2[2];
     r2[4] = s * (r2[4] - r3[4] * m2), r2[5] = s * (r2[5] - r3[5] * m2),
         r2[6] = s * (r2[6] - r3[6] * m2), r2[7] = s * (r2[7] - r3[7] * m2);
@@ -710,14 +696,14 @@ int glhInvertMatrixf2(float *m, float *out)
     m0 = r0[3];
     r0[4] -= r3[4] * m0, r0[5] -= r3[5] * m0,
         r0[6] -= r3[6] * m0, r0[7] -= r3[7] * m0;
-    m1 = r1[2];			/* now back substitute row 1 */
+    m1 = r1[2];         /* now back substitute row 1 */
     s = 1.0f / r1[1];
     r1[4] = s * (r1[4] - r2[4] * m1), r1[5] = s * (r1[5] - r2[5] * m1),
         r1[6] = s * (r1[6] - r2[6] * m1), r1[7] = s * (r1[7] - r2[7] * m1);
     m0 = r0[2];
     r0[4] -= r2[4] * m0, r0[5] -= r2[5] * m0,
         r0[6] -= r2[6] * m0, r0[7] -= r2[7] * m0;
-    m0 = r0[1];			/* now back substitute row 0 */
+    m0 = r0[1];         /* now back substitute row 0 */
     s = 1.0f / r0[0];
     r0[4] = s * (r0[4] - r1[4] * m0), r0[5] = s * (r0[5] - r1[5] * m0),
         r0[6] = s * (r0[6] - r1[6] * m0), r0[7] = s * (r0[7] - r1[7] * m0);
@@ -746,52 +732,48 @@ void dkglShutDown()
 //
 CVector3f dkglUnProject(CVector2i & pos2D, float zRange)
 {
-	float v[3];
-#ifndef _DX_
-	CVector3f pos((float)pos2D[0], (float)pos2D[1], zRange);
-	GLfloat modelMatrix[16];
+    float v[3];
+    CVector3f pos((float)pos2D[0], (float)pos2D[1], zRange);
+    GLfloat modelMatrix[16];
     GLfloat projMatrix[16];
-	GLint    viewport[4];
+    GLint    viewport[4];
 
-	glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
-	glGetFloatv(GL_PROJECTION_MATRIX, projMatrix);
-	glGetIntegerv(GL_VIEWPORT, viewport);
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
+    glGetFloatv(GL_PROJECTION_MATRIX, projMatrix);
+    glGetIntegerv(GL_VIEWPORT, viewport);
 
     glhUnProjectf(
-		pos[0], 
-		pos[1], 
-		pos[2], 
-		modelMatrix, 
-		projMatrix, 
-		viewport, 
+        pos[0],
+        pos[1],
+        pos[2],
+        modelMatrix,
+        projMatrix,
+        viewport,
         v);
-#endif
 
-	return CVector3f(v[0], v[1], v[2]);
+    return CVector3f(v[0], v[1], v[2]);
 }
 
 
 CVector3f dkglProject(CVector3f & pos3D)
 {
     float v[3];
-#ifndef _DX_
     GLfloat modelMatrix[16];
     GLfloat projMatrix[16];
-	GLint    viewport[4];
+    GLint    viewport[4];
 
     glGetFloatv(GL_MODELVIEW_MATRIX, modelMatrix);
     glGetFloatv(GL_PROJECTION_MATRIX, projMatrix);
-	glGetIntegerv(GL_VIEWPORT, viewport);
+    glGetIntegerv(GL_VIEWPORT, viewport);
 
     glhProjectf(
-		pos3D[0], 
-		pos3D[1], 
-		pos3D[2], 
-		modelMatrix, 
-		projMatrix, 
-		viewport, 
+        pos3D[0],
+        pos3D[1],
+        pos3D[2],
+        modelMatrix,
+        projMatrix,
+        viewport,
         v);
-#endif
     return CVector3f(v[0], v[1], v[2]);
 }
 

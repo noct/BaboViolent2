@@ -165,7 +165,6 @@ void eHierarchic::drawAll()
 	{
 		// On fait son push pop
 #ifndef DEDICATED_SERVER
-#ifndef _DX_
 		glPushMatrix();
 			glTranslatef(position[0], position[1], position[2]);
 			float Matrix[16] = {
@@ -175,7 +174,6 @@ void eHierarchic::drawAll()
 				0,          0,          0,          1};
 			glMultMatrixf(Matrix);
 #endif
-#endif
 
 			// On le dessine lui en premier
 			drawIt();
@@ -184,9 +182,7 @@ void eHierarchic::drawAll()
 			for (eHierarchic* ptrObject = childList; ptrObject; ptrObject = ptrObject->next)
 				ptrObject->drawAll(); // hum pas vraiment d'hierarchi �l'interieur d'un dko mais bon
 #ifndef DEDICATED_SERVER
-#ifndef _DX_
 		glPopMatrix();
-#endif
 #endif
 	}
 }

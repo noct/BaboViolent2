@@ -145,7 +145,6 @@ void Write::update(float delay)
 //
 void Write::render()
 {
-#ifndef _DX_
 	glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
 		// Le contour
 		glEnable(GL_TEXTURE_2D);
@@ -220,7 +219,6 @@ void Write::render()
 			}
 		}
 	glPopAttrib();
-#endif
 }
 
 

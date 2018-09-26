@@ -554,6 +554,8 @@ public:
 	// Destructeur
 	virtual ~GameVar();
 
+    void init();
+
 	// on load les models pour le jeu
 	void loadModels();
 

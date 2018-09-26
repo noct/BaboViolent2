@@ -1,19 +1,19 @@
 /*
-	Copyright 2012 bitHeads inc.
+    Copyright 2012 bitHeads inc.
 
-	This file is part of the BaboViolent 2 source code.
+    This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or
-	modify it under the terms of the GNU General Public License as published by the
-	Free Software Foundation, either version 3 of the License, or (at your option)
-	any later version.
+    The BaboViolent 2 source code is free software: you can redistribute it and/or
+    modify it under the terms of the GNU General Public License as published by the
+    Free Software Foundation, either version 3 of the License, or (at your option)
+    any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    The BaboViolent 2 source code is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the
-	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
+    You should have received a copy of the GNU General Public License along with the
+    BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
 #ifdef WIN32
@@ -21,7 +21,7 @@
 #endif
 
 #ifndef WIN32
-	#include "LinuxHeader.h"
+    #include "LinuxHeader.h"
 #endif
 
 #include "Zeven.h"
@@ -30,8 +30,8 @@
 #include <exception>
 #include "CMaster.h"
 #ifndef DEDICATED_SERVER
-	#include "CStatus.h"
-	#include "CLobby.h"
+    #include "CStatus.h"
+    #include "CLobby.h"
 #endif
 
 #include "imgui.h"
@@ -39,9 +39,9 @@
 #include "imgui_impl_opengl3.h"
 
 #ifdef WIN32
-	#if defined(_DEBUG) && defined(USE_VLD) && !defined(DEDICATED_SERVER)
-		#include <vld.h>
-	#endif
+    #if defined(_DEBUG) && defined(USE_VLD) && !defined(DEDICATED_SERVER)
+        #include <vld.h>
+    #endif
 #endif
 
 
@@ -59,84 +59,84 @@ char * bbNetVersion;
 bool quit = false;
 void dkwForceQuit()
 {
-	quit = true;
+    quit = true;
 }
 #else
 CVector2i mousePos_xbox;
 CVector2f mousePos_xboxVel;
 void updateXBoxMouse_main(float delay)
 {
-	CVector3f joy = dkiGetJoyR();
+    CVector3f joy = dkiGetJoyR();
 
-	joy[2] = 0;
+    joy[2] = 0;
 
-	if (fabsf(joy[0]) < .25f) joy[0] = 0;
-	if (fabsf(joy[1]) < .25f) joy[1] = 0;
+    if (fabsf(joy[0]) < .25f) joy[0] = 0;
+    if (fabsf(joy[1]) < .25f) joy[1] = 0;
 
-	CVector2i res = dkwGetResolution();
+    CVector2i res = dkwGetResolution();
 
-	mousePos_xboxVel[0] += joy[0] * (30 + fabsf(mousePos_xboxVel[0]) * 0.0f) * delay;
-	mousePos_xboxVel[1] += joy[1] * (30 + fabsf(mousePos_xboxVel[1]) * 0.0f) * delay;
-	if (mousePos_xboxVel[0] > 2.5f) mousePos_xboxVel[0] = 2.5f;
-	if (mousePos_xboxVel[0] < -2.5f) mousePos_xboxVel[0] = -2.5f;
-	if (mousePos_xboxVel[1] > 2.5f) mousePos_xboxVel[1] = 2.5f;
-	if (mousePos_xboxVel[1] < -2.5f) mousePos_xboxVel[1] = -2.5f;
+    mousePos_xboxVel[0] += joy[0] * (30 + fabsf(mousePos_xboxVel[0]) * 0.0f) * delay;
+    mousePos_xboxVel[1] += joy[1] * (30 + fabsf(mousePos_xboxVel[1]) * 0.0f) * delay;
+    if (mousePos_xboxVel[0] > 2.5f) mousePos_xboxVel[0] = 2.5f;
+    if (mousePos_xboxVel[0] < -2.5f) mousePos_xboxVel[0] = -2.5f;
+    if (mousePos_xboxVel[1] > 2.5f) mousePos_xboxVel[1] = 2.5f;
+    if (mousePos_xboxVel[1] < -2.5f) mousePos_xboxVel[1] = -2.5f;
 
-	mousePos_xbox[0] += (int)(mousePos_xboxVel[0] * 600 * delay);
-	mousePos_xbox[1] += (int)(mousePos_xboxVel[1] * 600 * delay);
-	if (mousePos_xbox[0] < 0)
-	{
-		mousePos_xbox[0] = 0;
-		mousePos_xboxVel[0] = 0;
-	}
-	if (mousePos_xbox[1] < 0)
-	{
-		mousePos_xbox[1] = 0;
-		mousePos_xboxVel[1] = 0;
-	}
-	if (mousePos_xbox[0] > res[0])
-	{
-		mousePos_xbox[0] = res[0] - 1;
-		mousePos_xboxVel[0] = 0;
-	}
-	if (mousePos_xbox[1] > res[1])
-	{
-		mousePos_xbox[1] = res[1] - 1;
-		mousePos_xboxVel[1] = 0;
-	}
+    mousePos_xbox[0] += (int)(mousePos_xboxVel[0] * 600 * delay);
+    mousePos_xbox[1] += (int)(mousePos_xboxVel[1] * 600 * delay);
+    if (mousePos_xbox[0] < 0)
+    {
+        mousePos_xbox[0] = 0;
+        mousePos_xboxVel[0] = 0;
+    }
+    if (mousePos_xbox[1] < 0)
+    {
+        mousePos_xbox[1] = 0;
+        mousePos_xboxVel[1] = 0;
+    }
+    if (mousePos_xbox[0] > res[0])
+    {
+        mousePos_xbox[0] = res[0] - 1;
+        mousePos_xboxVel[0] = 0;
+    }
+    if (mousePos_xbox[1] > res[1])
+    {
+        mousePos_xbox[1] = res[1] - 1;
+        mousePos_xboxVel[1] = 0;
+    }
 
-	if (mousePos_xboxVel[0] > 0)
-	{
-		mousePos_xboxVel[0] -= delay * 25;
-		if (mousePos_xboxVel[0] < 0) mousePos_xboxVel[0] = 0;
-	}
-	if (mousePos_xboxVel[0] < 0)
-	{
-		mousePos_xboxVel[0] += delay * 25;
-		if (mousePos_xboxVel[0] > 0) mousePos_xboxVel[0] = 0;
-	}
-	if (mousePos_xboxVel[1] > 0)
-	{
-		mousePos_xboxVel[1] -= delay * 25;
-		if (mousePos_xboxVel[1] < 0) mousePos_xboxVel[1] = 0;
-	}
-	if (mousePos_xboxVel[1] < 0)
-	{
-		mousePos_xboxVel[1] += delay * 25;
-		if (mousePos_xboxVel[1] > 0) mousePos_xboxVel[1] = 0;
-	}
+    if (mousePos_xboxVel[0] > 0)
+    {
+        mousePos_xboxVel[0] -= delay * 25;
+        if (mousePos_xboxVel[0] < 0) mousePos_xboxVel[0] = 0;
+    }
+    if (mousePos_xboxVel[0] < 0)
+    {
+        mousePos_xboxVel[0] += delay * 25;
+        if (mousePos_xboxVel[0] > 0) mousePos_xboxVel[0] = 0;
+    }
+    if (mousePos_xboxVel[1] > 0)
+    {
+        mousePos_xboxVel[1] -= delay * 25;
+        if (mousePos_xboxVel[1] < 0) mousePos_xboxVel[1] = 0;
+    }
+    if (mousePos_xboxVel[1] < 0)
+    {
+        mousePos_xboxVel[1] += delay * 25;
+        if (mousePos_xboxVel[1] > 0) mousePos_xboxVel[1] = 0;
+    }
 }
 
 CVector2i dkwGetCursorPos_main()
 {
-	if (gameVar.cl_enableXBox360Controller)
-	{
-		return mousePos_xbox;
-	}
-	else
-	{
-		return dkwGetCursorPos();
-	}
+    if (gameVar.cl_enableXBox360Controller)
+    {
+        return mousePos_xbox;
+    }
+    else
+    {
+        return dkwGetCursorPos();
+    }
 }
 #endif
 
@@ -147,47 +147,47 @@ CVector2i dkwGetCursorPos_main()
 void UpdateLauncher()
 {
 
-	//test
-	//CreateDirectory("testing", 0 );
+    //test
+    //CreateDirectory("testing", 0 );
 
-	//CreateDirectory("test", 0 );
-	//CreateDirectory("test/testing", 0 );
+    //CreateDirectory("test", 0 );
+    //CreateDirectory("test/testing", 0 );
 
 
-	// try to open the file, if not present, then we dont need to update the launcher!
-	FILE * file = fopen("_Bv2Launcher.exe" ,"rb");
+    // try to open the file, if not present, then we dont need to update the launcher!
+    FILE * file = fopen("_Bv2Launcher.exe" ,"rb");
 
-	//no update needed
-	if(!file)
-	{
-		return;
-	}
-
-	fseek (file , 0 , SEEK_END);
-	long Size = ftell(file);
-	rewind(file);
-
-		//open the current laucher so we can overwrite it!
-	FILE * ufile = fopen("Bv2Launcher.exe","wb");
-
-	// problem opening the file for writing, no update will occur
-	if(!ufile)
-	{
-		fclose(file);
+    //no update needed
+    if(!file)
+    {
         return;
-	}
+    }
 
-	char *buffer = new char[Size];
+    fseek (file , 0 , SEEK_END);
+    long Size = ftell(file);
+    rewind(file);
 
-	fread( buffer , Size , 1 , file );
-	fwrite( buffer , Size , 1 , ufile );
+        //open the current laucher so we can overwrite it!
+    FILE * ufile = fopen("Bv2Launcher.exe","wb");
 
-	//finished with the files
-	fclose( file );
-	fclose( ufile );
+    // problem opening the file for writing, no update will occur
+    if(!ufile)
+    {
+        fclose(file);
+        return;
+    }
 
-	//let's kill the unusefull file
-	remove( "_Bv2Launcher.exe" );
+    char *buffer = new char[Size];
+
+    fread( buffer , Size , 1 , file );
+    fwrite( buffer , Size , 1 , ufile );
+
+    //finished with the files
+    fclose( file );
+    fclose( ufile );
+
+    //let's kill the unusefull file
+    remove( "_Bv2Launcher.exe" );
 
 
 
@@ -201,70 +201,70 @@ public:
 
 
 
-	// Les fonctions obligatoire du MainLoopInterface de la dll dkw
-	void paint()
-	{
+    // Les fonctions obligatoire du MainLoopInterface de la dll dkw
+    void paint()
+    {
 
-		// On va updater notre timer
-		int nbFrameElapsed = dkcUpdateTimer();
+        // On va updater notre timer
+        int nbFrameElapsed = dkcUpdateTimer();
 
 #ifdef _DEBUG
-		// LAG GENERATOR , use it to bind a key and test in lag conditions
-		if (dkiGetState(KeyBackspace) == DKI_DOWN)
-		{
-			Sleep(300);
-		}
+        // LAG GENERATOR , use it to bind a key and test in lag conditions
+        if (dkiGetState(KeyBackspace) == DKI_DOWN)
+        {
+            Sleep(300);
+        }
 #endif
 
 
-		// On va chercher notre delay
-		float delay = dkcGetElapsedf();
+        // On va chercher notre delay
+        float delay = dkcGetElapsedf();
 
-		// On passe le nombre de frame �animer
-		while (nbFrameElapsed)
-		{
-			// On update nos input
-			dkiUpdate(delay, resW, resH);
+        // On passe le nombre de frame �animer
+        while (nbFrameElapsed)
+        {
+            // On update nos input
+            dkiUpdate(delay, resW, resH);
 
-			// Xbox mouse pos
-			updateXBoxMouse_main(delay);
+            // Xbox mouse pos
+            updateXBoxMouse_main(delay);
 
-			// On update le writing
-			if (writting) writting->updateWritting(delay);
+            // On update le writing
+            if (writting) writting->updateWritting(delay);
 
-			// Update la console
-			console->update(delay);
+            // Update la console
+            console->update(delay);
 
-			// On appel nos fonction pour animer ici
-			scene->update(delay);
+            // On appel nos fonction pour animer ici
+            scene->update(delay);
 
-			// On d�r�ente pour le prochain frame
-			nbFrameElapsed--;
-		}
+            // On d�r�ente pour le prochain frame
+            nbFrameElapsed--;
+        }
 
 #ifdef _DX_
-		if (dkglGetDXDevice())
-		{
-			dkglGetDXDevice()->BeginScene();
+        if (dkglGetDXDevice())
+        {
+            dkglGetDXDevice()->BeginScene();
 #endif
-		// On render le tout
-		scene->render();
+        // On render le tout
+        scene->render();
 #ifdef _DX_
-		dkglGetDXDevice()->EndScene();
+        dkglGetDXDevice()->EndScene();
 #endif
 
-		// Swap buffers if valid context is found
+        // Swap buffers if valid context is found
 #ifndef _DX_
-		if( dkwGetDC() )
-		{
+        if( dkwGetDC() )
+        {
             SDL_GL_SwapWindow(dkwGetHandle());
-		}
+        }
 #else
-		dkglGetDXDevice()->Present(	NULL,
-									NULL,
-									NULL,
-									NULL);
-		}
+        dkglGetDXDevice()->Present( NULL,
+                                    NULL,
+                                    NULL,
+                                    NULL);
+        }
 #endif
 
       #ifdef NDEBUG
@@ -277,13 +277,13 @@ public:
       #endif
       #endif
       #endif
-	}
+    }
 
-	void textWrite(unsigned int caracter)
-	{
-		// Voil�juste un writting peut avoir le focus �la fois
-		if (writting) writting->writeText(caracter);
-	}
+    void textWrite(unsigned int caracter)
+    {
+        // Voil�juste un writting peut avoir le focus �la fois
+        if (writting) writting->writeText(caracter);
+    }
 } mainLoopInterface;
 #endif
 
@@ -292,10 +292,10 @@ public:
 class StringInterface : public CStringInterface
 {
 public:
-	virtual void updateString(CString* string, char * newValue)
-	{
-		*string = newValue;
-	}
+    virtual void updateString(CString* string, char * newValue)
+    {
+        *string = newValue;
+    }
     StringInterface()
         {
             //printf("Constructor: 0x%x\n", this);
@@ -310,363 +310,357 @@ public:
 #ifdef DEDICATED_SERVER
 
 #include "CThread.h"
-	bool s_locked = false;
-	bool s_internalLock = false;
+    bool s_locked = false;
+    bool s_internalLock = false;
 
 class CMainLoopConsole : public CThread
 {
 public:
-	bool locked;
-	bool internalLock;
+    bool locked;
+    bool internalLock;
 
 public:
-	CMainLoopConsole()
-	{
-		locked = false;
-		internalLock = false;
-	}
+    CMainLoopConsole()
+    {
+        locked = false;
+        internalLock = false;
+    }
 
-	void execute(void* pArg)
-	{
-		#ifndef WIN32 // linux timestruct for nanosleep
-			timespec ts;
+    void execute(void* pArg)
+    {
+        #ifndef WIN32 // linux timestruct for nanosleep
+            timespec ts;
 
-			ts.tv_sec = 0;
-			ts.tv_nsec = 1000000;
-		#endif
-
-
-		while (!quit)
-		{
-			// On va updater notre timer
-			int nbFrameElapsed = dkcUpdateTimer();
-
-			// On va chercher notre delay
-			float delay = dkcGetElapsedf();
-
-			// On passe le nombre de frame �animer
-			while (nbFrameElapsed)
-			{
-				// Update la console
-				console->update(delay);
-
-				// On appel nos fonction pour animer ici
-				scene->update(delay);
-
-				// On d�r�ente pour le prochain frame
-				nbFrameElapsed--;
-
-				//printf("FPS: %f\n", dkcGetFPS());
-			}
-
-			//--- On check si on n'est pas lock�avant de continuer
-			if (locked)
-			{
-				internalLock = true;
-			}
-
-			while (internalLock)
-			{
-				#ifdef WIN32
-					Sleep(1);
-				#else
-					if(nanosleep(&ts,0))
-					{
-						printf("problem nanosleep internal lock\n");
-					}
-				#endif
-			//	printf("--- internalLock (execute)\n");
-			}
-
-			#ifdef WIN32
-				Sleep(1);
-			#else
-			if(nanosleep(&ts,0))
-			{
-				printf("problem nanosleep main loop\n");
-			}
-			#endif
-		}
-
-		//printf(" game main loop has quit \n");
-
-	/*	char input[256];
-		while (!quit)
-		{
-			std::cin.getline(input,256);
+            ts.tv_sec = 0;
+            ts.tv_nsec = 1000000;
+        #endif
 
 
-			lock();
-			console->sendCommand(input);//CString("Execute CTF"));
-			unlock();
+        while (!quit)
+        {
+            // On va updater notre timer
+            int nbFrameElapsed = dkcUpdateTimer();
 
-			#ifdef WIN32
-				Sleep(1);
-			#else
-				if(nanosleep(&ts,0))
-				{
-					printf("problem nanosleep console loop\n");
-				}
-				ts.tv_sec = 0;
-				ts.tv_nsec = 1000000;
-			#endif
+            // On va chercher notre delay
+            float delay = dkcGetElapsedf();
 
-			//cin.ignore( 10000 , '\n');
-			//input[0] = 0;
-			//fflush(stdin);
-		};*/
-	}
+            // On passe le nombre de frame �animer
+            while (nbFrameElapsed)
+            {
+                // Update la console
+                console->update(delay);
 
-	void lock()
-	{
-		#ifndef WIN32 // linux timestruct for nanosleep
+                // On appel nos fonction pour animer ici
+                scene->update(delay);
 
-			timespec ts;
+                // On d�r�ente pour le prochain frame
+                nbFrameElapsed--;
 
-			ts.tv_sec = 0;
-			ts.tv_nsec = 1000000;
-		#endif
+                //printf("FPS: %f\n", dkcGetFPS());
+            }
 
-		locked = true;
-		while (!internalLock)
-		{
-			#ifdef WIN32
-				Sleep(1);
-			#else
-				if(nanosleep(&ts,0))
-				{
-					printf("problem nanosleep lock\n");
-				}
-				ts.tv_sec = 0;
-				ts.tv_nsec = 1000000;
+            //--- On check si on n'est pas lock�avant de continuer
+            if (locked)
+            {
+                internalLock = true;
+            }
+
+            while (internalLock)
+            {
+                #ifdef WIN32
+                    Sleep(1);
+                #else
+                    if(nanosleep(&ts,0))
+                    {
+                        printf("problem nanosleep internal lock\n");
+                    }
+                #endif
+            //  printf("--- internalLock (execute)\n");
+            }
+
+            #ifdef WIN32
+                Sleep(1);
+            #else
+            if(nanosleep(&ts,0))
+            {
+                printf("problem nanosleep main loop\n");
+            }
+            #endif
+        }
+
+        //printf(" game main loop has quit \n");
+
+    /*  char input[256];
+        while (!quit)
+        {
+            std::cin.getline(input,256);
 
 
-			#endif
-		//	printf("--- internalLock (lock)\n");
-		}
-	}
+            lock();
+            console->sendCommand(input);//CString("Execute CTF"));
+            unlock();
 
-	void unlock()
-	{
-		locked = false;
-		internalLock = false;
-	}
+            #ifdef WIN32
+                Sleep(1);
+            #else
+                if(nanosleep(&ts,0))
+                {
+                    printf("problem nanosleep console loop\n");
+                }
+                ts.tv_sec = 0;
+                ts.tv_nsec = 1000000;
+            #endif
+
+            //cin.ignore( 10000 , '\n');
+            //input[0] = 0;
+            //fflush(stdin);
+        };*/
+    }
+
+    void lock()
+    {
+        #ifndef WIN32 // linux timestruct for nanosleep
+
+            timespec ts;
+
+            ts.tv_sec = 0;
+            ts.tv_nsec = 1000000;
+        #endif
+
+        locked = true;
+        while (!internalLock)
+        {
+            #ifdef WIN32
+                Sleep(1);
+            #else
+                if(nanosleep(&ts,0))
+                {
+                    printf("problem nanosleep lock\n");
+                }
+                ts.tv_sec = 0;
+                ts.tv_nsec = 1000000;
+
+
+            #endif
+        //  printf("--- internalLock (lock)\n");
+        }
+    }
+
+    void unlock()
+    {
+        locked = false;
+        internalLock = false;
+    }
 };
 
 
 int main(int argc, const char* argv[])
 {
+    // lil print out so that people now know that its working
 
-	// lil print out so that people now know that its working
+    printf("***************************************\n");
+    printf("*   Babo Violent 2 Dedicated Server   *\n");
+    printf("*   Version 2.11d                     *\n");
+    printf("*                                     *\n");
+    printf("* check the /main/LaunchScript files  *\n");
+    printf("* to configure your server            *\n");
+    printf("***************************************\n\n\n");
 
-	printf("***************************************\n");
-	printf("*   Babo Violent 2 Dedicated Server   *\n");
-	printf("*   Version 2.11d                     *\n");
-	printf("*                                     *\n");
-	printf("* check the /main/LaunchScript files  *\n");
-	printf("* to configure your server            *\n");
-	printf("***************************************\n\n\n");
+    // Example on how to get the mac adress
+    //unsigned char mac[8];     // unsigned here is very important
+    //bb_getMyMAC( mac );
 
+    //char macString[20];
+    //sprintf( macString , "%.2x-%.2x-%.2x-%.2x-%.2x-%.2x" , (int)mac[0], (int)mac[1],(int)mac[2],(int)mac[3],(int)mac[4],(int)mac[5] );
+    //printf( " mac addr : %s " , macString );
 
-	// Example on how to get the mac adress
-	//unsigned char mac[8];		// unsigned here is very important
-	//bb_getMyMAC( mac );
+    #ifndef WIN32 // linux timestruct for nanosleep
+        timespec ts;
 
-	//char macString[20];
-	//sprintf( macString , "%.2x-%.2x-%.2x-%.2x-%.2x-%.2x" , (int)mac[0], (int)mac[1],(int)mac[2],(int)mac[3],(int)mac[4],(int)mac[5] );
-	//printf( " mac addr : %s " , macString );
+        ts.tv_sec = 0;
+        ts.tv_nsec = 1000000; // 1 ms
+    #endif
 
+    // PREMI�E CHOSE �FAIRE, on load les config
+    dksvarInit(&stringInterface);
+    dksvarLoadConfig("main/bv2.cfg");
+    dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
 
+    // On init nos DLL qui vont �re utilis�dans ce jeu
+    // On initialise quelque cossin important avant tout
+    dkcInit(30); // 30 frame par seconde (m�e que 15 serait le best)
 
+    // On init la network
+    if (bb_init() == 1)
+    {
+        #ifdef WIN32
+            MessageBox(NULL, "Error initiating baboNet", "Error", 0);
+        #endif
+        return 0;
+    }
+    bbNetVersion = bb_getVersion();
+    if (CString("%s", bbNetVersion) != "4.0")
+    {
+        // Error
+        bb_peerShutdown();
+        bb_shutdown();
+        #ifdef WIN32
+            MessageBox(NULL, "Wrong version of BaboNet\nReinstalling the game may resolve this prolem", "Error", 0);
+        #endif
+        return 0;
+    }
 
+    // On init la console
+    console = new Console();
+    console->init();
 
-	#ifndef WIN32 // linux timestruct for nanosleep
-		timespec ts;
+    //--- On cr�le master
+    master = new CMaster();
 
-		ts.tv_sec = 0;
-		ts.tv_nsec = 1000000; // 1 ms
-	#endif
+    // On cr�notre scene
+    scene = new Scene();
 
-	// PREMI�E CHOSE �FAIRE, on load les config
-	dksvarInit(&stringInterface);
-	dksvarLoadConfig("main/bv2.cfg");
-	dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
+    // La loop principal
+    CMainLoopConsole mainLoopConsole;
 
-	// On init nos DLL qui vont �re utilis�dans ce jeu
-	// On initialise quelque cossin important avant tout
-	dkcInit(30); // 30 frame par seconde (m�e que 15 serait le best)
-
-	// On init la network
-	if (bb_init() == 1)
-	{
-		#ifdef WIN32
-			MessageBox(NULL, "Error initiating baboNet", "Error", 0);
-		#endif
-		return 0;
-	}
-	bbNetVersion = bb_getVersion();
-	if (CString("%s", bbNetVersion) != "4.0")
-	{
-		// Error
-		bb_peerShutdown();
-		bb_shutdown();
-		#ifdef WIN32
-			MessageBox(NULL, "Wrong version of BaboNet\nReinstalling the game may resolve this prolem", "Error", 0);
-		#endif
-		return 0;
-	}
-
-	// On init la console
-	console = new Console();
-	console->init();
-
-	//--- On cr�le master
-	master = new CMaster();
-
-	// On cr�notre scene
-	scene = new Scene();
-
-	// La loop principal
-	CMainLoopConsole mainLoopConsole;
-
-	//--- On start la thread
-	mainLoopConsole.start();
+    //--- On start la thread
+    mainLoopConsole.start();
 
 
-/*	{
-		#ifndef WIN32 // linux timestruct for nanosleep
-			timespec ts;
+/*  {
+        #ifndef WIN32 // linux timestruct for nanosleep
+            timespec ts;
 
-			ts.tv_sec = 0;
-			ts.tv_nsec = 1000000;
-		#endif
-
-
-		float tim = 0;
-
-		while (!quit)
-		{
-			// On va updater notre timer
-			int nbFrameElapsed = dkcUpdateTimer();
-
-			// On va chercher notre delay
-			float delay = dkcGetElapsedf();
-
-			//printf("nbFrameElapsed : %i\n",nbFrameElapsed);
-
-			// On passe le nombre de frame �animer
-			while (nbFrameElapsed)
-			{
-				// Update la console
-				console->update(delay);
-
-				// On appel nos fonction pour animer ici
-				scene->update(delay);
-
-				// On d�r�ente pour le prochain frame
-				nbFrameElapsed--;
-
-				//tim += delay;
-				//printf("elapsed : %f\n",tim);
-
-				//printf("FPS: %f\n", dkcGetFPS());
-			}
-
-			//--- On check si on n'est pas lock�avant de continuer
-			if (s_locked)
-			{
-				s_internalLock = true;
-			}
-
-			while (s_internalLock)
-			{
-				#ifdef WIN32
-					Sleep(1);
-				#else
-					if(nanosleep(&ts,0))
-					{
-						printf("problem nanosleep internal lock\n");
-					}
-					ts.tv_sec = 0;
-					ts.tv_nsec = 1000000;
-				#endif
-			//	printf("--- internalLock (execute)\n");
-			}
-
-			#ifdef WIN32
-				Sleep(1);
-			#else
-			if(nanosleep(&ts,0))
-			{
-				printf("problem nanosleep main loop\n");
-			}
-			ts.tv_sec = 0;
-			ts.tv_nsec = 1000000;
-			#endif
-		}
-	}*/
-
-	//--- Get the arguments and send that to console
-//	int argc, const char* argv[]
-
-	if (argc > 1)
-	{
-		CString executeCmd = "execute ";
-		executeCmd += (char*)(argv[1]);
-		console->sendCommand(executeCmd);
-	}
+            ts.tv_sec = 0;
+            ts.tv_nsec = 1000000;
+        #endif
 
 
-	char input[256];
-	while (!quit)
-	{
-		std::cin.getline(input,256);
+        float tim = 0;
+
+        while (!quit)
+        {
+            // On va updater notre timer
+            int nbFrameElapsed = dkcUpdateTimer();
+
+            // On va chercher notre delay
+            float delay = dkcGetElapsedf();
+
+            //printf("nbFrameElapsed : %i\n",nbFrameElapsed);
+
+            // On passe le nombre de frame �animer
+            while (nbFrameElapsed)
+            {
+                // Update la console
+                console->update(delay);
+
+                // On appel nos fonction pour animer ici
+                scene->update(delay);
+
+                // On d�r�ente pour le prochain frame
+                nbFrameElapsed--;
+
+                //tim += delay;
+                //printf("elapsed : %f\n",tim);
+
+                //printf("FPS: %f\n", dkcGetFPS());
+            }
+
+            //--- On check si on n'est pas lock�avant de continuer
+            if (s_locked)
+            {
+                s_internalLock = true;
+            }
+
+            while (s_internalLock)
+            {
+                #ifdef WIN32
+                    Sleep(1);
+                #else
+                    if(nanosleep(&ts,0))
+                    {
+                        printf("problem nanosleep internal lock\n");
+                    }
+                    ts.tv_sec = 0;
+                    ts.tv_nsec = 1000000;
+                #endif
+            //  printf("--- internalLock (execute)\n");
+            }
+
+            #ifdef WIN32
+                Sleep(1);
+            #else
+            if(nanosleep(&ts,0))
+            {
+                printf("problem nanosleep main loop\n");
+            }
+            ts.tv_sec = 0;
+            ts.tv_nsec = 1000000;
+            #endif
+        }
+    }*/
+
+    //--- Get the arguments and send that to console
+//  int argc, const char* argv[]
+
+    if (argc > 1)
+    {
+        CString executeCmd = "execute ";
+        executeCmd += (char*)(argv[1]);
+        console->sendCommand(executeCmd);
+    }
 
 
-		mainLoopConsole.lock();
-		if(std::cin.gcount())
-			console->sendCommand(input);//CString("Execute CTF"));
-		mainLoopConsole.unlock();
+    char input[256];
+    while (!quit)
+    {
+        std::cin.getline(input,256);
 
 
-		#ifdef WIN32
-			Sleep(1);
-
-		#else
-			if(nanosleep(&ts,0))
-			{
-				printf("problem nanosleep console loop\n");
-			}
-			ts.tv_sec = 0;
-			ts.tv_nsec = 1000000;
-		#endif
-
-		//cin.ignore( 10000 , '\n');
-		//input[0] = 0;
-		//fflush(stdin);
-	};
-
-	//printf(" main console loop has quit \n");
+        mainLoopConsole.lock();
+        if(std::cin.gcount())
+            console->sendCommand(input);//CString("Execute CTF"));
+        mainLoopConsole.unlock();
 
 
-//	while (dkwMainLoop());
+        #ifdef WIN32
+            Sleep(1);
 
-	// On efface la scene et ses amis
-	delete scene;
-	delete master;
-	delete console;
-	console = 0;
-	master = 0;
-	scene = 0;
+        #else
+            if(nanosleep(&ts,0))
+            {
+                printf("problem nanosleep console loop\n");
+            }
+            ts.tv_sec = 0;
+            ts.tv_nsec = 1000000;
+        #endif
 
-	dksvarSaveConfig("main/bv2.cfg");
+        //cin.ignore( 10000 , '\n');
+        //input[0] = 0;
+        //fflush(stdin);
+    };
 
-	// On shutdown le tout (L'ordre est assez important ici)
-	bb_peerShutdown();
-	bb_shutdown();
+    //printf(" main console loop has quit \n");
 
-	// Tout c'est bien pass� on retourne 0
-	return 0;
+
+//  while (dkwMainLoop());
+
+    // On efface la scene et ses amis
+    delete scene;
+    delete master;
+    delete console;
+    console = 0;
+    master = 0;
+    scene = 0;
+
+    dksvarSaveConfig("main/bv2.cfg");
+
+    // On shutdown le tout (L'ordre est assez important ici)
+    bb_peerShutdown();
+    bb_shutdown();
+
+    // Tout c'est bien pass� on retourne 0
+    return 0;
 }
 
 #else
@@ -676,202 +670,204 @@ int main(int argc, const char* argv[])
 //
 // Fonction principal
 //
-int WINAPI WinMain(	HINSTANCE	hInstance,				// Instance
-			HINSTANCE	hPrevInstance,				// Previous Instance
-			LPSTR		lpCmdLine,				// Command Line Parameters
-			int		nCmdShow)				// Window Show State
+int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
+            HINSTANCE   hPrevInstance,              // Previous Instance
+            LPSTR       lpCmdLine,              // Command Line Parameters
+            int     nCmdShow)               // Window Show State
 {
-	// PREMI�E CHOSE �FAIRE, on load les config
-	dksvarInit(&stringInterface);
-	dksvarLoadConfig("main/bv2.cfg");
-	dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
+    // PREMI�E CHOSE �FAIRE, on load les config
+    gameVar.init();
 
-	// On load tout suite le language utilis�par le joueur
-	if (!gameVar.isLanguageLoaded())
-	{
-		MessageBox(NULL, "Can not load language file\nTry deleting the config file.", "Error", 0);
-		return 0;
-	}
+    dksvarInit(&stringInterface);
+    dksvarLoadConfig("main/bv2.cfg");
+    dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
+
+    // On load tout suite le language utilis�par le joueur
+    if (!gameVar.isLanguageLoaded())
+    {
+        MessageBox(NULL, "Can not load language file\nTry deleting the config file.", "Error", 0);
+        return 0;
+    }
 
 
-	if (gameVar.r_bitdepth != 16 && gameVar.r_bitdepth != 32) gameVar.r_bitdepth = 32;
+    if (gameVar.r_bitdepth != 16 && gameVar.r_bitdepth != 32) gameVar.r_bitdepth = 32;
 
-	// On init nos DLL qui vont �re utilis�dans ce jeu
-	// On initialise quelque cossin important avant tout
+    // On init nos DLL qui vont �re utilis�dans ce jeu
+    // On initialise quelque cossin important avant tout
     //dkcInit(30); // 30 frame par seconde (m�e que 15 serait le best)
     dkcInit(120); // FTFY
 
 
-	//--- Windowed mode requires special handling
-	if (!dkwInit(gameVar.r_resolution[0], gameVar.r_resolution[1], gameVar.r_bitdepth, gameVar.lang_gameName.s, &mainLoopInterface, gameVar.r_fullScreen, gameVar.r_refreshRate))
-	{
-		char * error = dkwGetLastError();
-		MessageBox(NULL, error, "Error", 0);
-		return 0;
-	}
+    //--- Windowed mode requires special handling
+    if (!dkwInit(gameVar.r_resolution[0], gameVar.r_resolution[1], gameVar.r_bitdepth, gameVar.lang_gameName.s, &mainLoopInterface, gameVar.r_fullScreen, gameVar.r_refreshRate))
+    {
+        char * error = dkwGetLastError();
+        MessageBox(NULL, error, "Error", 0);
+        return 0;
+    }
 
-	// On init les input
-	if (!dkiInit(dkwGetHandle()))
-	{
-		dkwShutDown();
-		MessageBox(NULL, "Error creating Input", "Error", 0);
-		return 0;
-	}
+    // On init les input
+    if (!dkiInit(dkwGetHandle()))
+    {
+        dkwShutDown();
+        MessageBox(NULL, "Error creating Input", "Error", 0);
+        return 0;
+    }
 
-	// Set single CPU usage
-	if(gameVar.cl_affinityMode > 0)
-	{
-		::SetProcessAffinityMask(::GetCurrentProcess(), 0x1);
-	}
+    // Set single CPU usage
+    if(gameVar.cl_affinityMode > 0)
+    {
+        ::SetProcessAffinityMask(::GetCurrentProcess(), 0x1);
+    }
 
-	// On cr�notre API openGL (This does nothing anymore
-	if (!dkglCreateContext(dkwGetDC(), gameVar.r_bitdepth))
-	{
-		dkiShutDown();
-		dkwShutDown();
-		MessageBox(NULL, "Error creating openGL context", "Error", 0);
-		return 0;
-	}
+    // On cr�notre API openGL (This does nothing anymore
+    if (!dkglCreateContext(dkwGetDC(), gameVar.r_bitdepth))
+    {
+        dkiShutDown();
+        dkwShutDown();
+        MessageBox(NULL, "Error creating openGL context", "Error", 0);
+        return 0;
+    }
 
-	// Restore system settings
-	if(gameVar.cl_affinityMode == 1)
-	{
+    // Restore system settings
+    if(gameVar.cl_affinityMode == 1)
+    {
         DWORD_PTR procMask;
         DWORD_PTR sysMask;
-		::GetProcessAffinityMask(::GetCurrentProcess(), &procMask, &sysMask);
-		::SetProcessAffinityMask(::GetCurrentProcess(), sysMask);
-	}
+        ::GetProcessAffinityMask(::GetCurrentProcess(), &procMask, &sysMask);
+        ::SetProcessAffinityMask(::GetCurrentProcess(), sysMask);
+    }
 
-	// On init les textures
-	dktInit();
+    // On init les textures
+    dktInit();
 
-	// On init les objets 3D
-	dkoInit();
+    // On init les objets 3D
+    dkoInit();
 
-	// On init les particles
-	dkpInit();
+    // On init les particles
+    dkpInit();
 
-	// On init le son
-	if (!dksInit(gameVar.s_mixRate, gameVar.s_maxSoftwareChannels))
-	{
-		dkpShutDown();
-		dkoShutDown();
-		dkiShutDown();
-		dkglShutDown();
-		dkwShutDown();
-		MessageBox(NULL, "Error creating fmod", "Error", 0);
-		return 0;
-	}
+    // On init le son
+    if (!dksInit(gameVar.s_mixRate, gameVar.s_maxSoftwareChannels))
+    {
+        dkpShutDown();
+        dkoShutDown();
+        dkiShutDown();
+        dkglShutDown();
+        dkwShutDown();
+        MessageBox(NULL, "Error creating fmod", "Error", 0);
+        return 0;
+    }
 
-	// On init la network
-	if (bb_init() == 1)
-	{
-		dksShutDown();
-		dkpShutDown();
-		dkoShutDown();
-		dkiShutDown();
-		dkglShutDown();
-		dkwShutDown();
-		MessageBox(NULL, "Error initiating baboNet", "Error", 0);
-		return 0;
-	}
-	bbNetVersion = bb_getVersion();
-	if (CString("%s", bbNetVersion) != "4.0")
-	{
-		// Error
-		bb_peerShutdown();
-		bb_shutdown();
-		dksShutDown();
-		dkpShutDown();
-		dkoShutDown();
-		dkiShutDown();
-		dkglShutDown();
-		dkwShutDown();
-		MessageBox(NULL, "Wrong version of BaboNet\nReinstalling the game may resolve this prolem", "Error", 0);
-		return 0;
-	}
+    // On init la network
+    if (bb_init() == 1)
+    {
+        dksShutDown();
+        dkpShutDown();
+        dkoShutDown();
+        dkiShutDown();
+        dkglShutDown();
+        dkwShutDown();
+        MessageBox(NULL, "Error initiating baboNet", "Error", 0);
+        return 0;
+    }
+    bbNetVersion = bb_getVersion();
+    if (CString("%s", bbNetVersion) != "4.0")
+    {
+        // Error
+        bb_peerShutdown();
+        bb_shutdown();
+        dksShutDown();
+        dkpShutDown();
+        dkoShutDown();
+        dkiShutDown();
+        dkglShutDown();
+        dkwShutDown();
+        MessageBox(NULL, "Wrong version of BaboNet\nReinstalling the game may resolve this prolem", "Error", 0);
+        return 0;
+    }
 
-	// On cr�le lobby
-	lobby = new CLobby();
+    // On cr�le lobby
+    lobby = new CLobby();
 
-	// On init la console
-	console = new Console();
-	console->init();
+    // On init la console
+    console = new Console();
+    console->init();
 
-	// Create the status manager
-	status = new CStatus();
+    // Create the status manager
+    status = new CStatus();
 
-	//--- On cr�le master
-	master = new CMaster();
+    //--- On cr�le master
+    master = new CMaster();
 
-	// On cr�notre scene
-	scene = new Scene();
+    // On cr�notre scene
+    scene = new Scene();
 
-	ShowCursor(FALSE);
-
-
-
-	#ifndef DEDICATED_SERVER
-		//check if we need to update to launcher
-		UpdateLauncher();
-	#endif
-
-	// check command line options
-	CString str = lpCmdLine;
-	if( str.len() > 1 )
-	{
-		console->sendCommand( str );
-	}
+    ShowCursor(FALSE);
 
 
-	// La loop principal
-/*	try
-	{*/
-		while (dkwMainLoop());
-/*	}
-	catch(...)
-	{
-		dkwShutDown(); // On close la fenetre au moins!
-		MessageBox(NULL, "Babo Violent 2 has encountered an error and needs to close, sorry for the inconvenience", "Error", 0);
-		return 0;
-	}*/
+
+    #ifndef DEDICATED_SERVER
+        //check if we need to update to launcher
+        UpdateLauncher();
+    #endif
+
+    // check command line options
+    CString str = lpCmdLine;
+    if( str.len() > 1 )
+    {
+        console->sendCommand( str );
+    }
 
 
-	ShowCursor(TRUE);
+    // La loop principal
+/*  try
+    {*/
+        while (dkwMainLoop());
+/*  }
+    catch(...)
+    {
+        dkwShutDown(); // On close la fenetre au moins!
+        MessageBox(NULL, "Babo Violent 2 has encountered an error and needs to close, sorry for the inconvenience", "Error", 0);
+        return 0;
+    }*/
 
-	// On efface la scene
-	delete scene;
-	scene = 0;
 
-	// Delete master
-	delete master;
-	master = 0;
+    ShowCursor(TRUE);
 
-	delete console;
-	console = 0;
+    // On efface la scene
+    delete scene;
+    scene = 0;
 
-	delete lobby;
-	lobby = 0;
+    // Delete master
+    delete master;
+    master = 0;
 
-	dksvarSaveConfig("main/bv2.cfg");
+    delete console;
+    console = 0;
 
-	// On shutdown le tout (L'ordre est assez important ici)
-	bb_peerShutdown();
-	bb_shutdown();
-	dksShutDown();
-	dkpShutDown();
-	dkoShutDown();
-	dkfShutDown();
-	dktShutDown();
-	dkglShutDown();
-	dkiShutDown();
-	dkwShutDown();
+    delete lobby;
+    lobby = 0;
 
-	// Do last update after window is closed
-	delete status;
+    dksvarSaveConfig("main/bv2.cfg");
 
-	// Tout c'est bien pass� on retourne 0
-	return 0;
+    // On shutdown le tout (L'ordre est assez important ici)
+    bb_peerShutdown();
+    bb_shutdown();
+    dksShutDown();
+    dkpShutDown();
+    dkoShutDown();
+    dkfShutDown();
+    dktShutDown();
+    dkglShutDown();
+    dkiShutDown();
+    dkwShutDown();
+
+    // Do last update after window is closed
+    delete status;
+
+    // Tout c'est bien pass� on retourne 0
+    return 0;
 }
 
 #endif

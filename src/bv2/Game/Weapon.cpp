@@ -711,11 +711,13 @@ void Weapon::render()
             glPopAttrib();
         }
     }
-
-    dkoRender(dkoModel);
-    for (int i=0;i<(int)nuzzleFlashes.size();++i)
+    else
     {
-        nuzzleFlashes[i]->render();
+        dkoRender(dkoModel);
+        for(int i = 0; i < (int)nuzzleFlashes.size(); ++i)
+        {
+            nuzzleFlashes[i]->render();
+        }
     }
 }
 #endif

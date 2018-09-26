@@ -93,14 +93,6 @@ void Player::update(float delay)
 	lastCF = currentCF; // On garde une copie du dernier coordFrame
 	currentCF.frameID++; // Ça ça reste inchangé
 
-#if defined(_PRO_)
-	if (minibot)
-	{
-		minibot->lastCF = minibot->currentCF;
-		minibot->currentCF.frameID++;
-	}
-#endif
-
 	// Rapid-fire hack detection
 	secondPassed += delay;
 	if (secondPassed > 3.0f && shotCount > 1) {
@@ -190,52 +182,6 @@ void Player::update(float delay)
 	{
 		timeAlive += delay;
 		timePlayedCurGame += delay;
-
-#if defined(_PRO_) && defined(_MINIBOT_)
-		if (minibot)
-		{
-			//--- Control it if it's server, else do as a remote entity
-			if (game->isServerGame)
-			{
-				// On déplace avec la velocity
-				minibot->currentCF.position += minibot->currentCF.vel * delay;
-
-				// On ralenti sa vel
-				float size = minibot->currentCF.vel.length();
-				if (size > 0)
-				{
-					size -= delay * 8;
-					if (size < 0) size = 0;
-					normalize(minibot->currentCF.vel);
-					minibot->currentCF.vel = minibot->currentCF.vel * size;
-				}
-
-				// Un ajustement obligatoire
-				minibot->currentCF.position[2] = .15f;
-
-				// On gère les inputs1
-				minibot->Think(delay);
-			}
-			else
-			{
-				// Là on va créer une genre d'interpolation
-				minibot->currentCF.interpolate(minibot->cFProgression, minibot->netCF0, minibot->netCF1, delay);
-
-				// Un ajustement obligatoire (sa hauteur)
-				minibot->currentCF.position[2] = .15f;
-			}
-			minibot->m_seekingTime -= delay;
-			if(minibot->m_seekingTime <= 0 && minibot->owner->meleeWeapon && minibot->owner->meleeWeapon->weaponID == WEAPON_MINIBOT)
-			{
-#ifndef DEDICATED_SERVER
-				dksPlay3DSound(dksCreateSoundFromFile("main/sounds/BaboCreve3.wav", false), -1, 5, minibot->currentCF.position,64);
-				game->spawnBloodMinibot(minibot->currentCF.position, .5f);
-#endif
-				delete minibot;
-				minibot = 0;
-			}
-		}
-#endif
 
 		if (remoteEntity)
 		{
@@ -357,33 +303,6 @@ void Player::update(float delay)
 				matrix.normalize();
 			}
 		}
-
-#if defined(_PRO_)
-		if (minibot)
-		{
-			// On l'oriente
-			CVector3f dirVect = minibot->currentCF.mousePosOnMap - minibot->currentCF.position;
-			dirVect[2] = 0;
-			normalize(dirVect);
-			float dotWithY = dot(CVector3f(0,1,0),dirVect);
-			float dotWithX = dot(CVector3f(1,0,0),dirVect);
-			minibot->currentCF.angle = acosf(dotWithY)*TO_DEGREE;
-			if (dotWithX > 0) minibot->currentCF.angle = -minibot->currentCF.angle;
-
-			// Bon, on fait rouler la bouboule
-			if (minibot->lastCF.position != minibot->currentCF.position)
-			{
-				CVector3f mouvement = minibot->currentCF.position - minibot->lastCF.position;
-				float angle = .5f*PI*(mouvement.length()) * 4.0f;
-				CVector3f right = cross(mouvement, CVector3f(0,0,1));
-				normalize(right);
-				minibot->matrix.RotateArbitrary(-angle*TO_DEGREE, right);
-
-				// On la normalize (parce que la boule à rapetisse :|)
-				minibot->matrix.normalize();
-			}
-		}
-#endif
 	}
 	else if ((
 		teamID == PLAYER_TEAM_BLUE ||
@@ -583,9 +502,6 @@ void Player::controlIt(float delay)
 	}
 
 	// SECONDARY FIRE (Melee weapon)
-#if defined(_PRO_)
-	if (!minibot)
-#endif
 	if (dkiGetState(gameVar.k_melee) && grenadeDelay == 0 && meleeDelay == 0 && gameVar.sv_enableSecondary)
 	{
 		if (meleeWeapon && grenadeDelay == 0)

@@ -80,11 +80,14 @@ void dktBlurTexture(unsigned int textureID, int nbPass)
 
             // On construit les mipmaps
             GLint level;
-            if (texture->bpp == 1) level = GL_LUMINANCE;
-            if (texture->bpp == 3) level = GL_RGB;
-            if (texture->bpp == 4) level = GL_RGBA;
-            //gluBuild2DMipmaps(GL_TEXTURE_2D, texture->bpp, texture->size[0], texture->size[1],
-            //                GL_RGB, GL_UNSIGNED_BYTE, imageData);
+            switch(texture->bpp)
+            {
+                default:
+                case 4: level = GL_RGBA; break;
+                case 3: level = GL_RGB; break;
+                case 1: level = GL_LUMINANCE; break;
+            }
+
             glTexImage2D(GL_TEXTURE_2D, 0, level, texture->size[0], texture->size[1], 0, level, GL_UNSIGNED_BYTE, imageData);
             glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -538,7 +541,6 @@ unsigned int dktCreateTextureFromFile(char *mFilename, int filter)
         CDkt::updateLastError("DKT : The image is not a TGA");
         return 0;
     }
-    return 0;
 }
 
 //

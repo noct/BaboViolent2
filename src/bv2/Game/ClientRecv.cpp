@@ -498,36 +498,6 @@ void Client::recvPacket(char * buffer, int typeID)
 			}
 			break;
 		}
-#if defined(_PRO_) && defined(_MINIBOT_)
-	case NET_SVCL_MINIBOT_COORD_FRAME:
-		{
-			net_svcl_minibot_coord_frame minibotCoordFrame;
-			memcpy(&minibotCoordFrame, buffer, sizeof(net_svcl_minibot_coord_frame));
-			if (game->players[minibotCoordFrame.playerID])
-			{
-				game->players[minibotCoordFrame.playerID]->setCoordFrameMinibot(minibotCoordFrame);
-			}
-			break;
-		}
-	case NET_SVCL_CREATE_MINIBOT:
-		{
-			net_svcl_create_minibot miniBot;
-			memcpy(&miniBot, buffer, sizeof(net_svcl_create_minibot));
-			if (game->players[miniBot.playerID])
-			{
-				CVector3f pos;
-				pos[0] = (float)miniBot.position[0] / 10.0f;
-				pos[1] = (float)miniBot.position[1] / 10.0f;
-				pos[2] = (float)miniBot.position[2] / 10.0f;
-				CVector3f mousePos;
-				mousePos[0] = (float)miniBot.mousePos[0] / 10.0f;
-				mousePos[1] = (float)miniBot.mousePos[1] / 10.0f;
-				mousePos[2] = (float)miniBot.mousePos[2] / 10.0f;
-				game->players[miniBot.playerID]->SpawnMiniBot(pos, mousePos);
-			}
-			break;
-		}
-#endif
 	case NET_SVCL_PROJECTILE_COORD_FRAME:
 		{
 			net_svcl_projectile_coord_frame projectileCoordFrame;
@@ -572,10 +542,6 @@ void Client::recvPacket(char * buffer, int typeID)
 			{
 				status->set(CStatus::INGAME, gameVar.sv_gameName, server_ip, gameVar.sv_port);
 			}
-			if(sValue == "sv_nukeReload")
-			{
-				gameVar.weapons[WEAPON_NUCLEAR]->fireDelay = gameVar.sv_nukeReload;
-			}
 			if(sValue == "sv_serverType")
 			{
 				game->UpdateProSettings();
@@ -601,43 +567,6 @@ void Client::recvPacket(char * buffer, int typeID)
 			memcpy(&playerShoot, buffer, sizeof(net_svcl_player_shoot));
 			if (game->players[playerShoot.playerID])
 			{
-#if defined(_PRO_) && defined(_MINIBOT_)
-				if (playerShoot.weaponID == WEAPON_MINIBOT_WEAPON)
-				{
-					Player * player = game->players[playerShoot.playerID];
-					if (player->minibot)
-					{
-						CVector3f p1;
-						CVector3f p2;
-						CVector3f normal;
-						p1[0] = (float)playerShoot.p1[0] / 100.0f;
-						p1[1] = (float)playerShoot.p1[1] / 100.0f;
-						p1[2] = (float)playerShoot.p1[2] / 100.0f;
-						p2[0] = (float)playerShoot.p2[0] / 100.0f;
-						p2[1] = (float)playerShoot.p2[1] / 100.0f;
-						p2[2] = (float)playerShoot.p2[2] / 100.0f;
-						normal[0] = (float)playerShoot.normal[0] / 120.0f;
-						normal[1] = (float)playerShoot.normal[1] / 120.0f;
-						normal[2] = (float)playerShoot.normal[2] / 120.0f;
-
-						// Si c'est nous qui se fait toucher, on subit un recul!
-						CVector3f direction = p2 - p1;
-						normalize(direction);
-						if (playerShoot.hitPlayerID == game->thisPlayer->playerID)
-						{
-							game->thisPlayer->currentCF.vel += direction * .08f * 2;
-						}
-
-						// On spawn la trail
-						game->spawnImpact(p1, p2, normal, gameVar.weapons[WEAPON_SMG], .08f, game->players[playerShoot.playerID]->teamID);
-
-						//--- Play a sound
-						dksPlay3DSound(gameVar.sfx_ric[2], -1, 5,
-							player->minibot->currentCF.position,255);
-					}
-					return;
-				}
-#endif
 				bool itsMine = false;
 				// Si c'est le notre, on se spawn une trail
 				if (game->thisPlayer)
@@ -841,16 +770,6 @@ void Client::recvPacket(char * buffer, int typeID)
 			if(explosion.playerID == game->thisPlayer->playerID)
 			{
 				game->thisPlayer->rocketInAir = false;
-#if defined(_PRO_) && defined(_MINIBOT_)
-				if(game->thisPlayer->meleeWeapon->weaponID == WEAPON_NUCLEAR &&
-					game->thisPlayer->minibot && explosion.radius >= 4.0f)
-				{
-					dksPlay3DSound(dksCreateSoundFromFile("main/sounds/BaboCreve3.wav", false), -1, 5, game->thisPlayer->minibot->currentCF.position,64);
-					game->spawnBloodMinibot(game->thisPlayer->minibot->currentCF.position, .5f);
-					delete game->thisPlayer->minibot;
-					game->thisPlayer->minibot = 0;
-				}
-#endif
 			}
 			game->spawnExplosion(CVector3f(explosion.position), CVector3f(explosion.normal), explosion.radius);
 			break;
@@ -873,8 +792,7 @@ void Client::recvPacket(char * buffer, int typeID)
 						game->thisPlayer->currentCF.vel += vel;
 						// moved here from GameSpawn.cpp
 						if((playerHit.weaponID == WEAPON_BAZOOKA) ||
-							(playerHit.weaponID == WEAPON_GRENADE) ||
-							(playerHit.weaponID == WEAPON_NUCLEAR))
+							(playerHit.weaponID == WEAPON_GRENADE))
 						{
 							float realDamage = gameVar.weapons[playerHit.weaponID]->damage;
 							float viewShakeAmount = 2 - (playerHit.damage / realDamage);

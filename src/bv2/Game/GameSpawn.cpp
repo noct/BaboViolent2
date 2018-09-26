@@ -80,61 +80,6 @@ void Game::spawnBlood(CVector3f & position, float damage)
 		floorMarks[getNextFloorMark()].set(pos,rand(0.0f, 360.0f),rand(.05f,sizeMax),30,distance*0.5f,gameVar.tex_blood[rand()%10], CVector4f(rand(.25f,0.5f),0,0,rand(.5f,1.0f)));
 	}
 }
-
-#if defined(_PRO_) && defined(_MINIBOT_)
-void Game::spawnBloodMinibot(CVector3f & position, float damage)
-{
-	float bloodColor;
-
-	if (damage > 2.0) damage = 2.0;
-
-	for (int i=0;i<(int)(damage*10);++i)
-	{
-		bloodColor = rand(0.3f, 1.0f);
-
-		dkpCreateParticleEx(
-			position, //CVector3f & positionFrom,
-			position, //CVector3f & positionTo,
-			CVector3f(0,0,1), //CVector3f & direction,
-			damage, //float speedFrom,
-			damage*2, //float speedTo,
-			0, //float pitchFrom,
-			90, //float pitchTo,
-			.25f, //float startSizeFrom,
-			.25f, //float startSizeTo,
-			.25f, //float endSizeFrom,
-			.25f, //float endSizeTo,
-			2, //float durationFrom,
-			2, //float durationTo,
-			CColor4f(bloodColor,0,0,1), //CColor4f & startColorFrom,
-			CColor4f(bloodColor,0,0,1), //CColor4f & startColorTo,
-			CColor4f(bloodColor,0,0,0), //CColor4f & endColorFrom,
-			CColor4f(bloodColor,0,0,0), //CColor4f & endColorTo,
-			0, //float angleFrom,
-			360, //float angleTo,
-			-30, //float angleSpeedFrom,
-			30, //float angleSpeedTo,
-			.1f, //float gravityInfluence,
-			0, //float airResistanceInfluence,
-			1, //unsigned int particleCountFrom,
-			1, //unsigned int particleCountTo,
-			gameVar.tex_blood + rand()%10,
-			0, //int textureFrameCount,
-			DKP_SRC_ALPHA, //unsigned int srcBlend,
-			DKP_ONE);//unsigned int dstBlend);
-
-		// On cré les marks de sang au sol
-		CVector3f pos(1,0,0);
-		pos = rotateAboutAxis(pos, rand(0.0f, 360.0f), CVector3f(0,0,1));
-		float distance = rand(0.0f, damage*2.5f);
-		float sizeMax = (1-(distance)/2.5f) * 1.0f;
-		pos *= distance;
-		pos += position;
-		pos[2] = 0;
-		floorMarks[getNextFloorMark()].set(pos,rand(0.0f, 360.0f),rand(.05f,sizeMax),30,distance*0.5f,gameVar.tex_blood[rand()%10], CVector4f(rand(0.5f,1.0f),0,0,rand(.5f,1.0f)));
-	}
-}
-#endif
 #endif
 
 

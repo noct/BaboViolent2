@@ -104,11 +104,7 @@ Client::Client(Game * pGame)
 	btn_guns[6] = new CControl(clientRoot, CVector2i(250, 130 + 6 * 40), CVector2i(200,30), gameVar.weapons[WEAPON_PHOTON_RIFLE]->weaponName, this, "BUTTON");
 	btn_guns[7] = new CControl(clientRoot, CVector2i(250, 130 + 7 * 40), CVector2i(200,30), gameVar.weapons[WEAPON_FLAME_THROWER]->weaponName, this, "BUTTON");
 	btn_meleeguns[0] = new CControl(clientRoot, CVector2i(475, 130 + 0 * 40), CVector2i(200,30), gameVar.weapons[WEAPON_KNIVES]->weaponName, this, "BUTTON");
-	btn_meleeguns[1] = new CControl(clientRoot, CVector2i(475, 130 + 1 * 40), CVector2i(200,30), gameVar.weapons[WEAPON_NUCLEAR]->weaponName, this, "BUTTON");
-	btn_meleeguns[2] = new CControl(clientRoot, CVector2i(475, 130 + 2 * 40), CVector2i(200,30), gameVar.weapons[WEAPON_SHIELD]->weaponName, this, "BUTTON");
-	#if defined(_PRO_) && defined(_MINIBOT_)
-		btn_meleeguns[3] = new CControl(clientRoot, CVector2i(475, 130 + 3 * 40), CVector2i(200,30), gameVar.weapons[WEAPON_MINIBOT]->weaponName, this, "BUTTON");
-	#endif
+	btn_meleeguns[1] = new CControl(clientRoot, CVector2i(475, 130 + 1 * 40), CVector2i(200,30), gameVar.weapons[WEAPON_SHIELD]->weaponName, this, "BUTTON");
 	currentGun = btn_guns[gameVar.cl_primaryWeapon/*0*/];
 	currentMelee = btn_meleeguns[gameVar.cl_secondaryWeapon/*0*/];
 
@@ -696,19 +692,6 @@ void Client::Click(CControl * control)
 		if (game->thisPlayer)
 		{
 			currentMelee = btn_meleeguns[1];
-			game->thisPlayer->nextMeleeWeapon = WEAPON_NUCLEAR;
-			if (game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
-			{
-				showMenu = false;
-			}
-		}
-		return;
-	}
-	if (control == btn_meleeguns[2])
-	{
-		if (game->thisPlayer)
-		{
-			currentMelee = btn_meleeguns[2];
 			game->thisPlayer->nextMeleeWeapon = WEAPON_SHIELD;
 			if (game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
 			{
@@ -717,121 +700,7 @@ void Client::Click(CControl * control)
 		}
 		return;
 	}
-	#if defined(_PRO_) && defined(_MINIBOT_)
-		if (control == btn_meleeguns[3])
-		{
-			if (game->thisPlayer)
-			{
-				currentMelee = btn_meleeguns[3];
-				game->thisPlayer->nextMeleeWeapon = WEAPON_MINIBOT;
-				if (game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
-				{
-					showMenu = false;
-				}
-			}
-			return;
-		}
-	#endif
 }
-
-
-
-//
-// Pour g�rer les events de son menu
-//
-/*
-void Client::onClick(Control * control)
-{
-	if (control == btn_mainMenu)
-	{
-		// On show les menus
-		clientRoot->visible = true;
-//		scene->menu->isShowing = true;
-//		scene->menu->currentMenu = MENU_MAIN;
-		if (writting) writting->loseFocus();
-		return;
-	}
-	if (control == btn_disconnect)
-	{
-		needToShutDown = true;
-		return;
-	}
-	if (control == btn_autoAssign)
-	{
-		// On auto assign un team, yup bitch
-		if (game->thisPlayer)
-		{
-			// On le dit au server qu'on change de state!
-			// En fait, on le demannnnde au server, lui va d�cider si t'as le droit ou pas
-			net_clsv_svcl_team_request teamRequest;
-			teamRequest.playerID = game->thisPlayer->playerID;
-			teamRequest.teamRequested = PLAYER_TEAM_AUTO_ASSIGN;
-			bb_clientSend(uniqueClientID, (char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST);
-			showMenu = false;
-		}
-		return;
-	}
-	if (control == btn_blueTeam)
-	{
-		if (game->thisPlayer)
-		{
-			// On le dit au server qu'on change de state!
-			// En fait, on le demannnnde au server, lui va d�cider si t'as le droit ou pas
-			net_clsv_svcl_team_request teamRequest;
-			teamRequest.playerID = game->thisPlayer->playerID;
-			teamRequest.teamRequested = PLAYER_TEAM_BLUE;
-			bb_clientSend(uniqueClientID, (char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST);
-			showMenu = false;
-		}
-		return;
-	}
-	if (control == btn_redTeam)
-	{
-		if (game->thisPlayer)
-		{
-			// On le dit au server qu'on change de state!
-			// En fait, on le demannnnde au server, lui va d�cider si t'as le droit ou pas
-			net_clsv_svcl_team_request teamRequest;
-			teamRequest.playerID = game->thisPlayer->playerID;
-			teamRequest.teamRequested = PLAYER_TEAM_RED;
-			bb_clientSend(uniqueClientID, (char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST);
-			showMenu = false;
-		}
-		return;
-	}
-	if (control == btn_spectator)
-	{
-		if (game->thisPlayer)
-		{
-			// On le dit au server qu'on change de state!
-			// En fait, on le demannnnde au server, lui va d�cider si t'as le droit ou pas
-			net_clsv_svcl_team_request teamRequest;
-			teamRequest.playerID = game->thisPlayer->playerID;
-			teamRequest.teamRequested = PLAYER_TEAM_SPECTATOR;
-			bb_clientSend(uniqueClientID, (char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST);
-			showMenu = false;
-		}
-		return;
-	}
-	for (int i=0;i<6;++i)
-	{
-		if (control == btn_guns[i])
-		{
-			if (game->thisPlayer)
-			{
-				currentGun =	i;
-				game->thisPlayer->nextSpawnWeapon = i;
-				if (game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
-				{
-					showMenu = false;
-				}
-			}
-			return;
-		}
-	}
-}*/
-
-
 
 //
 // Pour rejoindre un server

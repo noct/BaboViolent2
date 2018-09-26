@@ -296,7 +296,7 @@ CString CString::getNextToken(int caracter)
 {
 
 	// On commence pa r trimmer le tout au cas
-	trim(caracter);
+	trim((char)caracter);
 
 	CString result;
 
@@ -313,7 +313,7 @@ CString CString::getNextToken(int caracter)
 	}
 
 	// On trim
-	trim(caracter);
+	trim((char)caracter);
 
 	return result;
 }
@@ -332,7 +332,7 @@ CString CString::getFirstToken(int caracterSeparator)
 {
 
 	// On commence par trimmer le tout au cas
-	trim(caracterSeparator);
+	trim((char)caracterSeparator);
 
 	CString result;
 
@@ -350,7 +350,7 @@ CString CString::getFirstToken(int caracterSeparator)
 	}
 
 	// On trim
-	trim(caracterSeparator);
+	trim((char)caracterSeparator);
 
 	return result;
 }

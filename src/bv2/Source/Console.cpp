@@ -1131,66 +1131,6 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
         return;
     }
 
-    if (command == "nukeall")
-    {
-        if(scene->server)
-            if(scene->server->game)
-                scene->server->nukeAll();
-        return;
-    }
-
-    if (command == "nuke")
-    {
-        if(scene->server)
-            if(scene->server->game)
-            {
-                int playerID;
-                for (int i = 0; i < MAX_PLAYER; ++i)
-                {
-                    if(scene->server->game->players[i] && (textColorLess(tokenize) == textColorLess(scene->server->game->players[i]->name)))
-                    {
-                        playerID = i;
-                        break;
-                    }
-                }
-                if (playerID == -1)
-                {
-                    add(CString("Error: No players were found with given name"), true);
-                }
-                else
-                {
-                    scene->server->nukePlayer(playerID);
-                }
-            }
-        return;
-    }
-
-    if (command == "nukeid")
-    {
-        if(scene->server)
-            if(scene->server->game)
-            {
-                int playerID = tokenize.getFirstToken(' ').toInt();
-                if ((playerID < -1) || (playerID >= MAX_PLAYER) || !scene->server->game->players[playerID])
-                {
-                    add(CString("Error: Bad player ID (use playerlist command to obtain the correct ID)"), true);
-                }
-                else
-                {
-                    if( playerID == -1 )
-                    {
-                        scene->server->nukeAll();
-                    }
-                    else
-                    {
-                        scene->server->nukePlayer(playerID);
-                    }
-                }
-            }
-
-        return;
-    }
-
     // Everyone spec!
     if (command == "allwatch")
     {

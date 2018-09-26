@@ -154,8 +154,6 @@ public:
 	// Le voting validity
 	bool validateVote(CString vote);
 
-	void nukeAll();
-	void nukePlayer(int);
 	// Pour chatter
 	void sayall(CString message);
 #ifndef DEDICATED_SERVER

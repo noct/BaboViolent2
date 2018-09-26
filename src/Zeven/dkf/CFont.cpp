@@ -216,8 +216,9 @@ int CFont::loadTGAFile(char * tgaFile)
 //
 // Signifie que l'on vient de créer l'objet font
 //
-int CFont::create(CString filename)
+int CFont::create(CString path)
 {
+    filename = path;
     if (strnicmp(&(filename.s[strlen(filename.s)-3]), "TGA", 3) == 0)
     {
         return loadTGAFile(filename.s);

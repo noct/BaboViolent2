@@ -25,8 +25,6 @@
 
 extern Scene * scene;
 
-
-
 //
 // Constructeur
 //
@@ -423,7 +421,7 @@ void Weapon::shoot(Player * owner)
         }
         else
         {
-            if (weaponID == WEAPON_KNIVES || weaponID == WEAPON_NUCLEAR)
+            if (weaponID == WEAPON_KNIVES)
             {
                 // On shoot melee
                 net_clsv_svcl_player_shoot_melee playerShootMelee;
@@ -455,24 +453,10 @@ void Weapon::shootMeleeSV(Player * owner)
         //--- On tue toute dans un rayon de 1 :D
         owner->game->radiusHit(owner->currentCF.position, 1, owner->playerID, weaponID, true);
         break;
-    case WEAPON_NUCLEAR:
-//#ifndef DEDICATED_SERVER
-#if defined(_PRO_) && defined(_MINIBOT_)
-        owner->SpawnNukeBotSV();
-#endif
-        nukeFrameID = 0;
-//#endif
-        break;
     case WEAPON_SHIELD:
         //--- Protect this player for 2 seconde
         owner->protection = 2;
         break;
-#if defined(_PRO_) && defined(_MINIBOT_)
-    case WEAPON_MINIBOT:
-        if (!owner->minibot)
-            owner->SpawnMiniBotSV();
-        break;
-#endif
     }
 }
 #ifndef DEDICATED_SERVER
@@ -482,9 +466,6 @@ void Weapon::shootMelee(Player * owner)
 {
     if(owner->meleeWeapon->weaponID == WEAPON_SHIELD ||
         owner->meleeWeapon->weaponID == WEAPON_KNIVES
-#if defined(_PRO_)
-        || owner->minibot
-#endif
         )
     {
         nukeFrameID = 0;
@@ -634,43 +615,6 @@ void Weapon::update(float delay)
             modelAnim = (3 - currentFireDelay) / 3.0f * 20.0f;
             if (modelAnim > 20) modelAnim = 20;
         }
-        if (weaponID == WEAPON_NUCLEAR)
-        {
-            nukeFrameID++;
-#if defined(_PRO_)
-            if (nukeFrameID % 45 == 0 && m_owner->minibot)
-            {
-                if (!m_owner->game->isServerGame)
-                {
-#ifndef DEDICATED_SERVER
-                    dksPlay3DSound(sfx_sound, -1, 5, m_owner->minibot->currentCF.position,255);
-#endif
-                }
-            }
-
-            //--- On explose apres 2sec
-            if (nukeFrameID >= 30 * gameVar.sv_nukeTimer && m_owner)
-            {
-                if (m_owner->game->isServerGame && m_owner->minibot)
-                {
-                    //--- KABOOMMMMMMMMMMMMM MODA FUKA
-                    net_svcl_explosion explosion;
-                    explosion.position[0] = m_owner->minibot->currentCF.position[0];
-                    explosion.position[1] = m_owner->minibot->currentCF.position[1];
-                    explosion.position[2] = m_owner->minibot->currentCF.position[2];
-                    explosion.normal[0] = 0;
-                    explosion.normal[1] = 0;
-                    explosion.normal[2] = 1;
-                    explosion.playerID = m_owner->playerID;
-                    explosion.radius = gameVar.sv_nukeRadius;
-                    bb_serverSend((char*)&explosion, sizeof(net_svcl_explosion), NET_SVCL_EXPLOSION, 0);
-                    if (scene->server) scene->server->game->radiusHit(m_owner->minibot->currentCF.position, gameVar.sv_nukeRadius, m_owner->playerID, weaponID);
-                    delete m_owner->minibot;
-                    m_owner->minibot = 0;
-                }
-            }
-#endif
-        }
     }
     else
     {
@@ -767,47 +711,11 @@ void Weapon::render()
             glPopAttrib();
         }
     }
-    else if (weaponID == WEAPON_NUCLEAR)
+
+    dkoRender(dkoModel);
+    for (int i=0;i<(int)nuzzleFlashes.size();++i)
     {
-#if defined(_PRO_)
-        if (nukeFrameID % 45 < 23 && m_owner->minibot && this->currentFireDelay > 0)
-        {
-            glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
-                glDisable(GL_FOG);
-                glDisable(GL_LIGHTING);
-                glDepthMask(GL_FALSE);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-                glPushMatrix();
-                    // Shot glow
-                    glEnable(GL_TEXTURE_2D);
-                    glDisable(GL_DEPTH_TEST);
-                    glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
-                    glColor4f(1,.25f,.25f,.5f);
-                    glBegin(GL_QUADS);
-                        glTexCoord2f(0,1);
-                        glVertex3f(-1000,1000,0);
-                        glTexCoord2f(0,0);
-                        glVertex3f(-1000,-1000,0);
-                        glTexCoord2f(1,0);
-                        glVertex3f(1000,-1000,0);
-                        glTexCoord2f(1,1);
-                        glVertex3f(1000,1000,0);
-                    glEnd();
-                    glEnable(GL_DEPTH_TEST);
-                glPopMatrix();
-            glPopAttrib();
-        }
-#endif
-        dkoRender(dkoModel);
-    }
-    else
-    {
-        dkoRender(dkoModel);
-        for (int i=0;i<(int)nuzzleFlashes.size();++i)
-        {
-            nuzzleFlashes[i]->render();
-        }
+        nuzzleFlashes[i]->render();
     }
 }
 #endif

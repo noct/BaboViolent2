@@ -172,10 +172,7 @@ class Map
 public:
     // Sa grosseur
     CVector2i size;
-#if defined(_PRO_)
 
-    CAStar * aStar;
-#endif
     // Ses cells
     map_cell * cells;
 #ifndef DEDICATED_SERVER

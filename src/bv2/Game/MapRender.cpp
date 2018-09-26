@@ -361,27 +361,6 @@ void Map::renderGround()
 
     glDepthMask(GL_TRUE);
     glPopAttrib();
-
-#if defined(_PRO_)
-    //--- Render path finding
-    if (aStar && gameVar.d_showNodes)
-    {
-        glPushAttrib(GL_ENABLE_BIT);
-        glDisable(GL_LIGHTING);
-        glLineWidth(1);
-        for (CPathNode * p = aStar->GetNodes();p;p=p->next)
-        {
-            glColor3f(1, 1, 0);
-            glBegin(GL_LINE_LOOP);
-                glVertex2f(p->m_centerX - (float)p->m_sizeX * .45f, p->m_centerY + (float)p->m_sizeY * .45f);
-                glVertex2f(p->m_centerX - (float)p->m_sizeX * .45f, p->m_centerY - (float)p->m_sizeY * .45f);
-                glVertex2f(p->m_centerX + (float)p->m_sizeX * .45f, p->m_centerY - (float)p->m_sizeY * .45f);
-                glVertex2f(p->m_centerX + (float)p->m_sizeX * .45f, p->m_centerY + (float)p->m_sizeY * .45f);
-            glEnd();
-        }
-        glPopAttrib();
-    }
-#endif
 }
 
 void Map::renderShadow()

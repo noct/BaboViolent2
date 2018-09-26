@@ -41,9 +41,6 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 : groundMesh(0), shadowMesh(0), wallMesh(0)
 #endif
 {
-#if defined(_PRO_)
-    aStar = 0;
-#endif
     int i, j, gtnum;
     //-- On print le loading screen! (new)
         // On clear les buffers, on init la camera, etc
@@ -464,58 +461,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     {
         delete dkoFile;
     }
-
-#if defined(_PRO_)
-    //--- Create the A* path
-    if (aStar) delete aStar;
-    aStar = new CAStar();
-
-    //--- Get the closest to power of two size
-    CVector2i aStarSize = size;
-
-    int s = 1;
-    for (s=1;s<=512;s*=2)
-    {
-        if (aStarSize[0] == s) break;
-        if (aStarSize[0] > s && aStarSize[0] < s * 2)
-        {
-            aStarSize[0] = s * 2;
-            break;
-        }
-    }
-    for (s=1;s<=512;s*=2)
-    {
-        if (aStarSize[1] == s) break;
-        if (aStarSize[1] > s && aStarSize[1] < s * 2)
-        {
-            aStarSize[1] = s * 2;
-            break;
-        }
-    }
-
-    unsigned char * passables = new unsigned char [aStarSize[0] * aStarSize[1]];
-    memset(passables, 0, sizeof(unsigned char) * (aStarSize[0] * aStarSize[1]));
-
-    for (j=0;j<size[1];++j)
-    {
-        for (i=0;i<size[0];++i)
-        {
-            if (cells[j*size[0]+i].passable)
-            {
-                passables[j * aStarSize[0] + i] = 255;
-            }
-        }
-    }
-
-    if (!aStar->Build(passables, aStarSize[0], aStarSize[1]))
-    {
-        delete aStar;
-        aStar = 0;
-    }
-
-    delete [] passables;
-#endif
-
+    
     if (isServer)
     {
         return;
@@ -1017,9 +963,6 @@ void Map::reloadTheme()
 //
 Map::~Map()
 {
-#if defined(_PRO_)
-    if (aStar) delete aStar;
-#endif
 #ifndef DEDICATED_SERVER
     if (dko_map) dkoDeleteModel(&dko_map);
 #endif

@@ -290,18 +290,12 @@ void GameVar::init()
         0.15f, 0, 1, -1.0f, 0, WEAPON_COCKTAIL_MOLOTOV, PROJECTILE_COCKTAIL_MOLOTOV);
     weapons[WEAPON_KNIVES] = new Weapon("main/models/Knifes.DKO", "main/sounds/knifes.wav", 1.0f, "Popup Knives",
         0.60f, 0, 1, 0, 0, WEAPON_KNIVES, PROJECTILE_NONE);
-    weapons[WEAPON_NUCLEAR] = new Weapon("main/models/Nuclear.DKO", "main/sounds/Siren.WAV", 12.0f, "Nuke Bot",
-        8.0f, 0, 1, 0, 0, WEAPON_NUCLEAR, PROJECTILE_NONE);
     weapons[WEAPON_PHOTON_RIFLE] = new Weapon("main/models/PhotonRifle.DKO", "main/sounds/PhotonRifle.wav", 1.5f, "Photon Rifle",
         0.24f, 0, 1, 5.0f, 0, WEAPON_PHOTON_RIFLE, PROJECTILE_DIRECT);
     weapons[WEAPON_FLAME_THROWER] = new Weapon("main/models/FlameThrower.DKO", "main/sounds/FlameThrower.wav", .1f, "Flame Thrower",
         .08f, 10, 1, 0, 10, WEAPON_FLAME_THROWER, PROJECTILE_DIRECT);
     weapons[WEAPON_SHIELD] = new Weapon("main/models/Shield.DKO", "main/sounds/shield.wav", 3.0f, "Instant Shield",
         0, 0, 1, 0, 0, WEAPON_SHIELD, PROJECTILE_NONE);
-    #if defined(_PRO_) && defined(_MINIBOT_)
-        weapons[WEAPON_MINIBOT] = new Weapon("main/models/Antena.DKO", "main/sounds/equip.wav", 1.0f, "Mini Bot",
-            .05f, 0, 1, 0, 0, WEAPON_MINIBOT, PROJECTILE_NONE);
-    #endif
 #else
     weapons[WEAPON_DUAL_MACHINE_GUN] = new Weapon("", "", .1f, "Dual Machine Gun",
         .13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
@@ -321,18 +315,12 @@ void GameVar::init()
         0.15f, 0, 1, -1.0f, 0, WEAPON_COCKTAIL_MOLOTOV, PROJECTILE_COCKTAIL_MOLOTOV);
     weapons[WEAPON_KNIVES] = new Weapon("", "", 1.0f, "Popup Knives",
         0.60f, 0, 1, 0, 0, WEAPON_KNIVES, PROJECTILE_NONE);
-    weapons[WEAPON_NUCLEAR] = new Weapon("", "", 12.0f, "Nuke Bot",
-        8.0f, 0, 1, 0, 0, WEAPON_NUCLEAR, PROJECTILE_NONE);
     weapons[WEAPON_PHOTON_RIFLE] = new Weapon("", "", 1.5f, "Photon Rifle",
         0.24f, 0, 1, 5.0f, 0, WEAPON_PHOTON_RIFLE, PROJECTILE_DIRECT);
     weapons[WEAPON_FLAME_THROWER] = new Weapon("", "", .1f, "Flame Thrower",
         .08f, 6, 1, 0, 6, WEAPON_FLAME_THROWER, PROJECTILE_DIRECT);
     weapons[WEAPON_SHIELD] = new Weapon("", "", 3.0f, "Instant Shield",
         0, 0, 1, 0, 0, WEAPON_SHIELD, PROJECTILE_NONE);
-    #if defined(_PRO_) && defined(_MINIBOT_)
-        weapons[WEAPON_MINIBOT] = new Weapon("", "", 1.0f, "Mini Bot",
-            .05f, 0, 1, 0, 0, WEAPON_MINIBOT, PROJECTILE_NONE);
-    #endif
 #endif
 
 
@@ -436,10 +424,6 @@ void GameVar::init()
     dksvarRegister(CString("sv_enableNuclear [bool : true | false (default true)]"), &sv_enableNuclear, true);
     sv_enableShield = true;
     dksvarRegister(CString("sv_enableShield [bool : true | false (default true)]"), &sv_enableShield, true);
-    #if defined(_PRO_)
-        sv_enableMinibot = true;
-        dksvarRegister(CString("sv_enableMinibot [bool : true | false (default true)]"), &sv_enableMinibot, true);
-    #endif
     sv_autoBalance = true;
     dksvarRegister(CString("sv_autoBalance [bool : true | false (default true)]"), &sv_autoBalance, true);
     sv_autoBalanceTime = 4;
@@ -480,8 +464,6 @@ void GameVar::init()
         LIMIT_MIN | LIMIT_MAX, true);
     sv_zookaRemoteDet = true;
     dksvarRegister(CString("sv_zookaRemoteDet [bool : true | false (default true)]"), &sv_zookaRemoteDet, true);
-    sv_explodingFT = false;
-    dksvarRegister(CString("sv_explodingFT [bool : true | false (default false)]"), &sv_explodingFT, true);
     sv_sendJoinMessage = true;
     dksvarRegister(CString("sv_sendJoinMessage [bool : true | false (default true)]"), &sv_sendJoinMessage,true);
     sv_enableMolotov = true;
@@ -608,8 +590,8 @@ void GameVar::init()
     //cl_weaponSideRight = true;
     //dksvarRegister(CString("cl_weaponSideRight [bool : true | false (default true)]"),&cl_weaponSideRight,true);
     cl_secondaryWeapon = 0;
-    dksvarRegister(CString("cl_secondaryWeapon [int : 0=Knives, 1=Nuclear, 2=Shield, 3=Minibot]"),
-        &cl_secondaryWeapon, 0, 3, LIMIT_MIN | LIMIT_MAX, true);
+    dksvarRegister(CString("cl_secondaryWeapon [int : 0=Knives, 1=Shield]"),
+        &cl_secondaryWeapon, 0, 2, LIMIT_MIN | LIMIT_MAX, true);
 #ifndef DISABLE_QUICK_MESSAGES
     // quick messages
     cl_qMsg01 = "aHello!";
@@ -851,9 +833,6 @@ void GameVar::sendSVVar(uint32_t babonetID)
     sendOne("sv_enableKnives", babonetID);
     sendOne("sv_enableNuclear", babonetID);
     sendOne("sv_enableShield", babonetID);
-#if defined(_PRO_)
-    sendOne("sv_enableMinibot", babonetID);
-#endif
     sendOne("sv_autoBalance", babonetID);
     sendOne("sv_autoBalanceTime", babonetID);
     sendOne("sv_gamePublic", babonetID);
@@ -887,7 +866,6 @@ void GameVar::sendSVVar(uint32_t babonetID)
     sendOne("sv_joinMessage", babonetID);
     sendOne("sv_sendJoinMessage", babonetID);
     sendOne("sv_ftExpirationTimer", babonetID);
-    sendOne("sv_explodingFT", babonetID);
     sendOne("sv_enableVote", babonetID);
 }
 
@@ -932,7 +910,6 @@ void GameVar::sendSVVar(int32_t peerId)
     sendOne("sv_enableNuclear", peerId);
     sendOne("sv_enableShield", peerId);
 #if defined(_PRO_)
-    sendOne("sv_enableMinibot", peerId);
     sendOne("sv_showKills", peerId);
     sendOne("sv_beGoodServer", peerId);
     sendOne("sv_validateWeapons", peerId);
@@ -970,7 +947,6 @@ void GameVar::sendSVVar(int32_t peerId)
     sendOne("sv_joinMessage", peerId);
     sendOne("sv_sendJoinMessage", peerId);
     sendOne("sv_ftExpirationTimer", peerId);
-    sendOne("sv_explodingFT", peerId);
     sendOne("sv_enableVote", peerId);
 }
 
@@ -991,12 +967,6 @@ void GameVar::sendOne(char * varName, uint32_t babonetID)
     CString varCom;
     dksvarGetFormatedVar(varName, &varCom);
     varCom.insert("set ", 0);
-
-    if(varName == "sv_nukeReload")
-    {
-        weapons[WEAPON_NUCLEAR]->fireDelay = sv_nukeReload;
-    }
-
     if (varCom.len() > 79) varCom.resize(79);
     net_svcl_sv_change svChange;
     memcpy(svChange.svChange, varCom.s, varCom.len()+1);
@@ -1027,13 +997,9 @@ void GameVar::loadModels()
     weapons[WEAPON_GRENADE]->loadModels();
     weapons[WEAPON_COCKTAIL_MOLOTOV] ->loadModels();
     weapons[WEAPON_KNIVES]->loadModels();
-    weapons[WEAPON_NUCLEAR]->loadModels();
     weapons[WEAPON_PHOTON_RIFLE]->loadModels();
     weapons[WEAPON_FLAME_THROWER]->loadModels();
     weapons[WEAPON_SHIELD]->loadModels();
-#if defined(_PRO_) && defined(_MINIBOT_)
-    weapons[WEAPON_MINIBOT]->loadModels();
-#endif
 
     tex_nuzzleFlash = dktCreateTextureFromFile("main/textures/nuzzleFlash.tga", DKT_FILTER_LINEAR);
     tex_smoke1 = dktCreateTextureFromFile("main/textures/Smoke1.tga", DKT_FILTER_LINEAR);
@@ -1175,11 +1141,7 @@ void GameVar::deleteModels()
     delete weapons[WEAPON_FLAME_THROWER];
     delete weapons[WEAPON_COCKTAIL_MOLOTOV];
     delete weapons[WEAPON_KNIVES];
-    delete weapons[WEAPON_NUCLEAR];
     delete weapons[WEAPON_SHIELD];
-#if defined(_PRO_) && defined(_MINIBOT_)
-    delete weapons[WEAPON_MINIBOT];
-#endif
 
 #ifndef DEDICATED_SERVER
     dktDeleteTexture(&tex_nuzzleFlash);

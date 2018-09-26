@@ -425,10 +425,6 @@ CString Server::queryNextMap()
 		mapInfoList[index].lastPlayed = 0;
 		return mapInfoList[index].mapName;
 	}
-	if (mapList.size() > 0)
-	{
-		return mapList[0];
-	}
 	return "";
 }
 
@@ -1124,9 +1120,6 @@ void Server::update(float delay)
 		if (game->roundState == GAME_PLAYING)
 		{
 			net_clsv_svcl_player_coord_frame playerCoordFrame;
-#if defined(_PRO_)
-			net_svcl_minibot_coord_frame minibotCoordFrame;
-#endif
 			for (int i=0;i<MAX_PLAYER;i++)
 			{
 				if (game->players[i])
@@ -1160,30 +1153,6 @@ void Server::update(float delay)
 #endif
 									bb_serverSend((char*)&playerCoordFrame, sizeof(net_clsv_svcl_player_coord_frame), NET_CLSV_SVCL_PLAYER_COORD_FRAME, game->players[i]->babonetID, NET_UDP);
 								}
-
-#if defined(_PRO_)
-								if (game->players[j]->status == PLAYER_STATUS_ALIVE)
-								{
-									//--- Mini bot?
-									if (game->players[j]->minibot)
-									{
-										minibotCoordFrame.playerID = (char)j;
-										minibotCoordFrame.babonetID = game->players[j]->babonetID;
-										minibotCoordFrame.frameID = game->players[j]->currentCF.frameID;
-										minibotCoordFrame.mousePos[0] = (short)(game->players[j]->minibot->currentCF.mousePosOnMap[0] * 100);
-										minibotCoordFrame.mousePos[1] = (short)(game->players[j]->minibot->currentCF.mousePosOnMap[1] * 100);
-										minibotCoordFrame.mousePos[2] = (short)(game->players[j]->minibot->currentCF.mousePosOnMap[2] * 100);
-										minibotCoordFrame.position[0] = (short)(game->players[j]->minibot->currentCF.position[0] * 100);
-										minibotCoordFrame.position[1] = (short)(game->players[j]->minibot->currentCF.position[1] * 100);
-										minibotCoordFrame.position[2] = (short)(game->players[j]->minibot->currentCF.position[2] * 100);
-										minibotCoordFrame.vel[0] = (char)(game->players[j]->minibot->currentCF.vel[0] * 10);
-										minibotCoordFrame.vel[1] = (char)(game->players[j]->minibot->currentCF.vel[1] * 10);
-										minibotCoordFrame.vel[2] = (char)(game->players[j]->minibot->currentCF.vel[2] * 10);
-
-										bb_serverSend((char*)&minibotCoordFrame, sizeof(net_svcl_minibot_coord_frame), NET_SVCL_MINIBOT_COORD_FRAME, game->players[i]->babonetID, NET_UDP);
-									}
-								}
-#endif
 
 								// On shoot aussi le ping de ce joueur
 								net_svcl_player_ping playerPing;
@@ -1503,51 +1472,10 @@ void Server::autoBalance()
 //
 void Server::sendSVChange(CString varCom)
 {
-	if(varCom == "sv_nukeReload")
-	{
-		gameVar.weapons[WEAPON_NUCLEAR]->fireDelay = gameVar.sv_nukeReload;
-	}
 	if (varCom.len() > 255) varCom.resize(255);
 	net_svcl_sv_change svChange;
 	memcpy(svChange.svChange, varCom.s, varCom.len()+1);
 	bb_serverSend((char*)&svChange,sizeof(net_svcl_sv_change),NET_SVCL_SV_CHANGE,0);
-}
-
-void Server::nukeAll()
-{
-	for (int i = 0; i < MAX_PLAYER; i ++)
-	{
-		if(game->players[i] && (game->players[i]->teamID == PLAYER_TEAM_RED || game->players[i]->teamID == PLAYER_TEAM_BLUE))
-		{
-			net_svcl_explosion explosion;
-			explosion.position[0] = game->players[i]->currentCF.position[0];
-			explosion.position[1] = game->players[i]->currentCF.position[1];
-			explosion.position[2] = game->players[i]->currentCF.position[2];
-			explosion.normal[0] = 0;
-			explosion.normal[1] = 0;
-			explosion.normal[2] = 1;
-			explosion.radius = gameVar.sv_nukeRadius;
-			bb_serverSend((char*)&explosion, sizeof(net_svcl_explosion), NET_SVCL_EXPLOSION, 0);
-			game->radiusHit(game->players[i]->currentCF.position, gameVar.sv_nukeRadius, game->players[i]->playerID, WEAPON_NUCLEAR);
-		}
-	}
-}
-
-void Server::nukePlayer(int i)
-{
-	if(game->players[i] && (game->players[i]->teamID == PLAYER_TEAM_RED || game->players[i]->teamID == PLAYER_TEAM_BLUE))
-	{
-		net_svcl_explosion explosion;
-		explosion.position[0] = game->players[i]->currentCF.position[0];
-		explosion.position[1] = game->players[i]->currentCF.position[1];
-		explosion.position[2] = game->players[i]->currentCF.position[2];
-		explosion.normal[0] = 0;
-		explosion.normal[1] = 0;
-		explosion.normal[2] = 1;
-		explosion.radius = gameVar.sv_nukeRadius;
-		bb_serverSend((char*)&explosion, sizeof(net_svcl_explosion), NET_SVCL_EXPLOSION, 0);
-		game->radiusHit(game->players[i]->currentCF.position, gameVar.sv_nukeRadius, game->players[i]->playerID, WEAPON_NUCLEAR);
-	}
 }
 
 //

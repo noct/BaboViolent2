@@ -187,13 +187,11 @@ void Game::UpdateProSettings()
 // Adjust weapons depending on game var
 	if (gameVar.sv_serverType == SERVER_TYPE_PRO)
 	{
-		gameVar.weapons[WEAPON_NUCLEAR]->fireDelay = 12;
 		gameVar.weapons[WEAPON_SHIELD]->fireDelay = 2.5;
 		gameVar.weapons[WEAPON_CHAIN_GUN]->reculVel = 1.0f;
 	}
 	else
 	{
-		gameVar.weapons[WEAPON_NUCLEAR]->fireDelay = 12;
 		gameVar.weapons[WEAPON_SHIELD]->fireDelay = 3.0;
 		gameVar.weapons[WEAPON_CHAIN_GUN]->reculVel = 2.0f;
 	}
@@ -333,12 +331,7 @@ int SelectToAvailableWeapon()
 int SelectToAvailableMeleeWeapon()
 {
 	if (gameVar.sv_enableKnives)	return WEAPON_KNIVES;
-	if (gameVar.sv_enableNuclear)	return WEAPON_NUCLEAR;
 	if (gameVar.sv_enableShield)	return WEAPON_SHIELD;
-#if defined(_PRO_) && defined(_MINIBOT_)
-	if (gameVar.sv_enableMinibot)	return WEAPON_MINIBOT;
-#endif
-
 	return WEAPON_KNIVES;
 }
 
@@ -509,13 +502,6 @@ void Game::update(float delay)
 								players[i]->switchMeleeWeapon(SelectToAvailableMeleeWeapon(), true);
 							}
 						}
-						if (players[i]->meleeWeapon->weaponID == WEAPON_NUCLEAR)
-						{
-							if (!gameVar.sv_enableNuclear)
-							{
-								players[i]->switchMeleeWeapon(SelectToAvailableMeleeWeapon(), true);
-							}
-						}
 						if (players[i]->meleeWeapon->weaponID == WEAPON_SHIELD)
 						{
 							if (!gameVar.sv_enableShield)
@@ -523,41 +509,11 @@ void Game::update(float delay)
 								players[i]->switchMeleeWeapon(SelectToAvailableMeleeWeapon(), true);
 							}
 						}
-#if defined(_PRO_) && defined(_MINIBOT_)
-						if (players[i]->meleeWeapon->weaponID == WEAPON_MINIBOT)
-						{
-							if (!gameVar.sv_enableMinibot)
-							{
-								players[i]->switchMeleeWeapon(SelectToAvailableMeleeWeapon(), true);
-							}
-						}
-#endif
 					}
 				}
 			}
 		}
 	}
-
-#if defined(_PRO_)
-	//--- Perform bot collisions with walls
-	if (isServerGame)
-	{
-		for (int i=0;i<MAX_PLAYER;++i)
-		{
-			if (players[i])
-			{
-				if (players[i]->status == PLAYER_STATUS_ALIVE)
-				{
-					if (players[i]->minibot)
-					{
-						if (map) map->performCollision(players[i]->minibot->lastCF, players[i]->minibot->currentCF, .15f);
-						map->collisionClip(players[i]->minibot->currentCF, .15f);
-					}
-				}
-			}
-		}
-	}
-#endif
 
 	// Si on tiens tab, on montre les stats
 #ifndef DEDICATED_SERVER
@@ -777,20 +733,12 @@ void Game::update(float delay)
 		if(gameVar.sv_enableSecondary)
 		{
 			scene->client->btn_meleeguns[WEAPON_KNIVES-WEAPON_KNIVES]->enable = gameVar.sv_enableKnives;
-			scene->client->btn_meleeguns[WEAPON_NUCLEAR-WEAPON_KNIVES]->enable = gameVar.sv_enableNuclear;
 			scene->client->btn_meleeguns[WEAPON_SHIELD-WEAPON_KNIVES]->enable = gameVar.sv_enableShield;
-#if defined(_PRO_) && defined(_MINIBOT_)
-			scene->client->btn_meleeguns[WEAPON_MINIBOT-WEAPON_KNIVES]->enable = gameVar.sv_enableMinibot;
-#endif
 		}
 		else
 		{
 			scene->client->btn_meleeguns[WEAPON_KNIVES-WEAPON_KNIVES]->enable = false;
-			scene->client->btn_meleeguns[WEAPON_NUCLEAR-WEAPON_KNIVES]->enable = false;
 			scene->client->btn_meleeguns[WEAPON_SHIELD-WEAPON_KNIVES]->enable = false;
-#if defined(_PRO_) && defined(_MINIBOT_)
-			scene->client->btn_meleeguns[WEAPON_MINIBOT-WEAPON_KNIVES]->enable = false;
-#endif
 		}
 
 	}
@@ -1292,76 +1240,6 @@ void Game::shootSV(net_clsv_player_shoot & playerShoot)
 	}
 }
 
-#if defined(_PRO_) && defined(_MINIBOT_)
-void Game::shootMinibotSV(CMiniBot * minibot, float imp, CVector3f p1, CVector3f p2)
-{
-	CVector3f normal;
-
-	//--- Impresition
-	CVector3f dir = p2 - p1;
-	normalize(dir);
-	p2 -= p1;
-	p2 = rotateAboutAxis(p2, rand(-imp, imp), CVector3f(0,0,1));
-	p2 = rotateAboutAxis(p2, rand(0.0f, 360.0f), dir);
-	p2[2] *= .5f;
-	p2 += p1;
-
-	// On test s'il y a une collision
-	map->rayTest(p1, p2, normal);
-
-	// On test premièrement si on touche un autre joueur!
-	Player * hitPlayer = 0;
-	for (int i=0;i<MAX_PLAYER;i++)
-	{
-		if (players[i])
-		{
-			if (i != minibot->owner->playerID)
-			{
-				if (players[i]->status == PLAYER_STATUS_ALIVE)
-           //    if (players[i]->status == PLAYER_STATUS_ALIVE && (players[i]->teamID != player->teamID || gameType == GAME_TYPE_DM || gameType == GAME_TYPE_SND || gameVar.sv_friendlyFire))
-				{
-					// Ray to sphere test
-					if (segmentToSphere(p1, p2, players[i]->currentCF.position, .25f))
-					{
-						hitPlayer = players[i];
-						normal = p2 - p1;
-						normalize(normal);
-					}
-				}
-			}
-		}
-	}
-
-	// On envoit le résultat à TOUT les joueurs y compris celui qui l'a tiré
-	net_svcl_player_shoot playerShootSV;
-	if (hitPlayer)
-	{
-		playerShootSV.hitPlayerID = hitPlayer->playerID;
-		playerShootSV.weaponID = WEAPON_MINIBOT_WEAPON;
-
-		// On décrémente sa vie
-		hitPlayer->hitSV(gameVar.weapons[WEAPON_MINIBOT], players[minibot->owner->playerID]);
-	}
-	else
-	{
-		playerShootSV.hitPlayerID = -1;
-	}
-	playerShootSV.playerID = minibot->owner->playerID;
-	playerShootSV.nuzzleID = 0;
-	playerShootSV.p1[0] = (short)(p1[0] * 100);
-	playerShootSV.p1[1] = (short)(p1[1] * 100);
-	playerShootSV.p1[2] = (short)(p1[2] * 100);
-	playerShootSV.p2[0] = (short)(p2[0] * 100);
-	playerShootSV.p2[1] = (short)(p2[1] * 100);
-	playerShootSV.p2[2] = (short)(p2[2] * 100);
-	playerShootSV.normal[0] = (char)(normal[0] * 120);
-	playerShootSV.normal[1] = (char)(normal[1] * 120);
-	playerShootSV.normal[2] = (char)(normal[2] * 120);
-	playerShootSV.weaponID = WEAPON_MINIBOT_WEAPON;
-	bb_serverSend((char*)&playerShootSV,sizeof(net_svcl_player_shoot),NET_SVCL_PLAYER_SHOOT,0);
-}
-#endif
-
 void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3f p2)
 {
 	Player* player = players[playerID];
@@ -1406,10 +1284,6 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 			if (mult < gameVar.sv_ftMinRange)
 				mult = gameVar.sv_ftMinRange;
 			p2 = p2 * mult;//nuvem's awesome idea, ft range decreases the longer it's fired
-			if(gameVar.sv_explodingFT && player->secondsFired/gameVar.sv_ftExpirationTimer > 1)
-			{
-				scene->server->nukePlayer(playerID);
-			}
 		}
 		else
 			p2 = p2 * gameVar.sv_ftMaxRange;

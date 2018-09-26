@@ -475,30 +475,6 @@ struct net_clsv_svcl_player_coord_frame
 	// Son orientation sera calcul� client side, vu que c pas full important c une boule
 };
 
-#if defined(_PRO_)
-//--- mini bot creation
-#define NET_SVCL_CREATE_MINIBOT 1001
-struct net_svcl_create_minibot
-{
-	char playerID; //--- Player ID owning that bot
-	short position[3]; //--- Bot position
-	short mousePos[3]; //--- Where it aims
-};
-
-#define NET_SVCL_MINIBOT_COORD_FRAME 1002
-struct net_svcl_minibot_coord_frame
-{
-	char playerID; // Le ID du joueur concern�
-	int32_t frameID; // Le frame auquel �a a �t� envoy� (on en a de besoin pour cr�er des belles interpolations)
-//	float angle; // Par o� il regarde
-	short position[3]; // Sa position
-	char vel[3]; // Sa velocity
-	short mousePos[3]; // La position o� il vise
-	int32_t babonetID; // ?? don't need that
-};
-#endif
-
-
 // On change le nom du joueur pendant le round (devra attendre la fin, ou au prochain round)
 // Techniquement �a ne devrait pas �tre allow�, mais �a va �tre hot
 #define NET_CLSV_SVCL_PLAYER_CHANGE_NAME 205

@@ -1,19 +1,19 @@
 /*
-	Copyright 2012 bitHeads inc.
+    Copyright 2012 bitHeads inc.
 
-	This file is part of the BaboViolent 2 source code.
+    This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or
-	modify it under the terms of the GNU General Public License as published by the
-	Free Software Foundation, either version 3 of the License, or (at your option)
-	any later version.
+    The BaboViolent 2 source code is free software: you can redistribute it and/or
+    modify it under the terms of the GNU General Public License as published by the
+    Free Software Foundation, either version 3 of the License, or (at your option)
+    any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    The BaboViolent 2 source code is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the
-	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
+    You should have received a copy of the GNU General Public License along with the
+    BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
 
@@ -28,7 +28,7 @@
 extern Scene* scene;
 
 #if defined(_PRO_)
-	#include "md5.h"
+    #include "md5.h"
 #endif
 
 using std::min;
@@ -692,11 +692,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 						}
 
 						if (!(spawnRequest.meleeID == WEAPON_KNIVES ||
-							spawnRequest.meleeID == WEAPON_NUCLEAR ||
 							spawnRequest.meleeID == WEAPON_SHIELD
-							#if defined(_PRO_) && defined(_MINIBOT_)
-								|| spawnRequest.meleeID == WEAPON_MINIBOT
-							#endif
 							))
 						{
 							//--- Kick him so HARD!
@@ -707,14 +703,6 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 					}
 
 					// *** small checkup to make sure people can't choose minibot if sv_enableMinibot is false
-#if defined(_PRO_) && defined(_MINIBOT_)
-					if( !gameVar.sv_enableMinibot && spawnRequest.meleeID == WEAPON_MINIBOT )
-					{
-						// force knives
-						spawnRequest.meleeID = WEAPON_KNIVES;
-					}
-#endif
-
 					game->players[spawnRequest.playerID]->nextSpawnWeapon = spawnRequest.weaponID;
 					game->players[spawnRequest.playerID]->nextMeleeWeapon = spawnRequest.meleeID;
 

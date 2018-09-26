@@ -19,7 +19,7 @@
 #ifndef DEDICATED_SERVER
 #if defined(_PRO_)
 #include "screengrab.h"
-#include "Zeven.h"
+#include <Zeven/Zeven.h>
 #include "GameVar.h"
 #include "Game.h"
 #include "Player.h"

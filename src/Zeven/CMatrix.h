@@ -15,18 +15,10 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-
-
-
 #ifndef CMatrix3x3f_H
 #define CMatrix3x3f_H
 
-
-#include "CVector.h"
-#ifndef DEDICATED_SERVER
-#include "dkgl.h"
-#endif
-
+#include <Zeven/CVector.h>
 
 class CMatrix3x3f
 {
@@ -293,20 +285,6 @@ public:
                 getFront()*u.s[1] +
                 getUp()*u.s[2];
     }
-
-    // Pour openGL
-#ifndef DEDICATED_SERVER
-    void MultOglMatrix()
-    {
-        float Matrix[16] = {
-            s[0], s[1], s[2], 0,
-            s[3], s[4], s[5], 0,
-            s[6], s[7], s[8], 0,
-            0,    0,    0,    1};
-
-        glMultMatrixf(Matrix);
-    }
-#endif
 
     // Les rotations de base autour des axes
     void RotateAboutRight(float Angle)

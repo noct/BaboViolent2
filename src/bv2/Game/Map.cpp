@@ -18,7 +18,7 @@
 
 #include "Map.h"
 #include "Helper.h"
-#include "FileIO.h"
+#include <Zeven/FileIO.h>
 #include "Console.h"
 #include "Game.h"
 #include "Scene.h"
@@ -461,7 +461,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     {
         delete dkoFile;
     }
-    
+
     if (isServer)
     {
         return;

@@ -42,18 +42,7 @@ solution "BaboViolent"
         language "C++"
 
         includedirs {
-            "src/Zeven",
-            "src/Zeven/API",
-            "src/Zeven/dkc",
-            "src/Zeven/dkf",
-            "src/Zeven/dkgl",
-            "src/Zeven/dki",
-            "src/Zeven/dko",
-            "src/Zeven/dkp",
-            "src/Zeven/dks",
-            "src/Zeven/dksvar",
-            "src/Zeven/dkt",
-            "src/Zeven/dkw",
+            "src",
             "thirdparty/glad/include",
             "thirdparty/imgui",
             "thirdparty/imgui/examples",
@@ -71,7 +60,7 @@ solution "BaboViolent"
         language "C++"
 
         includedirs {
-            "src/Zeven",
+            "src",
             "src/Babonet",
         }
 
@@ -123,18 +112,7 @@ solution "BaboViolent"
             "src/bv2/Menu2/Dialogs",
             "src/bv2/Source",
             "src/bv2/Weather",
-            "src/Zeven",
-            "src/Zeven/API",
-            "src/Zeven/dkc",
-            "src/Zeven/dkf",
-            "src/Zeven/dkgl",
-            "src/Zeven/dki",
-            "src/Zeven/dko",
-            "src/Zeven/dkp",
-            "src/Zeven/dks",
-            "src/Zeven/dksvar",
-            "src/Zeven/dkt",
-            "src/Zeven/dkw",
+            "src",
             "thirdparty/glad/include",
             "thirdparty/imgui",
             "thirdparty/imgui/examples",

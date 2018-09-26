@@ -27,7 +27,7 @@ KeyManager keyManager;
 
 #include <vector>
 
-#include "dki.h"
+#include <Zeven/Zeven.h>
 
 static const std::vector < std::pair<const char*, int> > KEY_NAMES = {
     {"Escape", KeyEscape},

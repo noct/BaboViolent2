@@ -1,26 +1,26 @@
 /*
-	Copyright 2012 bitHeads inc.
+    Copyright 2012 bitHeads inc.
 
-	This file is part of the BaboViolent 2 source code.
+    This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or
-	modify it under the terms of the GNU General Public License as published by the
-	Free Software Foundation, either version 3 of the License, or (at your option)
-	any later version.
+    The BaboViolent 2 source code is free software: you can redistribute it and/or
+    modify it under the terms of the GNU General Public License as published by the
+    Free Software Foundation, either version 3 of the License, or (at your option)
+    any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    The BaboViolent 2 source code is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the
-	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
+    You should have received a copy of the GNU General Public License along with the
+    BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
 #ifndef WEAPON_H
 #define WEAPON_H
 
 
-#include "Zeven.h"
+#include <Zeven/Zeven.h>
 #include "netPacket.h"
 #include <vector>
 
@@ -46,35 +46,35 @@ class Player;
 #ifndef DEDICATED_SERVER
 struct NuzzleFlash
 {
-	CMatrix3x3f matrix;
-	CVector3f position;
-	float delay; // le delait d'affichage du feu
-	float angle; // l'angle du nuzzle flash, ça c random
-	NuzzleFlash(CMatrix3x3f & pMatrix, CVector3f & pPosition)
-	{
-		delay = 0;
-		angle = 0;
-		matrix = pMatrix;
-		position = pPosition;
-	}
-	NuzzleFlash(NuzzleFlash * nuzzleFlash)
-	{
-		delay = 0;
-		angle = 0;
-		matrix = nuzzleFlash->matrix;
-		position = nuzzleFlash->position;
-	}
-	void update(float pDelay)
-	{
-		delay -= pDelay;
-		if (delay <= 0) delay = 0;
-	}
-	void shoot()
-	{
-		delay = NUZZLE_DELAY;
-		angle = rand(0.0f, 360.0f);
-	}
-	void render();
+    CMatrix3x3f matrix;
+    CVector3f position;
+    float delay; // le delait d'affichage du feu
+    float angle; // l'angle du nuzzle flash, ça c random
+    NuzzleFlash(CMatrix3x3f & pMatrix, CVector3f & pPosition)
+    {
+        delay = 0;
+        angle = 0;
+        matrix = pMatrix;
+        position = pPosition;
+    }
+    NuzzleFlash(NuzzleFlash * nuzzleFlash)
+    {
+        delay = 0;
+        angle = 0;
+        matrix = nuzzleFlash->matrix;
+        position = nuzzleFlash->position;
+    }
+    void update(float pDelay)
+    {
+        delay -= pDelay;
+        if (delay <= 0) delay = 0;
+    }
+    void shoot()
+    {
+        delay = NUZZLE_DELAY;
+        angle = rand(0.0f, 360.0f);
+    }
+    void render();
 };
 #endif
 
@@ -83,103 +83,103 @@ class Weapon
 {
 public:
 #ifndef DEDICATED_SERVER
-	// Son model DKO
-	unsigned int dkoModel;
-	unsigned int dkoAlternative;
+    // Son model DKO
+    unsigned int dkoModel;
+    unsigned int dkoAlternative;
 #endif
-	float modelAnim; //--- Used in some specific case
-	long nukeFrameID;
+    float modelAnim; //--- Used in some specific case
+    long nukeFrameID;
 
-	// pour le shotty
-	int shotInc;
-	bool fullReload;
+    // pour le shotty
+    int shotInc;
+    bool fullReload;
 
-	// Pour le photon rifle
-	float charge;
-	float justCharged;
+    // Pour le photon rifle
+    float charge;
+    float justCharged;
 #ifndef DEDICATED_SERVER
-	// Sa liste de nuzzle (il peut en avoir plusieurs)
-	std::vector<NuzzleFlash*> nuzzleFlashes;
-	std::vector<NuzzleFlash*> ejectingBrass;
+    // Sa liste de nuzzle (il peut en avoir plusieurs)
+    std::vector<NuzzleFlash*> nuzzleFlashes;
+    std::vector<NuzzleFlash*> ejectingBrass;
 
-	// À quel nuzzle on est rendu à tirer
-	int firingNuzzle;
+    // À quel nuzzle on est rendu à tirer
+    int firingNuzzle;
 #endif
 
-	// Le fire delay
-	float fireDelay;
-	float currentFireDelay;
+    // Le fire delay
+    float fireDelay;
+    float currentFireDelay;
 
 #ifndef DEDICATED_SERVER
-	// For delayed loading of models
-	CString dkoFile;
-	CString soundFile;
+    // For delayed loading of models
+    CString dkoFile;
+    CString soundFile;
 
-	// Le son
-	FSOUND_SAMPLE * sfx_sound;
+    // Le son
+    FSOUND_SAMPLE * sfx_sound;
 #endif
 
-	// Si il est juste une instance, on ne delete pas ses ressource
-	bool isInstance;
+    // Si il est juste une instance, on ne delete pas ses ressource
+    bool isInstance;
 
-	// Le nom du gun
-	CString weaponName;
+    // Le nom du gun
+    CString weaponName;
 
-	// Le damage
-	float damage;
+    // Le damage
+    float damage;
 
-	// L'impressision
-	float impressision;
-	float startImp;
-	float currentImp;
+    // L'impressision
+    float impressision;
+    float startImp;
+    float currentImp;
 
-	// Le nb de shot qu'un tire envoit (shotgun = 6)
-	int nbShot;
+    // Le nb de shot qu'un tire envoit (shotgun = 6)
+    int nbShot;
 
-	// Le recul de quand on tire
-	float reculVel;
+    // Le recul de quand on tire
+    float reculVel;
 
-	// Le ID du gun
-	int weaponID;
+    // Le ID du gun
+    int weaponID;
 
-	//Last position shot from
-	CVector3f shotFrom;
+    //Last position shot from
+    CVector3f shotFrom;
 
-	// Le type de projectile que l'ont tire
-	int projectileType;
+    // Le type de projectile que l'ont tire
+    int projectileType;
 
-	// Chaingun overheat
-	float chainOverHeat;
-	bool overHeated;
+    // Chaingun overheat
+    float chainOverHeat;
+    bool overHeated;
 
-	Player* m_owner;
+    Player* m_owner;
 
 public:
-	// Constructeur
-	Weapon(CString dkoFilename, CString soundFilename, float pFireDelay, CString pWeaponName, float pDamage, float pImp, int pNbShot, float pReculVel, float pStartImp, int pWeaponID, int pProjectileType);
-	Weapon(Weapon * pWeapon);
+    // Constructeur
+    Weapon(CString dkoFilename, CString soundFilename, float pFireDelay, CString pWeaponName, float pDamage, float pImp, int pNbShot, float pReculVel, float pStartImp, int pWeaponID, int pProjectileType);
+    Weapon(Weapon * pWeapon);
 
-	// Destructeur
-	virtual ~Weapon();
+    // Destructeur
+    virtual ~Weapon();
 
-	// On tire
+    // On tire
 #ifndef DEDICATED_SERVER
-	void loadModels();
+    void loadModels();
 
-	void shoot(Player * owner);
-	void shoot(net_svcl_player_shoot & playerShoot, Player * owner);
-	void shootMelee(Player * owner);
+    void shoot(Player * owner);
+    void shoot(net_svcl_player_shoot & playerShoot, Player * owner);
+    void shootMelee(Player * owner);
 #endif
 
-	// Le server shot le player Melee
-	void shootMeleeSV(Player * owner);
+    // Le server shot le player Melee
+    void shootMeleeSV(Player * owner);
 
-	// On l'update
-	void update(float delay);
+    // On l'update
+    void update(float delay);
 
 #ifndef DEDICATED_SERVER
-	// On l'affiche
-	void render();
+    // On l'affiche
+    void render();
 #endif
 };
 

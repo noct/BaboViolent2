@@ -24,7 +24,7 @@
 #include "GameVar.h"
 #include "Scene.h"
 #include "CStatus.h"
-#include "dki.h"
+#include <Zeven/Zeven.h>
 
 #if defined(_PRO_)
 #include "Screengrab.h"

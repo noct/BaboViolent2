@@ -23,7 +23,7 @@
 
 #include "CWeather.h"
 
-#include "Zeven.h"
+#include <Zeven/Zeven.h>
 
 
 struct SSnow

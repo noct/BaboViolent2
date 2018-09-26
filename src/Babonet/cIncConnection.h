@@ -1,19 +1,19 @@
 /*
-	Copyright 2012 bitHeads inc.
+    Copyright 2012 bitHeads inc.
 
-	This file is part of the BaboViolent 2 source code.
+    This file is part of the BaboViolent 2 source code.
 
-	The BaboViolent 2 source code is free software: you can redistribute it and/or
-	modify it under the terms of the GNU General Public License as published by the
-	Free Software Foundation, either version 3 of the License, or (at your option)
-	any later version.
+    The BaboViolent 2 source code is free software: you can redistribute it and/or
+    modify it under the terms of the GNU General Public License as published by the
+    Free Software Foundation, either version 3 of the License, or (at your option)
+    any later version.
 
-	The BaboViolent 2 source code is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-	FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    The BaboViolent 2 source code is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License along with the
-	BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
+    You should have received a copy of the GNU General Public License along with the
+    BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
 #ifndef _INC_CONN_H
@@ -23,60 +23,60 @@
 #include "time.h"
 
 #ifdef WIN32
-	#include "Winsock2.h"
+    #include "Winsock2.h"
 #else
-	#include "LinuxHeader.h"
+    #include "LinuxHeader.h"
 #endif
 
 #include "md5class.h"
-#include "CThread.h"
+#include <Zeven/CThread.h>
 
 class cIncConnection
 {
 private:
 public:
 
-	//FILE			*fp;
+    //FILE          *fp;
 
-	fd_set			master;
-	fd_set			fdwrite;
+    fd_set          master;
+    fd_set          fdwrite;
 
-	timeval			Timeout;
+    timeval         Timeout;
 
-	int				State;	//garde on est rendu ou dans la connection, 0 = entrein de connecter, doit envoyer la connID, 1 = en attente du port udp, 2 = renvoie du ok pour le port udp
-	bool			UDPenabled;
+    int             State;  //garde on est rendu ou dans la connection, 0 = entrein de connecter, doit envoyer la connID, 1 = en attente du port udp, 2 = renvoie du ok pour le port udp
+    bool            UDPenabled;
 
-	uint32_t        ID;		//id unique de notre connection
+    uint32_t        ID;     //id unique de notre connection
 
-	cIncConnection	*Next;
-	cIncConnection	*Previous;
+    cIncConnection  *Next;
+    cIncConnection  *Previous;
 
-	bool			isConnected;
+    bool            isConnected;
 
-	unsigned short	UDPport;
-	sockaddr_in		IP;
-	int				NewFD;			//TCP new file descriptor
+    unsigned short  UDPport;
+    sockaddr_in     IP;
+    int             NewFD;          //TCP new file descriptor
 
-	int				*NbClients;
-	int				*MaxClients;
+    int             *NbClients;
+    int             *MaxClients;
 
 
-	unsigned char	*NetBitField;
-	int				TCPlistener;
+    unsigned char   *NetBitField;
+    int             TCPlistener;
 
-	char			LastMessage[100];
-	char			*LastError;
+    char            LastMessage[100];
+    char            *LastError;
 
-	uint32_t	Pid;
+    uint32_t    Pid;
 
-	//char junk[32];
+    //char junk[32];
 
-	cIncConnection(uint32_t id,unsigned char *netBitField,bool UDPenabled,int tcpListener,int *nbClient,int *maxClient,char *lastError);
-	~cIncConnection(){}
+    cIncConnection(uint32_t id,unsigned char *netBitField,bool UDPenabled,int tcpListener,int *nbClient,int *maxClient,char *lastError);
+    ~cIncConnection(){}
 
-	void			CloseSocket(int socketFD);
+    void            CloseSocket(int socketFD);
 
-	int				Update();
+    int             Update();
 
 };
 

@@ -270,6 +270,19 @@ void Player::kill(bool silenceDeath)
 }
 
 #ifndef DEDICATED_SERVER
+
+void MultOglMatrix(CMatrix3x3f m)
+{
+    float Matrix[16] = {
+        m.s[0], m.s[1], m.s[2], 0,
+        m.s[3], m.s[4], m.s[5], 0,
+        m.s[6], m.s[7], m.s[8], 0,
+        0,    0,    0,    1};
+
+    glMultMatrixf(Matrix);
+}
+
+
 //
 // Render
 //
@@ -304,9 +317,7 @@ void Player::render()
             glEnd();
             glPopMatrix();
         }
-        if((game->gameType != GAME_TYPE_DM) &&
-            (game->gameType != GAME_TYPE_SND) &&
-            (gameVar.cl_teamIndicatorType == 1 || (gameVar.cl_teamIndicatorType == 2 && teamID == game->thisPlayer->teamID) || (gameVar.cl_teamIndicatorType > 0 && game->thisPlayer->teamID == PLAYER_TEAM_SPECTATOR)))
+        if((game->gameType != GAME_TYPE_DM) && (game->gameType != GAME_TYPE_SND) && (gameVar.cl_teamIndicatorType == 1 || (gameVar.cl_teamIndicatorType == 2 && teamID == game->thisPlayer->teamID) || (gameVar.cl_teamIndicatorType > 0 && game->thisPlayer->teamID == PLAYER_TEAM_SPECTATOR)))
         {
             //--- Get up & right vectors
             float modelview[16];
@@ -368,7 +379,7 @@ void Player::render()
         glDepthFunc(GL_LEQUAL);
         glPushMatrix();
         glTranslatef(currentCF.position[0], currentCF.position[1], currentCF.position[2]);
-        matrix.MultOglMatrix();
+        MultOglMatrix(matrix);
         glEnable(GL_COLOR_MATERIAL);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex_skin);

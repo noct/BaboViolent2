@@ -24,7 +24,6 @@
 #include <map>
 
 #ifndef WIN32
-	#include "platform_types.h"
     #include <string>
 #endif
 #if defined(_PRO_)

@@ -61,19 +61,6 @@
 	#define		NET_ACCEPT_CLIENTS	0x01	//est-ce qu'on accept des nouveaux clients ? (Client/Server only)
 	#define		NET_PUBLISH_PEERS	0x02	//disabled par defaut, si enabled, le "fake" server va communiquer les infos sur le ip/port de chaque peers quia entrer en communication avec
 
-/*
-#ifdef WIN32
-	#ifndef DLL_EXPORTS
-		#define BBNET_DLL_API __declspec(dllexport)
-	#else
-		#define BBNET_DLL_API __declspec(dllimport)
-	#endif
-#else
-	//#define BBNET_DLL_API extern "C"
-	#define BBNET_DLL_API
-#endif
-*/
-
 #ifdef WIN32
 
 	#define amax max	//by-pass an STL bug on linux

@@ -20,7 +20,7 @@
 #define MAP_H
 
 
-#include "Zeven.h"
+#include <Zeven/Zeven.h>
 #include <vector>
 #include "GameVar.h"
 #include "Player.h"

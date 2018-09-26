@@ -24,7 +24,7 @@
     #include "LinuxHeader.h"
 #endif
 
-#include "Zeven.h"
+#include <Zeven/Zeven.h>
 #include "Scene.h"
 #include "Console.h"
 #include <exception>
@@ -37,13 +37,6 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
-
-#ifdef WIN32
-    #if defined(_DEBUG) && defined(USE_VLD) && !defined(DEDICATED_SERVER)
-        #include <vld.h>
-    #endif
-#endif
-
 
 // notre scene
 Scene * scene = 0;
@@ -282,7 +275,7 @@ public:
 
 #ifdef DEDICATED_SERVER
 
-#include "CThread.h"
+#include <Zeven/CThread.h>
     bool s_locked = false;
     bool s_internalLock = false;
 

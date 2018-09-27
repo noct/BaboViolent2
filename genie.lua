@@ -79,8 +79,7 @@ solution "BaboViolent"
 
         defines {
             "SDL_MAIN_HANDLED",
-            "_PRO_",
-            "_MINIBOT_"
+            "_PRO_"
         }
 
         configuration {"Debug"}
@@ -98,6 +97,75 @@ solution "BaboViolent"
                 "Babonet",
                 "Zeven",
                 "opengl32",
+                "libcurl"
+            }
+
+        includedirs {
+            "src/Babonet",
+            "src/bv2/External",
+            "src/bv2/Game",
+            "src/bv2/Game/AStar",
+            "src/bv2/Game/Master",
+            "src/bv2/Menu",
+            "src/bv2/Menu2",
+            "src/bv2/Menu2/Dialogs",
+            "src/bv2/Source",
+            "src/bv2/Weather",
+            "src",
+            "thirdparty/glad/include",
+            "thirdparty/imgui",
+            "thirdparty/imgui/examples",
+            "thirdparty/sqlite",
+        }
+
+        files {
+            "src/bv2/**.hpp",
+            "src/bv2/**.cpp",
+            "src/bv2/**.h",
+            "src/bv2/**.c",
+            "thirdparty/imgui/imgui_demo.cpp",
+            "thirdparty/imgui/imgui_draw.cpp",
+            "thirdparty/imgui/imgui_internal.h",
+            "thirdparty/imgui/imgui.cpp",
+            "thirdparty/imgui/imgui.h",
+            "thirdparty/imgui/stb_rect_pack.h",
+            "thirdparty/imgui/stb_textedit.h",
+            "thirdparty/imgui/stb_truetype.h",
+            "thirdparty/imgui/examples/imgui_impl_opengl3.cpp",
+            "thirdparty/imgui/examples/imgui_impl_opengl3.h",
+            "thirdparty/imgui/examples/imgui_impl_sdl.cpp",
+            "thirdparty/imgui/examples/imgui_impl_sdl.h",
+            "thirdparty/sqlite/sqlite3.c",
+            "thirdparty/glad/src/glad.c",
+        }
+
+
+    project "bv2server"
+        kind "ConsoleApp"
+        language "C++"
+        targetdir "."
+        debugdir "Content"
+
+        defines {
+            "SDL_MAIN_HANDLED",
+            "_PRO_",
+            "DEDICATED_SERVER"
+        }
+
+        configuration {"Debug"}
+            links {
+                "SDL2d",
+            }
+
+        configuration {"Release"}
+            links {
+                "SDL2"
+            }
+
+        configuration {}
+            links {
+                "Babonet",
+                "Zeven",
                 "libcurl"
             }
 

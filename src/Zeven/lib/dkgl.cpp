@@ -19,7 +19,7 @@
 /* TCE (c) All rights reserved */
 
 
-#include "dkgli.h"
+#include <Zeven/Zeven.h>
 
 static SDL_GLContext glContext = nullptr;
 

@@ -22,8 +22,6 @@
 
 
 #include "CListener.h"
-#include "CNews.h"
-#include "CProfile.h"
 #include "CBrowser.h"
 #include "CControl.h"
 #include "CHost.h"
@@ -32,9 +30,6 @@
 #include "COption.h"
 #include "CMaster.h"
 #include "CUserLogin.h"
-
-
-
 
 class CMainTab : public CListener
 {
@@ -62,7 +57,6 @@ public:
 	//--- Nos menus
 	CControl * lastButtonPress;
 	CListener * current;
-	CNews * news;
     CUserLogin * profile;
 	CBrowser * browser;
 	CHost * host;

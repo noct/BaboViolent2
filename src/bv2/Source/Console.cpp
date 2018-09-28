@@ -21,7 +21,6 @@
 #include "CMaster.h"
 #ifndef DEDICATED_SERVER
 #include "KeyManager.h"
-#include "CStatus.h"
 #endif
 #include "Scene.h"
 #include <algorithm>
@@ -2293,20 +2292,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
     }
 
 #endif //_PRO_
-
-#ifdef _DEBUG
-#ifndef DEDICATED_SERVER
-    if (command == "status")
-    {
-        int i = tokenize.getFirstToken(' ').toInt();
-        if(i >= 0 && i <= 3)
-            status->set(i);
-        return;
-    }
-#endif
-#endif
-
-
+       
     add(CString("\x3> Unkown command : \"%s\"", command.s));
     add(CString("\x3> Type \"?\" for commands list", command.s));
     return;

@@ -20,7 +20,6 @@
 #include "Console.h"
 #include "GameVar.h"
 #include "Helper.h"
-#include "CStatus.h"
 
 extern char* bbNetVersion;
 
@@ -33,9 +32,7 @@ Scene::Scene()
 {
     frameID = 0;
 #ifndef DEDICATED_SERVER
-    surveySent = false;
     mainTab = 0;
-    survey = 0;
     font = dkfCreateFont("main/fonts/babo.tga");
     tex_crosshair = dktCreateTextureFromFile("main/textures/Cross01.tga", DKT_FILTER_LINEAR);
     tex_menuCursor = dktCreateTextureFromFile("main/textures/MenuCursor.tga", DKT_FILTER_LINEAR);
@@ -84,52 +81,9 @@ Scene::Scene()
     serverInfoDelay = GAME_UPDATE_DELAY;
     masterReady = true;
 #ifndef DEDICATED_SERVER
-    // Les menu seront toujours load� dans ram. Car on peut y aller pendant le jeu
-//  menu = new Menu();
-//  createSurvey();
-//  createMenu();
 
-    //--- Overall control
-    /*menuManager.root = new CControl();
-    menuManager.root->font = font;
-    menuManager.root->size.set(800,600);
-    menuManager.root->backColor.set(.3f,.5f,.8f);
-    menuManager.root->foreColor.set(1,1,1);
-    menuManager.root->textShadow = true;
-    menuManager.root->noFill = true;
-    if(gameVar.r_animatedMenu)
-    {
-        menuManager.root->superPanel = true;
-        menuManager.root->texture = dktCreateTextureFromFile("main/textures/Smoke2.tga", DKT_FILTER_NEAREST);
-    }
-
-//  menu->isReady = true;
-    menuManager.root->enable = true;
-    menuManager.root->visible = false; //--- Not now */
     FSOUND_SetSFXMasterVolume((int)(255.0f*gameVar.s_masterVolume));
 //  dksPlayMusic("main/sounds/menu.ogg", -1);
-
-    //--- Query from data base if we sent the survey already
-    sqlite3 *DB=0;
-    sqlite3_open("bv2.db",&DB);
-
-    //some infos to load the data
-    char    *zErrMsg;       // holds error msg if any
-    char    **azResult;     // contains the actual returned data
-    int nRow;           // number of record
-    int nColumn;        // number of column
-    char    SQL[256];       // the query
-
-    // Get infos of master servers and choose the one with the lowest Score
-    sprintf(SQL,"Select Value From LauncherSettings where Name = 'DidSurvey';");
-    sqlite3_get_table(DB,SQL,&azResult,&nRow,&nColumn,&zErrMsg);
-
-    int didSurvey = atoi(azResult[1]);
-    sqlite3_free_table(azResult);
-    sqlite3_close( DB );
-
-    surveySent = (didSurvey == 0 ? false : true);
-
 #endif
     // On reset el timer
     dkcJumpToFrame(0);
@@ -152,7 +106,6 @@ Scene::~Scene()
 //  ZEVEN_SAFE_DELETE(menu);
     ZEVEN_SAFE_DELETE(introScreen);
     ZEVEN_SAFE_DELETE(mainTab);
-    ZEVEN_SAFE_DELETE(survey);
 #endif
 }
 
@@ -188,46 +141,12 @@ void Scene::update(float delay)
     if (introScreen)
     {
         introScreen->update(delay);
-    //  menu->update(delay); // ??? wtf
         if (introScreen->showDelay <= 0)
         {
             ZEVEN_SAFE_DELETE(introScreen);
-        //  menu->isReady = true;
-        //  ZEVEN_SAFE_DELETE(menuManager.root);
-
-            // [dsl] No more survey!
-        /*  if (surveySent)
-            {*/
-                if (gameVar.s_inGameMusic) dksPlayMusic("main/sounds/Menu.ogg", -1);
-                createMenu();
-        /*  }
-            else
-            {
-                createSurvey();
-            }*/
-        //  survey = new CSurvey();
-            menuManager.root->visible = true;
-        /*  if (gameVar.s_inGameMusic) dksPlayMusic("main/sounds/Menu.ogg", -1);*/
-        }
-    }
-    else if (survey)
-    {
-        survey->update(delay);
-
-        // On update les menu
-        if ((menuManager.root) && (menuManager.root->visible))
-        {
-            menuManager.update(delay);
-        }
-
-        if (survey->IsDone())
-        {
-            ZEVEN_SAFE_DELETE(survey);
-            ZEVEN_SAFE_DELETE(menuManager.root);
-        //  menu->isReady = true;
+            if (gameVar.s_inGameMusic) dksPlayMusic("main/sounds/Menu.ogg", -1);
             createMenu();
             menuManager.root->visible = true;
-            if (gameVar.s_inGameMusic) dksPlayMusic("main/sounds/Menu.ogg", -1);
         }
     }
     else
@@ -335,88 +254,6 @@ void Scene::render()
     {
         introScreen->render();
     }
-    else if (survey)
-    {
-    //  survey->render();
-        // On render les menus
-        if ((menuManager.root) && (menuManager.root->visible))
-        {
-            menuManager.render();
-            dkwClipMouse( false );
-        }
-
-        // Non, le curseur sur TOUUTEEE
-        CVector2i cursor = dkwGetCursorPos_main();
-        int xM = (int)(((float)cursor[0]/(float)res[0])*800.0f);
-        int yM = (int)(((float)cursor[1]/(float)res[1])*600.0f);
-        dkglPushOrtho(800,600);
-            glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                glColor3f(1,1,1);
-            //  glColor3f(1,1,.6f);
-                renderTexturedQuad(xM,yM,32,32,tex_menuCursor);
-            glPopAttrib();
-        dkglPopOrtho();
-
-        // On afficher le fps
-        if(gameVar.r_widescreen > 1) res[0] = static_cast<int>(res[1]*1.333f);
-        dkglPushOrtho((float)res[0], (float)res[1]);
-            glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-                glEnable(GL_TEXTURE_2D);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                dkfBindFont(font);
-
-                glColor3f(1,1,1);
-                //--- Render if logged in or not
-                if (status)
-                {
-                    if (status->get() == CStatus::ONLINE)
-                    {
-                        glColor3f(0,1,0);
-                        printLeftText(10, (float)res[1] - 20, 20, CString("\x2 Current user: ") + gameVar.cl_accountUsername);
-                    }
-                    else if (status->get() == CStatus::OFFLINE)
-                    {
-                        glColor3f(1,0,0);
-                        printLeftText(10, (float)res[1] - 20, 20, " Offline");
-                    }
-                }
-
-                glColor3f(1,1,1);
-                if (gameVar.r_showStats)
-                {
-                    printRightText((float)res[0], 0, 20, CString("FPS : %i", (int)dkcGetFPS()));
-                //  printRightText((float)res[0], 32, 32, CString("NB PARTICLE : %i", gameVar.ro_nbParticle));
-                //  unsigned long byteSent = (client)?bb_clientGetBytesSent(client->uniqueClientID) + bb_serverGetBytesSent() + bb_peerGetBytesSent():0;
-                //  unsigned long byteRecv = (client)?bb_clientGetBytesReceived(client->uniqueClientID) + bb_serverGetBytesReceived() + bb_peerGetBytesReceived():0;
-                //  printRightText((float)res[0], 64, 32, CString("NET BYTE SENT : %i Kb", (int)byteSent / 1024));
-                //  printRightText((float)res[0], 96, 32, CString("NET BYTE RECV : %i Kb", (int)byteRecv / 1024));
-                }
-
-                // On affiche la version du jeu
-                if (!editor && !client)
-                {
-                    if (server)
-                    {
-                        printRightText((float)res[0]-5, (float)res[1]-32-5, 32, CString(gameVar.lang_serverVersion.s, (int)GAME_VERSION_SV/10000, (int)(GAME_VERSION_SV%10000)/100, ((int)GAME_VERSION_SV%100)));
-                    }
-                    else
-                    {
-                        printRightText((float)res[0]-5, (float)res[1]-32-5, 32, CString(gameVar.lang_clientVersion.s, (int)GAME_VERSION_CL/10000, (int)(GAME_VERSION_CL%10000)/100, ((int)GAME_VERSION_CL%100)));
-                    }
-
-                    //--- Copyrights (replaced by head games logo)
-                //  printRightText((float)res[0]-5, (float)res[1]-100-5, 16, CString("Copyright (c) RndLabs Inc. 2006-2007"));
-                //  printRightText((float)res[0]-5, (float)res[1]-100-5+16, 16, CString("All Rights Reserved"));
-
-                //  printRightText((float)res[0]-5, (float)res[1]-32-5-32, 32, CString("server version %01i.%02i.%02i", (int)GAME_VERSION_SV/10000, (int)(GAME_VERSION_SV%1000)/100, ((int)GAME_VERSION_SV%100)));
-                //  printRightText((float)res[0]-5, (float)res[1]-32-5-64, 32, CString("Babonet version %s", bbNetVersion));
-                }
-            glPopAttrib();
-        dkglPopOrtho();
-    }
     else
     {
         // On render le server (sert pas � grand chose)
@@ -452,22 +289,6 @@ void Scene::render()
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 dkfBindFont(font);
-
-                glColor3f(1,1,1);
-                //--- Render if logged in or not
-                if (status)
-                {
-                    if (status->get() == CStatus::ONLINE)
-                    {
-                        glColor3f(0,1,0);
-                        printLeftText(10, (float)res[1] - 20, 20, CString("\x2 Current user: ") + gameVar.cl_accountUsername);
-                    }
-                    else if (status->get() == CStatus::OFFLINE)
-                    {
-                        glColor3f(1,0,0);
-                        printLeftText(10, (float)res[1] - 20, 20, " Offline");
-                    }
-                }
 
                 glColor3f(1,1,1);
                 if (gameVar.r_showStats)

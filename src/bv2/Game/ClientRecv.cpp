@@ -22,7 +22,6 @@
 #include "Console.h"
 #include "Scene.h"
 #include "md5.h"
-#include "CStatus.h"
 
 #if defined(_PRO_)
 	#include "md5_2.h"
@@ -265,14 +264,6 @@ void Client::recvPacket(char * buffer, int typeID)
 				// On send le playerInfo
 				playerInfo.playerID = game->thisPlayer->playerID;
 				memcpy(playerInfo.playerName, game->thisPlayer->name.s, game->thisPlayer->name.len() + 1);
-
-				gameVar.cl_accountUsername.resize(20);
-				memcpy(playerInfo.username, gameVar.cl_accountUsername.s, gameVar.cl_accountUsername.len() + 1);
-
-				RSA::MD5 pw((unsigned char*)gameVar.cl_accountPassword.s);
-				char* hex_digest = pw.hex_digest();
-				memcpy(playerInfo.password, hex_digest, 32);
-				delete[] hex_digest;
 
 				bb_clientSend(uniqueClientID, (char*)&playerInfo, sizeof(net_clsv_svcl_player_info), NET_CLSV_SVCL_PLAYER_INFO);
 
@@ -538,10 +529,6 @@ void Client::recvPacket(char * buffer, int typeID)
 			CString sv = CString("%s", svChange.svChange);
 			sv.getFirstToken(' ');
          CString sValue = sv.getFirstToken(' ');
-			if(sValue == "sv_gamePublic")
-			{
-				status->set(CStatus::INGAME, gameVar.sv_gameName, server_ip, gameVar.sv_port);
-			}
 			if(sValue == "sv_serverType")
 			{
 				game->UpdateProSettings();

@@ -47,12 +47,6 @@ void FetchDBInfos()
     gameVar.db_version = atoi(azResult[1]);
     sqlite3_free_table(azResult);
 
-    sprintf(SQL,"Select Value From LauncherSettings Where Name = 'AccountURL';");
-    sqlite3_get_table(db,SQL,&azResult,&nRow,&nColumn,&zErrMsg);
-
-    gameVar.db_accountServer = CString( azResult[1] );
-
-    sqlite3_free_table(azResult);
     sqlite3_close(db);
 }
 
@@ -537,16 +531,9 @@ void GameVar::init()
     sv_spawnImmunityTime = 2.0f;
     dksvarRegister(CString("sv_spawnImmunityTime [float : 0 to 3 (default 2.0)]"), &sv_spawnImmunityTime, 0, 3, LIMIT_MIN | LIMIT_MAX, true);
 
-    db_accountServer = "http://ladder.rndlabs.ca/bv2link.php";
     db_version = 0;
     FetchDBInfos();
 
-//  dksvarRegister(CString("cl_accountServer [string : \"URL\"]", cl_accountServer.s), &cl_accountServer, true);
-
-    cl_accountUsername = "";
-    dksvarRegister(CString("cl_accountUsername [string : \"\" (default \"\")]"), &cl_accountUsername, true);
-    cl_accountPassword = "";
-    dksvarRegister(CString("cl_accountPassword [string : \"\" (default \"\")]"), &cl_accountPassword, true);
     cl_playerName = "Unnamed Babo";
     dksvarRegister(CString("cl_playerName [string : \"\" (default \"Unnamed Babo\")]"), &cl_playerName, true);
     cl_mapAuthorName = "";

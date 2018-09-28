@@ -22,10 +22,6 @@
 #include "Helper.h"
 #include "GameVar.h"
 #include "Console.h"
-#include "CStatus.h"
-#include <ShellAPI.h>
-#include <process.h>
-#include <tchar.h>
 
 
 CUserLogin::CUserLogin(CControl * in_parent, CControl * in_alignTo)
@@ -42,49 +38,6 @@ CUserLogin::CUserLogin(CControl * in_parent, CControl * in_alignTo)
 //  instance->texture = dktCreateTextureFromFile("main/textures/Smoke2.tga", DKT_FILTER_LINEAR);
     instance->borderColor.set(1,.5f,.25f);
 
-    //--- Labels and controls
-/*  CControl * label1 = new CControl(pnl_login, CVector2i(10,10), CVector2i(200,25),"User name :", this, "LABEL");
-    label1->toolTips = "Enter your user name.";
-    txt_userName = new CControl(pnl_login, CVector2i(10,10), CVector2i(200,25),"", this, "EDIT", label1, CONTROL_SNAP_BOTTOM);
-    CControl * label2 = new CControl(pnl_login, CVector2i(10,10), CVector2i(200,25),"Password :", this, "LABEL", txt_userName, CONTROL_SNAP_BOTTOM);
-    label2->toolTips = "Type down your password.";
-    txt_password = new CControl(pnl_login, CVector2i(10,10), CVector2i(200,25),"", this, "EDIT", label2, CONTROL_SNAP_BOTTOM);
-    txt_password->password = true;
-    CControl * label3 = new CControl(pnl_login, CVector2i(10,10), CVector2i(375,400),"Note : There is two ways to create an acount:\n  - You can create it directly here.\n  - You can register on the official forum : \x3www.rndlabs.ca\x8\n\nYou will then be able to identify yourself both on\nthe forum and in the game by using the same\naccount.\nIf you already have a forum's account\nyou can use it here to log on.\n\nHave fun!", this, "LABEL", label1, CONTROL_SNAP_RIGHT, 100);
-    label3->textAlign = CONTROL_TEXTALIGN_TOPLEFT;
-
-    btn_login = new CControl(pnl_login, CVector2i(32,32),CVector2i(128,25),"Login",this,"BUTTON", txt_password, CONTROL_SNAP_BOTTOM, 15);
-    btn_login->toolTips = "Validate your user/pass and log into the world of babo!";
-*/
-    //--- CLIENT OPTIONS
-    /*CControl * separator = new CControl(instance, CVector2i(10,20), CVector2i(200,25),"Profile", this, "SEPARATOR");
-
-    //--- Player name
-    CControl * label1 = new CControl(instance, CVector2i(20,20), CVector2i(90,25),"Username:", this, "LABEL", separator, CONTROL_SNAP_BOTTOM, 5);
-    label1->textAlign = CONTROL_TEXTALIGN_TOPLEFT;
-    label1->toolTips = "(Optional) Your account username.";
-    txt_userName = new CControl(instance, CVector2i(20,20), CVector2i(200,25),gameVar.cl_accountUsername, this, "EDIT", label1, CONTROL_SNAP_RIGHT, 5);
-//  txt_userName->password = true;
-
-    label1 = new CControl(instance, CVector2i(20,20), CVector2i(90,25),"Password:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
-    label1->textAlign = CONTROL_TEXTALIGN_TOPLEFT;
-    label1->toolTips = "(Optional) Your account password.";
-    txt_password = new CControl(instance, CVector2i(20,20), CVector2i(200,25),gameVar.cl_accountPassword, this, "EDIT", label1, CONTROL_SNAP_RIGHT, 5);
-    txt_password->password = true;
-
-    CControl * label2 = new CControl(instance, CVector2i(20,20), CVector2i(90,25),"Player name:", this, "LABEL", txt_userName, CONTROL_SNAP_RIGHT, 15);
-    label2->textAlign = CONTROL_TEXTALIGN_TOPLEFT;
-    label2->toolTips = "Your player name visible to other players in game.";
-    txt_playerName = new CControl(instance, CVector2i(20,20), CVector2i(250,25),gameVar.cl_playerName, this, "EDIT", label2, CONTROL_SNAP_RIGHT, 5);
-    txt_playerName->SetMaxCarac(24);
-
-    btn_login = new CControl(instance, CVector2i(32,32),CVector2i(64,36),CString("") + "Login",this,"BUTTON", txt_password, CONTROL_SNAP_RIGHT, 5);
-
-    label2 = new CControl(instance, CVector2i(20,20), CVector2i(90, 25), "\x9(OPTIONAL) : ", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
-    btn_createAccount = new CControl(instance, CVector2i(32,32),CVector2i(128,36),CString("") + "Create Account",this,"BUTTON", label2, CONTROL_SNAP_RIGHT, 5);
-    btn_createAccount->toolTips = "If this doesn't launch Internet Explorer, go to http://ladder.rndlabs.ca manually";
-
-    separator = new CControl(instance, CVector2i(10,20), CVector2i(200,25),"Appearance", this, "SEPARATOR", btn_createAccount, CONTROL_SNAP_BOTTOM, 15);*/
     CControl * separator = new CControl(instance, CVector2i(10,20), CVector2i(200,25),"Appearance", this, "SEPARATOR");
 
     //--- Stats view : Perso config
@@ -165,29 +118,6 @@ void CUserLogin::updateSkin()
     float r,g,b;
     CColor3f finalColor;
 
-/*  for (i=0;i<11;++i)
-    {
-        if (!(1 << i & m_medals))
-        {
-            pic_medals[i]->enable = false;
-        }
-        pic_medals[i]->visible = true;
-    }*/
-
-    //--- Les stats
-/*  lbl_honor->text = CString("") + (int)gameVar.scl_honor;
-    lbl_xp->text = CString("") + (int)gameVar.scl_xp;
-    lbl_leftToNextLevel->text = CString("") + (int)gameVar.scl_leftToNextLevel;
-    lbl_totalKill->text = CString("") + (int)gameVar.scl_totalKill;
-    lbl_totalDeath->text = CString("") + (int)gameVar.scl_totalDeath;
-    lbl_ratio->text = CString("%.02f", (float)gameVar.scl_totalKill / (float)gameVar.scl_totalDeath);
-    lbl_weaponOfChoice->text = "None";
-    for (i=0;i<20;++i)
-    {
-        if (lbl_killWeapon[i]) lbl_killWeapon[i]->text = CString("") + (int)gameVar.scl_killWeapon[i];
-    }
-    if (gameVar.weapons[gameVar.scl_weaponOfChoice]) lbl_weaponOfChoice->text = gameVar.weapons[gameVar.scl_weaponOfChoice]->weaponName;
-*/
     //--- Ici c'est nowhere on update les couleurs lol
     //--- Si ça changé on update ça au autres joueur!
     redDecalT = gameVar.cl_redDecal;
@@ -266,38 +196,6 @@ void CUserLogin::Click(CControl * control)
     if (control->style == "BUTTON")
     {
         dksPlaySound(m_sfxClic, -1, 200);
-    }
-    if (control == btn_login)
-    {
-        // Username can be no longer than 20 characters
-        CString username = txt_userName->text;
-        username.resize(20);
-
-        // Check if settings changed
-        if(gameVar.cl_accountUsername != username || gameVar.cl_accountPassword != txt_password->text)
-        {
-            //status->set(CStatus::OFFLINE);
-            // Save Settings
-            gameVar.cl_accountUsername = username;
-            gameVar.cl_accountPassword = txt_password->text;
-            status->set(CStatus::ONLINE);
-        }
-    }
-    if (control == btn_createAccount)
-    {
-#ifdef WIN32
-    //  ShellExecute(dkwGetHandle(), "OPEN", "Register.lnk", NULL, NULL, SW_SHOW);
-    //  ShellExecute(0, "OPEN", "http://p3.envision3d.org/~league/", "", NULL/*lcTPath*/, 1);
-    //  ShellExecute(0, "", "http://p3.envision3d.org/~league/", "", "", SW_SHOWNORMAL);
-    //  execl("http://p3.envision3d.org/~league/", 0);
-    //  CreateProcess();
-    //LPCTSTR url = _T("www.microsoft.com");
-    //CString args;
-    //args.Format(_T("url.dll,FileProtocolHandler www.microsoft.com"), url);
-    ShellExecute(NULL, _T("open"), _T("rundll32.exe"), _T("url.dll,FileProtocolHandler http://ladder.rndlabs.ca"), 0, SW_SHOW);
-
-#endif
-        dkwForceQuit();
     }
 }
 void CUserLogin::Validate(CControl * control)

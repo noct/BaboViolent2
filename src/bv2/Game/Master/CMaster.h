@@ -37,8 +37,6 @@
 
 #include "Server.h"
 
-#include "AccountManager.h"
-
 extern bool surveyReceived;
 
 
@@ -97,35 +95,6 @@ public:
 	}
 };
 
-class AccountManagerClient : public AccountManager
-{
-private:
-	AccountManagerClient()
-	{}
-
-	friend class CMaster;
-public:
-	bool createAccount(char* login, char* password, char* nick, char* email);
-	bool deleteAccount(int userID, char* password);
-	bool updateAccount(char* login, char* password, char* nick, char* email);
-	bool changePassword(int userID, char* oldPass, char* newPass);
-	bool recoverPassword(char* login);
-	bool loginAccount(char* login, char* password);
-	bool logoutAccount(char* login, char* password);
-	bool userStatusUpdate(int userID, char* password, char* serverName, char* ip, short port);
-	bool registerClan(int userID, char* password, char* name, char* tag, char* email, char* website);
-	bool removeClan(int userID, char* password);
-	bool changeClanPermissions(int userID, char* password, int userIDChanging, char permissions);
-	bool joinClanRequest(int userID, char* password, int userIDDest);
-	bool joinClanAccept(int userID, char* password, int userIDFrom);
-	bool leaveClan(int userID, char* password);
-	bool requestFriend(int userID, char* password, int userIDDest, char* groupName);
-	bool acceptFriend(int userID, char* password, int userIDDest, char* groupName);
-	bool removeFriend(int userID, char* password, int userIDDest);
-	bool moveFriend(int userID, char* password, int userIDDest, char* groupName);
-	bool statsUpdate();
-};
-
 class CMaster
 {
 private:
@@ -181,7 +150,6 @@ private:
 	bool IsRemoteAdmin( long in_peerId );
 
 public:
-	AccountManagerClient AccountManager;
 
 	stCacheAnswer	BannedAnswers[64]; //we keep a max of 64 cached banned answers
 

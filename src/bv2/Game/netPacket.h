@@ -437,8 +437,6 @@ struct net_clsv_svcl_player_info
 	char playerID; // Le ID du joueur
 	char playerIP[16];
 	char playerName[31+1]; // Le nom du joueur, 31 + \0 caract�res
-	char username[21];		// Account username
-	char password[32];		// Account password (MD5)
 	char macAddr[20]; // player's mac adress, mouhouha
 };
 

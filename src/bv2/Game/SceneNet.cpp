@@ -18,9 +18,6 @@
 
 #include "Scene.h"
 #include "Console.h"
-#ifndef DEDICATED_SERVER
-#include "CStatus.h"
-#endif
 #include <fstream>
 
 
@@ -155,8 +152,6 @@ void Scene::disconnect()
 {
 #ifndef DEDICATED_SERVER
 	if (client && !server) dksvarLoadConfigSVOnly("main/bv2.cfg");
-
-	status->set(CStatus::ONLINE);
 
 	bool wrongVersion = false;
 	if (client) wrongVersion = client->wrongVersionReason;

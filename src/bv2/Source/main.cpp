@@ -30,7 +30,6 @@
 #include <exception>
 #include "CMaster.h"
 #ifndef DEDICATED_SERVER
-    #include "CStatus.h"
     #include "CLobby.h"
 #endif
 
@@ -760,9 +759,6 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
     console = new Console();
     console->init();
 
-    // Create the status manager
-    status = new CStatus();
-
     //--- On cr�le master
     master = new CMaster();
 
@@ -828,9 +824,6 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
     dkglShutDown();
     dkiShutDown();
     dkwShutDown();
-
-    // Do last update after window is closed
-    delete status;
 
     // Tout c'est bien pass� on retourne 0
     return 0;

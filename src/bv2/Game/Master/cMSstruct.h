@@ -25,12 +25,6 @@
 #define		CACHE_BANNED	1013	// ask the master if the player is banned
 #define		CACHE_ANSWER	1014	// tell the server who ask for a banned player if it is actually banned
 
-#define		ACCOUNT_URL	1015	// tell the accountUrl
-
-#define		SURVEY_SUBMIT	1016	//--- Survey ID
-#define		SURVEY_NEVER	1017	//--- The guy don't want to answer the survey, E.V.E.R
-#define		SURVEY_CONFIRM	1018	//--- Master send confirmation that he received the survey
-
 #define		CACHE_LIST_REMOTE	1019	// tell the master we want the list of cached list of remote server
 #define		CACHE_LIST_PLAYER	1021	// received along with data of cached players
 #define		CACHE_LIST_PLAYER_END	1022	// remote server -> master, no more players in cache

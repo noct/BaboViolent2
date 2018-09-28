@@ -51,11 +51,7 @@ public:
     //--- Text field
     CControl * txt_userName;
     CControl * txt_password;
-
-    //--- Some controls (Login and create acount)
-    CControl * btn_login;
-    CControl * btn_createAccount;
-
+    
     //--- The stats panel
     CControl * pnl_stats;
 

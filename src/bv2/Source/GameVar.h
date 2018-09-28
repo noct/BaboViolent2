@@ -165,11 +165,8 @@ public:
     CString zsv_adminUser;
     CString zsv_adminPass;
 
-    CString db_accountServer;
     int db_version;
 
-    CString cl_accountUsername;
-    CString cl_accountPassword;
     CString cl_playerName;
     CString cl_mapAuthorName;
     bool cl_cubicMotion;

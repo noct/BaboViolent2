@@ -79,13 +79,11 @@ struct net_clsv_pickup_request
 
 // On demande au server d'�tre admin!
 #define NET_CLSV_ADMIN_REQUEST 6
-#if defined(_PRO_)
 struct net_clsv_admin_request
 {
 	char login[33];		//md5
 	char password[33];	//md5
 };
-#endif
 
 // Vote
 #define NET_CLSV_VOTE 7
@@ -467,9 +465,7 @@ struct net_clsv_svcl_player_coord_frame
 	char vel[3]; // Sa velocity
 	short mousePos[3]; // La position o� il vise
 	int32_t babonetID;
-#if defined(_PRO_)
 	int camPosZ;
-#endif
 	// Son orientation sera calcul� client side, vu que c pas full important c une boule
 };
 
@@ -566,24 +562,17 @@ struct net_svcl_broadcast_game_info
 	stBV2row	GameInfo;
 };
 
-
-
 // things specific to the pro client
-#if defined(_PRO_)
+#define NET_SVCL_HASH_SEED 404
+struct net_svcl_hash_seed
+{
+	short s1;
+	short s2;
+	short s3;
+	short s4;
+};
 
-	#define NET_SVCL_HASH_SEED 404
-	struct net_svcl_hash_seed
-	{
-		short s1;
-		short s2;
-		short s3;
-		short s4;
-	};
-
-	#define NET_SVCL_HASH_SEED_REPLY 405
-
-#endif
-
+#define NET_SVCL_HASH_SEED_REPLY 405
 
 #endif
 

@@ -87,16 +87,11 @@ Server::Server(Game * pGame): maxTimeOverMaxPing(5.0f)//, maxIdleTime(180.0f)
 //
 Server::~Server()
 {
-#if defined(_PRO_)
-
 	for( unsigned int i=0; i<m_checksumQueries.size(); i++ )
 	{
 		delete m_checksumQueries[i];
 	}
 	m_checksumQueries.clear();
-
-#endif
-
 
 	if (master) master->RunningServer = 0;
 
@@ -692,7 +687,6 @@ void Server::update(float delay)
 			}
 		}
 
-#if defined(_PRO_)
 		// update current checksum queries
 		for( unsigned int nn = 0; nn < m_checksumQueries.size(); nn++ )
 		{
@@ -739,7 +733,6 @@ void Server::update(float delay)
 			else
 				it++;
 		}
-#endif
 
 		// On update le server
 		updateNet(delay, false);
@@ -1088,9 +1081,7 @@ void Server::update(float delay)
 									playerCoordFrame.vel[0] = (char)(game->players[j]->currentCF.vel[0] * 10);
 									playerCoordFrame.vel[1] = (char)(game->players[j]->currentCF.vel[1] * 10);
 									playerCoordFrame.vel[2] = (char)(game->players[j]->currentCF.vel[2] * 10);
-#if defined(_PRO_)
 									playerCoordFrame.camPosZ = 0;
-#endif
 									bb_serverSend((char*)&playerCoordFrame, sizeof(net_clsv_svcl_player_coord_frame), NET_CLSV_SVCL_PLAYER_COORD_FRAME, game->players[i]->babonetID, NET_UDP);
 								}
 
@@ -1201,45 +1192,6 @@ void Server::update(float delay)
 				else if (game->map && game->gameType == GAME_TYPE_CTF)
 				{
 					updateCTF(delay);
-				}
-				else if (game->map)
-				{
-#if defined(_PRO_)
-               // Every minute, new spawn-slots and respawn everyone
-               if (game->roundTimeLeft == 0)
-               {
-
-                  game->roundTimeLeft = gameVar.sv_roundTimeLimit;
-
-                  // Reset all spawn slots
-                  for (int j=0;j<MAX_PLAYER;++j)
-						{
-                     if (game->players[j])
-                        {
-                        game->players[j]->spawnSlot = -1;
-                        }
-                  }
-
-            // Reset all spawn slots
-                  for (int j=0;j<MAX_PLAYER;++j)
-						{
-                     if ( (game->players[j]) && (game->players[j]->teamID == PLAYER_TEAM_BLUE || game->players[j]->teamID == PLAYER_TEAM_RED))
-                        {
-                        net_svcl_player_hit playerHit;
-				            playerHit.damage = -100;
-                        playerHit.playerID = game->players[j]->playerID;
-				            playerHit.fromID = (char)game->players[j]->playerID;
-				            playerHit.weaponID = 0;
-				            playerHit.vel[0] = 0;
-				            playerHit.vel[1] = 0;
-				            playerHit.vel[2] = 1;
-				            bb_serverSend((char*)&playerHit,sizeof(net_svcl_player_hit),NET_SVCL_PLAYER_HIT,0);
-                        }
-                  }
-               }
-#else
-               updateSnD(delay);
-#endif
 				}
 			}
 		}
@@ -1452,8 +1404,6 @@ void Server::sayall(CString message)
 	}
 }
 
-#if defined(_PRO_)
-
 std::vector<invalidChecksumEntity> Server::getInvalidChecksums(unsigned long bbnetID, int number, int offsetFromEnd)
 {
 	sqlite3 *DB=0;
@@ -1492,43 +1442,6 @@ std::vector<invalidChecksumEntity> Server::getInvalidChecksums(unsigned long bbn
 	return list;
 }
 
-/*void Server::sendInvalidChecksums(unsigned long bbnetID, int number, int offsetFromEnd)
-{
-	sqlite3 *DB=0;
-	sqlite3_open("./bv2.db",&DB);
-
-	//some infos to load the data
-	char	*zErrMsg;		// holds error msg if any
-	char	**azResult;		// contains the actual returned data
-	int	nRow;			// number of record
-	int	nColumn;		// number of column
-	char	SQL[256];		// the query
-	int maxRows = 50;
-
-	if (number > maxRows)
-		number = maxRows;
-	//sprintf(SQL, CString("Select IP, Name From BadChecksum limit %i", maxRows).s);
-	sprintf(SQL, CString("Select IP, Name From BadChecksum limit %i offset (select count(*) from BadChecksum) - %i",
-		number, offsetFromEnd).s);
-	sqlite3_get_table(DB,SQL,&azResult,&nRow,&nColumn,&zErrMsg);
-	{
-		for (int i = 0; i < nRow; i++)
-		{
-			net_svcl_bad_checksum_entity bce;
-			memset(&bce, 0, sizeof(net_svcl_bad_checksum_entity));
-			char* ip = azResult[(i + 1) * nColumn];
-			char* name = azResult[(i + 1) * nColumn + 1];
-			int minLen = (strlen(name) < 31) ? strlen(name) : 31;
-			strncpy(bce.name, name, minLen);
-			strncpy(bce.playerIP, ip, 16);
-			bce.id = i + 1;
-			bb_serverSend((char*)&bce, sizeof(net_svcl_bad_checksum_entity), NET_SVCL_BAD_CHECKSUM_ENTITY, bbnetID);
-		}
-		sqlite3_free_table(azResult);
-	}
-	sqlite3_close( DB );
-}*/
-
 void Server::deleteInvalidChecksums()
 {
 	sqlite3 *DB=0;
@@ -1560,8 +1473,6 @@ int Server::getNumberOfInvalidChecksums()
 	sqlite3_close( DB );
 	return num;
 }
-
-#endif
 
 void Server::cacheStats(const Player* player)
 {

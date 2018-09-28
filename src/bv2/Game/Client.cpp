@@ -24,10 +24,7 @@
 #include "GameVar.h"
 #include "Scene.h"
 #include <Zeven/Zeven.h>
-
-#if defined(_PRO_)
 #include "Screengrab.h"
-#endif
 
 extern Scene * scene;
 
@@ -52,10 +49,6 @@ Client::Client(Game * pGame)
     isChattingTeam = false;
     isConnected = false;
     gotGameState = false;
-
-#if defined(_PRO_)
-    proServer = false;
-#endif
 
     m_sfxChat = dksCreateSoundFromFile("main/Sounds/Chat.wav", false);
     sfxHit = dksCreateSoundFromFile("main/Sounds/Hit.wav", false);
@@ -419,7 +412,6 @@ void Client::update(float delay)
         }
 
         // Screenshot
-#if defined(_PRO_)
 #ifdef WIN32
         if(dkiGetState(gameVar.k_screenShot) == DKI_DOWN && !console->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
         {
@@ -430,8 +422,6 @@ void Client::update(float delay)
         {
             SaveStatsAuto();
         }
-
-#endif
 #endif
 
         // On g�re le menu (important, toujours tester si la console est l� ou pas)

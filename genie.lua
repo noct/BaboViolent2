@@ -79,7 +79,6 @@ solution "BaboViolent"
 
         defines {
             "SDL_MAIN_HANDLED",
-            "_PRO_"
         }
 
         configuration {"Debug"}
@@ -148,7 +147,6 @@ solution "BaboViolent"
 
         defines {
             "SDL_MAIN_HANDLED",
-            "_PRO_",
             "DEDICATED_SERVER"
         }
 

@@ -385,24 +385,11 @@ void Weapon::shoot(Player * owner)
             }
 
             // On en shot le nb qui faut
-#if defined(_PRO_)
             owner->shootShakeDis = -gameVar.dkpp_firingSmoke.direction * reculVel * .5f;
             //for (int i=0;i<nbShot;++i)
             {
                 owner->game->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
             }
-#else
-            {
-                currentImp += 3;
-                if (currentImp > impressision) currentImp = impressision;
-                owner->shootShakeDis = -gameVar.dkpp_firingSmoke.direction * reculVel * .5f;
-                for (int i=0;i<nbShot;++i)
-                {
-                    owner->game->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, currentImp, damage, owner, projectileType);
-                }
-            }
-#endif
-
 
             if (projectileType == PROJECTILE_DIRECT && weaponID != WEAPON_FLAME_THROWER && weaponID != WEAPON_PHOTON_RIFLE)
             {

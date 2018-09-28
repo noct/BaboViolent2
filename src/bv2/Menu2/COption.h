@@ -64,12 +64,11 @@ public:
 	CControl * chk_simpleText;
 	CControl * chk_inGameMusic;
 
-#if defined(_PRO_)
    // GUI options
    CControl * slc_chatTextSize;
    CControl * slc_eventTextSize;
    CControl * chk_showEventText;
-#endif
+
 	// Sound options
 	CControl * lst_mixRate;
 	CControl * txt_maxSoftwareChannels;
@@ -89,10 +88,10 @@ public:
 	CControl * key_chatTeam;
 	CControl * key_showScore;
 	CControl * key_menuAccess;
-#if defined(_PRO_)
+
    CControl * key_screenShot;
    CControl * key_stats;
-#endif
+
 #ifndef DISABLE_QUICK_MESSAGES
 	// Quick Messages options
 	CControl * txt_qMsg01;

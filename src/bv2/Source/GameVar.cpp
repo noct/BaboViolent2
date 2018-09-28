@@ -31,8 +31,8 @@ GameVar gameVar;
 // function to fetch db infos, version and web url
 void FetchDBInfos()
 {
-    sqlite3* db=0;
-    sqlite3_open("./bv2.db",&db);
+    sqlite3* db = 0;
+    sqlite3_open("./bv2.db", &db);
 
     //some infos to load the data
     char    *zErrMsg;       // holds error msg if any
@@ -41,8 +41,8 @@ void FetchDBInfos()
     int nColumn;        // number of column
     char    SQL[256];       // the query
 
-    sprintf(SQL,"Select Value From LauncherSettings Where Name = 'DBVersion';");
-    sqlite3_get_table(db,SQL,&azResult,&nRow,&nColumn,&zErrMsg);
+    sprintf(SQL, "Select Value From LauncherSettings Where Name = 'DBVersion';");
+    sqlite3_get_table(db, SQL, &azResult, &nRow, &nColumn, &zErrMsg);
 
     gameVar.db_version = atoi(azResult[1]);
     sqlite3_free_table(azResult);
@@ -114,10 +114,6 @@ void GameVar::init()
     langs.push_back(SLangText("lang_captureTheFlagD", &lang_captureTheFlagD));
     langs.push_back(SLangText("lang_counterBaboristC", &lang_counterBaboristC));
     langs.push_back(SLangText("lang_counterBaboristD", &lang_counterBaboristD));
-#ifdef _PRO
-    langs.push_back(SLangText("lang_championC", &lang_championC));
-    langs.push_back(SLangText("lang_championD", &lang_championD));
-#endif
 
     langs.push_back(SLangText("lang_connectingC", &lang_connectingC));
     langs.push_back(SLangText("lang_pressF10ToCancel", &lang_pressF10ToCancel));
@@ -152,13 +148,11 @@ void GameVar::init()
     langs.push_back(SLangText("lang_gameNameS", &lang_gameNameS));
     langs.push_back(SLangText("lang_gameType", &lang_gameType));
 
-   langs.push_back(SLangText("lang_serverType", &lang_serverType));
-#if defined(_PRO_)
-   langs.push_back(SLangText("lang_spawnType", &lang_spawnType));
-   langs.push_back(SLangText("lang_subGameType", &lang_subGameType));
-#endif
+    langs.push_back(SLangText("lang_serverType", &lang_serverType));
+    langs.push_back(SLangText("lang_spawnType", &lang_spawnType));
+    langs.push_back(SLangText("lang_subGameType", &lang_subGameType));
 
-   langs.push_back(SLangText("lang_freeForAll", &lang_freeForAll));
+    langs.push_back(SLangText("lang_freeForAll", &lang_freeForAll));
     langs.push_back(SLangText("lang_teamDeathmatch", &lang_teamDeathmatch));
     langs.push_back(SLangText("lang_captureTheFlag", &lang_captureTheFlag));
     langs.push_back(SLangText("lang_TCPnUDPport", &lang_TCPnUDPport));
@@ -190,7 +184,7 @@ void GameVar::init()
     langs.push_back(SLangText("lang_refreshList", &lang_refreshList));
     langs.push_back(SLangText("lang_players", &lang_players));
     langs.push_back(SLangText("lang_mapName", &lang_mapName));
-//  langs.push_back(SLangText("lang_ping", &lang_ping));
+    //  langs.push_back(SLangText("lang_ping", &lang_ping));
     langs.push_back(SLangText("lang_join", &lang_join));
     langs.push_back(SLangText("lang_IPAdress", &lang_IPAdress));
     langs.push_back(SLangText("lang_canRefreshIn", &lang_canRefreshIn));
@@ -270,8 +264,8 @@ void GameVar::init()
         .13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SMG] = new Weapon("main/models/SMG.DKO", "main/sounds/SMG.wav", .1f, gameVar.lang_subMachineGun.s,
         .1f, 8, 1, .5f, 1, WEAPON_SMG, PROJECTILE_DIRECT);
-   weapons[WEAPON_CHAIN_GUN] = new Weapon("main/models/ChainGun.DKO", "main/sounds/ChainGun.wav", .1f, gameVar.lang_changGun.s,
-      .19f, 15, 1, 2.00f, 5, WEAPON_CHAIN_GUN, PROJECTILE_DIRECT);
+    weapons[WEAPON_CHAIN_GUN] = new Weapon("main/models/ChainGun.DKO", "main/sounds/ChainGun.wav", .1f, gameVar.lang_changGun.s,
+        .19f, 15, 1, 2.00f, 5, WEAPON_CHAIN_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SHOTGUN] = new Weapon("main/models/ShotGun.DKO", "main/sounds/Shotgun.wav", 0.85f, gameVar.lang_shotgun.s,
         .21f, 20, 5, 3.0f, 12, WEAPON_SHOTGUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SNIPER] = new Weapon("main/models/Sniper.DKO", "main/sounds/Sniper.wav", 2.0f, gameVar.lang_sniper.s,
@@ -299,7 +293,7 @@ void GameVar::init()
         .19f, 15, 1, 2.00f, 5, WEAPON_CHAIN_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SHOTGUN] = new Weapon("", "", 0.85f, "Shotgun",
         .21f, 20, 5, 3.0f, 12, WEAPON_SHOTGUN, PROJECTILE_DIRECT);
-    weapons[WEAPON_SNIPER] = new Weapon("", "", 2.0f,"Sniper Rifle",
+    weapons[WEAPON_SNIPER] = new Weapon("", "", 2.0f, "Sniper Rifle",
         .30f, 0, 1, 3.0f, 0, WEAPON_SNIPER, PROJECTILE_DIRECT);
     weapons[WEAPON_BAZOOKA] = new Weapon("", "", 1.75f, "Bazooka",
         .75f, 0, 1, 3.0f, 0, WEAPON_BAZOOKA, PROJECTILE_ROCKET);
@@ -334,10 +328,10 @@ void GameVar::init()
     dksvarRegister(CString("sv_forceRespawn [bool : (default false)]"), &sv_forceRespawn, true);
     sv_baboStats = false;
     dksvarRegister(CString("sv_baboStats [bool : (default false)]"), &sv_baboStats, true);
-    sv_roundTimeLimit = 3*60;
+    sv_roundTimeLimit = 3 * 60;
     dksvarRegister(CString("sv_roundTimeLimit [float : 0 = unlimited (default 180)]"), &sv_roundTimeLimit,
         0, 0, LIMIT_MIN, true);
-    sv_gameTimeLimit = 30*60;
+    sv_gameTimeLimit = 30 * 60;
     dksvarRegister(CString("sv_gameTimeLimit [float : 0 = unlimited (default 1800)]"), &sv_gameTimeLimit,
         0, 0, LIMIT_MIN, true);
     sv_scoreLimit = 50;
@@ -347,27 +341,21 @@ void GameVar::init()
     dksvarRegister(CString("sv_winLimit [int : 0 = unlimited (default 7)]"), &sv_winLimit,
         0, 0, LIMIT_MIN, true);
 
-   sv_serverType = 0;
+    sv_serverType = 0;
     dksvarRegister(CString("sv_serverType [int : 0=Normal, 1=Pro]"),
         &sv_serverType, 0, 1, LIMIT_MIN | LIMIT_MAX, true);
 
-#if defined(_PRO_)
-   sv_spawnType = 0;
+    sv_spawnType = 0;
     dksvarRegister(CString("sv_spawnType [int : 0=Normal, 1=Ladder]"),
         &sv_spawnType, 0, 1, LIMIT_MIN | LIMIT_MAX, true);
 
     sv_gameType = 1;
-    dksvarRegister(CString("sv_gameType [int : 0=Deathmatch, 1=Team Deathmatch, 2=Capture The Flag, 3=Champion]"),
-        &sv_gameType, 0, 3, LIMIT_MIN | LIMIT_MAX, true);
+    dksvarRegister(CString("sv_gameType [int : 0=Deathmatch, 1=Team Deathmatch, 2=Capture The Flag]"),
+        &sv_gameType, 0, 2, LIMIT_MIN | LIMIT_MAX, true);
 
     sv_subGameType = 0;
     dksvarRegister(CString("sv_subGameType [int : 0=Normal, 1=Instagib, 2=RandomWeapon]"),
         &sv_subGameType, 0, 2, LIMIT_MIN | LIMIT_MAX, true);
-#else
-    sv_gameType = 1;
-    dksvarRegister(CString("sv_gameType [int : 0=Deathmatch, 1=Team Deathmatch, 2=Capture The Flag]"),
-        &sv_gameType, 0, 3, LIMIT_MIN | LIMIT_MAX, true);
-#endif
 
     sv_bombTime = 60;
     dksvarRegister(CString("sv_bombTime [int : (default 60)]"), &sv_bombTime, 10, 0, LIMIT_MIN, true);
@@ -379,8 +367,8 @@ void GameVar::init()
     sv_maxPlayer = 16; // Max player in the game
     dksvarRegister(CString("sv_maxPlayer [int : 1 to 32 (default 16)]"), &sv_maxPlayer, 1, 32,
         LIMIT_MIN | LIMIT_MAX, true);
-   sv_maxPlayerInGame = 0; // Max player in the game
-   dksvarRegister(CString("sv_maxPlayerInGame [int : 0 to 32 (default 0, no limit)]"), &sv_maxPlayerInGame, 0, 32,
+    sv_maxPlayerInGame = 0; // Max player in the game
+    dksvarRegister(CString("sv_maxPlayerInGame [int : 0 to 32 (default 0, no limit)]"), &sv_maxPlayerInGame, 0, 32,
         LIMIT_MIN | LIMIT_MAX, true);
     sv_password = "";
     dksvarRegister(CString("sv_password [string : \"\""), &sv_password, true);
@@ -459,9 +447,9 @@ void GameVar::init()
     sv_zookaRemoteDet = true;
     dksvarRegister(CString("sv_zookaRemoteDet [bool : true | false (default true)]"), &sv_zookaRemoteDet, true);
     sv_sendJoinMessage = true;
-    dksvarRegister(CString("sv_sendJoinMessage [bool : true | false (default true)]"), &sv_sendJoinMessage,true);
+    dksvarRegister(CString("sv_sendJoinMessage [bool : true | false (default true)]"), &sv_sendJoinMessage, true);
     sv_enableMolotov = true;
-    dksvarRegister(CString("sv_enableMolotov [bool : true | false (default true)]"), &sv_enableMolotov,true);
+    dksvarRegister(CString("sv_enableMolotov [bool : true | false (default true)]"), &sv_enableMolotov, true);
     sv_joinMessage = "Welcome to the server!\0";
     dksvarRegister(CString("sv_joinMessage [string : \"\" ]"), &sv_joinMessage, true);
     sv_shottyDropRadius = 0.40f;
@@ -547,25 +535,25 @@ void GameVar::init()
         LIMIT_MIN | LIMIT_MAX, true);
     cl_password = "";
     dksvarRegister(CString("cl_password [string : \"\"]"), &cl_password, true);
-    cl_redDecal.set(.5f,.5f,1);
+    cl_redDecal.set(.5f, .5f, 1);
     dksvarRegister(CString("cl_redDecal [vector3f : (default .5 .5 1)]"), &cl_redDecal, true);
-    cl_greenDecal.set(0,0,1);
+    cl_greenDecal.set(0, 0, 1);
     dksvarRegister(CString("cl_greenDecal [vector3f : (default 0 0 1)]"), &cl_greenDecal, true);
-    cl_blueDecal.set(0,0,.5f);
+    cl_blueDecal.set(0, 0, .5f);
     dksvarRegister(CString("cl_blueDecal [vector3f : (default 0 0 .5)]"), &cl_blueDecal, true);
     cl_skin = "skin10";
     dksvarRegister(CString("cl_skin [string : \"skin10\"]"), &cl_skin, true);
     cl_teamIndicatorType = 0;
     dksvarRegister(CString("cl_teamIndicatorType [int : 0=Colourize, 1=Halos 2=TeamHalosOnly(default 0)]"),
-        &cl_teamIndicatorType,0,2, LIMIT_MIN | LIMIT_MAX, true);
+        &cl_teamIndicatorType, 0, 2, LIMIT_MIN | LIMIT_MAX, true);
     cl_glowSize = 0.5f;
-    dksvarRegister(CString("cl_glowSize [float : 0.25 to 0.5 (default 0.5)]"),&cl_glowSize,0.25,0.5, LIMIT_MIN | LIMIT_MAX,true);
+    dksvarRegister(CString("cl_glowSize [float : 0.25 to 0.5 (default 0.5)]"), &cl_glowSize, 0.25, 0.5, LIMIT_MIN | LIMIT_MAX, true);
     cl_preciseCursor = true;
-    dksvarRegister(CString("cl_preciseCursor [bool : true | false (default true)]"),&cl_preciseCursor,true);
+    dksvarRegister(CString("cl_preciseCursor [bool : true | false (default true)]"), &cl_preciseCursor, true);
     cl_enableXBox360Controller = false;
     dksvarRegister(CString("cl_enableXBox360Controller [bool : true | false (default false)]"), &cl_enableXBox360Controller, true);
     cl_grassTextureForAllMaps = false;
-    dksvarRegister(CString("cl_grassTextureForAllMaps [bool : true | false (default false)]"),&cl_grassTextureForAllMaps,true);
+    dksvarRegister(CString("cl_grassTextureForAllMaps [bool : true | false (default false)]"), &cl_grassTextureForAllMaps, true);
     cl_enableVSync = true;
     dksvarRegister(CString("cl_enableVSync [bool : true | false (default true)]"), &cl_enableVSync, true);
     cl_affinityMode = 0;
@@ -603,14 +591,14 @@ void GameVar::init()
     dksvarRegister(CString("cl_qMsg10 [string]"), &cl_qMsg10, true);
 #endif
 
-        scl_honor = 10;
-        scl_xp = 25;
-        scl_leftToNextLevel = 75;
-        scl_totalKill = 75;
-        scl_totalDeath = 50;
-        scl_ratio = 75.0f / 50.0f;
-        scl_weaponOfChoice = 0;
-        for (int i=0;i<20;scl_killWeapon[i++] = 0);
+    scl_honor = 10;
+    scl_xp = 25;
+    scl_leftToNextLevel = 75;
+    scl_totalKill = 75;
+    scl_totalDeath = 50;
+    scl_ratio = 75.0f / 50.0f;
+    scl_weaponOfChoice = 0;
+    for(int i = 0; i < 20; scl_killWeapon[i++] = 0);
 
     r_showStats = false;
     dksvarRegister(CString("r_showStats [bool : true | false (default false)]"), &r_showStats, true);
@@ -620,7 +608,7 @@ void GameVar::init()
     r_fullScreen = true;
 #endif
     dksvarRegister(CString("r_fullScreen [bool : true | false (default true)]"), &r_fullScreen, true);
-    r_resolution.set(800,600);
+    r_resolution.set(800, 600);
     dksvarRegister(CString("r_resolution [vector2i : (default 800 600)]"), &r_resolution, true);
     r_bitdepth = 32;
     dksvarRegister(CString("r_bitdepth [int : 16 | 32 (default 32)]"), &r_bitdepth, 16, 32,
@@ -664,16 +652,14 @@ void GameVar::init()
     r_maxNameLenOverBabo = 0;
     dksvarRegister(CString("r_maxNameLenOverBabo [int : (default 0=no limit)]"), &r_maxNameLenOverBabo, 0, 0, LIMIT_MIN, true);
 
-#if defined(_PRO_)
     r_chatTextSize = 28;
     dksvarRegister(CString("r_chatTextSize [int : (default 28)]"), &r_chatTextSize,
         8, 28, LIMIT_MIN | LIMIT_MAX, true);
     r_eventTextSize = 28;
     dksvarRegister(CString("r_eventTextSize [int : (default 28)]"), &r_eventTextSize,
         8, 28, LIMIT_MIN | LIMIT_MAX, true);
-   r_showEventText = true;
+    r_showEventText = true;
     dksvarRegister(CString("r_showEventText [bool : true | false (default true)]"), &r_showEventText, true);
-#endif
 
     s_mixRate = 22050;
     dksvarRegister(CString("s_mixRate [int : 22050 | 44100 (default 22050)]"), &s_mixRate, 22050, 44100,
@@ -714,13 +700,11 @@ void GameVar::init()
     dksvarRegister(CString("k_menuAccess [int]"), &k_menuAccess, 0, 0, 0, true);
     k_melee = keyManager.getKeyByName("Space");
     dksvarRegister(CString("k_melee [int]"), &k_melee, 0, 0, 0, true);
-#if defined(_PRO_)
-   k_screenShot = keyManager.getKeyByName("P");
+    k_screenShot = keyManager.getKeyByName("P");
     dksvarRegister(CString("k_screenShot [int]"), &k_screenShot, 0, 0, 0, true);
 
-   k_stats = keyManager.getKeyByName("L");
+    k_stats = keyManager.getKeyByName("L");
     dksvarRegister(CString("k_stats [int]"), &k_stats, 0, 0, 0, true);
-#endif
 
 #ifndef DISABLE_QUICK_MESSAGES
     k_qMsg01 = keyManager.getKeyByName("1");
@@ -758,7 +742,7 @@ void GameVar::init()
 
 #ifndef DEDICATED_SERVER
     ro_nbParticle = 0;
-    ro_hitPoint.set(0,0,0);
+    ro_hitPoint.set(0, 0, 0);
 #endif
 
 }
@@ -794,16 +778,14 @@ void GameVar::sendSVVar(uint32_t babonetID)
     sendOne("sv_scoreLimit", babonetID);
     sendOne("sv_winLimit", babonetID);
     sendOne("sv_gameType", babonetID);
-   sendOne("sv_serverType", babonetID);
-#if defined(_PRO_)
-   sendOne("sv_spawnType", babonetID);
-   sendOne("sv_subGameType", babonetID);
-#endif
+    sendOne("sv_serverType", babonetID);
+    sendOne("sv_spawnType", babonetID);
+    sendOne("sv_subGameType", babonetID);
     sendOne("sv_bombTime", babonetID);
     sendOne("sv_gameName", babonetID);
     sendOne("sv_port", babonetID);
     sendOne("sv_maxPlayer", babonetID);
-   sendOne("sv_maxPlayerInGame", babonetID);
+    sendOne("sv_maxPlayerInGame", babonetID);
     sendOne("sv_password", babonetID);
     sendOne("sv_enableSMG", babonetID);
     sendOne("sv_enableShotgun", babonetID);
@@ -870,16 +852,14 @@ void GameVar::sendSVVar(int32_t peerId)
     sendOne("sv_scoreLimit", peerId);
     sendOne("sv_winLimit", peerId);
     sendOne("sv_gameType", peerId);
-   sendOne("sv_serverType", peerId);
-#if defined(_PRO_)
-   sendOne("sv_spawnType", peerId);
-   sendOne("sv_subGameType", peerId);
-#endif
+    sendOne("sv_serverType", peerId);
+    sendOne("sv_spawnType", peerId);
+    sendOne("sv_subGameType", peerId);
     sendOne("sv_bombTime", peerId);
     sendOne("sv_gameName", peerId);
     sendOne("sv_port", peerId);
     sendOne("sv_maxPlayer", peerId);
-   sendOne("sv_maxPlayerInGame", peerId);
+    sendOne("sv_maxPlayerInGame", peerId);
     sendOne("sv_password", peerId);
     sendOne("sv_enableSMG", peerId);
     sendOne("sv_enableShotgun", peerId);
@@ -896,11 +876,9 @@ void GameVar::sendSVVar(int32_t peerId)
     sendOne("sv_enableKnives", peerId);
     sendOne("sv_enableNuclear", peerId);
     sendOne("sv_enableShield", peerId);
-#if defined(_PRO_)
     sendOne("sv_showKills", peerId);
     sendOne("sv_beGoodServer", peerId);
     sendOne("sv_validateWeapons", peerId);
-#endif
     sendOne("sv_autoBalance", peerId);
     sendOne("sv_autoBalanceTime", peerId);
     sendOne("sv_gamePublic", peerId);
@@ -926,8 +904,8 @@ void GameVar::sendSVVar(int32_t peerId)
     sendOne("sv_nukeRadius", peerId);
     sendOne("sv_nukeTimer", peerId);
     sendOne("sv_nukeReload", peerId);
-    sendOne("sv_minTilesPerBabo",peerId);
-    sendOne("sv_maxTilesPerBabo",peerId);
+    sendOne("sv_minTilesPerBabo", peerId);
+    sendOne("sv_maxTilesPerBabo", peerId);
     sendOne("sv_photonDistMult", peerId);
     sendOne("sv_photonVerticalShift", peerId);
     sendOne("sv_photonHorizontalShift", peerId);
@@ -943,10 +921,10 @@ void GameVar::sendOne(char * varName, int32_t peerId)
     dksvarGetFormatedVar(varName, &varCom);
     //varCom.insert("set ", 0);
 
-    if (varCom.len() > 79) varCom.resize(79);
+    if(varCom.len() > 79) varCom.resize(79);
     net_ra_var ra_var;
-    memcpy(ra_var.var, varCom.s, varCom.len()+1);
-    bb_peerSend(peerId,(char*)&ra_var,RA_VAR,sizeof(net_ra_var),true);
+    memcpy(ra_var.var, varCom.s, varCom.len() + 1);
+    bb_peerSend(peerId, (char*)&ra_var, RA_VAR, sizeof(net_ra_var), true);
 }
 
 void GameVar::sendOne(char * varName, uint32_t babonetID)
@@ -954,10 +932,10 @@ void GameVar::sendOne(char * varName, uint32_t babonetID)
     CString varCom;
     dksvarGetFormatedVar(varName, &varCom);
     varCom.insert("set ", 0);
-    if (varCom.len() > 79) varCom.resize(79);
+    if(varCom.len() > 79) varCom.resize(79);
     net_svcl_sv_change svChange;
-    memcpy(svChange.svChange, varCom.s, varCom.len()+1);
-    bb_serverSend((char*)&svChange,sizeof(net_svcl_sv_change),NET_SVCL_SV_CHANGE,babonetID);
+    memcpy(svChange.svChange, varCom.s, varCom.len() + 1);
+    bb_serverSend((char*)&svChange, sizeof(net_svcl_sv_change), NET_SVCL_SV_CHANGE, babonetID);
 }
 
 
@@ -982,7 +960,7 @@ void GameVar::loadModels()
     weapons[WEAPON_SNIPER]->loadModels();
     weapons[WEAPON_BAZOOKA]->loadModels();
     weapons[WEAPON_GRENADE]->loadModels();
-    weapons[WEAPON_COCKTAIL_MOLOTOV] ->loadModels();
+    weapons[WEAPON_COCKTAIL_MOLOTOV]->loadModels();
     weapons[WEAPON_KNIVES]->loadModels();
     weapons[WEAPON_PHOTON_RIFLE]->loadModels();
     weapons[WEAPON_FLAME_THROWER]->loadModels();
@@ -1009,22 +987,22 @@ void GameVar::loadModels()
     {
         const int w = 256;
         const int h = 256;
-        const int w_2 = int(256/2.0f);
-        const int h_2 = int(256/2.0f);
+        const int w_2 = int(256 / 2.0f);
+        const int h_2 = int(256 / 2.0f);
         int centerx = 0;//int(w / 2.0f);
         int centery = 0;//int(h / 2.0f);
         int x, y;
-        unsigned char imgData[w*h*4];
-        memset(imgData, 0, w*h*4);
+        unsigned char imgData[w*h * 4];
+        memset(imgData, 0, w*h * 4);
 
-        for (int i = 0; i < w*h; i++)
+        for(int i = 0; i < w*h; i++)
         {
             x = (i % w);
             y = int(i / (float)w);
-            int distx = centerx-(x-w_2);
-            int disty = centery-(y-h_2);
-            float len = float(sqrt(double(distx*distx+disty*disty)));
-            if (len < 118 && x != w_2 && y != h_2)
+            int distx = centerx - (x - w_2);
+            int disty = centery - (y - h_2);
+            float len = float(sqrt(double(distx*distx + disty * disty)));
+            if(len < 118 && x != w_2 && y != h_2)
                 imgData[i * 4 + 3] = 0;
             else
                 imgData[i * 4 + 3] = 255;
@@ -1079,10 +1057,10 @@ void GameVar::loadModels()
     dkpp_firingSmoke.dstBlend = DKP_ONE_MINUS_SRC_ALPHA;
     dkpp_firingSmoke.durationFrom = .25f;
     dkpp_firingSmoke.durationTo = .5f;
-    dkpp_firingSmoke.endColorFrom.set(1,1,.7f,.0f);
-    dkpp_firingSmoke.endColorTo.set(1,1,.7f,.0f);
-    dkpp_firingSmoke.startColorFrom.set(.7f,.7f,.7f,1.0f);
-    dkpp_firingSmoke.startColorTo.set(.7f,.7f,.7f,1.0f);
+    dkpp_firingSmoke.endColorFrom.set(1, 1, .7f, .0f);
+    dkpp_firingSmoke.endColorTo.set(1, 1, .7f, .0f);
+    dkpp_firingSmoke.startColorFrom.set(.7f, .7f, .7f, 1.0f);
+    dkpp_firingSmoke.startColorTo.set(.7f, .7f, .7f, 1.0f);
     dkpp_firingSmoke.endSizeFrom = .25f;
     dkpp_firingSmoke.endSizeTo = .30f;
     dkpp_firingSmoke.startSizeFrom = .15f;
@@ -1191,88 +1169,88 @@ void GameVar::deleteModels()
 // Pour loader les lang_ var
 bool GameVar::loadLanguage(char * filename)
 {
-  int i;
+    int i;
     FILE * fic = fopen(filename, "r");
 
-    if (!fic) return false;
+    if(!fic) return false;
 
     char varName[256];
     char varValue[512];
-    while (true)
+    while(true)
     {
         fscanf(fic, "%s", varName);
-        if (strcmp(varName, "END") == 0)
+        if(strcmp(varName, "END") == 0)
         {
             languageLoaded = true;
             return true;
         }
-        for (i=0;;)
+        for(i = 0;;)
         {
             int character = fgetc(fic);
-            if (character == 199) {character = 128;}
-            if (character == 252) {character = 129;}
-            if (character == 233) {character = 130;}
-            if (character == 226) {character = 131;}
-            if (character == 228) {character = 132;}
-            if (character == 224) {character = 133;}
-            if (character == 229) {character = 134;}
-            if (character == 231) {character = 135;}
-            if (character == 234) {character = 136;}
-            if (character == 235) {character = 137;}
-            if (character == 232) {character = 138;}
-            if (character == 239) {character = 139;}
-            if (character == 238) {character = 140;}
-            if (character == 236) {character = 141;}
-            if (character == 196) {character = 142;}
-            if (character == 197) {character = 143;}
-            if (character == 201) {character = 144;}
-            if (character == 230) {character = 145;}
-            if (character == 198) {character = 146;}
-            if (character == 244) {character = 147;}
-            if (character == 246) {character = 148;}
-            if (character == 242) {character = 149;}
-            if (character == 251) {character = 150;}
-            if (character == 249) {character = 151;}
-            if (character == 255) {character = 152;}
-            if (character == 214) {character = 153;}
-            if (character == 220) {character = 154;}
-            if (character == 248) {character = 155;}
-            if (character == 163) {character = 156;}
-            if (character == 216) {character = 157;}
-            if (character == 215) {character = 158;}
-            if (character == 170) {character = 159;}
-            if (character == '\t')
+            if(character == 199) { character = 128; }
+            if(character == 252) { character = 129; }
+            if(character == 233) { character = 130; }
+            if(character == 226) { character = 131; }
+            if(character == 228) { character = 132; }
+            if(character == 224) { character = 133; }
+            if(character == 229) { character = 134; }
+            if(character == 231) { character = 135; }
+            if(character == 234) { character = 136; }
+            if(character == 235) { character = 137; }
+            if(character == 232) { character = 138; }
+            if(character == 239) { character = 139; }
+            if(character == 238) { character = 140; }
+            if(character == 236) { character = 141; }
+            if(character == 196) { character = 142; }
+            if(character == 197) { character = 143; }
+            if(character == 201) { character = 144; }
+            if(character == 230) { character = 145; }
+            if(character == 198) { character = 146; }
+            if(character == 244) { character = 147; }
+            if(character == 246) { character = 148; }
+            if(character == 242) { character = 149; }
+            if(character == 251) { character = 150; }
+            if(character == 249) { character = 151; }
+            if(character == 255) { character = 152; }
+            if(character == 214) { character = 153; }
+            if(character == 220) { character = 154; }
+            if(character == 248) { character = 155; }
+            if(character == 163) { character = 156; }
+            if(character == 216) { character = 157; }
+            if(character == 215) { character = 158; }
+            if(character == 170) { character = 159; }
+            if(character == '\t')
             {
                 continue;
             }
-            if (character == '\n')
+            if(character == '\n')
             {
                 varValue[i] = '\0';
                 break;
             }
-            if (character == '%')
+            if(character == '%')
             {
                 varValue[i] = character;
                 ++i;
             }
-            if (character == '\\')
+            if(character == '\\')
             {
                 character = fgetc(fic);
-                switch (character)
+                switch(character)
                 {
                 case 'x':
                     character = fgetc(fic);
-                    switch (character)
+                    switch(character)
                     {
-                    case '1': character = '\x1';break;
-                    case '2': character = '\x2';break;
-                    case '3': character = '\x3';break;
-                    case '4': character = '\x4';break;
-                    case '5': character = '\x5';break;
-                    case '6': character = '\x6';break;
-                    case '7': character = '\x7';break;
-                    case '8': character = '\x8';break;
-                    case '9': character = '\x9';break;
+                    case '1': character = '\x1'; break;
+                    case '2': character = '\x2'; break;
+                    case '3': character = '\x3'; break;
+                    case '4': character = '\x4'; break;
+                    case '5': character = '\x5'; break;
+                    case '6': character = '\x6'; break;
+                    case '7': character = '\x7'; break;
+                    case '8': character = '\x8'; break;
+                    case '9': character = '\x9'; break;
                     }
                     break;
                 case 'n':
@@ -1287,9 +1265,9 @@ bool GameVar::loadLanguage(char * filename)
             ++i;
         }
         CString value = varValue;
-        for (i=0;i<(int)langs.size();++i)
+        for(i = 0; i < (int)langs.size(); ++i)
         {
-            if (langs[i].varName == varName)
+            if(langs[i].varName == varName)
             {
                 *(langs[i].varPtr) = value;
             }

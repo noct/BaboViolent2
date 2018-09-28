@@ -173,7 +173,6 @@ bool Game::spawnPlayer(int playerID)
                     }
                     CVector3f spawnPosition(map->dm_spawns[bestFound][0], map->dm_spawns[bestFound][1], .25f);
 
-#if defined(_PRO_)
                     if((gameType == GAME_TYPE_CTF) && (spawnType == SPAWN_TYPE_LADDER))
                     {
                         float timeElapsed = gameVar.sv_gameTimeLimit - gameTimeLeft;
@@ -182,7 +181,6 @@ bool Game::spawnPlayer(int playerID)
                             spawnPosition = map->flagPodPos[players[playerID]->teamID];
                         }
                     }
-#endif
 
                     players[playerID]->spawn(spawnPosition);
 #ifndef DEDICATED_SERVER

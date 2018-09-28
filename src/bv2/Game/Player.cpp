@@ -75,9 +75,7 @@ pingLogID(0)
     mfCumulativeVel = 0.0f;
     shootShakeDis.set(0, 0, 0);
 
-#if defined(_PRO_)
     spawnSlot = -1;
-#endif
 
     timeDead = 0.0f;
     timeAlive = 0.0f;
@@ -535,11 +533,7 @@ void Player::updateSkin()
     dktGetTextureData(tex_skinOriginal, imgData);
 
     //--- Celon son team, on set la couleur du babo en cons�uence
-#if defined(_PRO_)
     if((game->gameType != GAME_TYPE_DM) && gameVar.cl_teamIndicatorType == 0)
-#else
-    if(game->gameType != GAME_TYPE_DM)
-#endif
     {
         switch(teamID)
         {
@@ -662,11 +656,7 @@ void Player::reinit()
     pingOverMax = 0.0f;
     flagAttempts = 0;
     timePlayedCurGame = 0.0f;
-
-#if defined(_PRO_)
     spawnSlot = -1;
-#endif
-
 }
 
 
@@ -962,12 +952,10 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
         cdamage = 0.0f;
     }
 
-#if defined(_PRO_)
     if((gameVar.sv_subGameType == SUBGAMETYPE_INSTAGIB) && (fromWeapon->weaponID != WEAPON_GRENADE) && (fromWeapon->weaponID != WEAPON_KNIVES) && (fromWeapon->weaponID != WEAPON_COCKTAIL_MOLOTOV))
     {
         cdamage = life;
     }
-#endif
 
     if(status == PLAYER_STATUS_ALIVE)
     {
@@ -1295,9 +1283,7 @@ void Player::setCoordFrame(net_clsv_svcl_player_coord_frame & playerCoordFrame)
     currentCF.vel[1] = (float)playerCoordFrame.vel[1] / 10.0f;
     currentCF.vel[2] = (float)playerCoordFrame.vel[2] / 10.0f;
 
-#if defined(_PRO_)
     currentCF.camPosZ = (float)playerCoordFrame.camPosZ;
-#endif
 
     // Son frame ID
     netCF1.frameID = playerCoordFrame.frameID;

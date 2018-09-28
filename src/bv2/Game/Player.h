@@ -24,11 +24,7 @@
 #include "netPacket.h"
 #include "Helper.h"
 #include "GameVar.h"
-
-#if defined(_PRO_)
 #include <list>
-#endif
-
 
 #define PLAYER_STATUS_ALIVE 0
 #define PLAYER_STATUS_DEAD 1
@@ -51,9 +47,7 @@ struct CoordFrame
     long frameID;
     float angle;
     CVector3f mousePosOnMap;
-#if defined(_PRO_)
     float camPosZ;
-#endif
 
     CoordFrame()
     {
@@ -173,11 +167,7 @@ public:
 
     CVector3f shootShakeDis;
 
-#if defined(_PRO_)
-
-   int spawnSlot;
-
-#endif
+    int spawnSlot;
 
     // anti cheat for projectiles and shots
     float mfElapsedSinceLastShot;

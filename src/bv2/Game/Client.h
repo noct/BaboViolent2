@@ -19,14 +19,8 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#if defined(_PRO_)
-#define GAME_VERSION_CL 21100
-#else
-#define GAME_VERSION_CL 21000
-#endif
-
+#define GAME_VERSION_CL 40000
 #define MIN_TIME_BETWEEN_QMSG 0.9f
-
 
 #include "Game.h"
 #include "ControlListener.h"
@@ -81,9 +75,6 @@ public:
 
 	// Si le client run
 	bool isRunning;
-#if defined(_PRO_)
-   bool proServer;
-#endif
 
 	// une erreur ou de quoi, on doit shutdowner
 	bool needToShutDown;

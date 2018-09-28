@@ -42,13 +42,9 @@
 #define SOUND_OVERHEAT 3
 #define SOUND_PHOTON_START 4
 
-#if defined(_PRO_)
 #define SUBGAMETYPE_NORMAL 0
 #define SUBGAMETYPE_INSTAGIB 1
 #define SUBGAMETYPE_RANDOMWEAPON 2
-
-#endif
-
 
 struct SLangText
 {
@@ -92,16 +88,16 @@ public:
     int sv_scoreLimit;
     int sv_winLimit;
     int sv_gameType;
-   int sv_serverType;
-   int sv_spawnType;
-   int sv_subGameType;
+    int sv_serverType;
+    int sv_spawnType;
+    int sv_subGameType;
     float sv_bombTime;
     CString sv_gameName;
     int sv_port;
     int sv_maxPlayer;
-   int sv_maxPlayerInGame;
-   float sv_minTilesPerBabo;
-   float sv_maxTilesPerBabo;
+    int sv_maxPlayerInGame;
+    float sv_minTilesPerBabo;
+    float sv_maxTilesPerBabo;
     CString sv_password;
     bool sv_enableSMG;
     bool sv_enableShotgun;
@@ -201,14 +197,14 @@ public:
     CString cl_qMsg10;
 #endif
     //--- Those are not included into the cfg file
-        long scl_honor;
-        long scl_xp;
-        long scl_leftToNextLevel;
-        long scl_totalKill;
-        long scl_totalDeath;
-        float scl_ratio;
-        long scl_weaponOfChoice;
-        long scl_killWeapon[20];
+    long scl_honor;
+    long scl_xp;
+    long scl_leftToNextLevel;
+    long scl_totalKill;
+    long scl_totalDeath;
+    float scl_ratio;
+    long scl_weaponOfChoice;
+    long scl_killWeapon[20];
 
     bool r_showStats;
     bool r_fullScreen;
@@ -233,11 +229,10 @@ public:
     int r_widescreen;
     int r_maxNameLenOverBabo;
 
-#if defined(_PRO_)
-   int r_chatTextSize;
-   int r_eventTextSize;
-   bool r_showEventText;
-#endif
+    int r_chatTextSize;
+    int r_eventTextSize;
+    bool r_showEventText;
+
 
     int s_mixRate;
     int s_maxSoftwareChannels;
@@ -257,10 +252,8 @@ public:
     int k_showScore;
     int k_menuAccess;
     int k_melee;
-#if defined(_PRO_)
-   int k_screenShot;
-   int k_stats;
-#endif
+    int k_screenShot;
+    int k_stats;
 #ifndef DISABLE_QUICK_MESSAGES
     // quick messages
     int k_qMsg01;
@@ -383,10 +376,6 @@ public:
     CString lang_captureTheFlagD;
     CString lang_counterBaboristC;
     CString lang_counterBaboristD;
-#if defined(_PRO_)
-    CString lang_championC;
-    CString lang_championD;
-#endif
 
     CString lang_connectingC;
     CString lang_pressF10ToCancel;
@@ -420,11 +409,10 @@ public:
     CString lang_generalGameOption;
     CString lang_gameNameS;
     CString lang_gameType;
-   CString lang_serverType;
-#if defined(_PRO_)
-   CString lang_spawnType;
-   CString lang_subGameType;
-#endif
+    CString lang_serverType;
+    CString lang_spawnType;
+    CString lang_subGameType;
+
     CString lang_freeForAll;
     CString lang_teamDeathmatch;
     CString lang_captureTheFlag;

@@ -434,7 +434,7 @@ int main(int argc, const char* argv[])
         bb_peerShutdown();
         bb_shutdown();
         #ifdef WIN32
-            MessageBox(NULL, "Wrong version of BaboNet\nReinstalling the game may resolve this prolem", "Error", 0);
+            printf(NULL, "Wrong version of BaboNet\nReinstalling the game may resolve this prolem", "Error", 0);
         #endif
         return 0;
     }
@@ -551,19 +551,7 @@ int main(int argc, const char* argv[])
             console->sendCommand(input);//CString("Execute CTF"));
         mainLoopConsole.unlock();
 
-
-        #ifdef WIN32
-            Sleep(1);
-
-        #else
-            if(nanosleep(&ts,0))
-            {
-                printf("problem nanosleep console loop\n");
-            }
-            ts.tv_sec = 0;
-            ts.tv_nsec = 1000000;
-        #endif
-
+        SDL_Delay(1);
         //cin.ignore( 10000 , '\n');
         //input[0] = 0;
         //fflush(stdin);

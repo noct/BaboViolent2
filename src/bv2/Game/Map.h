@@ -24,9 +24,6 @@
 #include <vector>
 #include "GameVar.h"
 #include "Player.h"
-#if defined(_PRO_)
-#include "CAStar.h"
-#endif
 
 #ifndef DEDICATED_SERVER
 #include "CMeshBuilder.h"

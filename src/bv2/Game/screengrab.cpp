@@ -17,7 +17,6 @@
 */
 
 #ifndef DEDICATED_SERVER
-#if defined(_PRO_)
 #include "screengrab.h"
 #include <Zeven/Zeven.h>
 #include "GameVar.h"
@@ -165,5 +164,4 @@ bool SaveScreenGrab(const char* filename) {
     return true;
 }
 
-#endif
 #endif

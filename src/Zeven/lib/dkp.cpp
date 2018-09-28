@@ -26,7 +26,108 @@
 
 #include <vector>
 #include "dkgl.h"
-#include "CParticle.h"
+
+
+
+#include <Zeven/CVector.h>
+
+
+class CParticle
+{
+public:
+    // Sa texture utilisé
+    unsigned int texture;
+
+    // La position de la particle
+    CPoint3f position;
+
+    // Sa position au dernier frame
+    CPoint3f lastPosition;
+
+    // Sa couleur au début
+    CColor4f startColor;
+
+    // Sa couleur à la fin
+    CColor4f endColor;
+
+    // Sa velocité
+    CVector3f vel;
+
+    // Sa vie (0 à 1) (1 étant mort)
+    float life;
+
+    // Sa duré de vie, sec / duré
+    float fadeSpeed;
+
+    // Sa grosseur au début
+    float startSize;
+
+    // Sa grosseur à la fin
+    float endSize;
+
+    // Sa densité (1 = fully attracted by gravity)
+    float density;
+
+    // Son angle de rotation
+    float angle;
+
+    // La vitesse de rotation de son angle
+    float rotationSpeed;
+
+    // La fonction de blending utilisé
+    unsigned int srcBlend;
+    unsigned int dstBlend;
+
+    // Pour la résistance de l'air
+    float airResistanceInfluence;
+
+    // La distance avec la camera
+    float camDis;
+
+    // Si c'est un billboard
+    bool billboard;
+
+    // Son opacity
+    float billboardOpacity;
+
+    // Sa distance avant de fader
+    float billboardFadeDis;
+
+    float billboardFadeDelay;
+
+    bool toDelete;
+
+    bool isMultipleTexture;
+    unsigned int * textureArray;
+    int nbFrame;
+
+public:
+    // Constructeur / Destructeur
+    CParticle(
+        float *position,
+        float *vel,
+        float *startColor,
+        float *endColor,
+        float startSize,
+        float endSize,
+        float duration,
+        float density,
+        float airResistanceInfluence,
+        float rotationSpeed,
+        unsigned int texture,
+        unsigned int srcBlend,
+        unsigned int dstBlend,
+        int transitionFunc);
+    virtual ~CParticle();
+
+    // Pour l'updater
+    int update();
+
+    // Pour le rendre
+    void render();
+};
+
+
 
 
 /* BlendingFactorDest */

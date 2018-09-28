@@ -39,7 +39,7 @@
 #include <glad/glad.h>
 #include <SDL2/SDL.h>
 
-#include <Zeven/CVector.h>
+#include <Zeven/Zeven.h>
 
 
 /// \name BlendingPreset

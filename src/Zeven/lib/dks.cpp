@@ -18,15 +18,29 @@
 
 /* TCE (c) All rights reserved */
 
+#include <Zeven/Zeven.h>
+
 #ifndef WIN32
 #include "linux_types.h"
 #endif
-#include "dksi.h"
+
+
 #include <vector>
 
 #ifdef USE_FMODEX
 #include <fmod_errors.h>
 #endif
+
+
+#ifdef USE_FMODEX
+void dksSet3DListenerAttributes(const CVector3f * pos, const CVector3f * vel, const CVector3f * forward, const CVector3f * up);
+void dksUpdate();
+void dksSetSfxMasterVolume(float volume);
+void dksStopSound(FMOD_SOUND * s);
+FMOD_SYSTEM * dksGetSystem();
+FMOD_CHANNEL * dksGetChannel(FMOD_SOUND * s);
+#endif
+
 
 class CSound
 {

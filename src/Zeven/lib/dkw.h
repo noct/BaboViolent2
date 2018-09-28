@@ -49,7 +49,7 @@
 #ifndef DKW_H
 #define DKW_H
 
-#include <Zeven/CVector.h>
+#include <Zeven/Zeven.h>
 
 #include <SDL2/SDL.h>
 

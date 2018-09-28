@@ -19,7 +19,7 @@
 /* TCE (c) All rights reserved */
 
 
-#include "dkii.h"
+#include <Zeven/Zeven.h>
 #include "dkw.h"
 
 #include <memory.h>

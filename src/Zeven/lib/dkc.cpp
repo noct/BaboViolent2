@@ -17,6 +17,7 @@
 */
 
 /* RndLabs (c) All rights reserved */
+#include <Zeven/Zeven.h>
 #include <cstdint>
 #include <Windows.h>
 

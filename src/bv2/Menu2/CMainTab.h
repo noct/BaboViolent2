@@ -43,11 +43,8 @@ public:
 	FSOUND_SAMPLE * m_sfxOver;
 
 	//--- Top Buttons (tab)
-	//CControl * btn_userLogin;
-	CControl * btn_news;
 	CControl * btn_profile;
 	CControl * btn_browser;
-	//CControl * btn_friends;
 	CControl * btn_create;
 	CControl * btn_editor;
 	CControl * btn_option;

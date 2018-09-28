@@ -41,12 +41,12 @@ CEditor::CEditor(CControl * in_parent, CControl * in_alignTo)
 	CControl * label1 = new CControl(instance, CVector2i(20,10), CVector2i(150,25),"Author name:", this, "LABEL", btn_edit, CONTROL_SNAP_BOTTOM, 10);
 	label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
 	label1->toolTips = "Author name (maximum 24 characters)";
-	txt_authorName = new CControl(instance, CVector2i(10,10), CVector2i(300,25), gameVar.cl_mapAuthorName, this, "EDIT", label1, CONTROL_SNAP_RIGHT);
+	txt_authorName = new CControl(instance, CVector2i(10,10), CVector2i(300,25), "Author", this, "EDIT", label1, CONTROL_SNAP_RIGHT);
 
 	label1 = new CControl(instance, CVector2i(10,10), CVector2i(150,25),"Map name:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
 	label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
 	label1->toolTips = "Map name (maximum 15 characters)";
-	txt_mapName = new CControl(instance, CVector2i(10,10), CVector2i(300,25),"", this, "EDIT", label1, CONTROL_SNAP_RIGHT);
+	txt_mapName = new CControl(instance, CVector2i(10,10), CVector2i(300,25),"TestMap", this, "EDIT", label1, CONTROL_SNAP_RIGHT);
 
 	label1 = new CControl(instance, CVector2i(10,10), CVector2i(150,40),"Width:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
 	label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;

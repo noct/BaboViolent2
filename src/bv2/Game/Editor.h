@@ -84,8 +84,6 @@ public:
     CControl * frameObjects;
     CControl * btn_redFlag;
     CControl * btn_blueFlag;
-    CControl * btn_bombSite1;
-    CControl * btn_bombSite2;
     CControl * btn_spawn;
     CControl * btn_redSpawn;
     CControl * btn_blueSpawn;

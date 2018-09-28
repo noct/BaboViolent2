@@ -128,9 +128,7 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
     frameObjects = new CControl(editorRoot, CVector2i(0, 50), CVector2i(90, 260), "", this, "FRAME", 0, CONTROL_SNAP_TOP, 10, true);
     btn_blueFlag  = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "{\x01 flag", this, "BUTTON");
     btn_redFlag   = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "}\x04 flag", this, "BUTTON", btn_blueFlag,  CONTROL_SNAP_BOTTOM);
-    btn_bombSite1 = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "Bomb 1",     this, "BUTTON", btn_redFlag,   CONTROL_SNAP_BOTTOM);
-    btn_bombSite2 = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "Bomb 2",     this, "BUTTON", btn_bombSite1, CONTROL_SNAP_BOTTOM);
-    btn_spawn     = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x05Spawn",  this, "BUTTON", btn_bombSite2, CONTROL_SNAP_BOTTOM);
+    btn_spawn     = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x05Spawn",  this, "BUTTON", btn_redFlag, CONTROL_SNAP_BOTTOM);
     btn_blueSpawn = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x01Spawn",  this, "BUTTON", btn_spawn,     CONTROL_SNAP_BOTTOM);
     btn_redSpawn  = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x04Spawn",  this, "BUTTON", btn_blueSpawn, CONTROL_SNAP_BOTTOM);
 
@@ -176,7 +174,7 @@ Editor2::~Editor2()
 //  scene->createMenu();
 
     delete scene->mainTab->host;
-    scene->mainTab->host = new CHost(scene->mainTab->parent, scene->mainTab->btn_news);//btn_userLogin);
+    scene->mainTab->host = new CHost(scene->mainTab->parent, scene->mainTab->btn_profile);
     scene->mainTab->host->setVisible(false);
 
 
@@ -318,14 +316,6 @@ void Editor2::update(float delay)
         if (dkiGetState(KeyN))
         {
             Click(btn_redFlag);
-        }
-        if (dkiGetState(KeyT))
-        {
-            Click(btn_bombSite1);
-        }
-        if (dkiGetState(KeyY))
-        {
-            Click(btn_bombSite2);
         }
         if (dkiGetState(KeyU))
         {
@@ -595,11 +585,9 @@ void Editor2::renderSelection() const
                 {
                 case  7: renderSquare(btn_redFlag,      3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
                 case  8: renderSquare(btn_blueFlag,     3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  9: renderSquare(btn_bombSite1,    3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 10: renderSquare(btn_bombSite2,    3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 11: renderSquare(btn_spawn,        3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 12: renderSquare(btn_redSpawn,     3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 13: renderSquare(btn_blueSpawn,    3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+                case  9: renderSquare(btn_spawn,        3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+                case 10: renderSquare(btn_redSpawn,     3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+                case 11: renderSquare(btn_blueSpawn,    3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
                 }
             }
             if(frameSize->visible)
@@ -607,10 +595,10 @@ void Editor2::renderSelection() const
                 renderSquare(btn_size, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
                 switch(active)
                 {
-                case 14: renderSquare(btn_insertLineH,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 15: renderSquare(btn_insertLineV,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 16: renderSquare(btn_removeLineH,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 17: renderSquare(btn_removeLineV,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+                case 12: renderSquare(btn_insertLineH,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+                case 13: renderSquare(btn_insertLineV,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+                case 14: renderSquare(btn_removeLineH,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+                case 15: renderSquare(btn_removeLineV,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
                 }
             }
             if(frameMisc->visible)
@@ -839,49 +827,39 @@ void Editor2::Click(CControl * control)
         ActivateTool(8);
         return;
     }
-    if (control == btn_bombSite1)
+    if (control == btn_spawn)
     {
         ActivateTool(9);
         return;
     }
-    if (control == btn_bombSite2)
+    if (control == btn_redSpawn)
     {
         ActivateTool(10);
         return;
     }
-    if (control == btn_spawn)
+    if (control == btn_blueSpawn)
     {
         ActivateTool(11);
         return;
     }
-    if (control == btn_redSpawn)
+    if (control == btn_insertLineH)
     {
         ActivateTool(12);
         return;
     }
-    if (control == btn_blueSpawn)
+    if (control == btn_insertLineV)
     {
         ActivateTool(13);
         return;
     }
-    if (control == btn_insertLineH)
+    if (control == btn_removeLineH)
     {
         ActivateTool(14);
         return;
     }
-    if (control == btn_insertLineV)
-    {
-        ActivateTool(15);
-        return;
-    }
-    if (control == btn_removeLineH)
-    {
-        ActivateTool(16);
-        return;
-    }
     if (control == btn_removeLineV)
     {
-        ActivateTool(17);
+        ActivateTool(15);
         return;
     }
     if (control == btn_theme)

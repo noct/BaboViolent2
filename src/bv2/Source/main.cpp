@@ -24,6 +24,7 @@
     #include "LinuxHeader.h"
 #endif
 
+#include <SDL2/SDL.h>
 #include <Zeven/Zeven.h>
 #include "Scene.h"
 #include "Console.h"
@@ -332,25 +333,10 @@ public:
 
             while (internalLock)
             {
-                #ifdef WIN32
-                    Sleep(1);
-                #else
-                    if(nanosleep(&ts,0))
-                    {
-                        printf("problem nanosleep internal lock\n");
-                    }
-                #endif
-            //  printf("--- internalLock (execute)\n");
+                SDL_Delay(1);
             }
 
-            #ifdef WIN32
-                Sleep(1);
-            #else
-            if(nanosleep(&ts,0))
-            {
-                printf("problem nanosleep main loop\n");
-            }
-            #endif
+            SDL_Delay(1);
         }
 
         //printf(" game main loop has quit \n");
@@ -384,30 +370,10 @@ public:
 
     void lock()
     {
-        #ifndef WIN32 // linux timestruct for nanosleep
-
-            timespec ts;
-
-            ts.tv_sec = 0;
-            ts.tv_nsec = 1000000;
-        #endif
-
         locked = true;
         while (!internalLock)
         {
-            #ifdef WIN32
-                Sleep(1);
-            #else
-                if(nanosleep(&ts,0))
-                {
-                    printf("problem nanosleep lock\n");
-                }
-                ts.tv_sec = 0;
-                ts.tv_nsec = 1000000;
-
-
-            #endif
-        //  printf("--- internalLock (lock)\n");
+            SDL_Delay(1);
         }
     }
 
@@ -458,9 +424,7 @@ int main(int argc, const char* argv[])
     // On init la network
     if (bb_init() == 1)
     {
-        #ifdef WIN32
-            MessageBox(NULL, "Error initiating baboNet", "Error", 0);
-        #endif
+        printf(NULL, "Error initiating baboNet", "Error", 0);
         return 0;
     }
     bbNetVersion = bb_getVersion();

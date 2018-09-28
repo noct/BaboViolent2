@@ -404,7 +404,7 @@ void Game::update(float delay)
 								if (j != i)
 								{
 #if defined(_PRO_)
-									if (players[j]->status == PLAYER_STATUS_ALIVE && (players[j]->teamID != players[i]->teamID || gameType == GAME_TYPE_DM || gameType == GAME_TYPE_SND || gameVar.sv_friendlyFire || gameVar.sv_reflectedDamage))
+									if (players[j]->status == PLAYER_STATUS_ALIVE && (players[j]->teamID != players[i]->teamID || gameType == GAME_TYPE_DM || gameVar.sv_friendlyFire || gameVar.sv_reflectedDamage))
 #else
 									if (players[j]->status == PLAYER_STATUS_ALIVE && (players[j]->teamID != players[i]->teamID || gameType == GAME_TYPE_DM || gameVar.sv_friendlyFire))
 #endif
@@ -1370,7 +1370,7 @@ void Game::shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3
 				if (i != player->playerID)
 				{
 #if defined(_PRO_)
-               if (players[i]->status == PLAYER_STATUS_ALIVE && (players[i]->teamID != player->teamID || gameType == GAME_TYPE_DM || gameType == GAME_TYPE_SND || gameVar.sv_friendlyFire || gameVar.sv_reflectedDamage))
+               if (players[i]->status == PLAYER_STATUS_ALIVE && (players[i]->teamID != player->teamID || gameType == GAME_TYPE_DM || gameVar.sv_friendlyFire || gameVar.sv_reflectedDamage))
 #else
                if (players[i]->status == PLAYER_STATUS_ALIVE && (players[i]->teamID != player->teamID || gameType == GAME_TYPE_DM || gameVar.sv_friendlyFire))
 #endif

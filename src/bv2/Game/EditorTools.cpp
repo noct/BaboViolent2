@@ -237,8 +237,6 @@ void ToolWall::LeftClick(Editor2 * editor, float delay)
     if(
         (CVector2i((int)editor->map->flagPodPos[0][0], (int)editor->map->flagPodPos[0][1]) == editor->cellCursor) ||
         (CVector2i((int)editor->map->flagPodPos[1][0], (int)editor->map->flagPodPos[1][1]) == editor->cellCursor) ||
-        (CVector2i((int)editor->map->objective[0][0], (int)editor->map->objective[0][1]) == editor->cellCursor) ||
-        (CVector2i((int)editor->map->objective[1][0], (int)editor->map->objective[1][1]) == editor->cellCursor) ||
         (std::find(editor->map->dm_spawns.begin(), editor->map->dm_spawns.end(), spawnAt) != editor->map->dm_spawns.end()) ||
         (std::find(editor->map->blue_spawns.begin(), editor->map->blue_spawns.end(), spawnAt) != editor->map->blue_spawns.end()) ||
         (std::find(editor->map->red_spawns.begin(), editor->map->red_spawns.end(), spawnAt) != editor->map->red_spawns.end())
@@ -332,85 +330,6 @@ void ToolFlag::RightClick(Editor2 * editor, float delay)
 }
 
 void ToolFlag::MiddleClick(Editor2 * editor, float delay)
-{
-    // We don't need the warnings!
-    (void) editor;
-    (void) delay;
-}
-
-ToolBomb::ToolBomb(unsigned int bombIndex)
-    :   bomb(bombIndex)
-{
-}
-
-ToolBomb::~ToolBomb()
-{
-}
-
-void ToolBomb::render(Editor2 * editor)
-{
-    glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_COLOR_MATERIAL);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        if(bomb == 0)
-        {
-            glColor4f(0.0f, 1.0f, 0.5f, 0.5f);
-        }
-        else
-        {
-            glColor4f(0.5f, 1.0f, 0.0f, 0.5f);
-        }
-        glBindTexture(GL_TEXTURE_2D, editor->map->tex_bombMark);
-        glPushMatrix();
-            glTranslatef(editor->cellCursor[0] + 0.5f, editor->cellCursor[1] + 0.5f, Selection);
-            glBegin(GL_QUADS);
-                glTexCoord2i(0, 1);
-                glVertex2f(-0.5f,  0.5f);
-                glTexCoord2i(0, 0);
-                glVertex2f(-0.5f, -0.5f);
-                glTexCoord2i(1, 0);
-                glVertex2f( 0.5f, -0.5f);
-                glTexCoord2i(1, 1);
-                glVertex2f( 0.5f,  0.5f);
-            glEnd();
-        glPopMatrix();
-    glPopAttrib();
-}
-
-void ToolBomb::LeftClick(Editor2 * editor, float delay)
-{
-    unsigned int index = MapCellIndex(editor->map, editor->cellCursor);
-    if(editor->map->cells[index].passable)
-    {
-        CVector3f newPos(float(editor->cellCursor[0]) + 0.5f, float(editor->cellCursor[1]) + 0.5f, 0.0f);
-        if(newPos != editor->map->objective[bomb])
-        {
-            editor->map->objective[bomb] = newPos;
-            editor->isDirty = true;
-        }
-    }
-    (void) delay;
-}
-
-void ToolBomb::RightClick(Editor2 * editor, float delay)
-{
-    CVector2i bombPos((int)editor->map->objective[bomb][0], (int)editor->map->objective[bomb][1]);
-    if(bombPos == editor->cellCursor)
-    {
-        CVector3f newPos(0.0f, 0.0f, 0.0f);
-        if(newPos != editor->map->objective[bomb])
-        {
-            editor->map->objective[bomb] = newPos;
-            editor->isDirty = true;
-        }
-    }
-    (void) delay;
-}
-
-void ToolBomb::MiddleClick(Editor2 * editor, float delay)
 {
     // We don't need the warnings!
     (void) editor;
@@ -600,10 +519,6 @@ void ToolAddLine::LeftClick(Editor2 * editor, float delay)
                 editor->map->flagPodPos[0][1] += 1;
             if(editor->map->flagPodPos[1][1] >= editor->cellCursor[1])
                 editor->map->flagPodPos[1][1] += 1;
-            if(editor->map->objective[0][1] >= editor->cellCursor[1])
-                editor->map->objective[0][1] += 1;
-            if(editor->map->objective[1][1] >= editor->cellCursor[1])
-                editor->map->objective[1][1] += 1;
             for(std::vector<CVector3f>::iterator i = editor->map->dm_spawns.begin();
                 i < editor->map->dm_spawns.end(); ++i)
             {
@@ -671,10 +586,6 @@ void ToolAddLine::LeftClick(Editor2 * editor, float delay)
                 editor->map->flagPodPos[0][0] += 1;
             if(editor->map->flagPodPos[1][0] >= editor->cellCursor[0])
                 editor->map->flagPodPos[1][0] += 1;
-            if(editor->map->objective[0][0] >= editor->cellCursor[0])
-                editor->map->objective[0][0] += 1;
-            if(editor->map->objective[1][0] >= editor->cellCursor[0])
-                editor->map->objective[1][0] += 1;
             for(std::vector<CVector3f>::iterator i = editor->map->dm_spawns.begin();
                 i < editor->map->dm_spawns.end(); ++i)
             {
@@ -818,10 +729,6 @@ void ToolRemoveLine::LeftClick(Editor2 * editor, float delay)
                 editor->map->flagPodPos[0][1] -= 1;
             if(editor->map->flagPodPos[1][1] >= editor->cellCursor[1])
                 editor->map->flagPodPos[1][1] -= 1;
-            if(editor->map->objective[0][1] >= editor->cellCursor[1])
-                editor->map->objective[0][1] -= 1;
-            if(editor->map->objective[1][1] >= editor->cellCursor[1])
-                editor->map->objective[1][1] -= 1;
             for(std::vector<CVector3f>::iterator i = editor->map->dm_spawns.begin();
                 i < editor->map->dm_spawns.end(); ++i)
             {
@@ -879,10 +786,6 @@ void ToolRemoveLine::LeftClick(Editor2 * editor, float delay)
                 editor->map->flagPodPos[0][0] -= 1;
             if(editor->map->flagPodPos[1][0] >= editor->cellCursor[0])
                 editor->map->flagPodPos[1][0] -= 1;
-            if(editor->map->objective[0][0] >= editor->cellCursor[0])
-                editor->map->objective[0][0] -= 1;
-            if(editor->map->objective[1][0] >= editor->cellCursor[0])
-                editor->map->objective[1][0] -= 1;
             for(std::vector<CVector3f>::iterator i = editor->map->dm_spawns.begin();
                 i < editor->map->dm_spawns.end(); ++i)
             {

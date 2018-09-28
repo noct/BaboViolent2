@@ -87,19 +87,6 @@ public:
     virtual void MiddleClick(Editor2 * editor, float delay);
 };
 
-class ToolBomb : public ITool
-{
-private:
-    unsigned int bomb;
-public:
-    ToolBomb(unsigned int bombIndex);
-    virtual ~ToolBomb();
-    virtual void render(Editor2 * editor);
-    virtual void LeftClick(Editor2 * editor, float delay);
-    virtual void RightClick(Editor2 * editor, float delay);
-    virtual void MiddleClick(Editor2 * editor, float delay);
-};
-
 class ToolSpawn : public ITool
 {
 public:

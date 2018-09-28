@@ -707,39 +707,6 @@ void Map::collisionClip(CoordFrame & CF, float radius)
 
 #ifndef DEDICATED_SERVER
 
-void Map::renderBombMark()
-{
-    glBindTexture(GL_TEXTURE_2D, tex_bombMark);
-    glPushMatrix();
-        glTranslatef(objective[0][0], objective[0][1], objective[0][2]);
-        glColor3f(1,.5f,.3f);
-        glBegin(GL_QUADS);
-            glTexCoord2i(0,1);
-            glVertex2f(-.5f,.5f);
-            glTexCoord2i(0,0);
-            glVertex2f(-.5f,-.5f);
-            glTexCoord2i(1,0);
-            glVertex2f(.5f,-.5f);
-            glTexCoord2i(1,1);
-            glVertex2f(.5f,.5f);
-        glEnd();
-    glPopMatrix();
-    glPushMatrix();
-        glTranslatef(objective[1][0], objective[1][1], objective[1][2]);
-        glColor3f(1,.5f,.3f);
-        glBegin(GL_QUADS);
-            glTexCoord2i(0,1);
-            glVertex2f(-.5f,.5f);
-            glTexCoord2i(0,0);
-            glVertex2f(-.5f,-.5f);
-            glTexCoord2i(1,0);
-            glVertex2f(.5f,-.5f);
-            glTexCoord2i(1,1);
-            glVertex2f(.5f,.5f);
-        glEnd();
-    glPopMatrix();
-}
-
 void Map::renderFlag(int i)
 {
     glPushMatrix();

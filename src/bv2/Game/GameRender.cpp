@@ -644,7 +644,7 @@ void Game::renderMiniMap()
             {
                 if(players[i]->status == PLAYER_STATUS_ALIVE)
                 {
-                    if((players[i]->teamID == thisPlayer->teamID || thisPlayer->teamID == PLAYER_TEAM_SPECTATOR) && gameType != GAME_TYPE_SND && gameType != GAME_TYPE_DM || thisPlayer == players[i])
+                    if((players[i]->teamID == thisPlayer->teamID || thisPlayer->teamID == PLAYER_TEAM_SPECTATOR) && gameType != GAME_TYPE_DM || thisPlayer == players[i])
                     {
                         glPushMatrix();
                         glTranslatef(players[i]->currentCF.position[0], players[i]->currentCF.position[1], 0);
@@ -690,7 +690,7 @@ void Game::renderMiniMap()
                 {
                     if(players[i]->status == PLAYER_STATUS_ALIVE || players[i]->firedShowDelay > 0)
                     {
-                        if(players[i]->teamID != thisPlayer->teamID || gameType == GAME_TYPE_SND || gameType == GAME_TYPE_DM)
+                        if(players[i]->teamID != thisPlayer->teamID || gameType == GAME_TYPE_DM)
                         {
                             glPushMatrix();
                             glTranslatef(players[i]->currentCF.position[0], players[i]->currentCF.position[1], 0);

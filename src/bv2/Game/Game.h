@@ -39,7 +39,6 @@ class Client;
 #define GAME_TYPE_DM 0
 #define GAME_TYPE_TDM 1
 #define GAME_TYPE_CTF 2
-#define GAME_TYPE_SND 3
 
 #define SERVER_TYPE_NORMAL 0
 #define SERVER_TYPE_PRO 1

@@ -78,8 +78,6 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
     tools.push_back(new ToolWall(5));
     tools.push_back(new ToolFlag(1));
     tools.push_back(new ToolFlag(0));
-    tools.push_back(new ToolBomb(0));
-    tools.push_back(new ToolBomb(1));
     tools.push_back(new ToolSpawn(ToolSpawn::SPAWN_COMMON));
     tools.push_back(new ToolSpawn(ToolSpawn::SPAWN_RED));
     tools.push_back(new ToolSpawn(ToolSpawn::SPAWN_BLUE));
@@ -463,16 +461,6 @@ void Editor2::render()
                 glPopAttrib();
             }
 
-            // Render the bombs
-            glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);
-                glDepthMask(GL_FALSE);
-                glDisable(GL_LIGHTING);
-                glEnable(GL_TEXTURE_2D);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                map->renderBombMark();
-            glPopAttrib();
-
             // Render flags, spawns and other shit
             map->renderMisc();
 
@@ -716,11 +704,6 @@ void Editor2::Save(CString mapName)
         // flags
         file.put(map->flagPodPos[0]);
         file.put(map->flagPodPos[1]);
-        // save CB data
-        file.put((int)GAME_TYPE_SND);
-        // bombs
-        file.put(map->objective[0]);
-        file.put(map->objective[1]);
         // Trim duplicate spawns (if any) before saving
         temp_spawns = map->blue_spawns;
         map->blue_spawns.clear();
@@ -922,8 +905,6 @@ void Editor2::Click(CControl * control)
         map->red_spawns.clear();
         map->flagPodPos[0].set(0.0f, 0.0f, 0.0f);
         map->flagPodPos[1].set(0.0f, 0.0f, 0.0f);
-        map->objective[0].set(0.0f, 0.0f, 0.0f);
-        map->objective[1].set(0.0f, 0.0f, 0.0f);
         for(int j = 0; j < map->size[1]; ++j)
         {
             for(int i = 0; i < map->size[0]; ++i)

@@ -317,7 +317,7 @@ void Player::render()
             glEnd();
             glPopMatrix();
         }
-        if((game->gameType != GAME_TYPE_DM) && (game->gameType != GAME_TYPE_SND) && (gameVar.cl_teamIndicatorType == 1 || (gameVar.cl_teamIndicatorType == 2 && teamID == game->thisPlayer->teamID) || (gameVar.cl_teamIndicatorType > 0 && game->thisPlayer->teamID == PLAYER_TEAM_SPECTATOR)))
+        if((game->gameType != GAME_TYPE_DM) && (gameVar.cl_teamIndicatorType == 1 || (gameVar.cl_teamIndicatorType == 2 && teamID == game->thisPlayer->teamID) || (gameVar.cl_teamIndicatorType > 0 && game->thisPlayer->teamID == PLAYER_TEAM_SPECTATOR)))
         {
             //--- Get up & right vectors
             float modelview[16];
@@ -439,7 +439,7 @@ void Player::renderName()
 {
     if(gameVar.sv_showEnemyTag && game->thisPlayer)
     {
-        if(!isThisPlayer && teamID != PLAYER_TEAM_SPECTATOR && teamID != game->thisPlayer->teamID && game->gameType != GAME_TYPE_DM && game->gameType != GAME_TYPE_SND)
+        if(!isThisPlayer && teamID != PLAYER_TEAM_SPECTATOR && teamID != game->thisPlayer->teamID && game->gameType != GAME_TYPE_DM)
         {
             //--- We don't print it !!!!!!
             return;
@@ -469,7 +469,7 @@ void Player::renderName()
     //--- The life of this player
     if(game->thisPlayer && status == PLAYER_STATUS_ALIVE)
     {
-        if((!isThisPlayer && teamID == game->thisPlayer->teamID && game->gameType != GAME_TYPE_DM && game->gameType != GAME_TYPE_SND) ||
+        if((!isThisPlayer && teamID == game->thisPlayer->teamID && game->gameType != GAME_TYPE_DM) ||
             teamID == PLAYER_TEAM_SPECTATOR)
         {
             glColor3f(1, 1, 1);
@@ -536,7 +536,7 @@ void Player::updateSkin()
 
     //--- Celon son team, on set la couleur du babo en cons�uence
 #if defined(_PRO_)
-    if((game->gameType != GAME_TYPE_DM) && (game->gameType != GAME_TYPE_SND) && gameVar.cl_teamIndicatorType == 0)
+    if((game->gameType != GAME_TYPE_DM) && gameVar.cl_teamIndicatorType == 0)
 #else
     if(game->gameType != GAME_TYPE_DM)
 #endif
@@ -731,7 +731,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
     if(status == PLAYER_STATUS_ALIVE)
     {
         // On check si c'est ff, ou reflect, etc
-        if(from->teamID == teamID && game->gameType != GAME_TYPE_DM && game->gameType != GAME_TYPE_SND)
+        if(from->teamID == teamID && game->gameType != GAME_TYPE_DM)
         {
             if(gameVar.sv_friendlyFire || from->playerID == playerID || game->gameType == GAME_TYPE_DM)
             {
@@ -787,7 +787,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
                     else if(from->teamID == PLAYER_TEAM_RED)
                         game->redScore--;
                 }//If we do a friendly fire kill, reduce score
-                if((game->gameType == GAME_TYPE_DM || game->gameType == GAME_TYPE_SND) && from != this)
+                if((game->gameType == GAME_TYPE_DM) && from != this)
                 {
                     if(from->teamID == PLAYER_TEAM_BLUE)
                     {
@@ -972,9 +972,9 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
     if(status == PLAYER_STATUS_ALIVE)
     {
         // On check si c'est ff, ou reflect, etc
-        if(from->teamID == teamID && game->gameType != GAME_TYPE_DM && game->gameType != GAME_TYPE_SND)
+        if(from->teamID == teamID && game->gameType != GAME_TYPE_DM)
         {
-            if(gameVar.sv_friendlyFire || from->playerID == playerID || game->gameType == GAME_TYPE_DM || game->gameType == GAME_TYPE_SND)
+            if(gameVar.sv_friendlyFire || from->playerID == playerID || game->gameType == GAME_TYPE_DM)
             {
                 if(from != this)
                     from->dmg += (cdamage < life) ? cdamage : life;

@@ -195,8 +195,6 @@ public:
     unsigned int tex_dirt;
     unsigned int tex_wall;
 
-    unsigned int tex_bombMark;
-
     unsigned int tex_floor;
     unsigned int tex_floor_dirt;
     unsigned int tex_wall_bottom;
@@ -262,9 +260,6 @@ public:
     CVector3f flagBendOffset[2];
     char flagState[2]; // -1 = par terre, -2 = on pod, 0+ on player
 
-    // Les objectifs
-    CVector3f objective[2];
-
     // Les spawn point
     std::vector<CVector3f> dm_spawns;
     std::vector<CVector3f> blue_spawns;
@@ -306,7 +301,6 @@ public:
     void renderWalls();
 
     void renderMisc();
-    void renderBombMark();
     void renderFlag(int index);
 
     // Pour seter la position de la cam

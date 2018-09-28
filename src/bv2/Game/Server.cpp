@@ -21,7 +21,6 @@
 #include "netPacket.h"
 #include "RemoteAdminPackets.h"
 #include "CCurl.h"
-#include "ReportGen.h"
 #include <time.h>
 #include <fstream>
 #include <algorithm>
@@ -912,50 +911,6 @@ void Server::update(float delay)
 				}
 			}
 
-			// Search and Destroy, le plus toff de tous (vu que les round sont entre coup�de petit round :S)
-			if (game->gameType == GAME_TYPE_SND)
-			{
-				// On check si on attein pas les max de score
-				if (game->blueWin == game->redWin && game->redWin >= gameVar.sv_winLimit && gameVar.sv_winLimit > 0)
-				{
-					game->roundState = GAME_DRAW;
-					changeRoundState = true;
-				}
-				else if (game->blueWin >= gameVar.sv_winLimit && gameVar.sv_winLimit > 0)
-				{
-					game->roundState = GAME_BLUE_WIN;
-					changeRoundState = true;
-				}
-				else if (game->redWin >= gameVar.sv_winLimit && gameVar.sv_winLimit > 0)
-				{
-					game->roundState = GAME_RED_WIN;
-					changeRoundState = true;
-				}
-
-				// On check si le temps est �oul�(de la partie complete)
-				if (game->gameTimeLeft == 0 && gameVar.sv_gameTimeLimit > 0)
-				{
-					if (game->blueWin == game->redWin)
-					{
-						game->roundState = GAME_DRAW;
-						changeRoundState = true;
-					}
-					else if (game->blueWin > game->redWin)
-					{
-						game->roundState = GAME_BLUE_WIN;
-						changeRoundState = true;
-					}
-					else
-					{
-						game->roundState = GAME_RED_WIN;
-						changeRoundState = true;
-					}
-				}
-
-				// On check si la bomb n'explose pas!
-
-			}
-
 			if (changeRoundState)
 			{
 				if (gameVar.sv_report && (game->roundState == GAME_RED_WIN ||
@@ -963,21 +918,6 @@ void Server::update(float delay)
 				{
 					console->add("\x2Updating Stats Cache", true);
 					updateStatsCache();
-
-					ReportGen repGen;
-					CUrlData data;
-					data.add("action", "report");
-
-					console->add("\x2Generating Report", true);
-					data.add("report", (char*)repGen.genReport().c_str(), CUrlData::BASE64);
-
-					for (size_t i = 0; i < reportUploadURLs.size(); i++)
-					{
-						console->add(CString("\x2Sending Report to: %s", reportUploadURLs[i].c_str()), true);
-						CCurl* request = new CCurl((char*)reportUploadURLs[i].c_str(), data.get());
-						reportUploads.push_back(request);
-						request->start();
-					}
 				}
 				clearStatsCache();
 
@@ -1262,7 +1202,7 @@ void Server::update(float delay)
 				{
 					updateCTF(delay);
 				}
-				else if (game->map && game->gameType == GAME_TYPE_SND)
+				else if (game->map)
 				{
 #if defined(_PRO_)
                // Every minute, new spawn-slots and respawn everyone

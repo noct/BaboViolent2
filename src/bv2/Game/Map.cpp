@@ -110,8 +110,6 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
         tex_dirt = dktCreateTextureFromFile("main/textures/dirt1.tga", DKT_FILTER_BILINEAR);
         tex_wall = dktCreateTextureFromFile("main/textures/dirt2.tga", DKT_FILTER_BILINEAR);
 
-        tex_bombMark = dktCreateTextureFromFile("main/textures/BombMark.tga", DKT_FILTER_BILINEAR);
-
         // Les models
         dko_flag[0] = dkoLoadFile("main/models/BlueFlag.DKO");
         dko_flagPod[0] = dkoLoadFile("main/models/BlueFlagPod.DKO");
@@ -258,8 +256,8 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
                 flagPodPos[1] = file.getVector3f();
 
                 // Les ojectifs
-                objective[0] = file.getVector3f();
-                objective[1] = file.getVector3f();
+                file.getVector3f();
+                file.getVector3f();
 
                 // Les spawn point
                 int nbSpawn = file.getInt();
@@ -313,8 +311,8 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
                 flagPodPos[1] = file.getVector3f();
 
                 // Les ojectifs
-                objective[0] = file.getVector3f();
-                objective[1] = file.getVector3f();
+                file.getVector3f();
+                file.getVector3f();
 
                 // Les spawn point
                 int nbSpawn = file.getInt();
@@ -391,24 +389,6 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
                             // flags
                             flagPodPos[0] = file.getVector3f();
                             flagPodPos[1] = file.getVector3f();
-                        }
-                        break;
-                    case GAME_TYPE_SND:
-                        {
-                            // bombs
-                            objective[0] = file.getVector3f();
-                            objective[1] = file.getVector3f();
-                            // team-spawns
-                            nbSpawn = file.getInt();
-                            for (i=0;i<nbSpawn;++i)
-                            {
-                                blue_spawns.push_back(file.getVector3f());
-                            }
-                            nbSpawn = file.getInt();
-                            for (i=0;i<nbSpawn;++i)
-                            {
-                                red_spawns.push_back(file.getVector3f());
-                            }
                         }
                         break;
                     default:
@@ -985,7 +965,6 @@ Map::~Map()
         dktDeleteTexture(&tex_grass);
         dktDeleteTexture(&tex_dirt);
         dktDeleteTexture(&tex_wall);
-        dktDeleteTexture(&tex_bombMark);
 
     //  dktDeleteTexture(&tex_floor);
     //  dktDeleteTexture(&tex_floor_dirt);
@@ -1677,18 +1656,6 @@ bool IsMapValid(const Map & map, int gameType)
         isGoodMap = (map.dm_spawns.size() >= 1)
             && (map.flagPodPos[0] != CVector3f(0.0f, 0.0f, 0.0f))
             && (map.flagPodPos[1] != CVector3f(0.0f, 0.0f, 0.0f));
-        break;
-    case GAME_TYPE_SND:
-        // there must be at least 1 item in blue_spawns
-        // there must be at least 1 item in red_spawns
-        // both objectives (bombs) must be set
-#if defined(_PRO_)
-      isGoodMap = (map.dm_spawns.size() >= 1);
-#else
-        isGoodMap = (map.blue_spawns.size() >= 1) && (map.red_spawns.size() >= 1)
-            && (map.objective[0] != CVector3f(0.0f, 0.0f, 0.0f))
-            && (map.objective[1] != CVector3f(0.0f, 0.0f, 0.0f));
-#endif
         break;
     }
     return isGoodMap;

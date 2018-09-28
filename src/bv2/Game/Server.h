@@ -177,8 +177,6 @@ public:
 
 	bool filterMapFromRotation(const mapInfo & map);
 
-	std::vector<std::string> reportUploadURLs;
-
 	typedef std::multimap<int, PlayerStats*> StatsCache;
 	typedef std::pair<int, PlayerStats*> StatsCachePair;
 

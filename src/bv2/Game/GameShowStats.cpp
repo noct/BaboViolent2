@@ -300,7 +300,6 @@ void Game::renderStats()
 
             switch (gameType)
             {
-         case GAME_TYPE_SND:
             case GAME_TYPE_DM:
                 renderStatsSlice(CVector4f(0, 0, 0, .75f), gameVar.lang_playerNameC.s, "Kills", "Death", "Damage", "", "", gameVar.lang_pingC.s, vPos);
                 vPos += 10;

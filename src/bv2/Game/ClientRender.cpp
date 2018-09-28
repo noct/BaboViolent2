@@ -525,36 +525,6 @@ void Client::render(float & alphaScope)
                         printLeftText(5+64+5,5+64+64,64,CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
                     }
                     break;
-                case GAME_TYPE_SND:
-
-#if defined(_PRO_)
-               printLeftText(5,5,64,CString("%01i:%02i", (int)((game->gameTimeLeft+1)/60), (int)(game->gameTimeLeft+1)%60));
-               printLeftText(5,5+64,64,CString("%01i:%02i", (int)((game->roundTimeLeft+1)/60), (int)(game->roundTimeLeft+1)%60));
-
-#else
-                    // Round Time left
-                    printLeftText(5,5,64,CString("%01i:%02i", (int)((game->roundTimeLeft+1)/60), (int)(game->roundTimeLeft+1)%60));
-                    // win left
-
-                    if (game->blueWin >= game->redWin)
-                    {
-                        renderTexturedQuad(5,5+64,64,64,tex_blueFlag);
-                        printLeftText(5+64+5,5+64,64,CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
-                        renderTexturedQuad(5,5+64+64,64,64,tex_redFlag);
-                        printLeftText(5+64+5,5+64+64,64,CString("%i/%i", game->redWin, gameVar.sv_winLimit));
-                    }
-                    else
-                    {
-                        renderTexturedQuad(5,5+64,64,64,tex_redFlag);
-                        printLeftText(5+64+5,5+64,64,CString("%i/%i", game->redWin, gameVar.sv_winLimit));
-                        renderTexturedQuad(5,5+64+64,64,64,tex_blueFlag);
-                        printLeftText(5+64+5,5+64+64,64,CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
-                    }
-
-
-#endif
-
-                    break;
                 }
 
 #if defined(_PRO_)
@@ -752,15 +722,6 @@ void Client::render(float & alphaScope)
                 case GAME_TYPE_CTF:
                     printCenterText(400, 5, 64, gameVar.lang_captureTheFlagC);
                     printCenterText(400, 5+88, 32, gameVar.lang_captureTheFlagD);
-                    break;
-                case GAME_TYPE_SND:
-#if defined(_PRO_)
-                    printCenterText(400, 5, 64, gameVar.lang_championC);
-                    printCenterText(400, 5+88, 32, gameVar.lang_championD);
-#else
-                    printCenterText(400, 5, 64, gameVar.lang_counterBaboristC);
-                    printCenterText(400, 5+88, 32, gameVar.lang_counterBaboristD);
-#endif
                     break;
                 }
                 CString mapInfo (game->map->mapName);

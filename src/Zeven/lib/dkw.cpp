@@ -84,6 +84,18 @@ int dkwInit(int width, int height, int mcolorDepth, char* mTitle, CMainLoopInter
         last_error = "Failed to initialize BrebisGL\n";
         return 0;
     }
+    // Setup Dear ImGui binding
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+
+    ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+    ImGui_ImplOpenGL3_Init("#version 130");
+
+    // Setup style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsClassic();
 
     done = false;
 
@@ -163,7 +175,7 @@ int dkwMainLoop()
 
     while (SDL_PollEvent(&event))
     {
-        //ImGui_ImplSDL2_ProcessEvent(&event);
+        ImGui_ImplSDL2_ProcessEvent(&event);
         if (event.type == SDL_QUIT)
             done = true;
         if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
@@ -175,7 +187,26 @@ int dkwMainLoop()
         //}
     }
 
+
+    bool show_demo_window = false;
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(window);
+    ImGui::NewFrame();
+    if(show_demo_window)
+    {
+        ImGui::ShowDemoWindow(&show_demo_window);
+    }
+    ImGui::Render();
+
     mainLoopObject->paint();
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    // Swap buffers if valid context is found
+    if(dkwGetDC())
+    {
+        SDL_GL_SwapWindow(dkwGetHandle());
+    }
 
 	return done ? 0 : 1;
 }

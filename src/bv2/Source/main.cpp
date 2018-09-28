@@ -237,12 +237,6 @@ public:
 
         // On render le tout
         scene->render();
-
-        // Swap buffers if valid context is found
-        if( dkwGetDC() )
-        {
-            SDL_GL_SwapWindow(dkwGetHandle());
-        }
     }
 
     void textWrite(unsigned int caracter)

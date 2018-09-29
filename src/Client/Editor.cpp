@@ -24,6 +24,8 @@
 #include "EditorTools.h"
 #include "EditorDialogs.h"
 #include "Scene.h"
+#include "ClientHelper.h"
+#include "ClientConsole.h"
 
 extern Scene * scene;
 
@@ -254,7 +256,8 @@ void Editor2::update(float delay)
     // Don't process clicks if in the menu area
     mouseInMenu = isCursorInFrame(delay);
 
-    if (map && !console->isActive())
+    auto cconsole = static_cast<ClientConsole*>(console);
+    if (map && !cconsole->isActive())
     {
         // Weather update
         if (map->m_weather)

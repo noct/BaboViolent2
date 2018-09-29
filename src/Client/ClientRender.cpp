@@ -15,13 +15,12 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-
-#ifndef DEDICATED_SERVER
 #include "Client.h"
 #include "KeyManager.h"
 #include "Console.h"
 #include "CControl.h"
 #include "CMenuManager.h"
+#include "ClientHelper.h"
 
 #ifdef RENDER_LAYER_TOGGLE
 extern int renderToggle;
@@ -748,5 +747,3 @@ void Client::render(float & alphaScope)
         dkglPopOrtho();
     }
 }
-#endif
-

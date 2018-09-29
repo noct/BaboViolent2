@@ -15,11 +15,8 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-
-
 #include "Map.h"
 #include "Game.h"
-
 
 #ifndef DEDICATED_SERVER
 #ifdef RENDER_LAYER_TOGGLE

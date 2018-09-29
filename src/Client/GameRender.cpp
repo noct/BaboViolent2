@@ -15,11 +15,11 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-
-#ifndef DEDICATED_SERVER
 #include "Game.h"
 #include "Console.h"
 #include "Scene.h"
+#include "ClientHelper.h"
+#include "ClientConsole.h"
 
 #include <algorithm>
 
@@ -205,7 +205,8 @@ void Game::render()
 
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_LIGHTING_BIT);
         // On trouve la position de la souri
-        if(thisPlayer && !console->isActive())
+        auto cconsole = static_cast<ClientConsole*>(console);
+        if(thisPlayer && !cconsole->isActive())
         {
             if(thisPlayer->status == PLAYER_STATUS_ALIVE && !showMenu && !thisPlayer->scopeMode)
             {
@@ -683,5 +684,3 @@ void Game::renderMiniMap()
     glPopAttrib();
     dkglPopOrtho();
 }
-#endif
-

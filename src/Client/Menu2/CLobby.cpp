@@ -15,8 +15,6 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-
-#ifndef DEDICATED_SERVER
 #include "CLobby.h"
 #include <Zeven/Gfx.h>
 
@@ -87,6 +85,3 @@ void CLobby::clearLobby()
     ZEVEN_DELETE_VECTOR(m_games, i);
     ZEVEN_SAFE_DELETE(lastSent);
 }
-
-#endif
-

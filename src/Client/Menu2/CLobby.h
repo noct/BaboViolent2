@@ -21,9 +21,10 @@
 
 
 #include <vector>
+#include <CMaster.h>
 
 
-class CLobby
+class CLobby : public CMaster::Listener
 {
 private:
 	//--- Array des games ready to be picked up by a GUI or something

@@ -19,6 +19,7 @@
 #include "CMenuManager.h"
 #include "Helper.h"
 #include "Scene.h"
+#include "ClientHelper.h"
 
 CMenuManager menuManager;
 extern Scene *scene;

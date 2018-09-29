@@ -145,10 +145,6 @@ public:
 
     // Pour chatter
     void sayall(CString message);
-#ifndef DEDICATED_SERVER
-    // Pour le dessiner !?
-    void render();
-#endif
 
     // On a re�u un message y�� !
     void recvPacket(char * buffer, int typeID, unsigned long bbnetID);

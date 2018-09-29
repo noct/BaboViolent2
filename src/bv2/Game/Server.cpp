@@ -40,9 +40,6 @@ Server::Server(Game * pGame): maxTimeOverMaxPing(5.0f)//, maxIdleTime(180.0f)
 {
 	game = pGame;
 	game->isServerGame = true;
-#ifndef DEDICATED_SERVER
-	font = dkfCreateFont("main/fonts/babo.tga");
-#endif
 	needToShutDown = false;
 	pingDelay = 0;
 	changeMapDelay = 0;
@@ -97,9 +94,6 @@ Server::~Server()
 
     mapList.clear();
 	banList.clear();
-#ifndef DEDICATED_SERVER
-	dkfDeleteFont(&font);
-#endif
 
 	bb_serverShutdown();
 	ZEVEN_SAFE_DELETE(game);
@@ -431,8 +425,7 @@ void Server::updateNet(float delay, bool send)
 {
 	// On update le server
 	char IPDuGars[16];
-	int clientID = bb_serverUpdate(delay, UPDATE_SEND_RECV, IPDuGars);//(send)?UPDATE_SEND:UPDATE_RECV);
-	console->debugBBNET(false, true);
+	int clientID = bb_serverUpdate(delay, UPDATE_SEND_RECV, IPDuGars);
 	int playerID = -1;
 	if (clientID > 0)
 	{
@@ -1619,14 +1612,3 @@ void Server::SendPlayerList( long in_peerId )
 	}
 
 }
-
-#ifndef DEDICATED_SERVER
-//
-// Pour le dessiner !?
-//
-void Server::render()
-{
-}
-#endif
-
-

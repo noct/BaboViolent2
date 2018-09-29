@@ -97,6 +97,13 @@ public:
 
 class CMaster
 {
+public:
+    struct Listener
+    {
+        virtual void pushGame(void* in_game) = 0;
+        virtual void clearLobby() = 0;
+    };
+
 private:
 	// account stuff hash values (received from server)
 	short s1,s2,s3,s4;
@@ -119,6 +126,8 @@ private:
 	int m_nbGameFound;
 	std::vector<stBV2row*> m_games;
 	CPing *m_ping;
+
+    Listener* m_listener;
 
 	// id of last remote cache list request
 	short cacheListReqNum;
@@ -157,7 +166,7 @@ public:
 
 	Server		*RunningServer; //the server currently running on the machine
 
-	CMaster();
+	CMaster(Listener* listener);
 	virtual ~CMaster();
 
 	//--- Kill it

@@ -98,6 +98,9 @@ solution "BaboViolent"
         includedirs {
             "src",
             "src/Common",
+            "src/Common/External",
+            "src/BaboNet",
+            "thirdparty/sqlite",
         }
 
         files {
@@ -105,6 +108,7 @@ solution "BaboViolent"
             "src/Common/**.cpp",
             "src/Common/**.h",
             "src/Common/**.c",
+            "thirdparty/sqlite/sqlite3.c",
         }
 
     project "bv2"
@@ -139,6 +143,7 @@ solution "BaboViolent"
 
         includedirs {
             "src/BaboNet",
+            "src/Common",
             "src/Common/External",
             "src/bv2",
             "src/bv2/Game",
@@ -176,7 +181,6 @@ solution "BaboViolent"
             "thirdparty/imgui/examples/imgui_impl_opengl3.h",
             "thirdparty/imgui/examples/imgui_impl_sdl.cpp",
             "thirdparty/imgui/examples/imgui_impl_sdl.h",
-            "thirdparty/sqlite/sqlite3.c",
             "thirdparty/glad/src/glad.c",
         }
 
@@ -212,6 +216,7 @@ solution "BaboViolent"
 
         includedirs {
             "src/BaboNet",
+            "src/Common",
             "src/Common/External",
             "src/bv2",
             "src/bv2/Game",
@@ -229,6 +234,5 @@ solution "BaboViolent"
             "src/Server/**.cpp",
             "src/Server/**.h",
             "src/Server/**.c",
-            "thirdparty/sqlite/sqlite3.c"
         }
 

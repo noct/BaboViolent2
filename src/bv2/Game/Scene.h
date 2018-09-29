@@ -40,6 +40,8 @@
 
 class CCurl;
 
+// Implemented in main.cpp
+void MainLoopForceQuit();
 
 class Scene
 {

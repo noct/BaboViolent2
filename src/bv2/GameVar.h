@@ -54,25 +54,6 @@ struct SLangText
         varName(in_varName), varPtr(in_varPtr) {}
 };
 
-
-//--- Visual props
-/*
-struct SVisual
-{
-    unsigned int dkoModel;
-    float angle;
-    SVisual(CString filename, float in_angle)
-    {
-        dkoModel = dkoLoadModel(filename.s);
-        angle = in_angle;
-    }
-    ~SVisual()
-    {
-        dkoDeleteModel(&dkoModel);
-    }
-};*/
-
-
 class GameVar
 {
 public:

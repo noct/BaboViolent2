@@ -24,6 +24,10 @@
 #include "Scene.h"
 #include <limits>
 
+#ifndef DEDICATED_SERVER
+#include "ClientHelper.h"
+#endif
+
 extern Scene * scene;
 
 

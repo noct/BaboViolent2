@@ -15,8 +15,6 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-
-#ifndef DEDICATED_SERVER
 #include "Client.h"
 #include "netPacket.h"
 #include "Console.h"
@@ -1131,6 +1129,3 @@ void Client::recvPacket(char * buffer, int typeID)
 
     }
 }
-#endif
-
-

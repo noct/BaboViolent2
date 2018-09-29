@@ -19,7 +19,7 @@
 #include <Zeven/CThread.h>
 #include <Zeven/Core.h>
 #include "Scene.h"
-#include "Console.h"
+#include "ClientConsole.h"
 #include "CMaster.h"
 #include "CLobby.h"
 #include <exception>
@@ -32,6 +32,11 @@ int resH = 600;
 bool fullscreen = false;
 
 char * bbNetVersion;
+
+void MainLoopForceQuit()
+{
+    dkwForceQuit();
+}
 
 CVector2i mousePos_xbox;
 CVector2f mousePos_xboxVel;
@@ -308,11 +313,11 @@ int main(int argc, const char* argv[])
     lobby = new CLobby();
 
     // On init la console
-    console = new Console();
+    console = new ClientConsole();
     console->init();
 
     //--- On cr�le master
-    master = new CMaster();
+    master = new CMaster(lobby);
 
     // On cr�notre scene
     scene = new Scene(ctx);

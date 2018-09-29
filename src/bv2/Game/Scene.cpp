@@ -21,6 +21,11 @@
 #include "GameVar.h"
 #include "Helper.h"
 
+#ifndef DEDICATED_SERVER
+#include "ClientHelper.h"
+#include "ClientConsole.h"
+#endif 
+
 extern char* bbNetVersion;
 
 //int masterServerID = -1; // Make it extern
@@ -257,9 +262,6 @@ void Scene::render()
     }
     else
     {
-        // On render le server (sert pas � grand chose)
-        if (server) server->render();
-
         // On render le client
         float alphaScope = 0;
         if (client) client->render(alphaScope);
@@ -327,7 +329,8 @@ void Scene::render()
         dkglPopOrtho();
 
         // Render la console sur toute
-        console->render();
+        auto cconsole = static_cast<ClientConsole*>(console);
+        cconsole->render();
 
         // Non, le curseur sur TOUUTEEE
         CVector2i cursor = dkwGetCursorPos_main();

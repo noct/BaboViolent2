@@ -17,6 +17,7 @@
 */
 #include "Writting.h"
 #include "Helper.h"
+#include "ClientHelper.h"
 
 // Le pointeur sur le writting qui a présentemnt le focus
 Writting * writting;

@@ -32,7 +32,7 @@ bool fullscreen = false;
 char * bbNetVersion;
 
 bool quit = false;
-void dkwForceQuit()
+void MainLoopForceQuit()
 {
     quit = true;
 }
@@ -168,7 +168,7 @@ int main(int argc, const char* argv[])
     console->init();
 
     //--- On cr�le master
-    master = new CMaster();
+    master = new CMaster(nullptr);
 
     // On cr�notre scene
     scene = new Scene(ctx);

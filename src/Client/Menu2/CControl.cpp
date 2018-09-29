@@ -21,6 +21,7 @@
 #include "CMenuManager.h"
 #include "KeyManager.h"
 #include "GameVar.h"
+#include "ClientHelper.h"
 
 
 

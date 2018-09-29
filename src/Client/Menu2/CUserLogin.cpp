@@ -19,6 +19,7 @@
 #include "Helper.h"
 #include "GameVar.h"
 #include "Console.h"
+#include "ClientHelper.h"
 
 
 CUserLogin::CUserLogin(CControl * in_parent, CControl * in_alignTo)

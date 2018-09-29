@@ -23,6 +23,11 @@
 #include "Game.h"
 #include "Scene.h"
 
+#ifndef DEDICATED_SERVER
+#include "ClientConsole.h"
+#endif // !DEDICATED_SERVER
+
+
 
 extern Scene * scene;
 
@@ -225,7 +230,8 @@ void Player::update(float delay)
             currentCF.position[2] = .25f;
 
             // On gère les inputs
-            if(isThisPlayer && !console->isActive() && !writting && !game->showMenu && !menuManager.root->visible)
+            auto cconsole = static_cast<ClientConsole*>(console);
+            if(isThisPlayer && !cconsole->isActive() && !writting && !game->showMenu && !menuManager.root->visible)
             {
                 controlIt(delay);
             }

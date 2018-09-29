@@ -15,10 +15,9 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-
-#ifndef DEDICATED_SERVER
 #include "Game.h"
 #include "Helper.h"
+#include "ClientHelper.h"
 
 void renderStatsSlice(const CVector4f & sliceColor, char * text1, char* c1, char* c2, char* c3, char* c4, char* c5, char * pingText, int & vPos)
 {
@@ -345,6 +344,3 @@ void Game::renderStats()
         glPopAttrib();
     dkglPopOrtho();
 }
-#endif
-
-

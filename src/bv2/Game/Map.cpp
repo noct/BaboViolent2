@@ -27,6 +27,7 @@
 #include "CRain.h"
 #include "CSnow.h"
 #include "CLava.h"
+#include "ClientHelper.h"
 #include <direct.h>
 #include <algorithm>
 #endif

@@ -17,10 +17,7 @@
 */
 
 #include "CPing.h"
-#include "Console.h"
 #include "baboNet.h"
-
-
 
 //
 //--- Constructor

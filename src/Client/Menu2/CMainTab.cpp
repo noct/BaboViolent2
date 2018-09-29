@@ -247,7 +247,7 @@ void CMainTab::Click(CControl * control)
 	}
 	if (control == btn_quit)
 	{
-		dkwForceQuit();
+		MainLoopForceQuit();
 	}
 	if (btn_resume == control)
 	{

@@ -21,6 +21,10 @@
 #include <fstream>
 
 
+#ifndef DEDICATED_SERVER
+#include "ClientConsole.h"
+#endif // !DEDICATED_SERVER
+
 //extern unsigned long masterServerID;
 
 
@@ -165,7 +169,8 @@ void Scene::disconnect()
 #ifndef DEDICATED_SERVER
 	if (editor) console->add("\x3> Shutdowning Editor");
 	ZEVEN_SAFE_DELETE(editor);
-	console->unlock(); // Petit bug quand on chattait ;)
+    auto cconsole = static_cast<ClientConsole*>(console);
+	cconsole->unlock(); // Petit bug quand on chattait ;)
 //	menu->show();
     if (menuManager.root) menuManager.root->visible = true;
 //	if (wrongVersion) menu->currentMenu = MENU_WRONG_VERSION;

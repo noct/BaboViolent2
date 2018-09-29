@@ -23,6 +23,7 @@
 #include "Scene.h"
 #include <Zeven/Gfx.h>
 #include "Screengrab.h"
+#include "ClientConsole.h"
 
 extern Scene * scene;
 
@@ -240,7 +241,6 @@ void Client::update(float delay)
 
         // On update le client
         int result = bb_clientUpdate(uniqueClientID, delay, UPDATE_SEND_RECV);
-        console->debugBBNET(true, false);
         if(result == 1)
         {
             // Une erreur !!! On arr�te tout !!!
@@ -269,19 +269,20 @@ void Client::update(float delay)
         else */
         if(!(menuManager.root && menuManager.root->visible) && !showMenu)
         {
-            if(!console->isActive() && dkiGetState(gameVar.k_chatAll) == DKI_DOWN && !chatting.haveFocus())
+            auto cconsole = static_cast<ClientConsole*>(console);
+            if(!cconsole->isActive() && dkiGetState(gameVar.k_chatAll) == DKI_DOWN && !chatting.haveFocus())
             {
                 isChattingTeam = false;
-                console->lock();
+                cconsole->lock();
                 chatting.giveFocus();
             }
-            if(!console->isActive() && dkiGetState(gameVar.k_chatTeam) == DKI_DOWN && !chatting.haveFocus())
+            if(!cconsole->isActive() && dkiGetState(gameVar.k_chatTeam) == DKI_DOWN && !chatting.haveFocus())
             {
                 isChattingTeam = true;
-                console->lock();
+                cconsole->lock();
                 chatting.giveFocus();
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg01) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg01) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg01.s[1]));
                 if(gameVar.cl_qMsg01.s[0] == 'a')
@@ -290,7 +291,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg02) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg02) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg02.s[1]));
                 if(gameVar.cl_qMsg02.s[0] == 'a')
@@ -299,7 +300,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg03) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg03) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg03.s[1]));
                 if(gameVar.cl_qMsg03.s[0] == 'a')
@@ -308,7 +309,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg04) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg04) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg04.s[1]));
                 if(gameVar.cl_qMsg04.s[0] == 'a')
@@ -317,7 +318,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg05) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg05) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg05.s[1]));
                 if(gameVar.cl_qMsg05.s[0] == 'a')
@@ -326,7 +327,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg06) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg06) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg06.s[1]));
                 if(gameVar.cl_qMsg06.s[0] == 'a')
@@ -335,7 +336,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg07) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg07) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg07.s[1]));
                 if(gameVar.cl_qMsg07.s[0] == 'a')
@@ -344,7 +345,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg08) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg08) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg08.s[1]));
                 if(gameVar.cl_qMsg08.s[0] == 'a')
@@ -353,7 +354,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg09) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg09) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg09.s[1]));
                 if(gameVar.cl_qMsg09.s[0] == 'a')
@@ -362,7 +363,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !console->isActive() && dkiGetState(gameVar.k_qMsg10) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg10) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg10.s[1]));
                 if(gameVar.cl_qMsg10.s[0] == 'a')
@@ -381,7 +382,7 @@ void Client::update(float delay)
                     sayall(chatting.s);
                 chatting.clear();
                 chatting.loseFocus();
-                console->unlock();
+                cconsole->unlock();
             }
         }
 
@@ -395,7 +396,8 @@ void Client::update(float delay)
         }
 
         // Si on fait Esc, on spawn un menu
-        if(dkiGetState(gameVar.k_menuAccess) == DKI_DOWN && !console->isActive() && isConnected && !(menuManager.root && menuManager.root->visible))
+        auto cconsole = static_cast<ClientConsole*>(console);
+        if(dkiGetState(gameVar.k_menuAccess) == DKI_DOWN && !cconsole->isActive() && isConnected && !(menuManager.root && menuManager.root->visible))
         {
             if(!chatting.haveFocus())
             {
@@ -405,25 +407,25 @@ void Client::update(float delay)
             {
                 chatting.clear();
                 chatting.loseFocus();
-                console->unlock();
+                cconsole->unlock();
             }
         }
 
         // Screenshot
 #ifdef WIN32
-        if(dkiGetState(gameVar.k_screenShot) == DKI_DOWN && !console->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
+        if(dkiGetState(gameVar.k_screenShot) == DKI_DOWN && !cconsole->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
         {
             SaveScreenGrabAuto();
         }
 
-        if(dkiGetState(gameVar.k_stats) == DKI_DOWN && !console->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
+        if(dkiGetState(gameVar.k_stats) == DKI_DOWN && !cconsole->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
         {
             SaveStatsAuto();
         }
 #endif
 
         // On g�re le menu (important, toujours tester si la console est l� ou pas)
-        if(showMenu && !console->isActive() && isConnected)
+        if(showMenu && !cconsole->isActive() && isConnected)
         {
             menuManager.update(delay, clientRoot);
             //          clientRoot->update(delay);
@@ -462,7 +464,6 @@ void Client::update(float delay)
 
     // On update le client une derni�re fois
     int result = bb_clientUpdate(uniqueClientID, delay, UPDATE_SEND_RECV);
-    console->debugBBNET(true, false);
     if(result == 1)
     {
         // Une erreur !!! On arr�te tout !!!

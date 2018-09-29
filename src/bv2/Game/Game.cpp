@@ -22,6 +22,7 @@
 #include "GameVar.h"
 #ifndef DEDICATED_SERVER
 #include "Client.h"
+#include "ClientConsole.h"
 #endif
 #include "Server.h"
 #include "Scene.h"
@@ -513,7 +514,8 @@ void Game::update(float delay)
 
     // Si on tiens tab, on montre les stats
 #ifndef DEDICATED_SERVER
-    if(!console->isActive() && dkiGetState(gameVar.k_showScore) || roundState != GAME_PLAYING)
+    auto cconsole = static_cast<ClientConsole*>(console);
+    if(!cconsole->isActive() && dkiGetState(gameVar.k_showScore) || roundState != GAME_PLAYING)
     {
         showStats = true;
     }
@@ -535,7 +537,7 @@ void Game::update(float delay)
 
     if(thisPlayer && roundState == GAME_PLAYING)
     {
-        if(thisPlayer->teamID == PLAYER_TEAM_SPECTATOR && !console->isActive() && !writting && !showMenu && !(menuManager.root && menuManager.root->visible))
+        if(thisPlayer->teamID == PLAYER_TEAM_SPECTATOR && !cconsole->isActive() && !writting && !showMenu && !(menuManager.root && menuManager.root->visible))
         {
             // On est spectateur, alors on peut se déplacer comme on veut dans la map
             // Pour l'instant les flèches (a,s,w,d, pomal temp)

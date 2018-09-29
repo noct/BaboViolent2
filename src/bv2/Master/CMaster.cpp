@@ -20,20 +20,11 @@
 #include "Console.h"
 #include "RemoteAdminPackets.h"
 #include "GameVar.h"
-#include "Scene.h"
-#ifndef DEDICATED_SERVER
-#include "CLobby.h"
-#endif
-#ifdef LINUX64
-#include <openssl/md5.h>
-#endif
 
 CMaster* master = 0;
 bool surveyReceived = false;
-extern Scene* scene;
 
-
-CMaster::CMaster()
+CMaster::CMaster(Listener* listener)
 {
 	s1 = -1; s2 = -1; s3 = -1; s4 = -1;
 	uniqueClientID = 0;
@@ -41,6 +32,7 @@ CMaster::CMaster()
 	m_nbGameFound = 0;
 	m_ping = 0;
 	RunningServer = 0;
+    m_listener = listener;
 
 	GetMasterInfos();
 
@@ -120,10 +112,8 @@ void CMaster::pingReceived(int ping)
 		memcpy(browsableGame->bv2Row, m_games[0], sizeof(stBV2row));
 		browsableGame->ping = ping;
 
-#ifndef DEDICATED_SERVER
-		//--- Push it into the lobby
-		if (lobby) lobby->pushGame(browsableGame);
-#endif
+		//--- Push it into the listener
+		if (m_listener) m_listener->pushGame(browsableGame);
 
 		//--- Remove that row
 		m_games.erase(m_games.begin());
@@ -306,10 +296,8 @@ void CMaster::ReceivePeersPacket()
 					memcpy(browsableGame->bv2Row, &(lanGame.GameInfo) , sizeof(stBV2row));
 					browsableGame->ping = 0;
 
-					#ifndef DEDICATED_SERVER
-						//--- Push it into the lobby
-						if (lobby) lobby->pushGame(browsableGame);
-					#endif
+					//--- Push it into the listener
+					if (m_listener) m_listener->pushGame(browsableGame);
 				}
 
 				break;
@@ -715,9 +703,8 @@ void CMaster::recvPacket(const char * buffer, int typeID)
 	{
 	case MASTER_INFO:
 		{
-#ifndef DEDICATED_SERVER
-			if (lobby) lobby->clearLobby();
-#endif
+			if (m_listener) m_listener->clearLobby();
+
 			eraseGames();
 			stMasterInfo masterInfo;
 			memcpy(&masterInfo, buffer, sizeof(stMasterInfo));
@@ -872,10 +859,8 @@ void CMaster::sendGameInfo(Server* server)
 //
 void CMaster::requestGames()
 {
-	#ifndef DEDICATED_SERVER
-		//clear lobby
-		if( lobby ) lobby->clearLobby();
-	#endif
+	//clear listener
+	if( m_listener ) m_listener->clearLobby();
 
 	//clear the game stack
 	int i;

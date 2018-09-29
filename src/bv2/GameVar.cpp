@@ -260,54 +260,54 @@ void GameVar::init()
 
 #ifndef DEDICATED_SERVER
     loadLanguage(languageFile.s);
-    weapons[WEAPON_DUAL_MACHINE_GUN] = new Weapon("main/models/DualMachineGun.DKO", "main/sounds/DualMachineGun.wav", .1f, gameVar.lang_dualMachineGun.s,
+    weapons[WEAPON_DUAL_MACHINE_GUN] = new ClientWeapon("main/models/DualMachineGun.DKO", "main/sounds/DualMachineGun.wav", .1f, gameVar.lang_dualMachineGun.s,
         .13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
-    weapons[WEAPON_SMG] = new Weapon("main/models/SMG.DKO", "main/sounds/SMG.wav", .1f, gameVar.lang_subMachineGun.s,
+    weapons[WEAPON_SMG] = new ClientWeapon("main/models/SMG.DKO", "main/sounds/SMG.wav", .1f, gameVar.lang_subMachineGun.s,
         .1f, 8, 1, .5f, 1, WEAPON_SMG, PROJECTILE_DIRECT);
-    weapons[WEAPON_CHAIN_GUN] = new Weapon("main/models/ChainGun.DKO", "main/sounds/ChainGun.wav", .1f, gameVar.lang_changGun.s,
+    weapons[WEAPON_CHAIN_GUN] = new ClientWeapon("main/models/ChainGun.DKO", "main/sounds/ChainGun.wav", .1f, gameVar.lang_changGun.s,
         .19f, 15, 1, 2.00f, 5, WEAPON_CHAIN_GUN, PROJECTILE_DIRECT);
-    weapons[WEAPON_SHOTGUN] = new Weapon("main/models/ShotGun.DKO", "main/sounds/Shotgun.wav", 0.85f, gameVar.lang_shotgun.s,
+    weapons[WEAPON_SHOTGUN] = new ClientWeapon("main/models/ShotGun.DKO", "main/sounds/Shotgun.wav", 0.85f, gameVar.lang_shotgun.s,
         .21f, 20, 5, 3.0f, 12, WEAPON_SHOTGUN, PROJECTILE_DIRECT);
-    weapons[WEAPON_SNIPER] = new Weapon("main/models/Sniper.DKO", "main/sounds/Sniper.wav", 2.0f, gameVar.lang_sniper.s,
+    weapons[WEAPON_SNIPER] = new ClientWeapon("main/models/Sniper.DKO", "main/sounds/Sniper.wav", 2.0f, gameVar.lang_sniper.s,
         .30f, 0, 1, 3.0f, 0, WEAPON_SNIPER, PROJECTILE_DIRECT);
-    weapons[WEAPON_BAZOOKA] = new Weapon("main/models/Bazooka.DKO", "main/sounds/Bazooka.wav", 1.75f, lang_bazooka,
+    weapons[WEAPON_BAZOOKA] = new ClientWeapon("main/models/Bazooka.DKO", "main/sounds/Bazooka.wav", 1.75f, lang_bazooka,
         .75f, 0, 1, 3.0f, 0, WEAPON_BAZOOKA, PROJECTILE_ROCKET);
-    weapons[WEAPON_GRENADE] = new Weapon("main/models/Hand.DKO", "main/sounds/Grenade.wav", 1.0f, gameVar.lang_grenade.s,
+    weapons[WEAPON_GRENADE] = new ClientWeapon("main/models/Hand.DKO", "main/sounds/Grenade.wav", 1.0f, gameVar.lang_grenade.s,
         1.5f, 0, 1, -1.0f, 0, WEAPON_GRENADE, PROJECTILE_GRENADE);
-    weapons[WEAPON_COCKTAIL_MOLOTOV] = new Weapon("main/models/Hand.DKO", "main/sounds/Grenade.wav", 1.0f, "Flame",
+    weapons[WEAPON_COCKTAIL_MOLOTOV] = new ClientWeapon("main/models/Hand.DKO", "main/sounds/Grenade.wav", 1.0f, "Flame",
         0.15f, 0, 1, -1.0f, 0, WEAPON_COCKTAIL_MOLOTOV, PROJECTILE_COCKTAIL_MOLOTOV);
-    weapons[WEAPON_KNIVES] = new Weapon("main/models/Knifes.DKO", "main/sounds/knifes.wav", 1.0f, "Popup Knives",
+    weapons[WEAPON_KNIVES] = new ClientWeapon("main/models/Knifes.DKO", "main/sounds/knifes.wav", 1.0f, "Popup Knives",
         0.60f, 0, 1, 0, 0, WEAPON_KNIVES, PROJECTILE_NONE);
-    weapons[WEAPON_PHOTON_RIFLE] = new Weapon("main/models/PhotonRifle.DKO", "main/sounds/PhotonRifle.wav", 1.5f, "Photon Rifle",
+    weapons[WEAPON_PHOTON_RIFLE] = new ClientWeapon("main/models/PhotonRifle.DKO", "main/sounds/PhotonRifle.wav", 1.5f, "Photon Rifle",
         0.24f, 0, 1, 5.0f, 0, WEAPON_PHOTON_RIFLE, PROJECTILE_DIRECT);
-    weapons[WEAPON_FLAME_THROWER] = new Weapon("main/models/FlameThrower.DKO", "main/sounds/FlameThrower.wav", .1f, "Flame Thrower",
+    weapons[WEAPON_FLAME_THROWER] = new ClientWeapon("main/models/FlameThrower.DKO", "main/sounds/FlameThrower.wav", .1f, "Flame Thrower",
         .08f, 10, 1, 0, 10, WEAPON_FLAME_THROWER, PROJECTILE_DIRECT);
-    weapons[WEAPON_SHIELD] = new Weapon("main/models/Shield.DKO", "main/sounds/shield.wav", 3.0f, "Instant Shield",
+    weapons[WEAPON_SHIELD] = new ClientWeapon("main/models/Shield.DKO", "main/sounds/shield.wav", 3.0f, "Instant Shield",
         0, 0, 1, 0, 0, WEAPON_SHIELD, PROJECTILE_NONE);
 #else
-    weapons[WEAPON_DUAL_MACHINE_GUN] = new Weapon("", "", .1f, "Dual Machine Gun",
+    weapons[WEAPON_DUAL_MACHINE_GUN] = new Weapon(.1f, "Dual Machine Gun",
         .13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
-    weapons[WEAPON_SMG] = new Weapon("", "", .1f, "SMG",
+    weapons[WEAPON_SMG] = new Weapon(.1f, "SMG",
         .1f, 8, 1, .5f, 1, WEAPON_SMG, PROJECTILE_DIRECT);
-    weapons[WEAPON_CHAIN_GUN] = new Weapon("", "", .1f, "ChainGun",
+    weapons[WEAPON_CHAIN_GUN] = new Weapon(.1f, "ChainGun",
         .19f, 15, 1, 2.00f, 5, WEAPON_CHAIN_GUN, PROJECTILE_DIRECT);
-    weapons[WEAPON_SHOTGUN] = new Weapon("", "", 0.85f, "Shotgun",
+    weapons[WEAPON_SHOTGUN] = new Weapon(0.85f, "Shotgun",
         .21f, 20, 5, 3.0f, 12, WEAPON_SHOTGUN, PROJECTILE_DIRECT);
-    weapons[WEAPON_SNIPER] = new Weapon("", "", 2.0f, "Sniper Rifle",
+    weapons[WEAPON_SNIPER] = new Weapon(2.0f, "Sniper Rifle",
         .30f, 0, 1, 3.0f, 0, WEAPON_SNIPER, PROJECTILE_DIRECT);
-    weapons[WEAPON_BAZOOKA] = new Weapon("", "", 1.75f, "Bazooka",
+    weapons[WEAPON_BAZOOKA] = new Weapon(1.75f, "Bazooka",
         .75f, 0, 1, 3.0f, 0, WEAPON_BAZOOKA, PROJECTILE_ROCKET);
-    weapons[WEAPON_GRENADE] = new Weapon("", "", 1.0f, "Grenade",
+    weapons[WEAPON_GRENADE] = new Weapon(1.0f, "Grenade",
         1.5f, 0, 1, -1.0f, 0, WEAPON_GRENADE, PROJECTILE_GRENADE);
-    weapons[WEAPON_COCKTAIL_MOLOTOV] = new Weapon("", "", 1.0f, "Flame",
+    weapons[WEAPON_COCKTAIL_MOLOTOV] = new Weapon(1.0f, "Flame",
         0.15f, 0, 1, -1.0f, 0, WEAPON_COCKTAIL_MOLOTOV, PROJECTILE_COCKTAIL_MOLOTOV);
-    weapons[WEAPON_KNIVES] = new Weapon("", "", 1.0f, "Popup Knives",
+    weapons[WEAPON_KNIVES] = new Weapon(1.0f, "Popup Knives",
         0.60f, 0, 1, 0, 0, WEAPON_KNIVES, PROJECTILE_NONE);
-    weapons[WEAPON_PHOTON_RIFLE] = new Weapon("", "", 1.5f, "Photon Rifle",
+    weapons[WEAPON_PHOTON_RIFLE] = new Weapon(1.5f, "Photon Rifle",
         0.24f, 0, 1, 5.0f, 0, WEAPON_PHOTON_RIFLE, PROJECTILE_DIRECT);
-    weapons[WEAPON_FLAME_THROWER] = new Weapon("", "", .1f, "Flame Thrower",
+    weapons[WEAPON_FLAME_THROWER] = new Weapon(.1f, "Flame Thrower",
         .08f, 6, 1, 0, 6, WEAPON_FLAME_THROWER, PROJECTILE_DIRECT);
-    weapons[WEAPON_SHIELD] = new Weapon("", "", 3.0f, "Instant Shield",
+    weapons[WEAPON_SHIELD] = new Weapon(3.0f, "Instant Shield",
         0, 0, 1, 0, 0, WEAPON_SHIELD, PROJECTILE_NONE);
 #endif
 

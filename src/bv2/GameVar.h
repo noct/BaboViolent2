@@ -19,10 +19,13 @@
 #ifndef GAMEVAR_H
 #define GAMEVAR_H
 
-
 #include <Zeven/Core.h>
-#include "Weapon.h"
 
+#ifndef DEDICATED_SERVER
+#include "ClientWeapon.h"
+#else
+#include "Weapon.h"
+#endif
 
 #define WEAPON_SMG 0
 #define WEAPON_SHOTGUN 1
@@ -268,8 +271,15 @@ public:
     unsigned int dko_cocktailMolotov;
     unsigned int dko_gib;
 #endif
+
+#ifndef DEDICATED_SERVER
     // Les gun
+    ClientWeapon * weapons[20];
+#else
     Weapon * weapons[20];
+#endif
+
+
 #ifndef DEDICATED_SERVER
     // Textures
     unsigned int tex_nuzzleFlash;

@@ -676,7 +676,11 @@ void Player::switchWeapon(int newWeaponID, bool forceSwitch)
     }
     // Bon testing, on va lui refiler un gun
     ZEVEN_SAFE_DELETE(weapon);
+#ifndef DEDICATED_SERVER
+    weapon = new ClientWeapon(gameVar.weapons[newWeaponID]);
+#else
     weapon = new Weapon(gameVar.weapons[newWeaponID]);
+#endif
     weapon->currentFireDelay = 1; // On a une 1sec de delait quand on switch de gun
     weapon->m_owner = this;
 
@@ -705,7 +709,12 @@ void Player::switchMeleeWeapon(int newWeaponID, bool forceSwitch)
     }
     // Bon testing, on va lui refiler un gun
     ZEVEN_SAFE_DELETE(meleeWeapon);
+
+#ifndef DEDICATED_SERVER
+    meleeWeapon = new ClientWeapon(gameVar.weapons[newWeaponID]);
+#else
     meleeWeapon = new Weapon(gameVar.weapons[newWeaponID]);
+#endif
     meleeWeapon->currentFireDelay = 0;
     meleeWeapon->m_owner = this;
 

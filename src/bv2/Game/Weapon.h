@@ -18,22 +18,11 @@
 
 #ifndef WEAPON_H
 #define WEAPON_H
-
-
 #include <Zeven/Core.h>
 #include "netPacket.h"
 #include <vector>
 
-#ifndef DEDICATED_SERVER
-#include <Zeven/Gfx.h>
-#endif
-
 class Player;
-
-#ifndef DEDICATED_SERVER
-#define NUZZLE_DELAY .10f
-#endif
-
 #define PROJECTILE_DIRECT 1
 #define PROJECTILE_ROCKET 2
 #define PROJECTILE_GRENADE 3
@@ -46,50 +35,9 @@ class Player;
 #define PROJECTILE_NONE 10
 #define PROJECTILE_PHOTON 11
 
-#ifndef DEDICATED_SERVER
-struct NuzzleFlash
-{
-    CMatrix3x3f matrix;
-    CVector3f position;
-    float delay; // le delait d'affichage du feu
-    float angle; // l'angle du nuzzle flash, ça c random
-    NuzzleFlash(CMatrix3x3f & pMatrix, CVector3f & pPosition)
-    {
-        delay = 0;
-        angle = 0;
-        matrix = pMatrix;
-        position = pPosition;
-    }
-    NuzzleFlash(NuzzleFlash * nuzzleFlash)
-    {
-        delay = 0;
-        angle = 0;
-        matrix = nuzzleFlash->matrix;
-        position = nuzzleFlash->position;
-    }
-    void update(float pDelay)
-    {
-        delay -= pDelay;
-        if (delay <= 0) delay = 0;
-    }
-    void shoot()
-    {
-        delay = NUZZLE_DELAY;
-        angle = rand(0.0f, 360.0f);
-    }
-    void render();
-};
-#endif
-
-
 class Weapon
 {
 public:
-#ifndef DEDICATED_SERVER
-    // Son model DKO
-    unsigned int dkoModel;
-    unsigned int dkoAlternative;
-#endif
     float modelAnim; //--- Used in some specific case
     long nukeFrameID;
 
@@ -100,27 +48,10 @@ public:
     // Pour le photon rifle
     float charge;
     float justCharged;
-#ifndef DEDICATED_SERVER
-    // Sa liste de nuzzle (il peut en avoir plusieurs)
-    std::vector<NuzzleFlash*> nuzzleFlashes;
-    std::vector<NuzzleFlash*> ejectingBrass;
-
-    // À quel nuzzle on est rendu à tirer
-    int firingNuzzle;
-#endif
 
     // Le fire delay
     float fireDelay;
     float currentFireDelay;
-
-#ifndef DEDICATED_SERVER
-    // For delayed loading of models
-    CString dkoFile;
-    CString soundFile;
-
-    // Le son
-    FSOUND_SAMPLE * sfx_sound;
-#endif
 
     // Si il est juste une instance, on ne delete pas ses ressource
     bool isInstance;
@@ -159,33 +90,17 @@ public:
 
 public:
     // Constructeur
-    Weapon(CString dkoFilename, CString soundFilename, float pFireDelay, CString pWeaponName, float pDamage, float pImp, int pNbShot, float pReculVel, float pStartImp, int pWeaponID, int pProjectileType);
+    Weapon(float pFireDelay, CString pWeaponName, float pDamage, float pImp, int pNbShot, float pReculVel, float pStartImp, int pWeaponID, int pProjectileType);
     Weapon(Weapon * pWeapon);
 
     // Destructeur
     virtual ~Weapon();
 
-    // On tire
-#ifndef DEDICATED_SERVER
-    void loadModels();
-
-    void shoot(Player * owner);
-    void shoot(net_svcl_player_shoot & playerShoot, Player * owner);
-    void shootMelee(Player * owner);
-#endif
-
     // Le server shot le player Melee
     void shootMeleeSV(Player * owner);
 
     // On l'update
-    void update(float delay);
-
-#ifndef DEDICATED_SERVER
-    // On l'affiche
-    void render();
-#endif
+    virtual void update(float delay);
 };
 
-
 #endif
-

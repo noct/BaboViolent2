@@ -287,11 +287,14 @@ public:
     int nextSpawnWeapon;
     int nextMeleeWeapon;
 
-    // Son gun
+#ifndef DEDICATED_SERVER
+    ClientWeapon * weapon;
+    ClientWeapon * meleeWeapon
+#else
     Weapon * weapon;
-
-    // Son melee gun
-    Weapon * meleeWeapon;
+    Weapon * meleeWeapon
+#endif
+        ;
 #ifndef DEDICATED_SERVER
     // Son shadow
     unsigned int tex_baboShadow;

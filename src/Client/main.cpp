@@ -173,21 +173,7 @@ public:
     }
 } mainLoopInterface;
 
-class StringInterface : public CStringInterface
-{
-public:
-    virtual void updateString(CString* string, char * newValue)
-    {
-        *string = newValue;
-    }
-    StringInterface()
-        {
-            //printf("Constructor: 0x%x\n", this);
-        }
-    virtual ~StringInterface()
-        {
-        }
-} stringInterface;
+
 
 int main(int argc, const char* argv[])
 {
@@ -198,7 +184,6 @@ int main(int argc, const char* argv[])
 
     gameVar.init();
 
-    dksvarInit(&stringInterface);
     dksvarLoadConfig("main/bv2.cfg");
     dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
 

@@ -37,22 +37,6 @@ void MainLoopForceQuit()
     quit = true;
 }
 
-class StringInterface : public CStringInterface
-{
-public:
-    virtual void updateString(CString* string, char * newValue)
-    {
-        *string = newValue;
-    }
-    StringInterface()
-        {
-            //printf("Constructor: 0x%x\n", this);
-        }
-    virtual ~StringInterface()
-        {
-        }
-} stringInterface;
-
 class CMainLoopConsole : public CThread
 {
 public:
@@ -140,7 +124,6 @@ int main(int argc, const char* argv[])
     dkContext* ctx = dkInit(config);
 
     // PREMI�E CHOSE �FAIRE, on load les config
-    dksvarInit(&stringInterface);
     dksvarLoadConfig("main/bv2.cfg");
     dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
 

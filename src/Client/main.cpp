@@ -21,9 +21,7 @@
 #include "Scene.h"
 #include "Console.h"
 #include "CMaster.h"
-#ifndef DEDICATED_SERVER
-    #include "CLobby.h"
-#endif
+#include "CLobby.h"
 #include <exception>
 
 // notre scene
@@ -35,13 +33,6 @@ bool fullscreen = false;
 
 char * bbNetVersion;
 
-#ifdef DEDICATED_SERVER
-bool quit = false;
-void dkwForceQuit()
-{
-    quit = true;
-}
-#else
 CVector2i mousePos_xbox;
 CVector2f mousePos_xboxVel;
 void updateXBoxMouse_main(float delay)
@@ -118,9 +109,7 @@ CVector2i dkwGetCursorPos_main()
         return dkwGetCursorPos();
     }
 }
-#endif
 
-#ifndef DEDICATED_SERVER
 class MainLoopInterface : public CMainLoopInterface
 {
 public:
@@ -178,9 +167,6 @@ public:
         if (writting) writting->writeText(caracter);
     }
 } mainLoopInterface;
-#endif
-
-
 
 class StringInterface : public CStringInterface
 {
@@ -197,178 +183,6 @@ public:
         {
         }
 } stringInterface;
-
-#ifdef DEDICATED_SERVER
-
-class CMainLoopConsole : public CThread
-{
-public:
-    bool locked;
-    bool internalLock;
-
-    dkContext* ctx;
-
-public:
-    CMainLoopConsole()
-    {
-        locked = false;
-        internalLock = false;
-    }
-
-    void execute(void* pArg)
-    {
-        while (!quit)
-        {
-            // On va updater notre timer
-            int nbFrameElapsed = dkcUpdateTimer(ctx);
-
-            // On va chercher notre delay
-            float delay = dkcGetElapsedf(ctx);
-
-            // On passe le nombre de frame �animer
-            while (nbFrameElapsed)
-            {
-                // Update la console
-                console->update(delay);
-
-                // On appel nos fonction pour animer ici
-                scene->update(delay);
-
-                // On d�r�ente pour le prochain frame
-                nbFrameElapsed--;
-            }
-
-            //--- On check si on n'est pas lock�avant de continuer
-            if (locked)
-            {
-                internalLock = true;
-            }
-
-            while (internalLock)
-            {
-                dkcSleep(ctx, 1);
-            }
-
-            dkcSleep(ctx, 1);
-        }
-    }
-
-    void lock()
-    {
-        locked = true;
-        while (!internalLock)
-        {
-            dkcSleep(ctx, 1);
-        }
-    }
-
-    void unlock()
-    {
-        locked = false;
-        internalLock = false;
-    }
-};
-
-
-int main(int argc, const char* argv[])
-{
-    // lil print out so that people now know that its working
-    printf("***************************************\n");
-    printf("*   Babo Violent 2 Dedicated Server   *\n");
-    printf("*   Version 2.11d                     *\n");
-    printf("*                                     *\n");
-    printf("* check the /main/LaunchScript files  *\n");
-    printf("* to configure your server            *\n");
-    printf("***************************************\n\n\n");
-
-    dkConfig config = {};
-    config.framePerSecond = 30;
-
-    dkContext* ctx = dkInit(config);
-
-    // PREMI�E CHOSE �FAIRE, on load les config
-    dksvarInit(&stringInterface);
-    dksvarLoadConfig("main/bv2.cfg");
-    dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
-
-
-    // On init la network
-    if (bb_init() == 1)
-    {
-        printf(NULL, "Error initiating BaboNet", "Error", 0);
-        dkFini(ctx);
-        return 0;
-    }
-    bbNetVersion = bb_getVersion();
-    if(CString("%s", bbNetVersion) != "4.0")
-    {
-        // Error
-        bb_peerShutdown();
-        bb_shutdown();
-        printf(NULL, "Wrong version of BaboNet", "Error", 0);
-        dkFini(ctx);
-        return 0;
-    }
-
-    // On init la console
-    console = new Console();
-    console->init();
-
-    //--- On cr�le master
-    master = new CMaster();
-
-    // On cr�notre scene
-    scene = new Scene(ctx);
-
-    // La loop principal
-    CMainLoopConsole mainLoopConsole;
-    mainLoopConsole.ctx = ctx;
-
-    //--- On start la thread
-    mainLoopConsole.start();
-
-    //--- Get the arguments and send that to console
-    if (argc > 1)
-    {
-        CString executeCmd = "execute ";
-        executeCmd += (char*)(argv[1]);
-        console->sendCommand(executeCmd);
-    }
-
-    char input[256];
-    while (!quit)
-    {
-        std::cin.getline(input,256);
-
-        mainLoopConsole.lock();
-        if(std::cin.gcount())
-        {
-            console->sendCommand(input);
-        }
-        mainLoopConsole.unlock();
-
-        dkcSleep(ctx, 1);
-    };
-
-    // On efface la scene et ses amis
-    delete scene;
-    delete master;
-    delete console;
-    console = 0;
-    master = 0;
-    scene = 0;
-
-    dksvarSaveConfig("main/bv2.cfg");
-
-    // On shutdown le tout (L'ordre est assez important ici)
-    bb_peerShutdown();
-    bb_shutdown();
-
-    dkFini(ctx);
-    return 0;
-}
-
-#else
 
 int main(int argc, const char* argv[])
 {
@@ -548,6 +362,3 @@ int main(int argc, const char* argv[])
     dkFini(ctx);
     return 0;
 }
-
-#endif
-

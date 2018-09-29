@@ -225,6 +225,10 @@ solution "BaboViolent"
             "src/bv2/**.cpp",
             "src/bv2/**.h",
             "src/bv2/**.c",
+            "src/Server/**.hpp",
+            "src/Server/**.cpp",
+            "src/Server/**.h",
+            "src/Server/**.c",
             "thirdparty/sqlite/sqlite3.c"
         }
 

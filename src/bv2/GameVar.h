@@ -183,7 +183,7 @@ public:
     int cl_primaryWeapon;
     //bool cl_weaponSideRight;
     int cl_secondaryWeapon;
-#ifndef DISABLE_QUICK_MESSAGES
+
     // quick messages
     CString cl_qMsg01;
     CString cl_qMsg02;
@@ -195,7 +195,7 @@ public:
     CString cl_qMsg08;
     CString cl_qMsg09;
     CString cl_qMsg10;
-#endif
+
     //--- Those are not included into the cfg file
     long scl_honor;
     long scl_xp;
@@ -254,7 +254,7 @@ public:
     int k_melee;
     int k_screenShot;
     int k_stats;
-#ifndef DISABLE_QUICK_MESSAGES
+
     // quick messages
     int k_qMsg01;
     int k_qMsg02;
@@ -266,7 +266,6 @@ public:
     int k_qMsg08;
     int k_qMsg09;
     int k_qMsg10;
-#endif
 
     int ro_nbParticle;
     CVector3f ro_hitPoint;

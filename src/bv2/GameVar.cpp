@@ -567,7 +567,7 @@ void GameVar::init()
     cl_secondaryWeapon = 0;
     dksvarRegister(CString("cl_secondaryWeapon [int : 0=Knives, 1=Shield]"),
         &cl_secondaryWeapon, 0, 2, LIMIT_MIN | LIMIT_MAX, true);
-#ifndef DISABLE_QUICK_MESSAGES
+
     // quick messages
     cl_qMsg01 = "aHello!";
     dksvarRegister(CString("cl_qMsg01 [string]"), &cl_qMsg01, true);
@@ -589,7 +589,6 @@ void GameVar::init()
     dksvarRegister(CString("cl_qMsg09 [string]"), &cl_qMsg09, true);
     cl_qMsg10 = "tGO! GO! GO!";
     dksvarRegister(CString("cl_qMsg10 [string]"), &cl_qMsg10, true);
-#endif
 
     scl_honor = 10;
     scl_xp = 25;
@@ -706,7 +705,6 @@ void GameVar::init()
     k_stats = keyManager.getKeyByName("L");
     dksvarRegister(CString("k_stats [int]"), &k_stats, 0, 0, 0, true);
 
-#ifndef DISABLE_QUICK_MESSAGES
     k_qMsg01 = keyManager.getKeyByName("1");
     dksvarRegister(CString("k_qMsg01 [int]"), &k_qMsg01, 0, 0, 0, true);
     k_qMsg02 = keyManager.getKeyByName("2");
@@ -727,7 +725,6 @@ void GameVar::init()
     dksvarRegister(CString("k_qMsg09 [int]"), &k_qMsg09, 0, 0, 0, true);
     k_qMsg10 = keyManager.getKeyByName("0");
     dksvarRegister(CString("k_qMsg10 [int]"), &k_qMsg10, 0, 0, 0, true);
-#endif
 #endif
 
     c_debug = false; // Default

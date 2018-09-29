@@ -90,7 +90,6 @@ public:
    CControl * key_screenShot;
    CControl * key_stats;
 
-#ifndef DISABLE_QUICK_MESSAGES
     // Quick Messages options
     CControl * txt_qMsg01;
     CControl * chk_qMsg01;
@@ -122,7 +121,6 @@ public:
     CControl * txt_qMsg10;
     CControl * chk_qMsg10;
     CControl * key_qMsg10;
-#endif
 public:
     COption(CControl * in_parent, CControl * in_alignTo);
     virtual ~COption();

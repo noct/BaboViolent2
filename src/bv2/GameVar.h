@@ -190,7 +190,6 @@ public:
     bool r_showStats;
     bool r_fullScreen;
     CVector2i r_resolution;
-    int r_bitdepth;
     int r_refreshRate;
     bool r_weatherEffects;
     bool r_reflection;

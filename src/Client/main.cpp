@@ -210,12 +210,10 @@ int main(int argc, const char* argv[])
         return 0;
     }
 
-    if (gameVar.r_bitdepth != 16 && gameVar.r_bitdepth != 32) gameVar.r_bitdepth = 32;
-
     mainLoopInterface.ctx = ctx;
 
     //--- Windowed mode requires special handling
-    if (!dkwInit(gameVar.r_resolution[0], gameVar.r_resolution[1], gameVar.r_bitdepth, gameVar.lang_gameName.s, &mainLoopInterface, gameVar.r_fullScreen, gameVar.r_refreshRate))
+    if (!dkwInit(gameVar.r_resolution[0], gameVar.r_resolution[1], gameVar.lang_gameName.s, &mainLoopInterface, gameVar.r_fullScreen, gameVar.r_refreshRate))
     {
         char * error = dkwGetLastError();
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", error, nullptr);
@@ -239,7 +237,7 @@ int main(int argc, const char* argv[])
     }
 
     // On cr�notre API openGL (This does nothing anymore
-    if (!dkglCreateContext(dkwGetDC(), gameVar.r_bitdepth))
+    if (!dkglCreateContext(dkwGetDC()))
     {
         dkiShutDown();
         dkwShutDown();

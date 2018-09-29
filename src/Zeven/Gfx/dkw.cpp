@@ -37,7 +37,7 @@ static CMainLoopInterface *mainLoopObject = nullptr;
 //
 // La plus importante. Cré la fenêtre et init les cossin
 //
-int dkwInit(int width, int height, int mcolorDepth, char* mTitle, CMainLoopInterface *mMainLoopObject, bool fullScreen, int refreshRate)
+int dkwInit(int width, int height, char* mTitle, CMainLoopInterface *mMainLoopObject, bool fullScreen, int refreshRate)
 {
     mainLoopObject = mMainLoopObject;
 

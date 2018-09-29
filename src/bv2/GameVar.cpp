@@ -609,9 +609,6 @@ void GameVar::init()
     dksvarRegister(CString("r_fullScreen [bool : true | false (default true)]"), &r_fullScreen, true);
     r_resolution.set(800, 600);
     dksvarRegister(CString("r_resolution [vector2i : (default 800 600)]"), &r_resolution, true);
-    r_bitdepth = 32;
-    dksvarRegister(CString("r_bitdepth [int : 16 | 32 (default 32)]"), &r_bitdepth, 16, 32,
-        LIMIT_MIN | LIMIT_MAX, true);
     r_refreshRate = -1;
     dksvarRegister(CString("r_refreshRate [int : -1 | 60 | 70 | 72 | 75 | 85 (default -1)]"), &r_refreshRate, 60, 85,
         LIMIT_MIN | LIMIT_MAX, true);

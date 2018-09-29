@@ -77,7 +77,7 @@ bool dkglCheckExtension(char * extension)
 //
 // Pour créer le context openGL (rendering context)
 //
-int dkglCreateContext(SDL_GLContext mDC, int colorDepth)
+int dkglCreateContext(SDL_GLContext mDC)
 {
     glContext = mDC;
     return 1;

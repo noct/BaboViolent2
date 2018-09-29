@@ -76,7 +76,7 @@ bool            dkglCheckExtension(char * extension);
 /// \param mDC Device Context de la fenêtre Windows
 /// \param colorDepth nombre de bit utiliser pour chaque composant de couleur d'un pixel (16 ou 32.....donc 32)
 /// \return true si la création du contexte a réussi, false sinon
-int              dkglCreateContext(SDL_GLContext mDC, int colorDepth);
+int              dkglCreateContext(SDL_GLContext mDC);
 
 
 

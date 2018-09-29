@@ -94,12 +94,11 @@ public:
 ///
 /// \param width dimension en pixel de la fenêtre souhaitée
 /// \param height dimension en pixel de la fenêtre souhaitée
-/// \param colorDepth nombre de bit utiliser pour chaque composant de couleur d'un pixel (16 ou 32.....donc 32)
 /// \param title chaine de caractères définissant le nom que portera la fenêtre créée
 /// \param mMainLoopObject pointeur vers une classe dérivée de la classe CMainLoopInterface qui contient la définition de la fonction principale du programme (Paint())
 /// \param fullScreen booléen qui détermine si la fenêtre doit être en mode plein écran(true) ou en mode fenêtre(false)
 /// \return int retourne 1 si la création de la fenêtre s'est bien déroulé, retourne 0 si une erreur s'est produite
-int             dkwInit(int width, int height, int colorDepth, char *title, CMainLoopInterface *mMainLoopObject, bool fullScreen, int refreshRate = -1);
+int dkwInit(int width, int height, char *title, CMainLoopInterface *mMainLoopObject, bool fullScreen, int refreshRate = -1);
 
 
 

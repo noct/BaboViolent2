@@ -130,17 +130,6 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
         if(gameVar.r_resolution == CVector2i(1600, 1200)) lst_resolution->selectChild(4);
     }
 
-
-    //--- Color depth resolution
-    label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 70), "Color depth:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
-    label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
-    label1->toolTips = "(Need to reboot the game).";
-    lst_bitDepth = new CControl(instance, CVector2i(10, 10), CVector2i(300, 70), "", this, "LISTBOX", label1, CONTROL_SNAP_RIGHT);
-    item = new CControl(lst_bitDepth, CVector2i(10, 10), CVector2i(150, 20), "16 bits", this, "LABEL");
-    item = new CControl(lst_bitDepth, CVector2i(10, 10), CVector2i(150, 20), "32 bits", this, "LABEL", item, CONTROL_SNAP_BOTTOM);
-    if(gameVar.r_bitdepth == 16) lst_bitDepth->selectChild(0);
-    if(gameVar.r_bitdepth == 32) lst_bitDepth->selectChild(1);
-
     //--- Display refresh rate
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 170), "Display refresh rate:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -701,13 +690,6 @@ void COption::Click(CControl * control)
         }
     }
 
-    switch(lst_bitDepth->selectedIndex)
-    {
-    case 0: gameVar.r_bitdepth = 16; break;
-    case 1: gameVar.r_bitdepth = 32; break;
-    default: gameVar.r_bitdepth = 32; break;
-    }
-
     switch(lst_refreshRate->selectedIndex)
     {
     case 0: gameVar.r_refreshRate = -1; break;
@@ -841,12 +823,7 @@ void COption::Validate(CControl * control)
         default: gameVar.r_resolution.set(800, 600); break;
         }
     }
-    switch(lst_bitDepth->selectedIndex)
-    {
-    case 0: gameVar.r_bitdepth = 16; break;
-    case 1: gameVar.r_bitdepth = 32; break;
-    default: gameVar.r_bitdepth = 32; break;
-    }
+
     gameVar.r_shadowQuality = (chk_wallShadow->check) ? 2 : 0;
     gameVar.r_playerShadow = chk_playerShadow->check;
     gameVar.r_projectileShadow = chk_projectileShadow->check;

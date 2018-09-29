@@ -19,7 +19,7 @@
 /* TCE (c) All rights reserved */
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include <math.h>
 #include <sys/stat.h>
 #include <vector>

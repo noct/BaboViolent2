@@ -17,7 +17,8 @@
 */
 /* TCE (c) All rights reserved */
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
+#include <SDL2/SDL.h>
 
 struct dkContext
 {

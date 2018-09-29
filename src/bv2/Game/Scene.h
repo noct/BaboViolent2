@@ -20,7 +20,7 @@
 #define SCENE_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 #include "Game.h"
 #include "Server.h"
 #include "CMaster.h"

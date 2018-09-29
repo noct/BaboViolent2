@@ -19,8 +19,7 @@
 #ifndef CCONTROL_H_INCLUDED
 #define CCONTROL_H_INCLUDED
 
-
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include "Writting.h"
 #include <vector>
 

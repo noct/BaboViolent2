@@ -19,7 +19,7 @@
 #ifndef EDITORDIALOGS_H
 #define EDITORDIALOGS_H
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include "CControl.h"
 #include "Dialog.h"
 //#include "CPanel.h"

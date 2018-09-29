@@ -18,7 +18,7 @@
 
 #ifndef DEDICATED_SERVER
 #include "screengrab.h"
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include "GameVar.h"
 #include "Game.h"
 #include "Player.h"

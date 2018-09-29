@@ -20,7 +20,7 @@
 #define GAMEVAR_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 #include "Weapon.h"
 
 

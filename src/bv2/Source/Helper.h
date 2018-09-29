@@ -20,7 +20,7 @@
 #define HELPER_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 #include "GameVar.h"
 
 #ifndef DEDICATED_SERVER

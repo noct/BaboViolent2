@@ -23,7 +23,7 @@
 #include "Helper.h"
 #include "GameVar.h"
 #include "Scene.h"
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include "Screengrab.h"
 
 extern Scene * scene;
@@ -531,7 +531,6 @@ void Client::Click(CControl * control)
             teamRequest.teamRequested = PLAYER_TEAM_AUTO_ASSIGN;
             bb_clientSend(uniqueClientID, (char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST);
             showMenu = false;
-            game->map->introAnim = game->map->introAnimLenght;
         }
         return;
     }
@@ -546,7 +545,6 @@ void Client::Click(CControl * control)
             teamRequest.teamRequested = PLAYER_TEAM_BLUE;
             bb_clientSend(uniqueClientID, (char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST);
             showMenu = false;
-            game->map->introAnim = game->map->introAnimLenght;
         }
         return;
     }
@@ -561,7 +559,6 @@ void Client::Click(CControl * control)
             teamRequest.teamRequested = PLAYER_TEAM_RED;
             bb_clientSend(uniqueClientID, (char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST);
             showMenu = false;
-            game->map->introAnim = game->map->introAnimLenght;
         }
         return;
     }
@@ -576,7 +573,6 @@ void Client::Click(CControl * control)
             teamRequest.teamRequested = PLAYER_TEAM_SPECTATOR;
             bb_clientSend(uniqueClientID, (char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST);
             showMenu = false;
-            game->map->introAnim = game->map->introAnimLenght;
         }
         return;
     }

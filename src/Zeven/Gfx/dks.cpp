@@ -18,7 +18,7 @@
 
 /* TCE (c) All rights reserved */
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 #ifndef WIN32
 #include "linux_types.h"

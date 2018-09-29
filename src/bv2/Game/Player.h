@@ -20,7 +20,7 @@
 #define PLAYER_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 #include "netPacket.h"
 #include "Helper.h"
 #include "GameVar.h"

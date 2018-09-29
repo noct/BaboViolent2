@@ -394,39 +394,6 @@ void Map::renderWalls()
 //
 void Map::performCollision(CoordFrame & lastCF, CoordFrame & CF, float radius)
 {
-    if(dko_mapLM)
-    {
-        //--- Simple dko ray test
-        int n;
-        CVector3f intersect;
-        CVector3f p1 = lastCF.position * 10.0f;
-        CVector3f p2 = CF.position * 10.0f;
-        CVector3f lastP2 = p2;
-        CVector3f normal;
-        bool result;
-        while(result = dkoSphereIntersection(dko_mapLM, p1.s, p2.s, radius * 10, intersect.s, normal.s, n))
-        {
-            p2 = intersect + normal * .01f;
-            CVector3f reste = lastP2 - p2;
-            lastP2 = p2;
-
-            // On le slide
-            CVector3f right = cross(cross(normal, reste), normal);
-            normalize(right);
-
-            // On test avec notre projection
-            p2 += right * dot(reste, right);
-
-            //--- Project also the velocity
-            CF.vel = right * dot(CF.vel, right);
-        }
-
-        //--- Update position now
-        CF.position = p2 * .1f;
-        return;
-    }
-
-
     // Ici c'est super dooper easy
     if(cells)
     {
@@ -619,8 +586,6 @@ void Map::performCollision(CoordFrame & lastCF, CoordFrame & CF, float radius)
 
 void Map::collisionClip(CoordFrame & CF, float radius)
 {
-    if(dko_mapLM) return;
-
     int x = (int)CF.position[0];
     int y = (int)CF.position[1];
 

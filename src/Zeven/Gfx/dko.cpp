@@ -17,7 +17,7 @@
 */
 
 #include <cstdint>
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 #ifdef WIN32
 #ifndef DEDICATED_SERVER
@@ -120,11 +120,6 @@ public:
 
 
 unsigned int createTextureFromBuffer(unsigned char *Buffer, int Width, int Height, int BytePerPixel, int Filter, bool inverse);
-
-
-#ifndef DEDICATED_SERVER
-#include <Zeven/lib/dkt.h>
-#endif
 
 
 const int MAX_MODEL = 1024;

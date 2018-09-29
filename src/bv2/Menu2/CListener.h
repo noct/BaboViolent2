@@ -19,8 +19,7 @@
 #ifndef CLISTENER_H_INCLUDED
 #define CLISTENER_H_INCLUDED
 
-
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 class CControl;
 

@@ -23,7 +23,7 @@
 
 #include "CWeather.h"
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 
 

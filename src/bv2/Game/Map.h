@@ -20,7 +20,7 @@
 #define MAP_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 #include <vector>
 #include "GameVar.h"
 #include "Player.h"
@@ -203,13 +203,7 @@ public:
     // La texture de la map (la meme en tant que tel !)
     unsigned int texMap;
     CVector2f texMapSize;
-
-    unsigned int dko_map;
-
-    unsigned int dko_cam;
-    int introAnim;
-    int introAnimLenght;
-
+ 
     // [PM] Author name
     CString author_name;
 
@@ -226,8 +220,6 @@ public:
     float       zoom;
 
 #endif
-    unsigned int dko_mapLM;
-
     CString mapName;
 
     bool isValid;

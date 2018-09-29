@@ -76,11 +76,8 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     SDL_GL_SwapWindow(dkwGetHandle());
 #endif
 #ifndef DEDICATED_SERVER
-    dko_map = 0;
-    dko_cam = 0;
     zoom = 0;
 #endif
-    dko_mapLM = 0;
     game = _game;
 
     if(game)
@@ -400,82 +397,13 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
         }
     }
 
-
-    //--- on check si on a pas un model 3D de cette map là
-    CString checkFor3D = "main/modelmaps_______/";
-    checkFor3D += mapName + "/" + mapName + ".DKO";
-    FileIO * dkoFile = new FileIO(checkFor3D, "rb");
-#ifndef DEDICATED_SERVER
-    introAnim = 0;
-    introAnimLenght = 0;
-#endif
-    if(dkoFile->isValid())
-    {
-        delete dkoFile;
-#ifndef DEDICATED_SERVER
-        if(!isServer) dko_map = dkoLoadFile(checkFor3D.s);
-#endif
-        checkFor3D.resize(checkFor3D.len() - 4);
-        checkFor3D += "LM.DKO";
-        dko_mapLM = dkoLoadFile(checkFor3D.s);
-
-        if(dko_mapLM)
-        {
-            //--- Generate octree for collisions
-            dkoBuildOctree(dko_mapLM);
-        }
-
-        //--- Cam animation
-#ifndef DEDICATED_SERVER
-        checkFor3D.resize(checkFor3D.len() - 6);
-        checkFor3D += "CAM.DKO";
-        dko_cam = dkoLoadFile(checkFor3D.s);
-        if(dko_cam)
-        {
-            introAnimLenght = dkoGetTotalFrame(dko_cam);
-        }
-#endif
-    }
-    else
-    {
-        delete dkoFile;
-    }
-
     if(isServer)
     {
         return;
     }
-
-#ifndef DEDICATED_SERVER
-    if(dko_map)
-    {
-        //--- Load dummies
-        int i = 0;
-        char* dummyName = 0;
-        while(dummyName = dkoGetDummyName(i, dko_map))
-        {
-            CVector3f dumPos;
-            int dumType = -1;
-            dkoGetDummyPosition(i + 1, dko_map, dumPos.s);
-            if(strnicmp("flame", dummyName, 5) == 0)
-            {
-                dumType = DUMMY_TYPE_FLAME;
-            }
-            dummies.push_back(SMapDummy(dumPos * .1f, dumType));
-            ++i;
-        }
-    }
-#endif
-
+    
 #ifndef DEDICATED_SERVER
     //--- We load now the minimap thumbnail
-    if(dko_map)
-    {
-        CString checkFor3D = "main/modelmaps_______/";
-        checkFor3D += mapName + "/minimap.tga";
-        texMap = dktCreateTextureFromFile(checkFor3D.s, DKT_FILTER_NEAREST);
-    }
-    else
     {
         // On cré l'espace pour la texture
         texMap = dktCreateEmptyTexture(size[0], size[1], 3, DKT_FILTER_NEAREST);
@@ -942,11 +870,6 @@ void Map::reloadTheme()
 //
 Map::~Map()
 {
-#ifndef DEDICATED_SERVER
-    if(dko_map) dkoDeleteModel(&dko_map);
-#endif
-    if(dko_mapLM) dkoDeleteModel(&dko_mapLM);
-
     if(isValid)
     {
         ZEVEN_SAFE_DELETE_ARRAY(cells);
@@ -1079,15 +1002,6 @@ void Map::update(float delay, Player * thisPlayer)
         renderToggle = 16;
     }
 #endif
-
-    if(introAnim < introAnimLenght && dko_cam)
-    {
-        introAnim++;
-        if(introAnim == introAnimLenght)
-        {
-            //...
-        }
-    }
 
     if(m_weather) m_weather->update(delay, this);
 
@@ -1334,34 +1248,6 @@ void Map::updateDummies()
 //
 bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
 {
-    if(dko_mapLM)
-    {
-        //--- Simple dko ray test
-        int n;
-        CVector3f intersect;
-        p1 *= 10;
-        p2 *= 10;
-        bool result = dkoRayIntersection(dko_mapLM, p1.s, p2.s, intersect.s, normal.s, n);
-        if(result)
-        {
-            p2 = intersect;
-        }
-        p1 *= .1f;
-        p2 *= .1f;
-
-        //--- Check for the floor now if the dko collision failed for it
-        if(p1[2] > 0 && p2[2] <= 0)
-        {
-            float percent = p1[2] / fabsf(p2[2] - p1[2]);
-            intersect = p1 + (p2 - p1) * percent;
-            p2 = intersect;
-            normal.set(0, 0, 1);
-            result = true;
-        }
-
-        return result;
-    }
-
     // On pogne notre cell de départ
     int i = (int)p1[0];
     int j = (int)p1[1];

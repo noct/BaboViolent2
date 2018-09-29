@@ -19,7 +19,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 
 #ifndef DEDICATED_SERVER
 #include "Writting.h"

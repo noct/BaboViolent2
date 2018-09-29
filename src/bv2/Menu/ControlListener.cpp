@@ -18,7 +18,7 @@
 
 #ifndef DEDICATED_SERVER
 #include "ControlListener.h"
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 
 

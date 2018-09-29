@@ -19,7 +19,7 @@
 #ifndef MESSAGEDIALOG_H
 #define MESSAGEDIALOG_H
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include "CControl.h"
 #include "Dialog.h"
 

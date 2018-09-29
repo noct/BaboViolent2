@@ -19,8 +19,7 @@
 #ifndef CMATERIAL_H
 #define CMATERIAL_H
 
-#include <Zeven/Zeven.h>
-
+#include <Zeven/Gfx.h>
 
 //--- SVertex: A single vertex with a normal, single texture, and colour
 struct SVertex

@@ -19,7 +19,7 @@
 /* TCE (c) All rights reserved */
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 static SDL_GLContext glContext = nullptr;
 

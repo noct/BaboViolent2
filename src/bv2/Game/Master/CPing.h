@@ -20,7 +20,7 @@
 #define CPING_H_INCLUDED
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 
 
 class CPing

@@ -589,9 +589,7 @@ void Game::update(float delay)
             //--- Est-ce qu'on est stuck dans un wall??? Oui? on respawn request
             int x = (int)thisPlayer->currentCF.position[0];
             int y = (int)thisPlayer->currentCF.position[1];
-            if((!map->dko_map && !map->cells[(y)*map->size[0] + (x)].passable) ||
-                (map->dko_map &&
-                (x < 0 || x > map->size[0] || y < 0 || y > map->size[1])))
+            if((!map->cells[(y)*map->size[0] + (x)].passable))
             {
                 // Respawn request!
                 if(!thisPlayer->spawnRequested)

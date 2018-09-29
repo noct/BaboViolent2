@@ -20,7 +20,7 @@
 #define WRITTING_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 
 class Writting : public CString

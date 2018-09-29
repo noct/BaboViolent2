@@ -429,32 +429,9 @@ void Editor2::render()
             // Render the map
             map->renderGround();
 
-            // Render 3D map (do we still need this? really?!)
-            if (map->dko_map)
-            {
-                glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT | GL_ENABLE_BIT);
-                glDisable(GL_LIGHTING);
-            //  glCullFace(GL_FRONT);
-                    glPushMatrix();
-                        glPolygonOffset(0,-.1f);
-                        glScalef(.1f,.1f,.1f);
-                        dkoRender(map->dko_map);
-
-                        glEnable(GL_POLYGON_OFFSET_FILL);
-
-                        glDepthFunc(GL_LEQUAL);
-                        glEnable(GL_BLEND);
-                        glBlendFunc(GL_DST_COLOR, GL_ZERO);
-                        dkoRender(map->dko_mapLM);
-                    glPopMatrix();
-            //  glCullFace(GL_BACK);
-                glPopAttrib();
-            }
-
             // Render flags, spawns and other shit
             map->renderMisc();
 
-            if (!map->dko_map)
             {
                 // Render shadows
                 map->renderShadow();

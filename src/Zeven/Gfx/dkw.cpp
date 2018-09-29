@@ -19,7 +19,7 @@
 /* TCE (c) All rights reserved */
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include <glad/glad.h>
 #include "imgui.h"
 #include "imgui_impl_sdl.h"

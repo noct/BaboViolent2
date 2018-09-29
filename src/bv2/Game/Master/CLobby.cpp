@@ -18,7 +18,7 @@
 
 #ifndef DEDICATED_SERVER
 #include "CLobby.h"
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 
 CLobby* lobby = 0;

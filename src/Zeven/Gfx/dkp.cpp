@@ -18,7 +18,7 @@
 /* TCE (c) All rights reserved */
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 #ifdef WIN32
 #include <windows.h>

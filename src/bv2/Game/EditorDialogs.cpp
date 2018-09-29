@@ -22,7 +22,7 @@
 #include "MessageDialog.h"
 #include "Editor.h"
 #include <Zeven/FileIO.h>
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include <algorithm>
 
 IEditorDialog::IEditorDialog(Editor2 * in_editor, unsigned int font, CString dialogTitle, CVector2i size, DialogButtons buttons)

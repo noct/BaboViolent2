@@ -17,7 +17,7 @@
 */
 
 #include <Zeven/CThread.h>
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 #include "Scene.h"
 #include "Console.h"
 #include "CMaster.h"
@@ -198,8 +198,6 @@ public:
         }
 } stringInterface;
 
-
-
 #ifdef DEDICATED_SERVER
 
 class CMainLoopConsole : public CThread
@@ -207,6 +205,8 @@ class CMainLoopConsole : public CThread
 public:
     bool locked;
     bool internalLock;
+
+    dkContext* ctx;
 
 public:
     CMainLoopConsole()
@@ -220,10 +220,10 @@ public:
         while (!quit)
         {
             // On va updater notre timer
-            int nbFrameElapsed = dkcUpdateTimer();
+            int nbFrameElapsed = dkcUpdateTimer(ctx);
 
             // On va chercher notre delay
-            float delay = dkcGetElapsedf();
+            float delay = dkcGetElapsedf(ctx);
 
             // On passe le nombre de frame �animer
             while (nbFrameElapsed)
@@ -246,10 +246,10 @@ public:
 
             while (internalLock)
             {
-                dkcSleep(1);
+                dkcSleep(ctx, 1);
             }
 
-            dkcSleep(1);
+            dkcSleep(ctx, 1);
         }
     }
 
@@ -258,7 +258,7 @@ public:
         locked = true;
         while (!internalLock)
         {
-            dkcSleep(1);
+            dkcSleep(ctx, 1);
         }
     }
 
@@ -281,16 +281,16 @@ int main(int argc, const char* argv[])
     printf("* to configure your server            *\n");
     printf("***************************************\n\n\n");
 
-    dkContext* ctx = dkInit();
+    dkConfig config = {};
+    config.framePerSecond = 30;
+
+    dkContext* ctx = dkInit(config);
 
     // PREMI�E CHOSE �FAIRE, on load les config
     dksvarInit(&stringInterface);
     dksvarLoadConfig("main/bv2.cfg");
     dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
 
-    // On init nos DLL qui vont �re utilis�dans ce jeu
-    // On initialise quelque cossin important avant tout
-    dkcInit(30); // 30 frame par seconde (m�e que 15 serait le best)
 
     // On init la network
     if (bb_init() == 1)
@@ -318,10 +318,11 @@ int main(int argc, const char* argv[])
     master = new CMaster();
 
     // On cr�notre scene
-    scene = new Scene();
+    scene = new Scene(ctx);
 
     // La loop principal
     CMainLoopConsole mainLoopConsole;
+    mainLoopConsole.ctx = ctx;
 
     //--- On start la thread
     mainLoopConsole.start();
@@ -346,7 +347,7 @@ int main(int argc, const char* argv[])
         }
         mainLoopConsole.unlock();
 
-        dkcSleep(1);
+        dkcSleep(ctx, 1);
     };
 
     // On efface la scene et ses amis

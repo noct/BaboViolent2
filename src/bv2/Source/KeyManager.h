@@ -20,7 +20,7 @@
 #define KEYMANAGER_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 
 class KeyManager

@@ -36,7 +36,27 @@ solution "BaboViolent"
             "-std=c++11"
         }
 
-    project "Zeven"
+    project "ZevenCore"
+        kind "StaticLib"
+        language "C++"
+
+        includedirs {
+            "src",
+        }
+
+        files {
+            "src/Zeven/*.h",
+            "src/Zeven/Core/**.hpp",
+            "src/Zeven/Core/**.cpp",
+            "src/Zeven/Core/**.h",
+            "src/Zeven/Core/**.c",
+        }
+
+        excludes {
+            "src/Zeven/Gfx.h"
+        }
+
+    project "ZevenGfx"
         kind "StaticLib"
         language "C++"
 
@@ -48,10 +68,11 @@ solution "BaboViolent"
         }
 
         files {
-            "src/Zeven/**.hpp",
-            "src/Zeven/**.cpp",
-            "src/Zeven/**.h",
-            "src/Zeven/**.c",
+            "src/Zeven/Gfx.h",
+            "src/Zeven/Gfx/**.hpp",
+            "src/Zeven/Gfx/**.cpp",
+            "src/Zeven/Gfx/**.h",
+            "src/Zeven/Gfx/**.c",
         }
 
     project "Babonet"
@@ -93,7 +114,8 @@ solution "BaboViolent"
         configuration {}
             links {
                 "Babonet",
-                "Zeven",
+                "ZevenCore",
+                "ZevenGfx",
                 "opengl32",
                 "libcurl"
             }
@@ -162,7 +184,7 @@ solution "BaboViolent"
         configuration {}
             links {
                 "Babonet",
-                "Zeven",
+                "ZevenCore",
                 "libcurl"
             }
 
@@ -178,9 +200,6 @@ solution "BaboViolent"
             "src/bv2/Source",
             "src/bv2/Weather",
             "src",
-            "thirdparty/glad/include",
-            "thirdparty/imgui",
-            "thirdparty/imgui/examples",
             "thirdparty/sqlite",
         }
 
@@ -189,19 +208,6 @@ solution "BaboViolent"
             "src/bv2/**.cpp",
             "src/bv2/**.h",
             "src/bv2/**.c",
-            "thirdparty/imgui/imgui_demo.cpp",
-            "thirdparty/imgui/imgui_draw.cpp",
-            "thirdparty/imgui/imgui_internal.h",
-            "thirdparty/imgui/imgui.cpp",
-            "thirdparty/imgui/imgui.h",
-            "thirdparty/imgui/stb_rect_pack.h",
-            "thirdparty/imgui/stb_textedit.h",
-            "thirdparty/imgui/stb_truetype.h",
-            "thirdparty/imgui/examples/imgui_impl_opengl3.cpp",
-            "thirdparty/imgui/examples/imgui_impl_opengl3.h",
-            "thirdparty/imgui/examples/imgui_impl_sdl.cpp",
-            "thirdparty/imgui/examples/imgui_impl_sdl.h",
-            "thirdparty/sqlite/sqlite3.c",
-            "thirdparty/glad/src/glad.c",
+            "thirdparty/sqlite/sqlite3.c"
         }
 

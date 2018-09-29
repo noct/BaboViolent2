@@ -20,7 +20,7 @@
 #define CONTROL_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 
 enum control_state

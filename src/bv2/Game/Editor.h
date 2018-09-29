@@ -19,7 +19,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 #include "Map.h"
 #include "CControl.h"
 #include "CListener.h"

@@ -19,7 +19,7 @@
 #ifndef EDITORTOOLS_H
 #define EDITORTOOLS_H
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 class Map;
 class Editor2;
 

@@ -23,7 +23,7 @@
 #include <Zeven/CVector.h>
 #include <Zeven/CString.h>
 #include <fstream>
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 
 using namespace std;
 

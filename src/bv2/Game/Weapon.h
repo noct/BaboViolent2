@@ -20,10 +20,13 @@
 #define WEAPON_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Core.h>
 #include "netPacket.h"
 #include <vector>
 
+#ifndef DEDICATED_SERVER
+#include <Zeven/Gfx.h>
+#endif
 
 class Player;
 

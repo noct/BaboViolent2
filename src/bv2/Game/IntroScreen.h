@@ -20,7 +20,7 @@
 #define INTROSCREEN_H
 
 
-#include <Zeven/Zeven.h>
+#include <Zeven/Gfx.h>
 
 
 class IntroScreen

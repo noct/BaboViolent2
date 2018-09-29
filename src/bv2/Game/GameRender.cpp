@@ -84,47 +84,29 @@ void Game::render()
                     }
                 }
             }
-            if(map->introAnim < map->introAnimLenght && map->dko_cam)
+            if(gameVar.sv_topView)
             {
-                CVector2i res = dkwGetResolution();
-                dkglSetProjection(50, .1f, 1000, (float)res[0], (float)res[1]);
-                CVector3f camPos;
-                CVector3f camTarget;
-                dkoGetDummyPosition("dum_cam", map->dko_cam, camPos.s, (short)map->introAnim);
-                dkoGetDummyPosition("dum_target", map->dko_cam, camTarget.s, (short)map->introAnim);
-                camPos *= .1f;
-                camTarget *= .1f;
-                gluLookAt(
-                    camPos[0], camPos[1], camPos[2],
-                    camTarget[0], camTarget[1], camTarget[2],
-                    0, 0, 1);
-            }
-            else
-            {
-                if(gameVar.sv_topView)
+                if(thisPlayer)
                 {
-                    if(thisPlayer)
-                    {
-                        gluLookAt(
-                            map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, map->camPos[2]/* + thisPlayer->shootShakeDis[2] * .25f*/,
-                            map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, 0/* + thisPlayer->shootShakeDis[2] * .25f*/,
-                            up[0], up[1], up[2]);
-                    }
-                    else
-                    {
-                        gluLookAt(
-                            map->camPos[0], map->camPos[1], map->camPos[2],
-                            map->camPos[0], map->camPos[1], 0,
-                            up[0], up[1], up[2]);
-                    }
+                    gluLookAt(
+                        map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, map->camPos[2]/* + thisPlayer->shootShakeDis[2] * .25f*/,
+                        map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, 0/* + thisPlayer->shootShakeDis[2] * .25f*/,
+                        up[0], up[1], up[2]);
                 }
                 else
                 {
                     gluLookAt(
-                        map->camPos[0], map->camPos[1] - 4.0f, map->camPos[2],
-                        map->camPos[0], map->camPos[1] - 1.0f, 0,
+                        map->camPos[0], map->camPos[1], map->camPos[2],
+                        map->camPos[0], map->camPos[1], 0,
                         up[0], up[1], up[2]);
                 }
+            }
+            else
+            {
+                gluLookAt(
+                    map->camPos[0], map->camPos[1] - 4.0f, map->camPos[2],
+                    map->camPos[0], map->camPos[1] - 1.0f, 0,
+                    up[0], up[1], up[2]);
             }
         }
 
@@ -137,48 +119,6 @@ void Game::render()
                 glScalef(1, 1, -1);
                 glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_LIGHTING_BIT);
 
-                //--- Full 3D map wow
-                if(map->dko_map)
-                {
-                    glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT | GL_ENABLE_BIT);
-                    glCullFace(GL_FRONT);
-                    glDisable(GL_LIGHTING);
-                    //  glCullFace(GL_FRONT);
-                    glPushMatrix();
-                    glPolygonOffset(0, -.1f);
-                    glScalef(.1f, .1f, .1f);
-                    dkoRender(map->dko_map);
-
-                    glEnable(GL_POLYGON_OFFSET_FILL);
-
-                    glDepthFunc(GL_LEQUAL);
-                    glEnable(GL_BLEND);
-                    glBlendFunc(GL_DST_COLOR, GL_ZERO);
-                    dkoRender(map->dko_mapLM);
-
-                    glEnable(GL_LIGHTING);
-                    dkglSetPointLight(1, -1000, 1000, 2000, 1, 1, 1);
-
-                    // On render les trucs genre flag pod, flag, canon
-                    map->renderMisc();
-
-                    // On render les players
-                    for(i = 0; i < MAX_PLAYER; ++i) if(players[i]) players[i]->render();
-
-                    // On render les rockets, grenades et autres projectiles
-                    ZEVEN_VECTOR_CALL(projectiles, i, render());
-
-                    // On render les projectiles client (Gibs et autre shit visuel)
-                    ZEVEN_VECTOR_CALL(clientProjectiles, i, render());
-
-                    // On render les douilles
-                    ZEVEN_VECTOR_CALL(douilles, i, render());
-
-                    glPopMatrix();
-                    //  glCullFace(GL_BACK);
-                    glPopAttrib();
-                }
-                else
                 {
                     //--- Sky
                     glColor3fv(map->fogColor.s);
@@ -310,28 +250,6 @@ void Game::render()
         // Render la map
         map->renderGround();
 
-        //--- Full 3D map wow
-        if(map->dko_map)
-        {
-            glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT | GL_ENABLE_BIT);
-            glDisable(GL_LIGHTING);
-            //  glCullFace(GL_FRONT);
-            glPushMatrix();
-            glPolygonOffset(0, -.1f);
-            glScalef(.1f, .1f, .1f);
-            dkoRender(map->dko_map);
-
-            glEnable(GL_POLYGON_OFFSET_FILL);
-
-            glDepthFunc(GL_LEQUAL);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_DST_COLOR, GL_ZERO);
-            dkoRender(map->dko_mapLM);
-            glPopMatrix();
-            //  glCullFace(GL_BACK);
-            glPopAttrib();
-        }
-
         // On render les floor mark et projectile shadows
         glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);
         glDepthMask(GL_FALSE);
@@ -402,7 +320,6 @@ void Game::render()
 #endif
             ZEVEN_VECTOR_CALL(douilles, i, render());
 
-        if(!map->dko_map)
         {
             // On render les shadows
 #ifdef RENDER_LAYER_TOGGLE

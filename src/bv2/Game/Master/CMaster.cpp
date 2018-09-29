@@ -942,7 +942,7 @@ void CMaster::GetMasterInfos()
 	sprintf(SQL,"Select Value From LauncherSettings Where Name = 'Version';");
 	sqlite3_get_table(db,SQL,&azResult,&nRow,&nColumn,&zErrMsg);
 
-	sprintf( m_CurrentVersion , azResult[1] );
+	sprintf( m_CurrentVersion , "2.2" );
 
 	sqlite3_free_table(azResult);
 	sqlite3_close( db );

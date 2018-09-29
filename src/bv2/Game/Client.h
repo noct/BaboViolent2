@@ -19,7 +19,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#define GAME_VERSION_CL 40000
+#define GAME_VERSION_CL 22000
 #define MIN_TIME_BETWEEN_QMSG 0.9f
 
 #include "Game.h"

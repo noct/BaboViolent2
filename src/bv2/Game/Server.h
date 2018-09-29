@@ -27,7 +27,7 @@
 
 #include "ChecksumQuery.h"
 #include <vector>
-#define GAME_VERSION_SV 40000
+#define GAME_VERSION_SV 22000
 #define GAME_UPDATE_DELAY 20
 
 

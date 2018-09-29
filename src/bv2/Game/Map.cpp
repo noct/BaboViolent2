@@ -38,42 +38,42 @@ extern Scene * scene;
 //
 Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int sizeX, int sizeY)
 #ifndef DEDICATED_SERVER
-: groundMesh(0), shadowMesh(0), wallMesh(0)
+    : groundMesh(0), shadowMesh(0), wallMesh(0)
 #endif
 {
     int i, j, gtnum;
     //-- On print le loading screen! (new)
         // On clear les buffers, on init la camera, etc
 #ifndef DEDICATED_SERVER
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        CVector2i res = dkwGetResolution();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    CVector2i res = dkwGetResolution();
 
-        if(gameVar.r_widescreen > 1)
-            glViewport( (GLint)((res[0] - res[1]*1.333f)/2.0f) , 0, (GLsizei)(res[1]*1.333f), (GLsizei)res[1]);
-        else
-            glViewport(0, 0, res[0], res[1]);
-        dkglSetProjection(60, 1, 50, (float)res[1]*1.333f, (float)res[1]);
+    if(gameVar.r_widescreen > 1)
+        glViewport((GLint)((res[0] - res[1] * 1.333f) / 2.0f), 0, (GLsizei)(res[1] * 1.333f), (GLsizei)res[1]);
+    else
+        glViewport(0, 0, res[0], res[1]);
+    dkglSetProjection(60, 1, 50, (float)res[1] * 1.333f, (float)res[1]);
 
-        // Truc par default à enabeler
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glDisable(GL_TEXTURE_2D);
-        glColor3f(1,1,1);
+    // Truc par default à enabeler
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glDisable(GL_TEXTURE_2D);
+    glColor3f(1, 1, 1);
 
-        dkglPushOrtho(800, 600);
+    dkglPushOrtho(800, 600);
 
-        // Print au millieu
-        glColor3f(1,1,1);
-        dkfBindFont(font);
-        glEnable(GL_BLEND);
+    // Print au millieu
+    glColor3f(1, 1, 1);
+    dkfBindFont(font);
+    glEnable(GL_BLEND);
 
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        printCenterText(400, 268, 64, CString("LOADING"));
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    printCenterText(400, 268, 64, CString("LOADING"));
 
-        dkglPopOrtho();
+    dkglPopOrtho();
 
-        // On swap les buffers
-        SDL_GL_SwapWindow(dkwGetHandle());
+    // On swap les buffers
+    SDL_GL_SwapWindow(dkwGetHandle());
 #endif
 #ifndef DEDICATED_SERVER
     dko_map = 0;
@@ -83,7 +83,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     dko_mapLM = 0;
     game = _game;
 
-    if (game)
+    if(game)
     {
         isServer = game->isServerGame;
     }
@@ -92,7 +92,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
         isServer = false;
     }
 
-    if (mapFilename.len() > 15) mapFilename.resize(15);
+    if(mapFilename.len() > 15) mapFilename.resize(15);
 
     isValid = true;
 #ifndef DEDICATED_SERVER
@@ -103,7 +103,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     flagAnim = 0;
     m_weather = 0;
 
-    if (!isServer)
+    if(!isServer)
     {
         // Les textures
         tex_grass = dktCreateTextureFromFile("main/textures/grass.tga", DKT_FILTER_BILINEAR);
@@ -116,7 +116,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
         dko_flag[1] = dkoLoadFile("main/models/RedFlag.DKO");
         dko_flagPod[1] = dkoLoadFile("main/models/RedFlagPod.DKO");
 
-    //  dko_flagPole = dkoLoadFile("main/models/flagpole.dko");
+        //  dko_flagPole = dkoLoadFile("main/models/flagpole.dko");
 
         flagAnims[0] = 25;
         flagAnims[1] = 25;
@@ -140,7 +140,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     // Ugly code was required to avoid modification of the remaining code
     FileIO  fileObj(fullName, "rb");
     FileIO* fptr = 0;
-    if (scene->server || isEditor)
+    if(scene->server || isEditor)
         fptr = &fileObj;
     else
         fptr = &_game->mapBuffer;
@@ -151,11 +151,11 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 #endif
 
 
-    if (!file.isValid())
+    if(!file.isValid())
     {
         console->add("\x4> Map doesnt exist");
 #ifndef DEDICATED_SERVER
-        if (editor)
+        if(editor)
         {
             isValid = true;
             mapName = mapFilename;
@@ -165,22 +165,22 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
             size[0] = sizeX;
             size[1] = sizeY;
 
-            cells = new map_cell[size[0]*size[1]];
+            cells = new map_cell[size[0] * size[1]];
 
             // On cré tout suite les contours de la map
-            for (j=0;j<size[1];++j)
+            for(j = 0; j < size[1]; ++j)
             {
-                cells[j*size[0]+0].passable = false;
-                cells[j*size[0]+0].height = 3; // Les bords sont plus haut
-                cells[j*size[0]+size[0]-1].passable = false;
-                cells[j*size[0]+size[0]-1].height = 3;
+                cells[j*size[0] + 0].passable = false;
+                cells[j*size[0] + 0].height = 3; // Les bords sont plus haut
+                cells[j*size[0] + size[0] - 1].passable = false;
+                cells[j*size[0] + size[0] - 1].height = 3;
             }
-            for (i=0;i<size[0];++i)
+            for(i = 0; i < size[0]; ++i)
             {
                 cells[i].passable = false;
                 cells[i].height = 3;
-                cells[(size[1]-1)*size[0]+i].passable = false;
-                cells[(size[1]-1)*size[0]+i].height = 3;
+                cells[(size[1] - 1)*size[0] + i].passable = false;
+                cells[(size[1] - 1)*size[0] + i].height = 3;
             }
         }
         else
@@ -200,204 +200,203 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
         // On le load ici
         unsigned long mapVersion = file.getULong();
 
-        switch (mapVersion)
+        switch(mapVersion)
         {
         case 10010:
-            {
+        {
 #ifndef DEDICATED_SERVER
-                // if opening older map file in editor - fill in the author field
-                if(editor)
-                {
-                    author_name = gameVar.cl_mapAuthorName;
-                }
-#endif
-                size[0] = file.getInt();
-                size[1] = file.getInt();
-                cells = new map_cell[size[0]*size[1]];
-                for (j=0;j<size[1];++j)
-                {
-                    for (i=0;i<size[0];++i)
-                    {
-                        unsigned char data = file.getUByte();
-                        cells[j*size[0]+i].passable = (data & 128)?true:false;
-                        cells[j*size[0]+i].height = (data & 127);
-                        data = file.getUByte();
-                        setTileDirt(i,j,((float)data)/255.0f);
-                    }
-                }
-                break;
+            // if opening older map file in editor - fill in the author field
+            if(editor)
+            {
+                author_name = gameVar.cl_mapAuthorName;
             }
+#endif
+            size[0] = file.getInt();
+            size[1] = file.getInt();
+            cells = new map_cell[size[0] * size[1]];
+            for(j = 0; j < size[1]; ++j)
+            {
+                for(i = 0; i < size[0]; ++i)
+                {
+                    unsigned char data = file.getUByte();
+                    cells[j*size[0] + i].passable = (data & 128) ? true : false;
+                    cells[j*size[0] + i].height = (data & 127);
+                    data = file.getUByte();
+                    setTileDirt(i, j, ((float)data) / 255.0f);
+                }
+            }
+            break;
+        }
         case 10011:
-            {
+        {
 #ifndef DEDICATED_SERVER
-                // if opening older map file in editor - fill in the author field
-                if(editor)
-                {
-                    author_name = gameVar.cl_mapAuthorName;
-                }
-#endif
-                size[0] = file.getInt();
-                size[1] = file.getInt();
-                cells = new map_cell[size[0]*size[1]];
-                for (j=0;j<size[1];++j)
-                {
-                    for (i=0;i<size[0];++i)
-                    {
-                        unsigned char data = file.getUByte();
-                        cells[j*size[0]+i].passable = (data & 128)?true:false;
-                        cells[j*size[0]+i].height = (data & 127);
-                        data = file.getUByte();
-                        setTileDirt(i,j,((float)data)/255.0f);
-                    }
-                }
-
-                // Les flag
-                flagPodPos[0] = file.getVector3f();
-                flagPodPos[1] = file.getVector3f();
-
-                // Les ojectifs
-                file.getVector3f();
-                file.getVector3f();
-
-                // Les spawn point
-                int nbSpawn = file.getInt();
-                for (i=0;i<nbSpawn;++i)
-                {
-                    dm_spawns.push_back(file.getVector3f());
-                }
-                nbSpawn = file.getInt();
-                for (i=0;i<nbSpawn;++i)
-                {
-                    blue_spawns.push_back(file.getVector3f());
-                }
-                nbSpawn = file.getInt();
-                for (i=0;i<nbSpawn;++i)
-                {
-                    red_spawns.push_back(file.getVector3f());
-                }
-                break;
+            // if opening older map file in editor - fill in the author field
+            if(editor)
+            {
+                author_name = gameVar.cl_mapAuthorName;
             }
+#endif
+            size[0] = file.getInt();
+            size[1] = file.getInt();
+            cells = new map_cell[size[0] * size[1]];
+            for(j = 0; j < size[1]; ++j)
+            {
+                for(i = 0; i < size[0]; ++i)
+                {
+                    unsigned char data = file.getUByte();
+                    cells[j*size[0] + i].passable = (data & 128) ? true : false;
+                    cells[j*size[0] + i].height = (data & 127);
+                    data = file.getUByte();
+                    setTileDirt(i, j, ((float)data) / 255.0f);
+                }
+            }
+
+            // Les flag
+            flagPodPos[0] = file.getVector3f();
+            flagPodPos[1] = file.getVector3f();
+
+            // Les ojectifs
+            file.getVector3f();
+            file.getVector3f();
+
+            // Les spawn point
+            int nbSpawn = file.getInt();
+            for(i = 0; i < nbSpawn; ++i)
+            {
+                dm_spawns.push_back(file.getVector3f());
+            }
+            nbSpawn = file.getInt();
+            for(i = 0; i < nbSpawn; ++i)
+            {
+                blue_spawns.push_back(file.getVector3f());
+            }
+            nbSpawn = file.getInt();
+            for(i = 0; i < nbSpawn; ++i)
+            {
+                red_spawns.push_back(file.getVector3f());
+            }
+            break;
+        }
         case 20201:
-            {
+        {
 #ifndef DEDICATED_SERVER
-                // if opening older map file in editor - fill in the author field
-                if(editor)
-                {
-                    author_name = gameVar.cl_mapAuthorName;
-                }
-                theme = file.getInt();
-                weather = file.getInt();
-#else
-                int theme = file.getInt();
-                int weather = file.getInt();
-#endif
-                size[0] = file.getInt();
-                size[1] = file.getInt();
-                cells = new map_cell[size[0]*size[1]];
-                for (j=0;j<size[1];++j)
-                {
-                    for (i=0;i<size[0];++i)
-                    {
-                        unsigned char data = file.getUByte();
-                        cells[j*size[0]+i].passable = (data & 128)?true:false;
-                        cells[j*size[0]+i].height = (data & 127);
-                        data = file.getUByte();
-                        setTileDirt(i,j,((float)data)/255.0f);
-                    }
-                }
-
-                // Les flag
-                flagPodPos[0] = file.getVector3f();
-                flagPodPos[1] = file.getVector3f();
-
-                // Les ojectifs
-                file.getVector3f();
-                file.getVector3f();
-
-                // Les spawn point
-                int nbSpawn = file.getInt();
-                for (i=0;i<nbSpawn;++i)
-                {
-                    dm_spawns.push_back(file.getVector3f());
-                }
-                nbSpawn = file.getInt();
-                for (i=0;i<nbSpawn;++i)
-                {
-                    blue_spawns.push_back(file.getVector3f());
-                }
-                nbSpawn = file.getInt();
-                for (i=0;i<nbSpawn;++i)
-                {
-                    red_spawns.push_back(file.getVector3f());
-                }
-                break;
+            // if opening older map file in editor - fill in the author field
+            if(editor)
+            {
+                author_name = gameVar.cl_mapAuthorName;
             }
+            theme = file.getInt();
+            weather = file.getInt();
+#else
+            int theme = file.getInt();
+            int weather = file.getInt();
+#endif
+            size[0] = file.getInt();
+            size[1] = file.getInt();
+            cells = new map_cell[size[0] * size[1]];
+            for(j = 0; j < size[1]; ++j)
+            {
+                for(i = 0; i < size[0]; ++i)
+                {
+                    unsigned char data = file.getUByte();
+                    cells[j*size[0] + i].passable = (data & 128) ? true : false;
+                    cells[j*size[0] + i].height = (data & 127);
+                    data = file.getUByte();
+                    setTileDirt(i, j, ((float)data) / 255.0f);
+                }
+            }
+
+            // Les flag
+            flagPodPos[0] = file.getVector3f();
+            flagPodPos[1] = file.getVector3f();
+
+            // Les ojectifs
+            file.getVector3f();
+            file.getVector3f();
+
+            // Les spawn point
+            int nbSpawn = file.getInt();
+            for(i = 0; i < nbSpawn; ++i)
+            {
+                dm_spawns.push_back(file.getVector3f());
+            }
+            nbSpawn = file.getInt();
+            for(i = 0; i < nbSpawn; ++i)
+            {
+                blue_spawns.push_back(file.getVector3f());
+            }
+            nbSpawn = file.getInt();
+            for(i = 0; i < nbSpawn; ++i)
+            {
+                red_spawns.push_back(file.getVector3f());
+            }
+            break;
+        }
         case 20202:
-            {
-                // Common map data
-                char * author_name_buffer = file.getByteArray(25);
+        {
+            // Common map data
+            char * author_name_buffer = file.getByteArray(25);
 #ifndef DEDICATED_SERVER
-                author_name_buffer[24] = '\0';
-                author_name.set("%.24s", author_name_buffer);
-                // Note: we DO NOT want to overwrite the author field if it's being edited
-                theme = file.getInt();
-                weather = file.getInt();
+            author_name_buffer[24] = '\0';
+            author_name.set("%.24s", author_name_buffer);
+            // Note: we DO NOT want to overwrite the author field if it's being edited
+            theme = file.getInt();
+            weather = file.getInt();
 #else
-                int theme = file.getInt();
-                int weather = file.getInt();
+            int theme = file.getInt();
+            int weather = file.getInt();
 #endif
-                delete[] author_name_buffer;
-                author_name_buffer = 0;
+            delete[] author_name_buffer;
+            author_name_buffer = 0;
 
-                // for gcc compliant code
+            // for gcc compliant code
 
-                int i=0;
+            int i = 0;
 
-                size[0] = file.getInt();
-                size[1] = file.getInt();
-                cells = new map_cell[size[0]*size[1]];
-                for (j=0;j<size[1];++j)
+            size[0] = file.getInt();
+            size[1] = file.getInt();
+            cells = new map_cell[size[0] * size[1]];
+            for(j = 0; j < size[1]; ++j)
+            {
+                for(i = 0; i < size[0]; ++i)
                 {
-                    for (i=0;i<size[0];++i)
-                    {
-                        unsigned char data = file.getUByte();
-                        cells[j*size[0]+i].passable = (data & 128)?true:false;
-                        cells[j*size[0]+i].height = (data & 127);
-                        data = file.getUByte();
-                        setTileDirt(i,j,((float)data)/255.0f);
-                    }
+                    unsigned char data = file.getUByte();
+                    cells[j*size[0] + i].passable = (data & 128) ? true : false;
+                    cells[j*size[0] + i].height = (data & 127);
+                    data = file.getUByte();
+                    setTileDirt(i, j, ((float)data) / 255.0f);
                 }
-                // common spawns
-                int nbSpawn = file.getInt();
-                for (i=0;i<nbSpawn;++i)
-                {
-                    dm_spawns.push_back(file.getVector3f());
-                }
+            }
+            // common spawns
+            int nbSpawn = file.getInt();
+            for(i = 0; i < nbSpawn; ++i)
+            {
+                dm_spawns.push_back(file.getVector3f());
+            }
 
-                // read game-type specific data
-                // there must always be one game-type specific section per one supported game type
-                for (gtnum = 0; gtnum < GAME_TYPE_COUNT; ++gtnum)
+            // read game-type specific data
+            // there must always be one game-type specific section per one supported game type
+            for(gtnum = 0; gtnum < GAME_TYPE_COUNT; ++gtnum)
+            {
+                int id = file.getInt();
+                switch(id)
                 {
-                    int id = file.getInt();
-                    switch (id)
-                    {
-                    case GAME_TYPE_DM:
-                    case GAME_TYPE_TDM:
-                        break; // nothing to do for DM and TDM
-                    case GAME_TYPE_CTF:
-                        {
-                            // flags
-                            flagPodPos[0] = file.getVector3f();
-                            flagPodPos[1] = file.getVector3f();
-                        }
-                        break;
-                    default:
-                        console->add(CString("\x3> Error: unknown game-type id found in map-file, the value is %d", id));
-                            break;
-                    }
+                case GAME_TYPE_DM:
+                case GAME_TYPE_TDM:
+                    break; // nothing to do for DM and TDM
+                case GAME_TYPE_CTF:
+                {
+                    // flags
+                    flagPodPos[0] = file.getVector3f();
+                    flagPodPos[1] = file.getVector3f();
                 }
                 break;
+                default:
+                    break;
+                }
             }
+            break;
+        }
         }
     }
 
@@ -410,17 +409,17 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     introAnim = 0;
     introAnimLenght = 0;
 #endif
-    if (dkoFile->isValid())
+    if(dkoFile->isValid())
     {
         delete dkoFile;
 #ifndef DEDICATED_SERVER
-        if (!isServer) dko_map = dkoLoadFile(checkFor3D.s);
+        if(!isServer) dko_map = dkoLoadFile(checkFor3D.s);
 #endif
         checkFor3D.resize(checkFor3D.len() - 4);
         checkFor3D += "LM.DKO";
         dko_mapLM = dkoLoadFile(checkFor3D.s);
 
-        if (dko_mapLM)
+        if(dko_mapLM)
         {
             //--- Generate octree for collisions
             dkoBuildOctree(dko_mapLM);
@@ -431,7 +430,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
         checkFor3D.resize(checkFor3D.len() - 6);
         checkFor3D += "CAM.DKO";
         dko_cam = dkoLoadFile(checkFor3D.s);
-        if (dko_cam)
+        if(dko_cam)
         {
             introAnimLenght = dkoGetTotalFrame(dko_cam);
         }
@@ -442,23 +441,23 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
         delete dkoFile;
     }
 
-    if (isServer)
+    if(isServer)
     {
         return;
     }
 
 #ifndef DEDICATED_SERVER
-    if (dko_map)
+    if(dko_map)
     {
         //--- Load dummies
-        int i=0;
+        int i = 0;
         char* dummyName = 0;
-        while (dummyName = dkoGetDummyName(i, dko_map))
+        while(dummyName = dkoGetDummyName(i, dko_map))
         {
             CVector3f dumPos;
             int dumType = -1;
-            dkoGetDummyPosition(i+1, dko_map, dumPos.s);
-            if (strnicmp("flame", dummyName, 5) == 0)
+            dkoGetDummyPosition(i + 1, dko_map, dumPos.s);
+            if(strnicmp("flame", dummyName, 5) == 0)
             {
                 dumType = DUMMY_TYPE_FLAME;
             }
@@ -470,7 +469,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 
 #ifndef DEDICATED_SERVER
     //--- We load now the minimap thumbnail
-    if (dko_map)
+    if(dko_map)
     {
         CString checkFor3D = "main/modelmaps_______/";
         checkFor3D += mapName + "/minimap.tga";
@@ -486,7 +485,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     tex_floor = 0;
     tex_floor_dirt = 0;
     tex_wall_bottom = 0;
-    tex_wall_center =0;
+    tex_wall_center = 0;
     tex_wall_up = 0;
     tex_wall_top = 0;
     tex_wall_both = 0;
@@ -514,7 +513,7 @@ void Map::reloadWeather()
     fogDensity = 1;
     fogStart = -3;
     fogEnd = -3;
-    fogColor.set(1,1,1,1);
+    fogColor.set(1, 1, 1, 1);
 
     if(!gameVar.r_weatherEffects) {
         weather = WEATHER_NONE;
@@ -525,37 +524,37 @@ void Map::reloadWeather()
     fogDensity = 0;
 
     // Set weather to match theme
-    if (theme == THEME_GRAIN)
+    if(theme == THEME_GRAIN)
         weather = WEATHER_FOG;
-    if ((theme == THEME_SNOW) || (theme == THEME_FROZEN) || (theme == THEME_WINTER))
+    if((theme == THEME_SNOW) || (theme == THEME_FROZEN) || (theme == THEME_WINTER))
         weather = WEATHER_SNOW;
-    else if ((theme == THEME_SAND) || (theme == THEME_STREET))
+    else if((theme == THEME_SAND) || (theme == THEME_STREET))
         weather = WEATHER_SANDSTORM;
-    else if ((theme == THEME_CITY) || (theme == THEME_RAINY) || (theme == THEME_ROAD))
+    else if((theme == THEME_CITY) || (theme == THEME_RAINY) || (theme == THEME_ROAD))
         weather = WEATHER_RAIN;
-    else if ((theme == THEME_LAVA) || (theme == THEME_CORE) || (theme == THEME_ROCK))
+    else if((theme == THEME_LAVA) || (theme == THEME_CORE) || (theme == THEME_ROCK))
         weather = WEATHER_LAVA;
     else weather = WEATHER_NONE;
 
-    if (weather == WEATHER_RAIN)
+    if(weather == WEATHER_RAIN)
     {
         fogStart = 4;
         fogEnd = -3;
-        fogColor.set(.15f,.25f,.25f,1);
+        fogColor.set(.15f, .25f, .25f, 1);
         m_weather = new CRain();
     }
-    if (weather == WEATHER_FOG)
+    if(weather == WEATHER_FOG)
     {
         fogStart = 1;
         fogEnd = -.25f;
-        fogColor.set(.3f,.4f,.4f,1);
+        fogColor.set(.3f, .4f, .4f, 1);
     }
-    if (weather == WEATHER_SNOW)
+    if(weather == WEATHER_SNOW)
     {
         fogDensity = 0;
         m_weather = new CSnow();
     }
-    if (weather == WEATHER_LAVA)
+    if(weather == WEATHER_LAVA)
     {
         fogDensity = 0;
         m_weather = new CLava();
@@ -564,279 +563,279 @@ void Map::reloadWeather()
 
 void Map::regenCell(int i, int j)
 {
-    if (i < 0 || j < 0 || i >= size[0] || j >= size[1]) return;
-    int pos = j*size[0]+i;
-    if (cells[pos].dl) glDeleteLists(cells[pos].dl, 1);
+    if(i < 0 || j < 0 || i >= size[0] || j >= size[1]) return;
+    int pos = j * size[0] + i;
+    if(cells[pos].dl) glDeleteLists(cells[pos].dl, 1);
     cells[pos].dl = 0;
-    if (!cells[pos].passable)
+    if(!cells[pos].passable)
     {
         cells[pos].dl = glGenLists(1);
         glNewList(cells[pos].dl, GL_COMPILE);
-            if (cells[pos].height == 1)
-            {
-                glBindTexture(GL_TEXTURE_2D, tex_wall_both);
-            }
-            else
-            {
-                glBindTexture(GL_TEXTURE_2D, tex_wall_bottom);
-            }
+        if(cells[pos].height == 1)
+        {
+            glBindTexture(GL_TEXTURE_2D, tex_wall_both);
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D, tex_wall_bottom);
+        }
 
-            if (j > 0)
+        if(j > 0)
+        {
+            if(cells[(j - 1)*size[0] + (i)].passable)
             {
-                if (cells[(j-1)*size[0]+(i)].passable)
+                glColor3f(.3f, .3f, .3f);
+                glBegin(GL_QUADS);
+                glTexCoord2i(0, 1);
+                glVertex3i(i, j, 1);
+                glTexCoord2i(0, 0);
+                glVertex3i(i, j, 0);
+                glTexCoord2i(1, 0);
+                glVertex3i(i + 1, j, 0);
+                glTexCoord2i(1, 1);
+                glVertex3i(i + 1, j, 1);
+                glEnd();
+            }
+        }
+
+        if(i < size[0] - 1)
+        {
+            if(cells[(j)*size[0] + (i + 1)].passable)
+            {
+                glColor3f(.4f, .4f, .4f);
+                glBegin(GL_QUADS);
+                glTexCoord2i(0, 1);
+                glVertex3i(i + 1, j, 1);
+                glTexCoord2i(0, 0);
+                glVertex3i(i + 1, j, 0);
+                glTexCoord2i(1, 0);
+                glVertex3i(i + 1, j + 1, 0);
+                glTexCoord2i(1, 1);
+                glVertex3i(i + 1, j + 1, 1);
+                glEnd();
+            }
+        }
+
+        if(j < size[1] - 1)
+        {
+            if(cells[(j + 1)*size[0] + (i)].passable)
+            {
+                glColor3f(.7f, .7f, .7f);
+                glBegin(GL_QUADS);
+                glTexCoord2i(0, 1);
+                glVertex3i(i + 1, j + 1, 1);
+                glTexCoord2i(0, 0);
+                glVertex3i(i + 1, j + 1, 0);
+                glTexCoord2i(1, 0);
+                glVertex3i(i, j + 1, 0);
+                glTexCoord2i(1, 1);
+                glVertex3i(i, j + 1, 1);
+                glEnd();
+            }
+        }
+
+        if(i > 0)
+        {
+            if(cells[(j)*size[0] + (i - 1)].passable)
+            {
+                glColor3f(.8f, .8f, .8f);
+                glBegin(GL_QUADS);
+                glTexCoord2i(0, 1);
+                glVertex3i(i, j + 1, 1);
+                glTexCoord2i(0, 0);
+                glVertex3i(i, j + 1, 0);
+                glTexCoord2i(1, 0);
+                glVertex3i(i, j, 0);
+                glTexCoord2i(1, 1);
+                glVertex3i(i, j, 1);
+                glEnd();
+            }
+        }
+
+        //--- Les partie central
+        if(cells[pos].height > 2)
+        {
+            int h = 1;
+            glBindTexture(GL_TEXTURE_2D, tex_wall_center);
+            if(j > 0)
+            {
+                if(cells[(j - 1)*size[0] + (i)].passable || cells[pos].height - 1 > cells[(j - 1)*size[0] + (i)].height)
                 {
-                    glColor3f(.3f,.3f,.3f);
+                    if(!cells[(j - 1)*size[0] + (i)].passable)
+                    {
+                        h = cells[(j - 1)*size[0] + (i)].height;
+                    }
+                    glColor3f(.3f, .3f, .3f);
                     glBegin(GL_QUADS);
-                        glTexCoord2i(0,1);
-                        glVertex3i(i,j,1);
-                        glTexCoord2i(0,0);
-                        glVertex3i(i,j,0);
-                        glTexCoord2i(1,0);
-                        glVertex3i(i+1,j,0);
-                        glTexCoord2i(1,1);
-                        glVertex3i(i+1,j,1);
+                    glTexCoord2i(0, cells[pos].height - 1 - h);
+                    glVertex3i(i, j, cells[pos].height - 1);
+                    glTexCoord2i(0, 0);
+                    glVertex3i(i, j, h);
+                    glTexCoord2i(1, 0);
+                    glVertex3i(i + 1, j, h);
+                    glTexCoord2i(1, cells[pos].height - 1 - h);
+                    glVertex3i(i + 1, j, cells[pos].height - 1);
                     glEnd();
                 }
             }
 
-            if (i < size[0]-1)
+            if(i < size[0] - 1)
             {
-                if (cells[(j)*size[0]+(i+1)].passable)
+                if(cells[(j)*size[0] + (i + 1)].passable || cells[pos].height > cells[(j)*size[0] + (i + 1)].height)
                 {
-                    glColor3f(.4f,.4f,.4f);
+                    if(!cells[(j)*size[0] + (i + 1)].passable)
+                    {
+                        h = cells[(j)*size[0] + (i + 1)].height;
+                    }
+                    glColor3f(.4f, .4f, .4f);
                     glBegin(GL_QUADS);
-                        glTexCoord2i(0,1);
-                        glVertex3i(i+1,j,1);
-                        glTexCoord2i(0,0);
-                        glVertex3i(i+1,j,0);
-                        glTexCoord2i(1,0);
-                        glVertex3i(i+1,j+1,0);
-                        glTexCoord2i(1,1);
-                        glVertex3i(i+1,j+1,1);
+                    glTexCoord2i(0, cells[pos].height - 1 - h);
+                    glVertex3i(i + 1, j, cells[pos].height - 1);
+                    glTexCoord2i(0, 0);
+                    glVertex3i(i + 1, j, h);
+                    glTexCoord2i(1, 0);
+                    glVertex3i(i + 1, j + 1, h);
+                    glTexCoord2i(1, cells[pos].height - 1 - h);
+                    glVertex3i(i + 1, j + 1, cells[pos].height - 1);
                     glEnd();
                 }
             }
 
-            if (j < size[1]-1)
+            if(j < size[1] - 1)
             {
-                if (cells[(j+1)*size[0]+(i)].passable)
+                if(cells[(j + 1)*size[0] + (i)].passable || cells[pos].height > cells[(j + 1)*size[0] + (i)].height)
                 {
-                    glColor3f(.7f,.7f,.7f);
+                    if(!cells[(j + 1)*size[0] + (i)].passable)
+                    {
+                        h = cells[(j + 1)*size[0] + (i)].height;
+                    }
+                    glColor3f(.7f, .7f, .7f);
                     glBegin(GL_QUADS);
-                        glTexCoord2i(0,1);
-                        glVertex3i(i+1,j+1,1);
-                        glTexCoord2i(0,0);
-                        glVertex3i(i+1,j+1,0);
-                        glTexCoord2i(1,0);
-                        glVertex3i(i,j+1,0);
-                        glTexCoord2i(1,1);
-                        glVertex3i(i,j+1,1);
+                    glTexCoord2i(0, cells[pos].height - 1 - h);
+                    glVertex3i(i + 1, j + 1, cells[pos].height - 1);
+                    glTexCoord2i(0, 0);
+                    glVertex3i(i + 1, j + 1, h);
+                    glTexCoord2i(1, 0);
+                    glVertex3i(i, j + 1, h);
+                    glTexCoord2i(1, cells[pos].height - 1 - h);
+                    glVertex3i(i, j + 1, cells[pos].height - 1);
                     glEnd();
                 }
             }
 
-            if (i > 0)
+            if(i > 0)
             {
-                if (cells[(j)*size[0]+(i-1)].passable)
+                if(cells[(j)*size[0] + (i - 1)].passable || cells[pos].height > cells[(j)*size[0] + (i - 1)].height)
                 {
-                    glColor3f(.8f,.8f,.8f);
+                    if(!cells[(j)*size[0] + (i - 1)].passable)
+                    {
+                        h = cells[(j)*size[0] + (i - 1)].height;
+                    }
+                    glColor3f(.8f, .8f, .8f);
                     glBegin(GL_QUADS);
-                        glTexCoord2i(0,1);
-                        glVertex3i(i,j+1,1);
-                        glTexCoord2i(0,0);
-                        glVertex3i(i,j+1,0);
-                        glTexCoord2i(1,0);
-                        glVertex3i(i,j,0);
-                        glTexCoord2i(1,1);
-                        glVertex3i(i,j,1);
+                    glTexCoord2i(0, cells[pos].height - 1 - h);
+                    glVertex3i(i, j + 1, cells[pos].height - 1);
+                    glTexCoord2i(0, 0);
+                    glVertex3i(i, j + 1, h);
+                    glTexCoord2i(1, 0);
+                    glVertex3i(i, j, h);
+                    glTexCoord2i(1, cells[pos].height - 1 - h);
+                    glVertex3i(i, j, cells[pos].height - 1);
+                    glEnd();
+                }
+            }
+        }
+
+        //--- La partie du haut
+        if(cells[pos].height > 1)
+        {
+            glBindTexture(GL_TEXTURE_2D, tex_wall_up);
+            if(j > 0)
+            {
+                if(cells[(j - 1)*size[0] + (i)].passable || cells[pos].height > cells[(j - 1)*size[0] + (i)].height)
+                {
+                    glColor3f(.3f, .3f, .3f);
+                    glBegin(GL_QUADS);
+                    glTexCoord2i(0, 1);
+                    glVertex3i(i, j, cells[pos].height);
+                    glTexCoord2i(0, 0);
+                    glVertex3i(i, j, cells[pos].height - 1);
+                    glTexCoord2i(1, 0);
+                    glVertex3i(i + 1, j, cells[pos].height - 1);
+                    glTexCoord2i(1, 1);
+                    glVertex3i(i + 1, j, cells[pos].height);
                     glEnd();
                 }
             }
 
-            //--- Les partie central
-            if (cells[pos].height > 2)
+            if(i < size[0] - 1)
             {
-                int h = 1;
-                glBindTexture(GL_TEXTURE_2D, tex_wall_center);
-                if (j > 0)
+                if(cells[(j)*size[0] + (i + 1)].passable || cells[pos].height > cells[(j)*size[0] + (i + 1)].height)
                 {
-                    if (cells[(j-1)*size[0]+(i)].passable || cells[pos].height - 1 > cells[(j-1)*size[0]+(i)].height)
-                    {
-                        if (!cells[(j-1)*size[0]+(i)].passable)
-                        {
-                            h = cells[(j-1)*size[0]+(i)].height;
-                        }
-                        glColor3f(.3f,.3f,.3f);
-                        glBegin(GL_QUADS);
-                            glTexCoord2i(0,cells[pos].height-1 - h);
-                            glVertex3i(i,j,cells[pos].height-1);
-                            glTexCoord2i(0,0);
-                            glVertex3i(i,j,h);
-                            glTexCoord2i(1,0);
-                            glVertex3i(i+1,j,h);
-                            glTexCoord2i(1,cells[pos].height-1 - h);
-                            glVertex3i(i+1,j,cells[pos].height-1);
-                        glEnd();
-                    }
-                }
-
-                if (i < size[0]-1)
-                {
-                    if (cells[(j)*size[0]+(i+1)].passable || cells[pos].height > cells[(j)*size[0]+(i+1)].height)
-                    {
-                        if (!cells[(j)*size[0]+(i+1)].passable)
-                        {
-                            h = cells[(j)*size[0]+(i+1)].height;
-                        }
-                        glColor3f(.4f,.4f,.4f);
-                        glBegin(GL_QUADS);
-                            glTexCoord2i(0,cells[pos].height-1 - h);
-                            glVertex3i(i+1,j,cells[pos].height-1);
-                            glTexCoord2i(0,0);
-                            glVertex3i(i+1,j,h);
-                            glTexCoord2i(1,0);
-                            glVertex3i(i+1,j+1,h);
-                            glTexCoord2i(1,cells[pos].height-1 - h);
-                            glVertex3i(i+1,j+1,cells[pos].height-1);
-                        glEnd();
-                    }
-                }
-
-                if (j < size[1]-1)
-                {
-                    if (cells[(j+1)*size[0]+(i)].passable || cells[pos].height > cells[(j+1)*size[0]+(i)].height)
-                    {
-                        if (!cells[(j+1)*size[0]+(i)].passable)
-                        {
-                            h = cells[(j+1)*size[0]+(i)].height;
-                        }
-                        glColor3f(.7f,.7f,.7f);
-                        glBegin(GL_QUADS);
-                            glTexCoord2i(0,cells[pos].height-1 - h);
-                            glVertex3i(i+1,j+1,cells[pos].height-1);
-                            glTexCoord2i(0,0);
-                            glVertex3i(i+1,j+1,h);
-                            glTexCoord2i(1,0);
-                            glVertex3i(i,j+1,h);
-                            glTexCoord2i(1,cells[pos].height-1 - h);
-                            glVertex3i(i,j+1,cells[pos].height-1);
-                        glEnd();
-                    }
-                }
-
-                if (i > 0)
-                {
-                    if (cells[(j)*size[0]+(i-1)].passable || cells[pos].height > cells[(j)*size[0]+(i-1)].height)
-                    {
-                        if (!cells[(j)*size[0]+(i-1)].passable)
-                        {
-                            h = cells[(j)*size[0]+(i-1)].height;
-                        }
-                        glColor3f(.8f,.8f,.8f);
-                        glBegin(GL_QUADS);
-                            glTexCoord2i(0,cells[pos].height-1 - h);
-                            glVertex3i(i,j+1,cells[pos].height-1);
-                            glTexCoord2i(0,0);
-                            glVertex3i(i,j+1,h);
-                            glTexCoord2i(1,0);
-                            glVertex3i(i,j,h);
-                            glTexCoord2i(1,cells[pos].height-1 - h);
-                            glVertex3i(i,j,cells[pos].height-1);
-                        glEnd();
-                    }
+                    glColor3f(.4f, .4f, .4f);
+                    glBegin(GL_QUADS);
+                    glTexCoord2i(0, 1);
+                    glVertex3i(i + 1, j, cells[pos].height);
+                    glTexCoord2i(0, 0);
+                    glVertex3i(i + 1, j, cells[pos].height - 1);
+                    glTexCoord2i(1, 0);
+                    glVertex3i(i + 1, j + 1, cells[pos].height - 1);
+                    glTexCoord2i(1, 1);
+                    glVertex3i(i + 1, j + 1, cells[pos].height);
+                    glEnd();
                 }
             }
 
-            //--- La partie du haut
-            if (cells[pos].height > 1)
+            if(j < size[1] - 1)
             {
-                glBindTexture(GL_TEXTURE_2D, tex_wall_up);
-                if (j > 0)
+                if(cells[(j + 1)*size[0] + (i)].passable || cells[pos].height > cells[(j + 1)*size[0] + (i)].height)
                 {
-                    if (cells[(j-1)*size[0]+(i)].passable || cells[pos].height > cells[(j-1)*size[0]+(i)].height)
-                    {
-                        glColor3f(.3f,.3f,.3f);
-                        glBegin(GL_QUADS);
-                            glTexCoord2i(0,1);
-                            glVertex3i(i,j,cells[pos].height);
-                            glTexCoord2i(0,0);
-                            glVertex3i(i,j,cells[pos].height-1);
-                            glTexCoord2i(1,0);
-                            glVertex3i(i+1,j,cells[pos].height-1);
-                            glTexCoord2i(1,1);
-                            glVertex3i(i+1,j,cells[pos].height);
-                        glEnd();
-                    }
-                }
-
-                if (i < size[0]-1)
-                {
-                    if (cells[(j)*size[0]+(i+1)].passable || cells[pos].height > cells[(j)*size[0]+(i+1)].height)
-                    {
-                        glColor3f(.4f,.4f,.4f);
-                        glBegin(GL_QUADS);
-                            glTexCoord2i(0,1);
-                            glVertex3i(i+1,j,cells[pos].height);
-                            glTexCoord2i(0,0);
-                            glVertex3i(i+1,j,cells[pos].height-1);
-                            glTexCoord2i(1,0);
-                            glVertex3i(i+1,j+1,cells[pos].height-1);
-                            glTexCoord2i(1,1);
-                            glVertex3i(i+1,j+1,cells[pos].height);
-                        glEnd();
-                    }
-                }
-
-                if (j < size[1]-1)
-                {
-                    if (cells[(j+1)*size[0]+(i)].passable || cells[pos].height > cells[(j+1)*size[0]+(i)].height)
-                    {
-                        glColor3f(.7f,.7f,.7f);
-                        glBegin(GL_QUADS);
-                            glTexCoord2i(0,1);
-                            glVertex3i(i+1,j+1,cells[pos].height);
-                            glTexCoord2i(0,0);
-                            glVertex3i(i+1,j+1,cells[pos].height-1);
-                            glTexCoord2i(1,0);
-                            glVertex3i(i,j+1,cells[pos].height-1);
-                            glTexCoord2i(1,1);
-                            glVertex3i(i,j+1,cells[pos].height);
-                        glEnd();
-                    }
-                }
-
-                if (i > 0)
-                {
-                    if (cells[(j)*size[0]+(i-1)].passable || cells[pos].height > cells[(j)*size[0]+(i-1)].height)
-                    {
-                        glColor3f(.8f,.8f,.8f);
-                        glBegin(GL_QUADS);
-                            glTexCoord2i(0,1);
-                            glVertex3i(i,j+1,cells[pos].height);
-                            glTexCoord2i(0,0);
-                            glVertex3i(i,j+1,cells[pos].height-1);
-                            glTexCoord2i(1,0);
-                            glVertex3i(i,j,cells[pos].height-1);
-                            glTexCoord2i(1,1);
-                            glVertex3i(i,j,cells[pos].height);
-                        glEnd();
-                    }
+                    glColor3f(.7f, .7f, .7f);
+                    glBegin(GL_QUADS);
+                    glTexCoord2i(0, 1);
+                    glVertex3i(i + 1, j + 1, cells[pos].height);
+                    glTexCoord2i(0, 0);
+                    glVertex3i(i + 1, j + 1, cells[pos].height - 1);
+                    glTexCoord2i(1, 0);
+                    glVertex3i(i, j + 1, cells[pos].height - 1);
+                    glTexCoord2i(1, 1);
+                    glVertex3i(i, j + 1, cells[pos].height);
+                    glEnd();
                 }
             }
 
-            //--- Le top
-            glBindTexture(GL_TEXTURE_2D, tex_wall_top);
-            glColor3f(1,1,1);
-            glBegin(GL_QUADS);
-                glTexCoord2i(0,1);
-                glVertex3i(i,j+1,cells[pos].height);
-                glTexCoord2i(0,0);
-                glVertex3i(i,j,cells[pos].height);
-                glTexCoord2i(1,0);
-                glVertex3i(i+1,j,cells[pos].height);
-                glTexCoord2i(1,1);
-                glVertex3i(i+1,j+1,cells[pos].height);
-            glEnd();
+            if(i > 0)
+            {
+                if(cells[(j)*size[0] + (i - 1)].passable || cells[pos].height > cells[(j)*size[0] + (i - 1)].height)
+                {
+                    glColor3f(.8f, .8f, .8f);
+                    glBegin(GL_QUADS);
+                    glTexCoord2i(0, 1);
+                    glVertex3i(i, j + 1, cells[pos].height);
+                    glTexCoord2i(0, 0);
+                    glVertex3i(i, j + 1, cells[pos].height - 1);
+                    glTexCoord2i(1, 0);
+                    glVertex3i(i, j, cells[pos].height - 1);
+                    glTexCoord2i(1, 1);
+                    glVertex3i(i, j, cells[pos].height);
+                    glEnd();
+                }
+            }
+        }
+
+        //--- Le top
+        glBindTexture(GL_TEXTURE_2D, tex_wall_top);
+        glColor3f(1, 1, 1);
+        glBegin(GL_QUADS);
+        glTexCoord2i(0, 1);
+        glVertex3i(i, j + 1, cells[pos].height);
+        glTexCoord2i(0, 0);
+        glVertex3i(i, j, cells[pos].height);
+        glTexCoord2i(1, 0);
+        glVertex3i(i + 1, j, cells[pos].height);
+        glTexCoord2i(1, 1);
+        glVertex3i(i + 1, j + 1, cells[pos].height);
+        glEnd();
         glEndList();
     }
 }
@@ -846,11 +845,11 @@ void Map::regenDL()
 {
     //---We create now all the wall's display list (HEaDShOt)
     int i, j;
-    for (j=0;j<size[1];++j)
+    for(j = 0; j < size[1]; ++j)
     {
-        for (i=0;i<size[0];++i)
+        for(i = 0; i < size[0]; ++i)
         {
-            regenCell(i,j);
+            regenCell(i, j);
         }
     }
 
@@ -860,20 +859,20 @@ void Map::regenDL()
 //--- To reload the theme
 void Map::reloadTheme()
 {
-    if (tex_grass) dktDeleteTexture(&tex_grass);
-    if (tex_dirt) dktDeleteTexture(&tex_dirt);
-    if (tex_wall) dktDeleteTexture(&tex_wall);
+    if(tex_grass) dktDeleteTexture(&tex_grass);
+    if(tex_dirt) dktDeleteTexture(&tex_dirt);
+    if(tex_wall) dktDeleteTexture(&tex_wall);
 
-/*  if (tex_floor) dktDeleteTexture(&tex_floor);
-    if (tex_floor_dirt) dktDeleteTexture(&tex_floor_dirt);
-    if (tex_wall_bottom) dktDeleteTexture(&tex_wall_bottom);
-    if (tex_wall_center) dktDeleteTexture(&tex_wall_center);
-    if (tex_wall_up) dktDeleteTexture(&tex_wall_up);
-    if (tex_wall_top) dktDeleteTexture(&tex_wall_top);*/
+    /*  if (tex_floor) dktDeleteTexture(&tex_floor);
+        if (tex_floor_dirt) dktDeleteTexture(&tex_floor_dirt);
+        if (tex_wall_bottom) dktDeleteTexture(&tex_wall_bottom);
+        if (tex_wall_center) dktDeleteTexture(&tex_wall_center);
+        if (tex_wall_up) dktDeleteTexture(&tex_wall_up);
+        if (tex_wall_top) dktDeleteTexture(&tex_wall_top);*/
 
     CString themeStr = "";
 
-    switch (theme)
+    switch(theme)
     {
     case THEME_GRASS:    themeStr = THEME_GRASS_STR;    break;
     case THEME_SNOW:     themeStr = THEME_SNOW_STR;     break;
@@ -916,22 +915,22 @@ void Map::reloadTheme()
     tex_dirt = dktCreateTextureFromFile(CString("main/textures/themes/%s/tex_floor_dirt.tga", themeStr.s).s, DKT_FILTER_BILINEAR);
     if(tex_dirt == 0)
         tex_dirt = dktCreateTextureFromFile(CString("main/textures/themes/grass/tex_floor_dirt.tga").s, DKT_FILTER_BILINEAR);
-//  tex_wall_bottom = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_bottom.tga").s, DKT_FILTER_BILINEAR);
+    //  tex_wall_bottom = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_bottom.tga").s, DKT_FILTER_BILINEAR);
     tex_wall = dktCreateTextureFromFile(CString("main/textures/themes/%s/tex_wall_center.tga", themeStr.s).s, DKT_FILTER_BILINEAR);
     if(tex_wall == 0)
         tex_wall = dktCreateTextureFromFile(CString("main/textures/themes/grass/tex_wall_center.tga").s, DKT_FILTER_BILINEAR);
-//  tex_wall_up = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_up.tga").s, DKT_FILTER_BILINEAR);
-//  tex_wall_top = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_top.tga").s, DKT_FILTER_BILINEAR);
-//  tex_wall_both = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_both.tga").s, DKT_FILTER_BILINEAR);
-/*
-    tex_floor = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_floor.tga").s, DKT_FILTER_BILINEAR);
-    tex_floor_dirt = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_floor_dirt.tga").s, DKT_FILTER_BILINEAR);
-    tex_wall_bottom = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_bottom.tga").s, DKT_FILTER_BILINEAR);
-    tex_wall_center = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_center.tga").s, DKT_FILTER_BILINEAR);
-    tex_wall_up = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_up.tga").s, DKT_FILTER_BILINEAR);
-    tex_wall_top = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_top.tga").s, DKT_FILTER_BILINEAR);
-    tex_wall_both = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_both.tga").s, DKT_FILTER_BILINEAR);
-*/
+    //  tex_wall_up = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_up.tga").s, DKT_FILTER_BILINEAR);
+    //  tex_wall_top = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_top.tga").s, DKT_FILTER_BILINEAR);
+    //  tex_wall_both = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_both.tga").s, DKT_FILTER_BILINEAR);
+    /*
+        tex_floor = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_floor.tga").s, DKT_FILTER_BILINEAR);
+        tex_floor_dirt = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_floor_dirt.tga").s, DKT_FILTER_BILINEAR);
+        tex_wall_bottom = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_bottom.tga").s, DKT_FILTER_BILINEAR);
+        tex_wall_center = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_center.tga").s, DKT_FILTER_BILINEAR);
+        tex_wall_up = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_up.tga").s, DKT_FILTER_BILINEAR);
+        tex_wall_top = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_top.tga").s, DKT_FILTER_BILINEAR);
+        tex_wall_both = dktCreateTextureFromFile((CString("main/textures/themes/") + themeStr + "/tex_wall_both.tga").s, DKT_FILTER_BILINEAR);
+    */
     buildAll();
 }
 #endif
@@ -944,11 +943,11 @@ void Map::reloadTheme()
 Map::~Map()
 {
 #ifndef DEDICATED_SERVER
-    if (dko_map) dkoDeleteModel(&dko_map);
+    if(dko_map) dkoDeleteModel(&dko_map);
 #endif
-    if (dko_mapLM) dkoDeleteModel(&dko_mapLM);
+    if(dko_mapLM) dkoDeleteModel(&dko_mapLM);
 
-    if (isValid)
+    if(isValid)
     {
         ZEVEN_SAFE_DELETE_ARRAY(cells);
     }
@@ -957,7 +956,7 @@ Map::~Map()
     blue_spawns.clear();
     red_spawns.clear();
 #ifndef DEDICATED_SERVER
-    if (!isServer)
+    if(!isServer)
     {
         ZEVEN_SAFE_DELETE(m_weather);
 
@@ -966,12 +965,12 @@ Map::~Map()
         dktDeleteTexture(&tex_dirt);
         dktDeleteTexture(&tex_wall);
 
-    //  dktDeleteTexture(&tex_floor);
-    //  dktDeleteTexture(&tex_floor_dirt);
-    //  dktDeleteTexture(&tex_wall_bottom);
-    //  dktDeleteTexture(&tex_wall_center);
-    //  dktDeleteTexture(&tex_wall_up);
-    //  dktDeleteTexture(&tex_wall_top);
+        //  dktDeleteTexture(&tex_floor);
+        //  dktDeleteTexture(&tex_floor_dirt);
+        //  dktDeleteTexture(&tex_wall_bottom);
+        //  dktDeleteTexture(&tex_wall_center);
+        //  dktDeleteTexture(&tex_wall_up);
+        //  dktDeleteTexture(&tex_wall_top);
 
         dkoDeleteModel(&dko_flag[0]);
         dkoDeleteModel(&dko_flagPod[0]);
@@ -1015,20 +1014,20 @@ void Map::regenTex()
     {
         texMapSize[1] = float(size[1]) / float(height);
     }
-    unsigned char * textureData = new unsigned char [width*height*3];
-    memset(textureData, 0, width*height*3);
+    unsigned char * textureData = new unsigned char[width*height * 3];
+    memset(textureData, 0, width*height * 3);
     // On rempli le data dans la texture
-    for (j=0;j < height;++j)
+    for(j = 0; j < height; ++j)
     {
-        for (i=0;i < width;++i)
+        for(i = 0; i < width; ++i)
         {
             if((i < size[0]) && (j < size[1]))
             {
-                if (!cells[j*size[0]+i].passable)
+                if(!cells[j*size[0] + i].passable)
                 {
-                    textureData[(j*width+i)*3+0] = 255;
-                    textureData[(j*width+i)*3+1] = 255;
-                    textureData[(j*width+i)*3+2] = 255;
+                    textureData[(j*width + i) * 3 + 0] = 255;
+                    textureData[(j*width + i) * 3 + 1] = 255;
+                    textureData[(j*width + i) * 3 + 2] = 255;
                 }
             }
         }
@@ -1037,7 +1036,7 @@ void Map::regenTex()
     dktCreateTextureFromBuffer(&texMap, textureData, width, height, 3, DKT_FILTER_NEAREST);
 
     // On efface notre data tempon
-    delete [] textureData;
+    delete[] textureData;
 
     //--- Rebuild map
     buildAll();
@@ -1057,7 +1056,7 @@ void Map::setCameraPos(const CVector3f & pCamPos)
 #endif
 
 #ifdef RENDER_LAYER_TOGGLE
-    int renderToggle = 0;
+int renderToggle = 0;
 #endif
 
 #ifndef DEDICATED_SERVER
@@ -1066,71 +1065,71 @@ void Map::setCameraPos(const CVector3f & pCamPos)
 //
 void Map::update(float delay, Player * thisPlayer)
 {
-    #ifdef RENDER_LAYER_TOGGLE
-        if (dkiGetState(DIK_F5) == 1)
+#ifdef RENDER_LAYER_TOGGLE
+    if(dkiGetState(DIK_F5) == 1)
+    {
+        renderToggle++;
+        if(renderToggle > 16)
         {
-            renderToggle++;
-            if (renderToggle > 16)
-            {
-                renderToggle = 0;
-            }
+            renderToggle = 0;
         }
-        if (dkiGetState(DIK_F6) == 1)
-        {
-            renderToggle = 16;
-        }
-    #endif
+    }
+    if(dkiGetState(DIK_F6) == 1)
+    {
+        renderToggle = 16;
+    }
+#endif
 
-    if (introAnim < introAnimLenght && dko_cam)
+    if(introAnim < introAnimLenght && dko_cam)
     {
         introAnim++;
-        if (introAnim == introAnimLenght)
+        if(introAnim == introAnimLenght)
         {
             //...
         }
     }
 
-    if (m_weather) m_weather->update(delay, this);
+    if(m_weather) m_weather->update(delay, this);
 
     updateDummies();
 
     // Snipers should be able to scope at map edges
-    if (isEditor || (thisPlayer && thisPlayer->weapon && thisPlayer->weapon->weaponID != WEAPON_SNIPER) || (thisPlayer && thisPlayer->teamID == PLAYER_TEAM_SPECTATOR))
+    if(isEditor || (thisPlayer && thisPlayer->weapon && thisPlayer->weapon->weaponID != WEAPON_SNIPER) || (thisPlayer && thisPlayer->teamID == PLAYER_TEAM_SPECTATOR))
     {
-        if (camLookAt[0] < 5) camLookAt[0] = 5;
-        if (camLookAt[0] > (float)size[0]-5) camLookAt[0] = (float)size[0]-5;
-        if (camLookAt[1] < 4) camLookAt[1] = 4;
-        if (camLookAt[1] > (float)size[1]-4) camLookAt[1] = (float)size[1]-4;
+        if(camLookAt[0] < 5) camLookAt[0] = 5;
+        if(camLookAt[0] > (float)size[0] - 5) camLookAt[0] = (float)size[0] - 5;
+        if(camLookAt[1] < 4) camLookAt[1] = 4;
+        if(camLookAt[1] > (float)size[1] - 4) camLookAt[1] = (float)size[1] - 4;
     }
 
     camDest = camLookAt + CVector3f(0, 0, 7);
-    if (thisPlayer)
+    if(thisPlayer)
     {
-        if (thisPlayer->status == PLAYER_STATUS_ALIVE)
+        if(thisPlayer->status == PLAYER_STATUS_ALIVE)
         {
-            if (thisPlayer->weapon)
+            if(thisPlayer->weapon)
             {
-                if (thisPlayer->weapon->weaponID == WEAPON_SNIPER)
+                if(thisPlayer->weapon->weaponID == WEAPON_SNIPER)
                 {
                     //--- Dépendament de la distance entre la mouse et le player
                     float dis = distance(thisPlayer->currentCF.mousePosOnMap, thisPlayer->currentCF.position) * 2;
-                    if (dis > 12) dis = 12;
-                    if (dis < 5) dis = 5;
+                    if(dis > 12) dis = 12;
+                    if(dis < 5) dis = 5;
                     camDest = camLookAt + CVector3f(0, 0, dis); // On voit de plus loin pour mieux sniper ;)
                 }
             }
         }
-        else if (thisPlayer->status == PLAYER_STATUS_DEAD)
+        else if(thisPlayer->status == PLAYER_STATUS_DEAD)
         {
         }
 
-        if (thisPlayer->teamID == PLAYER_TEAM_SPECTATOR)
+        if(thisPlayer->teamID == PLAYER_TEAM_SPECTATOR)
         {
             // Update zoom
-            int longestSide = (size[0]>size[1])?size[0]:size[1];;
+            int longestSide = (size[0] > size[1]) ? size[0] : size[1];;
             zoom += -dkiGetMouseWheelVel()*0.01f;
-            zoom = (zoom < -8)?-8:zoom;
-            zoom = (zoom > longestSide/2)?longestSide/2:zoom;
+            zoom = (zoom < -8) ? -8 : zoom;
+            zoom = (zoom > longestSide / 2) ? longestSide / 2 : zoom;
 
             // Set camera
             camDest = camLookAt + CVector3f(0, 0, 14 + zoom); // On voit de plus loin pour mieux bombarder lol (joke)
@@ -1139,10 +1138,10 @@ void Map::update(float delay, Player * thisPlayer)
     else if(isEditor)
     {
         // Update zoom
-        int longestSide = (size[0]>size[1])?size[0]:size[1];;
+        int longestSide = (size[0] > size[1]) ? size[0] : size[1];;
         zoom += -dkiGetMouseWheelVel()*0.01f;
-        zoom = (zoom < -8)?-8:zoom;
-        zoom = (zoom > longestSide/2)?longestSide/2:zoom;
+        zoom = (zoom < -8) ? -8 : zoom;
+        zoom = (zoom > longestSide / 2) ? longestSide / 2 : zoom;
 
         // Set camera
         camDest = camLookAt + CVector3f(0, 0, 14 + zoom); // On voit de plus loin pour mieux bombarder lol (joke)
@@ -1157,110 +1156,110 @@ void Map::update(float delay, Player * thisPlayer)
 
     // On anim les flag
     flagAnim += delay * 10;
-    while (flagAnim>=10) flagAnim-= 10;
+    while(flagAnim >= 10) flagAnim -= 10;
 
-        if (flagState[0] == -2) flagPos[0] = flagPodPos[0];
-        if (flagState[1] == -2) flagPos[1] = flagPodPos[1];
-        if (flagState[0] >= 0) if (game->players[flagState[0]]) flagPos[0] = game->players[flagState[0]]->currentCF.position;
-        if (flagState[1] >= 0) if (game->players[flagState[1]]) flagPos[1] = game->players[flagState[1]]->currentCF.position;
+    if(flagState[0] == -2) flagPos[0] = flagPodPos[0];
+    if(flagState[1] == -2) flagPos[1] = flagPodPos[1];
+    if(flagState[0] >= 0) if(game->players[flagState[0]]) flagPos[0] = game->players[flagState[0]]->currentCF.position;
+    if(flagState[1] >= 0) if(game->players[flagState[1]]) flagPos[1] = game->players[flagState[1]]->currentCF.position;
 
-/*
-    CVector3f newAccel[2];
-    for (int i=0;i<2;++i)
-    {
-        newAccel[i] = (flagPos[i] - flagLastPos[i]) / delay;
-        flagLastAccel[i] = newAccel[i];
-        flagLastPos[i] = flagPos[i];
-
-        if (flagLastAccel[i].length() > 3.0f)
+    /*
+        CVector3f newAccel[2];
+        for (int i=0;i<2;++i)
         {
-            //--- Determine angle
-            if (flagAnims[i] > 10)
-            {
-                CVector3f dir = -flagLastAccel[i];
-                normalize(dir);
-                float angleX = dot(dir, CVector3f(1,0,0));
-                float angleY = dot(dir, CVector3f(0,1,0));
-                flagAngle[i] = acosf(angleX) * TO_DEGREE;
-                if (angleY < 0) flagAngle[i] = 180 + (180 - flagAngle[i]);
+            newAccel[i] = (flagPos[i] - flagLastPos[i]) / delay;
+            flagLastAccel[i] = newAccel[i];
+            flagLastPos[i] = flagPos[i];
 
-                flagAnims[i] = 0;
-            }
-        }
-        else if (flagLastAccel[i].length() > 1.5f)
-        {
-            //--- Determine angle
-            if (flagAnims[i] > 18)
+            if (flagLastAccel[i].length() > 3.0f)
             {
                 //--- Determine angle
-                CVector3f dir = -flagLastAccel[i];
-                normalize(dir);
-                float angleX = dot(dir, CVector3f(1,0,0));
-                float angleY = dot(dir, CVector3f(0,1,0));
-                flagAngle[i] = acosf(angleX) * TO_DEGREE;
-                if (angleY < 0) flagAngle[i] = 180 + (180 - flagAngle[i]);
+                if (flagAnims[i] > 10)
+                {
+                    CVector3f dir = -flagLastAccel[i];
+                    normalize(dir);
+                    float angleX = dot(dir, CVector3f(1,0,0));
+                    float angleY = dot(dir, CVector3f(0,1,0));
+                    flagAngle[i] = acosf(angleX) * TO_DEGREE;
+                    if (angleY < 0) flagAngle[i] = 180 + (180 - flagAngle[i]);
 
-                flagAnims[i] = 11;
+                    flagAnims[i] = 0;
+                }
             }
-        }
+            else if (flagLastAccel[i].length() > 1.5f)
+            {
+                //--- Determine angle
+                if (flagAnims[i] > 18)
+                {
+                    //--- Determine angle
+                    CVector3f dir = -flagLastAccel[i];
+                    normalize(dir);
+                    float angleX = dot(dir, CVector3f(1,0,0));
+                    float angleY = dot(dir, CVector3f(0,1,0));
+                    flagAngle[i] = acosf(angleX) * TO_DEGREE;
+                    if (angleY < 0) flagAngle[i] = 180 + (180 - flagAngle[i]);
 
-        if (flagAnims[i] < 25)
-        {
-            flagAnims[i] += delay * 10;
-            if (flagAnims[i] >= 25) flagAnims[i] = 25;
-        }
-    }*/
+                    flagAnims[i] = 11;
+                }
+            }
 
-/*  if (game)
-    {
-        if (game->gameType == GAME_TYPE_CTF)
-        {
-            //--- Get dummy position
-            CVector3f dumPos;
-            dkoGetDummyPosition("Dummy01", dko_flagPole, dumPos.s, (short)flagAnims[0]);
-            dumPos *= .005f; // Scale
-            dumPos = rotateAboutAxis(dumPos, flagAngle[0], CVector3f(0,0,1)); // Rotate
-            dumPos += flagPos[0]; // Translate
+            if (flagAnims[i] < 25)
+            {
+                flagAnims[i] += delay * 10;
+                if (flagAnims[i] >= 25) flagAnims[i] = 25;
+            }
+        }*/
 
-            //--- Spawn particule for the flag
-            dkpCreateParticle(  dumPos.s,//float *position,
-                                CVector3f(0,0,1).s,//float *vel,
-                                CVector4f(.2f,.2f,1,1.0f).s,//float *startColor,
-                                CVector4f(.2f,.2f,1,0.0f).s,//float *endColor,
-                                0,//float startSize,
-                                .5f,//float endSize,
-                                .5f,//float duration,
-                                0,//float gravityInfluence,
-                                0,//float airResistanceInfluence,
-                                360,//float rotationSpeed,
-                                gameVar.tex_smoke1,//unsigned int texture,
-                                DKP_SRC_ALPHA,//unsigned int srcBlend,
-                                DKP_ONE,//unsigned int dstBlend,
-                                0);//int transitionFunc);
+        /*  if (game)
+            {
+                if (game->gameType == GAME_TYPE_CTF)
+                {
+                    //--- Get dummy position
+                    CVector3f dumPos;
+                    dkoGetDummyPosition("Dummy01", dko_flagPole, dumPos.s, (short)flagAnims[0]);
+                    dumPos *= .005f; // Scale
+                    dumPos = rotateAboutAxis(dumPos, flagAngle[0], CVector3f(0,0,1)); // Rotate
+                    dumPos += flagPos[0]; // Translate
 
-            // Red flag
-            dkoGetDummyPosition("Dummy01", dko_flagPole, dumPos.s, (short)flagAnims[1]);
-            dumPos *= .005f; // Scale
-            dumPos = rotateAboutAxis(dumPos, flagAngle[1], CVector3f(0,0,1)); // Rotate
-            dumPos += flagPos[1]; // Translate
+                    //--- Spawn particule for the flag
+                    dkpCreateParticle(  dumPos.s,//float *position,
+                                        CVector3f(0,0,1).s,//float *vel,
+                                        CVector4f(.2f,.2f,1,1.0f).s,//float *startColor,
+                                        CVector4f(.2f,.2f,1,0.0f).s,//float *endColor,
+                                        0,//float startSize,
+                                        .5f,//float endSize,
+                                        .5f,//float duration,
+                                        0,//float gravityInfluence,
+                                        0,//float airResistanceInfluence,
+                                        360,//float rotationSpeed,
+                                        gameVar.tex_smoke1,//unsigned int texture,
+                                        DKP_SRC_ALPHA,//unsigned int srcBlend,
+                                        DKP_ONE,//unsigned int dstBlend,
+                                        0);//int transitionFunc);
 
-            //--- Spawn particule for the flag
-            dkpCreateParticle(  dumPos.s,//float *position,
-                                CVector3f(0,0,0).s,//float *vel,
-                                CVector4f(1,.2f,.2f,1.0f).s,//float *startColor,
-                                CVector4f(1,.2f,.2f,0.0f).s,//float *endColor,
-                                0,//float startSize,
-                                .5f,//float endSize,
-                                .5f,//float duration,
-                                0,//float gravityInfluence,
-                                0,//float airResistanceInfluence,
-                                360,//float rotationSpeed,
-                                gameVar.tex_smoke1,//unsigned int texture,
-                                DKP_SRC_ALPHA,//unsigned int srcBlend,
-                                DKP_ONE,//unsigned int dstBlend,
-                                0);//int transitionFunc);
-        }
-    }*/
+                    // Red flag
+                    dkoGetDummyPosition("Dummy01", dko_flagPole, dumPos.s, (short)flagAnims[1]);
+                    dumPos *= .005f; // Scale
+                    dumPos = rotateAboutAxis(dumPos, flagAngle[1], CVector3f(0,0,1)); // Rotate
+                    dumPos += flagPos[1]; // Translate
+
+                    //--- Spawn particule for the flag
+                    dkpCreateParticle(  dumPos.s,//float *position,
+                                        CVector3f(0,0,0).s,//float *vel,
+                                        CVector4f(1,.2f,.2f,1.0f).s,//float *startColor,
+                                        CVector4f(1,.2f,.2f,0.0f).s,//float *endColor,
+                                        0,//float startSize,
+                                        .5f,//float endSize,
+                                        .5f,//float duration,
+                                        0,//float gravityInfluence,
+                                        0,//float airResistanceInfluence,
+                                        360,//float rotationSpeed,
+                                        gameVar.tex_smoke1,//unsigned int texture,
+                                        DKP_SRC_ALPHA,//unsigned int srcBlend,
+                                        DKP_ONE,//unsigned int dstBlend,
+                                        0);//int transitionFunc);
+                }
+            }*/
 }
 #endif
 
@@ -1273,49 +1272,49 @@ void Map::renderDummies()
 void Map::updateDummies()
 {
     int i;
-    for (i=0;i<(int)dummies.size();++i)
+    for(i = 0; i < (int)dummies.size(); ++i)
     {
-        switch (dummies[i].type)
+        switch(dummies[i].type)
         {
         case DUMMY_TYPE_FLAME:
-            if (!isServer)
+            if(!isServer)
             {
 #ifndef DEDICATED_SERVER
                 dummies[i].spawnParticleTime++;
-                if (dummies[i].spawnParticleTime >= 30) dummies[i].spawnParticleTime = 0;
+                if(dummies[i].spawnParticleTime >= 30) dummies[i].spawnParticleTime = 0;
 
-                if (dummies[i].spawnParticleTime%3 == 0)
+                if(dummies[i].spawnParticleTime % 3 == 0)
                 {
                     // On spawn des particules de feu dans son cul (une par frame)
-                    dkpCreateParticle(  (dummies[i].position+rand(CVector3f(-.10f,-.10f,0),CVector3f(.10f,.10f,0))).s,//float *position,
-                                        (CVector3f(0,0,1)).s,//float *vel,
-                                        rand(CVector4f(1,0,0,0.0f),CVector4f(1,.75f,0,0.0f)).s,//float *startColor,
-                                        CVector4f(1,.75f,0,1.0f).s,//float *endColor,
-                                        .3f,//float startSize,
-                                        .0f,//float endSize,
-                                        1.0f,//float duration,
-                                        0,//float gravityInfluence,
-                                        0,//float airResistanceInfluence,
-                                        rand(0.0f, 30.0f),//float rotationSpeed,
-                                        gameVar.tex_smoke1,//unsigned int texture,
-                                        DKP_SRC_ALPHA,//unsigned int srcBlend,
-                                        DKP_ONE,//unsigned int dstBlend,
-                                        0);//int transitionFunc);
-                    // On spawn des particules de feu dans son cul (une par frame)
-                    dkpCreateParticle(  (dummies[i].position+rand(CVector3f(-.10f,-.10f,0),CVector3f(.10f,.10f,0))).s,//float *position,
-                                        (CVector3f(0,0,1)+rand(CVector3f(-.20f,-.20f,0),CVector3f(.20f,.20f,0))).s,//float *vel,
-                                        rand(CVector4f(1,0,0,1.0f),CVector4f(1,.75f,0,1.0f)).s,//float *startColor,
-                                        CVector4f(1,.75f,0,0.0f).s,//float *endColor,
-                                        .0f,//float startSize,
-                                        .3f,//float endSize,
-                                        0.5f,//float duration,
-                                        0,//float gravityInfluence,
-                                        0,//float airResistanceInfluence,
-                                        rand(0.0f, 30.0f),//float rotationSpeed,
-                                        gameVar.tex_smoke1,//unsigned int texture,
-                                        DKP_SRC_ALPHA,//unsigned int srcBlend,
-                                        DKP_ONE,//unsigned int dstBlend,
-                                        0);//int transitionFunc);
+                    dkpCreateParticle((dummies[i].position + rand(CVector3f(-.10f, -.10f, 0), CVector3f(.10f, .10f, 0))).s,//float *position,
+                        (CVector3f(0, 0, 1)).s,//float *vel,
+                        rand(CVector4f(1, 0, 0, 0.0f), CVector4f(1, .75f, 0, 0.0f)).s,//float *startColor,
+                        CVector4f(1, .75f, 0, 1.0f).s,//float *endColor,
+                        .3f,//float startSize,
+                        .0f,//float endSize,
+                        1.0f,//float duration,
+                        0,//float gravityInfluence,
+                        0,//float airResistanceInfluence,
+                        rand(0.0f, 30.0f),//float rotationSpeed,
+                        gameVar.tex_smoke1,//unsigned int texture,
+                        DKP_SRC_ALPHA,//unsigned int srcBlend,
+                        DKP_ONE,//unsigned int dstBlend,
+                        0);//int transitionFunc);
+    // On spawn des particules de feu dans son cul (une par frame)
+                    dkpCreateParticle((dummies[i].position + rand(CVector3f(-.10f, -.10f, 0), CVector3f(.10f, .10f, 0))).s,//float *position,
+                        (CVector3f(0, 0, 1) + rand(CVector3f(-.20f, -.20f, 0), CVector3f(.20f, .20f, 0))).s,//float *vel,
+                        rand(CVector4f(1, 0, 0, 1.0f), CVector4f(1, .75f, 0, 1.0f)).s,//float *startColor,
+                        CVector4f(1, .75f, 0, 0.0f).s,//float *endColor,
+                        .0f,//float startSize,
+                        .3f,//float endSize,
+                        0.5f,//float duration,
+                        0,//float gravityInfluence,
+                        0,//float airResistanceInfluence,
+                        rand(0.0f, 30.0f),//float rotationSpeed,
+                        gameVar.tex_smoke1,//unsigned int texture,
+                        DKP_SRC_ALPHA,//unsigned int srcBlend,
+                        DKP_ONE,//unsigned int dstBlend,
+                        0);//int transitionFunc);
                 }
 #endif
             }
@@ -1335,7 +1334,7 @@ void Map::updateDummies()
 //
 bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
 {
-    if (dko_mapLM)
+    if(dko_mapLM)
     {
         //--- Simple dko ray test
         int n;
@@ -1343,7 +1342,7 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
         p1 *= 10;
         p2 *= 10;
         bool result = dkoRayIntersection(dko_mapLM, p1.s, p2.s, intersect.s, normal.s, n);
-        if (result)
+        if(result)
         {
             p2 = intersect;
         }
@@ -1351,12 +1350,12 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
         p2 *= .1f;
 
         //--- Check for the floor now if the dko collision failed for it
-        if (p1[2] > 0 && p2[2] <= 0)
+        if(p1[2] > 0 && p2[2] <= 0)
         {
             float percent = p1[2] / fabsf(p2[2] - p1[2]);
             intersect = p1 + (p2 - p1) * percent;
             p2 = intersect;
-            normal.set(0,0,1);
+            normal.set(0, 0, 1);
             result = true;
         }
 
@@ -1368,12 +1367,12 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
     int j = (int)p1[1];
 
     // On check que notre tuile n'est pas déjà occupé
-    if (i >= 0 &&
+    if(i >= 0 &&
         i < size[0] &&
         j >= 0 &&
         j < size[1])
     {
-        if (!cells[j*size[0]+i].passable && p1[2] < cells[j*size[0]+i].height)
+        if(!cells[j*size[0] + i].passable && p1[2] < cells[j*size[0] + i].height)
         {
             p2 = p1;
             return true;
@@ -1387,9 +1386,9 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
 
     // On défini dans quel sens on va voyager (4 sens)
     int sens;
-    if (fabsf(p2[0] - p1[0]) > fabsf(p2[1] - p1[1]))
+    if(fabsf(p2[0] - p1[0]) > fabsf(p2[1] - p1[1]))
     {
-        if (p2[0] > p1[0])
+        if(p2[0] > p1[0])
         {
             sens = TEST_DIR_X;
         }
@@ -1400,7 +1399,7 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
     }
     else
     {
-        if (p2[1] > p1[1])
+        if(p2[1] > p1[1])
         {
             sens = TEST_DIR_Y;
         }
@@ -1412,10 +1411,10 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
 
     // On while tant qu'on ne l'a pas trouvé
     float percent;
-    while (true)
+    while(true)
     {
         // On check qu'on n'a pas dépassé
-        if (i < 0 ||
+        if(i < 0 ||
             i >= size[0] ||
             j < 0 ||
             j >= size[1] ||
@@ -1427,13 +1426,13 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
             return false;
         }
 
-        switch (sens)
+        switch(sens)
         {
         case TEST_DIR_X:
             // On test nos 3 tuiles
-            if (rayTileTest(i, j, p1, p2, normal)) return true;
-            if (rayTileTest(i, j-1, p1, p2, normal)) return true;
-            if (rayTileTest(i, j+1, p1, p2, normal)) return true;
+            if(rayTileTest(i, j, p1, p2, normal)) return true;
+            if(rayTileTest(i, j - 1, p1, p2, normal)) return true;
+            if(rayTileTest(i, j + 1, p1, p2, normal)) return true;
 
             // On incrémente à la prochaine tuile
             i++;
@@ -1443,21 +1442,21 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
 
         case TEST_DIR_X_NEG:
             // On test nos 3 tuiles
-            if (rayTileTest(i, j, p1, p2, normal)) return true;
-            if (rayTileTest(i, j-1, p1, p2, normal)) return true;
-            if (rayTileTest(i, j+1, p1, p2, normal)) return true;
+            if(rayTileTest(i, j, p1, p2, normal)) return true;
+            if(rayTileTest(i, j - 1, p1, p2, normal)) return true;
+            if(rayTileTest(i, j + 1, p1, p2, normal)) return true;
 
             // On incrémente à la prochaine tuile
             i--;
-            percent = (p1[0] - (float)(i+1)) / fabsf(p2[0] - p1[0]);
+            percent = (p1[0] - (float)(i + 1)) / fabsf(p2[0] - p1[0]);
             j = (int)(p1[1] + (p2[1] - p1[1]) * percent);
             break;
 
         case TEST_DIR_Y:
             // On test nos 3 tuiles
-            if (rayTileTest(i, j, p1, p2, normal)) return true;
-            if (rayTileTest(i-1, j, p1, p2, normal)) return true;
-            if (rayTileTest(i+1, j, p1, p2, normal)) return true;
+            if(rayTileTest(i, j, p1, p2, normal)) return true;
+            if(rayTileTest(i - 1, j, p1, p2, normal)) return true;
+            if(rayTileTest(i + 1, j, p1, p2, normal)) return true;
 
             // On incrémente à la prochaine tuile
             j++;
@@ -1467,13 +1466,13 @@ bool Map::rayTest(CVector3f & p1, CVector3f & p2, CVector3f & normal)
 
         case TEST_DIR_Y_NEG:
             // On test nos 3 tuiles
-            if (rayTileTest(i, j, p1, p2, normal)) return true;
-            if (rayTileTest(i-1, j, p1, p2, normal)) return true;
-            if (rayTileTest(i+1, j, p1, p2, normal)) return true;
+            if(rayTileTest(i, j, p1, p2, normal)) return true;
+            if(rayTileTest(i - 1, j, p1, p2, normal)) return true;
+            if(rayTileTest(i + 1, j, p1, p2, normal)) return true;
 
             // On incrémente à la prochaine tuile
             j--;
-            percent = (p1[1] - (float)(j+1)) / fabsf(p2[1] - p1[1]);
+            percent = (p1[1] - (float)(j + 1)) / fabsf(p2[1] - p1[1]);
             i = (int)(p1[0] + (p2[0] - p1[0]) * percent);
             break;
         }
@@ -1501,13 +1500,13 @@ void GetMapList(std::vector< CString > & maps)
     hFind = FindFirstFile(DirSpec, &FindFileData);
     if(hFind != INVALID_HANDLE_VALUE)
     {
-        CString filename ("%s", FindFileData.cFileName);
+        CString filename("%s", FindFileData.cFileName);
         // Drop the extension
         filename.resize(filename.len() - 4);
         maps.push_back(filename);
         while(FindNextFile(hFind, &FindFileData) != 0)
         {
-            CString filename ("%s", FindFileData.cFileName);
+            CString filename("%s", FindFileData.cFileName);
             // Drop the extension
             filename.resize(filename.len() - 4);
             maps.push_back(filename);
@@ -1524,15 +1523,15 @@ bool GetMapData(CString name, unsigned int & texture, CVector2i & textureSize, C
         map_cell * cells = 0;
         unsigned long mapVersion = file.getULong();
 
-        switch (mapVersion)
+        switch(mapVersion)
         {
         case 10010:
             size[0] = file.getInt();
             size[1] = file.getInt();
             cells = new map_cell[size[0] * size[1]];
-            for (int j = 0; j < size[1]; ++j)
+            for(int j = 0; j < size[1]; ++j)
             {
-                for (int i = 0; i < size[0]; ++i)
+                for(int i = 0; i < size[0]; ++i)
                 {
                     unsigned char data = file.getUByte();
                     cells[j * size[0] + i].passable = (data & 128) ? true : false;
@@ -1545,9 +1544,9 @@ bool GetMapData(CString name, unsigned int & texture, CVector2i & textureSize, C
             size[0] = file.getInt();
             size[1] = file.getInt();
             cells = new map_cell[size[0] * size[1]];
-            for (int j = 0; j < size[1]; ++j)
+            for(int j = 0; j < size[1]; ++j)
             {
-                for (int i = 0; i < size[0]; ++i)
+                for(int i = 0; i < size[0]; ++i)
                 {
                     unsigned char data = file.getUByte();
                     cells[j * size[0] + i].passable = (data & 128) ? true : false;
@@ -1557,47 +1556,47 @@ bool GetMapData(CString name, unsigned int & texture, CVector2i & textureSize, C
             }
             break;
         case 20201:
+        {
+            int theme = file.getInt();
+            int weather = file.getInt();
+            size[0] = file.getInt();
+            size[1] = file.getInt();
+            cells = new map_cell[size[0] * size[1]];
+            for(int j = 0; j < size[1]; ++j)
             {
-                int theme = file.getInt();
-                int weather = file.getInt();
-                size[0] = file.getInt();
-                size[1] = file.getInt();
-                cells = new map_cell[size[0] * size[1]];
-                for (int j = 0; j < size[1]; ++j)
+                for(int i = 0; i < size[0]; ++i)
                 {
-                    for (int i = 0; i < size[0]; ++i)
-                    {
-                        unsigned char data = file.getUByte();
-                        cells[j * size[0] + i].passable = (data & 128) ? true : false;
-                        cells[j * size[0] + i].height = (data & 127);
-                        data = file.getUByte();
-                    }
+                    unsigned char data = file.getUByte();
+                    cells[j * size[0] + i].passable = (data & 128) ? true : false;
+                    cells[j * size[0] + i].height = (data & 127);
+                    data = file.getUByte();
                 }
-                break;
             }
+            break;
+        }
         case 20202:
+        {
+            char * author_name_buffer = file.getByteArray(25);
+            author_name_buffer[24] = '\0';
+            author.set("%s", author_name_buffer);
+            delete[] author_name_buffer;
+            int theme = file.getInt();
+            int weather = file.getInt();
+            size[0] = file.getInt();
+            size[1] = file.getInt();
+            cells = new map_cell[size[0] * size[1]];
+            for(int j = 0; j < size[1]; ++j)
             {
-                char * author_name_buffer = file.getByteArray(25);
-                author_name_buffer[24] = '\0';
-                author.set("%s", author_name_buffer);
-                delete[] author_name_buffer;
-                int theme = file.getInt();
-                int weather = file.getInt();
-                size[0] = file.getInt();
-                size[1] = file.getInt();
-                cells = new map_cell[size[0] * size[1]];
-                for (int j = 0; j < size[1]; ++j)
+                for(int i = 0; i < size[0]; ++i)
                 {
-                    for (int i = 0; i < size[0]; ++i)
-                    {
-                        unsigned char data = file.getUByte();
-                        cells[j * size[0] + i].passable = (data & 128) ? true : false;
-                        cells[j * size[0] + i].height = (data & 127);
-                        data = file.getUByte();
-                    }
+                    unsigned char data = file.getUByte();
+                    cells[j * size[0] + i].passable = (data & 128) ? true : false;
+                    cells[j * size[0] + i].height = (data & 127);
+                    data = file.getUByte();
                 }
-                break;
             }
+            break;
+        }
         }
 
         textureSize.set(1, 1);

@@ -75,20 +75,36 @@ solution "BaboViolent"
             "src/Zeven/Gfx/**.c",
         }
 
-    project "Babonet"
+    project "BaboNet"
         kind "StaticLib"
         language "C++"
 
         includedirs {
             "src",
-            "src/Babonet",
+            "src/BaboNet",
         }
 
         files {
-            "src/Babonet/**.hpp",
-            "src/Babonet/**.cpp",
-            "src/Babonet/**.h",
-            "src/Babonet/**.c",
+            "src/BaboNet/**.hpp",
+            "src/BaboNet/**.cpp",
+            "src/BaboNet/**.h",
+            "src/BaboNet/**.c",
+        }
+
+    project "BaboCommon"
+        kind "StaticLib"
+        language "C++"
+
+        includedirs {
+            "src",
+            "src/Common",
+        }
+
+        files {
+            "src/Common/**.hpp",
+            "src/Common/**.cpp",
+            "src/Common/**.h",
+            "src/Common/**.c",
         }
 
     project "bv2"
@@ -113,7 +129,8 @@ solution "BaboViolent"
 
         configuration {}
             links {
-                "Babonet",
+                "BaboNet",
+                "BaboCommon",
                 "ZevenCore",
                 "ZevenGfx",
                 "opengl32",
@@ -121,16 +138,16 @@ solution "BaboViolent"
             }
 
         includedirs {
-            "src/Babonet",
-            "src/bv2/External",
+            "src/BaboNet",
+            "src/Common/External",
+            "src/bv2",
             "src/bv2/Game",
-            "src/bv2/Game/AStar",
-            "src/bv2/Game/Master",
-            "src/bv2/Menu",
-            "src/bv2/Menu2",
-            "src/bv2/Menu2/Dialogs",
-            "src/bv2/Source",
-            "src/bv2/Weather",
+            "src/bv2/Master",
+            "src/Client",
+            "src/Client/Menu",
+            "src/Client/Menu2",
+            "src/Client/Menu2/Dialogs",
+            "src/Client/Weather",
             "src",
             "thirdparty/glad/include",
             "thirdparty/imgui",
@@ -143,6 +160,10 @@ solution "BaboViolent"
             "src/bv2/**.cpp",
             "src/bv2/**.h",
             "src/bv2/**.c",
+            "src/Client/**.hpp",
+            "src/Client/**.cpp",
+            "src/Client/**.h",
+            "src/Client/**.c",
             "thirdparty/imgui/imgui_demo.cpp",
             "thirdparty/imgui/imgui_draw.cpp",
             "thirdparty/imgui/imgui_internal.h",
@@ -183,22 +204,18 @@ solution "BaboViolent"
 
         configuration {}
             links {
-                "Babonet",
+                "BaboNet",
+                "BaboCommon",
                 "ZevenCore",
                 "libcurl"
             }
 
         includedirs {
-            "src/Babonet",
-            "src/bv2/External",
+            "src/BaboNet",
+            "src/Common/External",
+            "src/bv2",
             "src/bv2/Game",
-            "src/bv2/Game/AStar",
-            "src/bv2/Game/Master",
-            "src/bv2/Menu",
-            "src/bv2/Menu2",
-            "src/bv2/Menu2/Dialogs",
-            "src/bv2/Source",
-            "src/bv2/Weather",
+            "src/bv2/Master",
             "src",
             "thirdparty/sqlite",
         }

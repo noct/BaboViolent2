@@ -1880,8 +1880,9 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
     // Pour carr?ent restarter toute la patente
     if (command == "restart")
     {
+        dkContext* ctx = scene->ctx;
         ZEVEN_SAFE_DELETE(scene);
-        scene = new Scene();
+        scene = new Scene(ctx);
         return;
     }
 

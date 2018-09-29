@@ -305,7 +305,7 @@ void Game::createMap()
         }
 #endif
     }
-    dkcJumpToFrame(0);
+    dkcJumpToFrame(scene->ctx, 0);
 }
 
 

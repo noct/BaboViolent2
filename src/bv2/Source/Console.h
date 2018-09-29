@@ -19,10 +19,6 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#ifndef WIN32
-    #include "LinuxHeader.h"
-#endif
-
 #include <Zeven/Zeven.h>
 
 #ifndef DEDICATED_SERVER

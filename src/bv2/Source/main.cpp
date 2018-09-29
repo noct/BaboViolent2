@@ -16,31 +16,18 @@
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
-#ifdef WIN32
-#define _WIN32_WINNT 0x0400
-#endif
-
-#ifndef WIN32
-    #include "LinuxHeader.h"
-#endif
-
-#include <SDL2/SDL.h>
+#include <Zeven/CThread.h>
 #include <Zeven/Zeven.h>
 #include "Scene.h"
 #include "Console.h"
-#include <exception>
 #include "CMaster.h"
 #ifndef DEDICATED_SERVER
     #include "CLobby.h"
 #endif
-
-#include "imgui.h"
-#include "imgui_impl_sdl.h"
-#include "imgui_impl_opengl3.h"
+#include <exception>
 
 // notre scene
 Scene * scene = 0;
-
 
 int resW = 800;
 int resH = 600;
@@ -133,73 +120,19 @@ CVector2i dkwGetCursorPos_main()
 }
 #endif
 
-
 #ifndef DEDICATED_SERVER
-
-// lil function to update the launcher on boot up
-void UpdateLauncher()
-{
-
-    //test
-    //CreateDirectory("testing", 0 );
-
-    //CreateDirectory("test", 0 );
-    //CreateDirectory("test/testing", 0 );
-
-
-    // try to open the file, if not present, then we dont need to update the launcher!
-    FILE * file = fopen("_Bv2Launcher.exe" ,"rb");
-
-    //no update needed
-    if(!file)
-    {
-        return;
-    }
-
-    fseek (file , 0 , SEEK_END);
-    long Size = ftell(file);
-    rewind(file);
-
-        //open the current laucher so we can overwrite it!
-    FILE * ufile = fopen("Bv2Launcher.exe","wb");
-
-    // problem opening the file for writing, no update will occur
-    if(!ufile)
-    {
-        fclose(file);
-        return;
-    }
-
-    char *buffer = new char[Size];
-
-    fread( buffer , Size , 1 , file );
-    fwrite( buffer , Size , 1 , ufile );
-
-    //finished with the files
-    fclose( file );
-    fclose( ufile );
-
-    //let's kill the unusefull file
-    remove( "_Bv2Launcher.exe" );
-
-
-
-
-}
-
-
 class MainLoopInterface : public CMainLoopInterface
 {
 public:
 
-
+    dkContext* ctx;
 
     // Les fonctions obligatoire du MainLoopInterface de la dll dkw
     void paint()
     {
 
         // On va updater notre timer
-        int nbFrameElapsed = dkcUpdateTimer();
+        int nbFrameElapsed = dkcUpdateTimer(ctx);
 
 #ifdef _DEBUG
         // LAG GENERATOR , use it to bind a key and test in lag conditions
@@ -211,7 +144,7 @@ public:
 
 
         // On va chercher notre delay
-        float delay = dkcGetElapsedf();
+        float delay = dkcGetElapsedf(ctx);
 
         // On passe le nombre de frame �animer
         while (nbFrameElapsed)
@@ -269,10 +202,6 @@ public:
 
 #ifdef DEDICATED_SERVER
 
-#include <Zeven/CThread.h>
-    bool s_locked = false;
-    bool s_internalLock = false;
-
 class CMainLoopConsole : public CThread
 {
 public:
@@ -288,14 +217,6 @@ public:
 
     void execute(void* pArg)
     {
-        #ifndef WIN32 // linux timestruct for nanosleep
-            timespec ts;
-
-            ts.tv_sec = 0;
-            ts.tv_nsec = 1000000;
-        #endif
-
-
         while (!quit)
         {
             // On va updater notre timer
@@ -315,8 +236,6 @@ public:
 
                 // On d�r�ente pour le prochain frame
                 nbFrameElapsed--;
-
-                //printf("FPS: %f\n", dkcGetFPS());
             }
 
             //--- On check si on n'est pas lock�avant de continuer
@@ -327,39 +246,11 @@ public:
 
             while (internalLock)
             {
-                SDL_Delay(1);
+                dkcSleep(1);
             }
 
-            SDL_Delay(1);
+            dkcSleep(1);
         }
-
-        //printf(" game main loop has quit \n");
-
-    /*  char input[256];
-        while (!quit)
-        {
-            std::cin.getline(input,256);
-
-
-            lock();
-            console->sendCommand(input);//CString("Execute CTF"));
-            unlock();
-
-            #ifdef WIN32
-                Sleep(1);
-            #else
-                if(nanosleep(&ts,0))
-                {
-                    printf("problem nanosleep console loop\n");
-                }
-                ts.tv_sec = 0;
-                ts.tv_nsec = 1000000;
-            #endif
-
-            //cin.ignore( 10000 , '\n');
-            //input[0] = 0;
-            //fflush(stdin);
-        };*/
     }
 
     void lock()
@@ -367,7 +258,7 @@ public:
         locked = true;
         while (!internalLock)
         {
-            SDL_Delay(1);
+            dkcSleep(1);
         }
     }
 
@@ -382,7 +273,6 @@ public:
 int main(int argc, const char* argv[])
 {
     // lil print out so that people now know that its working
-
     printf("***************************************\n");
     printf("*   Babo Violent 2 Dedicated Server   *\n");
     printf("*   Version 2.11d                     *\n");
@@ -391,20 +281,7 @@ int main(int argc, const char* argv[])
     printf("* to configure your server            *\n");
     printf("***************************************\n\n\n");
 
-    // Example on how to get the mac adress
-    //unsigned char mac[8];     // unsigned here is very important
-    //bb_getMyMAC( mac );
-
-    //char macString[20];
-    //sprintf( macString , "%.2x-%.2x-%.2x-%.2x-%.2x-%.2x" , (int)mac[0], (int)mac[1],(int)mac[2],(int)mac[3],(int)mac[4],(int)mac[5] );
-    //printf( " mac addr : %s " , macString );
-
-    #ifndef WIN32 // linux timestruct for nanosleep
-        timespec ts;
-
-        ts.tv_sec = 0;
-        ts.tv_nsec = 1000000; // 1 ms
-    #endif
+    dkContext* ctx = dkInit();
 
     // PREMI�E CHOSE �FAIRE, on load les config
     dksvarInit(&stringInterface);
@@ -418,18 +295,18 @@ int main(int argc, const char* argv[])
     // On init la network
     if (bb_init() == 1)
     {
-        printf(NULL, "Error initiating baboNet", "Error", 0);
+        printf(NULL, "Error initiating BaboNet", "Error", 0);
+        dkFini(ctx);
         return 0;
     }
     bbNetVersion = bb_getVersion();
-    if (CString("%s", bbNetVersion) != "4.0")
+    if(CString("%s", bbNetVersion) != "4.0")
     {
         // Error
         bb_peerShutdown();
         bb_shutdown();
-        #ifdef WIN32
-            printf(NULL, "Wrong version of BaboNet\nReinstalling the game may resolve this prolem", "Error", 0);
-        #endif
+        printf(NULL, "Wrong version of BaboNet", "Error", 0);
+        dkFini(ctx);
         return 0;
     }
 
@@ -449,83 +326,7 @@ int main(int argc, const char* argv[])
     //--- On start la thread
     mainLoopConsole.start();
 
-
-/*  {
-        #ifndef WIN32 // linux timestruct for nanosleep
-            timespec ts;
-
-            ts.tv_sec = 0;
-            ts.tv_nsec = 1000000;
-        #endif
-
-
-        float tim = 0;
-
-        while (!quit)
-        {
-            // On va updater notre timer
-            int nbFrameElapsed = dkcUpdateTimer();
-
-            // On va chercher notre delay
-            float delay = dkcGetElapsedf();
-
-            //printf("nbFrameElapsed : %i\n",nbFrameElapsed);
-
-            // On passe le nombre de frame �animer
-            while (nbFrameElapsed)
-            {
-                // Update la console
-                console->update(delay);
-
-                // On appel nos fonction pour animer ici
-                scene->update(delay);
-
-                // On d�r�ente pour le prochain frame
-                nbFrameElapsed--;
-
-                //tim += delay;
-                //printf("elapsed : %f\n",tim);
-
-                //printf("FPS: %f\n", dkcGetFPS());
-            }
-
-            //--- On check si on n'est pas lock�avant de continuer
-            if (s_locked)
-            {
-                s_internalLock = true;
-            }
-
-            while (s_internalLock)
-            {
-                #ifdef WIN32
-                    Sleep(1);
-                #else
-                    if(nanosleep(&ts,0))
-                    {
-                        printf("problem nanosleep internal lock\n");
-                    }
-                    ts.tv_sec = 0;
-                    ts.tv_nsec = 1000000;
-                #endif
-            //  printf("--- internalLock (execute)\n");
-            }
-
-            #ifdef WIN32
-                Sleep(1);
-            #else
-            if(nanosleep(&ts,0))
-            {
-                printf("problem nanosleep main loop\n");
-            }
-            ts.tv_sec = 0;
-            ts.tv_nsec = 1000000;
-            #endif
-        }
-    }*/
-
     //--- Get the arguments and send that to console
-//  int argc, const char* argv[]
-
     if (argc > 1)
     {
         CString executeCmd = "execute ";
@@ -533,28 +334,20 @@ int main(int argc, const char* argv[])
         console->sendCommand(executeCmd);
     }
 
-
     char input[256];
     while (!quit)
     {
         std::cin.getline(input,256);
 
-
         mainLoopConsole.lock();
         if(std::cin.gcount())
-            console->sendCommand(input);//CString("Execute CTF"));
+        {
+            console->sendCommand(input);
+        }
         mainLoopConsole.unlock();
 
-        SDL_Delay(1);
-        //cin.ignore( 10000 , '\n');
-        //input[0] = 0;
-        //fflush(stdin);
+        dkcSleep(1);
     };
-
-    //printf(" main console loop has quit \n");
-
-
-//  while (dkwMainLoop());
 
     // On efface la scene et ses amis
     delete scene;
@@ -570,23 +363,19 @@ int main(int argc, const char* argv[])
     bb_peerShutdown();
     bb_shutdown();
 
-    // Tout c'est bien pass� on retourne 0
+    dkFini(ctx);
     return 0;
 }
 
 #else
 
-
-
-//
-// Fonction principal
-//
-int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
-            HINSTANCE   hPrevInstance,              // Previous Instance
-            LPSTR       lpCmdLine,              // Command Line Parameters
-            int     nCmdShow)               // Window Show State
+int main(int argc, const char* argv[])
 {
-    // PREMI�E CHOSE �FAIRE, on load les config
+    dkConfig config = {};
+    config.framePerSecond = 120;
+
+    dkContext* ctx = dkInit(config);
+
     gameVar.init();
 
     dksvarInit(&stringInterface);
@@ -596,24 +385,21 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
     // On load tout suite le language utilis�par le joueur
     if (!gameVar.isLanguageLoaded())
     {
-        MessageBox(NULL, "Can not load language file\nTry deleting the config file.", "Error", 0);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Can not load language file\nTry deleting the config file.", nullptr);
+        dkFini(ctx);
         return 0;
     }
 
-
     if (gameVar.r_bitdepth != 16 && gameVar.r_bitdepth != 32) gameVar.r_bitdepth = 32;
 
-    // On init nos DLL qui vont �re utilis�dans ce jeu
-    // On initialise quelque cossin important avant tout
-    //dkcInit(30); // 30 frame par seconde (m�e que 15 serait le best)
-    dkcInit(120); // FTFY
-
+    mainLoopInterface.ctx = ctx;
 
     //--- Windowed mode requires special handling
     if (!dkwInit(gameVar.r_resolution[0], gameVar.r_resolution[1], gameVar.r_bitdepth, gameVar.lang_gameName.s, &mainLoopInterface, gameVar.r_fullScreen, gameVar.r_refreshRate))
     {
         char * error = dkwGetLastError();
-        MessageBox(NULL, error, "Error", 0);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", error, nullptr);
+        dkFini(ctx);
         return 0;
     }
 
@@ -621,7 +407,8 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
     if (!dkiInit(dkwGetHandle()))
     {
         dkwShutDown();
-        MessageBox(NULL, "Error creating Input", "Error", 0);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error creating Input", nullptr);
+        dkFini(ctx);
         return 0;
     }
 
@@ -636,7 +423,8 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
     {
         dkiShutDown();
         dkwShutDown();
-        MessageBox(NULL, "Error creating openGL context", "Error", 0);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error creating openGL context", nullptr);
+        dkFini(ctx);
         return 0;
     }
 
@@ -666,7 +454,8 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
         dkiShutDown();
         dkglShutDown();
         dkwShutDown();
-        MessageBox(NULL, "Error creating fmod", "Error", 0);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error creating fmod", nullptr);
+        dkFini(ctx);
         return 0;
     }
 
@@ -679,7 +468,8 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
         dkiShutDown();
         dkglShutDown();
         dkwShutDown();
-        MessageBox(NULL, "Error initiating baboNet", "Error", 0);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error initiating baboNet", nullptr);
+        dkFini(ctx);
         return 0;
     }
     bbNetVersion = bb_getVersion();
@@ -694,7 +484,8 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
         dkiShutDown();
         dkglShutDown();
         dkwShutDown();
-        MessageBox(NULL, "Wrong version of BaboNet\nReinstalling the game may resolve this prolem", "Error", 0);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Wrong version of BaboNet", nullptr);
+        dkFini(ctx);
         return 0;
     }
 
@@ -709,39 +500,21 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
     master = new CMaster();
 
     // On cr�notre scene
-    scene = new Scene();
+    scene = new Scene(ctx);
 
     ShowCursor(FALSE);
 
-
-
-    #ifndef DEDICATED_SERVER
-        //check if we need to update to launcher
-        UpdateLauncher();
-    #endif
-
     // check command line options
-    CString str = lpCmdLine;
-    if( str.len() > 1 )
+    for(int i = 0; i < argc - 1; ++i)
     {
-        console->sendCommand( str );
+        CString str = CString("%s", argv[i]);
+        if(str.len() > 1)
+        {
+            console->sendCommand(str);
+        }
     }
 
-
-    // La loop principal
-/*  try
-    {*/
-        while (dkwMainLoop());
-/*  }
-    catch(...)
-    {
-        dkwShutDown(); // On close la fenetre au moins!
-        MessageBox(NULL, "Babo Violent 2 has encountered an error and needs to close, sorry for the inconvenience", "Error", 0);
-        return 0;
-    }*/
-
-
-    ShowCursor(TRUE);
+    while (dkwMainLoop());
 
     // On efface la scene
     delete scene;
@@ -771,7 +544,7 @@ int WINAPI WinMain( HINSTANCE   hInstance,              // Instance
     dkiShutDown();
     dkwShutDown();
 
-    // Tout c'est bien pass� on retourne 0
+    dkFini(ctx);
     return 0;
 }
 

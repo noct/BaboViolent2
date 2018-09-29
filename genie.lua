@@ -8,8 +8,7 @@ solution "BaboViolent"
     flags {
         "NoPCH",
         "ExtraWarnings",
-        "Symbols",
-        "WinMain"
+        "Symbols"
     }
 
     configuration {"Debug"}

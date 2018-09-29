@@ -31,8 +31,6 @@ using namespace std;
 // Les includes pour opengl
 #include "dkgl.h"
 
-//#include <gl/glext.h>
-
 // pour pouvoir loader une texture
 #include "dkt.h"
 

@@ -28,8 +28,9 @@ extern char* bbNetVersion;
 //
 // Constructeur
 //
-Scene::Scene()
+Scene::Scene(dkContext* dk)
 {
+    ctx = dk;
     frameID = 0;
 #ifndef DEDICATED_SERVER
     mainTab = 0;
@@ -86,7 +87,7 @@ Scene::Scene()
 //  dksPlayMusic("main/sounds/menu.ogg", -1);
 #endif
     // On reset el timer
-    dkcJumpToFrame(0);
+    dkcJumpToFrame(ctx, 0);
 }
 
 
@@ -293,7 +294,7 @@ void Scene::render()
                 glColor3f(1,1,1);
                 if (gameVar.r_showStats)
                 {
-                    printRightText((float)res[0], 0, 20, CString("FPS : %i", (int)dkcGetFPS()));
+                    printRightText((float)res[0], 0, 20, CString("FPS : %i", (int)dkcGetFPS(ctx)));
                 //dkfPrint(20,0, 0, 0, CString("FPS : %i", (int)dkcGetFPS()).s);
                //(size,x-width,y,0,text.s);
                     //printRightText((float)res[0], 32, 32, CString("NB PARTICLE : %i", gameVar.ro_nbParticle));

@@ -19,12 +19,68 @@
 /* TCE (c) All rights reserved */
 
 
-#include "dkgl.h"
-#include "dkti.h"
+#include <Zeven/Zeven.h>
 #include <math.h>
 #include <sys/stat.h>
-
+#include <vector>
 #include <Zeven/CVector.h>
+
+
+// La class pour tenir une texture, son ID et son filename
+class CTexture
+{
+public:
+    // Le string pour le filename de la texture
+    CString filename;
+
+    // Son ID opengl
+    unsigned int oglID;
+
+    // La date de modification du fichier
+    int32_t modifDate;
+
+    // Sa résolution
+    CVector2i size;
+
+    // Le nombre de fois quelle a été loadé
+    int nbInstance;
+
+    // Le nombre de Byte per pixel de la texture
+    int bpp;
+
+public:
+    // Constructeur / Destructeur
+    CTexture()
+    {
+        oglID = 0;
+        nbInstance = 0;
+        modifDate = 0;
+    }
+
+    virtual ~CTexture()
+    {
+        glDeleteTextures(1, &oglID);
+    }
+};
+
+// La class static pour contenir le tout
+class CDkt
+{
+public:
+    // Pour tenir la dernière erreur
+    static char *lastErrorString;
+
+    // Le vector de nos textures initialisé
+    static std::vector<CTexture*> textures;
+
+    // La texture qu'on check pour le auto updating
+    static int checkingUpdate;
+
+public:
+    // Pour updater l'erreur
+    static void updateLastError(char *error);
+};
+
 
 //
 // Les trucs static

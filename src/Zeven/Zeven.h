@@ -19,22 +19,33 @@
 #ifndef ZEVEN_H
 #define ZEVEN_H
 
+
+#define ZEVEN_UNUSED(p) (p)
+
 #include <cstdint>
 
 #include <Zeven/CMatrix.h>
 #include <Zeven/CString.h>
 #include <Zeven/CVector.h>
 
+struct dkContext;
+struct dkConfig
+{
+    int framePerSecond;
+};
+
+dkContext* dkInit(dkConfig config);
+void       dkFini(dkContext* ctx);
+
 const int LIMIT_MIN = 1 << 0;
 const int LIMIT_MAX = 1 << 1;
 
 enum CMD_RET {
-                CR_OK,
-                CR_NOTSUPPORTED,
-                CR_NOSUCHVAR,
-                CR_INVALIDARGS
-             };
-
+    CR_OK,
+    CR_NOTSUPPORTED,
+    CR_NOSUCHVAR,
+    CR_INVALIDARGS
+};
 
 class CStringInterface
 {
@@ -171,7 +182,7 @@ bool            dkoSphereIntersection(unsigned int modelID, float *p1, float *p2
 /// Cette fonction retourne en fait simplement : 1.0f / le param�re framePerSecond pass��dkcInit. Cette valeur est constante et repr�ente la dur� d'un cycle d'ex�ution de la mise �jour.
 ///
 /// \return 1.0f / le nombre d'update d�ir�par seconde
-float           dkcGetElapsedf();
+float           dkcGetElapsedf(dkContext* ctx);
 
 
 
@@ -180,7 +191,7 @@ float           dkcGetElapsedf();
 /// Cette fonction retourne le nombre d'image dessin�s �l'�ran pas seconde. cette valeur peut grandement varier (lors d'un lag par exemple)
 ///
 /// \return le nombre d'image dessin�s �l'�ran pas seconde
-float           dkcGetFPS();
+float           dkcGetFPS(dkContext* ctx);
 
 
 
@@ -191,25 +202,14 @@ float           dkcGetFPS();
 /// nombre de cycles d'ex�utions de mise �jour (update) �oul� depuis le dernier appel de dkcJumpToFrame() = valeur de retour de dkcGetFrame() - param�re pass�au dernier appel de dkcJumpToFrame()
 ///
 /// \return retourne le nombre de cycles d'ex�utions de mise �jour (update) �oul� depuis un certain rep�e
-int32_t         dkcGetFrame();
-
-
-
-/// \brief initialise le module de gestion du temps
-///
-/// Cette fonction initialise le module de gestion du temps et doit �re appel�une seule fois et avant tout autres appels de ce module.
-///
-/// \param framePerSecond sp�ifie le nombre de cycle d'ex�ution de mise �jour (update) d�ir�par seconde
-void            dkcInit(int framePerSecond);
-
-
+int32_t         dkcGetFrame(dkContext* ctx);
 
 /// \brief modifie le num�o du cycle d'ex�ution de mise �jour courant
 ///
 /// Cette fonction modifie le num�o du cycle d'ex�ution de mise �jour courant.
 ///
 /// \param frame nouveau num�o du cycle d'ex�ution de mise �jour courant
-void            dkcJumpToFrame(int frame);
+void            dkcJumpToFrame(dkContext* ctx, int frame);
 
 
 
@@ -218,10 +218,10 @@ void            dkcJumpToFrame(int frame);
 /// Cette fonction met �jour les rep�es de temps n�essaire au bon fonctionnement du module et retourne le nombre de cycle d'ex�ution de mise �jour (update) ��re effectu� avant d'effectuer le prochain rendu pour rester conforme au nombre de cycle d'ex�ution de mise �jour �abli par le param�re framePerSecond pass��la fonction dkcInit()
 ///
 /// \return le nombre de cycle d'ex�ution de mise �jour (update) ��re effectu�
-int32_t         dkcUpdateTimer();
+int32_t         dkcUpdateTimer(dkContext* ctx);
 
 
-void            dkcSleep(int32_t ms);
+void            dkcSleep(dkContext* ctx, int32_t ms);
 
 
 #ifndef DEDICATED_SERVER

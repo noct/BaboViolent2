@@ -78,8 +78,10 @@ public:
     long frameID;
 
 public:
+    dkContext* ctx;
+
     // Constructeur
-    Scene();
+    Scene(dkContext* ctx);
 
     // Destructeur
     virtual ~Scene();

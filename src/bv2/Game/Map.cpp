@@ -502,7 +502,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
 #endif
 
     //--- Reset timer
-    dkcJumpToFrame(0);
+    dkcJumpToFrame(scene->ctx, 0);
 }
 
 #ifndef DEDICATED_SERVER

@@ -17,11 +17,7 @@
 */
 
 /* TCE (c) All rights reserved */
-
-
 #include <Zeven/Zeven.h>
-#include "dkw.h"
-
 #include <memory.h>
 
 static CVector2i mousePos(0, 0);

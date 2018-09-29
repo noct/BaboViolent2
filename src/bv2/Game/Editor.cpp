@@ -66,7 +66,7 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
         needToShutDown = true;
         return;
     }
-    dkcJumpToFrame(0);
+    dkcJumpToFrame(scene->ctx, 0);
 
     // Create and initialize the tools
     tools.push_back(new ToolGround());

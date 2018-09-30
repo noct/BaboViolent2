@@ -37,7 +37,7 @@
 
 
 class Map;
-class Game;
+struct Game;
 
 // Notre coordframe
 struct CoordFrame

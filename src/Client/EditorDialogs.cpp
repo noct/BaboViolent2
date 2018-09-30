@@ -263,6 +263,7 @@ void NewMapDialog::OnOk()
         txt_mapName->text.resize(15);
         delete editor->map;
         gameVar.cl_mapAuthorName = txt_authorName->text;
+        new Map(txt_mapName->text, 0, dialogRoot->font, true, sld_mapWidth->value, sld_mapHeight->value);
         editor->map = new Map(txt_mapName->text, 0, dialogRoot->font, true, sld_mapWidth->value, sld_mapHeight->value);
     }
     else

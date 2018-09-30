@@ -138,10 +138,16 @@ void ClientGame::render()
                     for(i = 0; i < MAX_PLAYER; ++i) if(players[i]) players[i]->render();
 
                     // On render les rockets, grenades et autres projectiles
-                    ZEVEN_VECTOR_CALL(projectiles, i, render());
+                    for(auto p : projectiles)
+                    {
+                        static_cast<ClientProjectile*>(p)->render();
+                    }
 
                     // On render les projectiles client (Gibs et autre shit visuel)
-                    ZEVEN_VECTOR_CALL(clientProjectiles, i, render());
+                    for(auto p : clientProjectiles)
+                    {
+                        static_cast<ClientProjectile*>(p)->render();
+                    }
 
                     // On render les douilles
                     ZEVEN_VECTOR_CALL(douilles, i, render());
@@ -272,7 +278,10 @@ void ClientGame::render()
             glEnable(GL_TEXTURE_2D);
             glColor4f(0, 0, 0, .35f);
             // On render les rockets, grenades et autres projectiles
-            ZEVEN_VECTOR_CALL(projectiles, i, renderShadow());
+            for(auto p : projectiles)
+            {
+                static_cast<ClientProjectile*>(p)->renderShadow();
+            }
         }
 
         // On render les shadows des projectiles client
@@ -282,7 +291,10 @@ void ClientGame::render()
             glEnable(GL_TEXTURE_2D);
             glColor4f(0, 0, 0, .35f);
             // On render les rockets, grenades et autres projectiles
-            ZEVEN_VECTOR_CALL(clientProjectiles, i, renderShadow());
+            for(auto p : clientProjectiles)
+            {
+                static_cast<ClientProjectile*>(p)->renderShadow();
+            }
         }
         glPopAttrib();
 
@@ -302,10 +314,16 @@ void ClientGame::render()
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 7) {
 #endif
-            ZEVEN_VECTOR_CALL(projectiles, i, render());
+            for(auto p : projectiles)
+            {
+                static_cast<ClientProjectile*>(p)->render();
+            }
 
             // On render les projectiles clients
-            ZEVEN_VECTOR_CALL(clientProjectiles, i, render());
+            for(auto p : clientProjectiles)
+            {
+                static_cast<ClientProjectile*>(p)->render();
+            }
 #ifdef RENDER_LAYER_TOGGLE
         }
 #endif

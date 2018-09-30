@@ -29,9 +29,6 @@
 class Client;
 
 #define MAX_PLAYER 32
-#ifndef DEDICATED_SERVER
-#define MAX_FLOOR_MARK 500
-#endif
 #define GAME_TYPE_COUNT 4
 #define GAME_TYPE_DM 0
 #define GAME_TYPE_TDM 1
@@ -81,14 +78,6 @@ struct Projectile
     // quick hack to give the molotov one more frame before it gets deleted ( to prevent invisi flame bug )
     bool reallyNeedToBeDeleted;
 
-#ifndef DEDICATED_SERVER
-    // La rocket tourne sur elle même
-    float rotation;
-    float rotateVel;
-
-    bool isClientOnly;
-#endif
-
     // Il a une duration limite
     float duration;
 
@@ -98,9 +87,7 @@ struct Projectile
 
     // Pour savoir quand shooter le data au client
     long whenToShoot;
-#ifndef DEDICATED_SERVER
-    int spawnParticleTime;
-#endif
+
     int damageTime;
 
     int stickToPlayer;
@@ -120,17 +107,13 @@ struct Projectile
     Projectile(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID);
 
     // Son update
-    void update(float delay, Map * map);
-#ifndef DEDICATED_SERVER
-    // Pour l'afficher (client Only)
-    void render();
-    void renderShadow();
-#endif
+    virtual void update(float delay, Map * map);
+
     // pour updater le coordFrame avec celui du server
     void setCoordFrame(net_svcl_projectile_coord_frame & projectileCoordFrame);
 };
 
-class Game
+struct Game
 {
 public:
     // Sa liste de player
@@ -151,8 +134,8 @@ public:
 
     // Le type de jeu et les scores
     int gameType;
-   int spawnType;
-   int subGameType;
+    int spawnType;
+    int subGameType;
     int blueScore;
     int redScore;
     int blueWin;
@@ -193,9 +176,13 @@ public:
 
     virtual void castVote(const net_clsv_svcl_vote_request & voteRequest);
     bool votingUpdate(float delay);
-public:
+
+    virtual void onTeamSwitch(Player* player);
+
+    virtual void spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID);
+
     // Constructeur
-    Game(CString pMapName="");
+    Game(CString pMapName = "");
 
     // Destructeur
     virtual ~Game();
@@ -245,10 +232,10 @@ public:
     bool spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, bool imServer);
 
     // Pour toucher les joueurs dans un rayon
-    void radiusHit(CVector3f & position, float radius, char fromID, char weaponID, bool sameDmg=false);
+    void radiusHit(CVector3f & position, float radius, char fromID, char weaponID, bool sameDmg = false);
 
     // Pour savoir s'il y a un joueur dans le radius, last parameter used to ignore a specific player ( -1 = not ignoring anyone )
-    Player * playerInRadius(CVector3f position, float radius, int ignore = -1 );
+    Player * playerInRadius(CVector3f position, float radius, int ignore = -1);
 
     // Pour starter un nouveau type de game
     void resetGameType(int pGameType);
@@ -260,7 +247,6 @@ public:
 
     int numPlayers();
 
-private:
     void shootSV(int playerID, int nuzzleID, float imp, CVector3f p1, CVector3f p2);
 };
 

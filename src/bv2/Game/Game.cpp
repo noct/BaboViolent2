@@ -26,6 +26,7 @@
 
 extern Scene * scene;
 
+long Projectile::uniqueProjectileID = 0;
 
 void Game::castVote(const net_clsv_svcl_vote_request & voteRequest)
 {
@@ -475,6 +476,23 @@ void Game::update(float delay)
     }
 }
 
+void Game::onTeamSwitch(Player* player)
+{
+    // On print dans console
+    switch(player->teamID)
+    {
+    case PLAYER_TEAM_SPECTATOR:
+        console->add(CString("%s\x8 goes spectator ID:%i", player->name.s, player->playerID));
+        break;
+    case PLAYER_TEAM_BLUE:
+        console->add(CString("%s\x1 joins blue team ID:%i", player->name.s, player->playerID));
+        break;
+    case PLAYER_TEAM_RED:
+        console->add(CString("%s\x4 joins red team ID:%i", player->name.s, player->playerID));
+        break;
+    }
+}
+
 //
 // pour donner un team à un player
 //
@@ -546,28 +564,7 @@ int Game::assignPlayerTeam(int playerID, char teamRequested, Client * client)
             // On lui donne le nouveau team
             players[playerID]->teamID = teamRequested;
 
-            // On print dans console
-            switch(players[playerID]->teamID)
-            {
-            case PLAYER_TEAM_SPECTATOR:
-                console->add(CString("%s\x8 goes spectator ID:%i", players[playerID]->name.s, playerID));
-#ifndef DEDICATED_SERVER
-                if(client) client->eventMessages.push_back(CString(gameVar.lang_goesSpectator.s, players[playerID]->name.s));
-#endif
-                break;
-            case PLAYER_TEAM_BLUE:
-                console->add(CString("%s\x1 joins blue team ID:%i", players[playerID]->name.s, playerID));
-#ifndef DEDICATED_SERVER
-                if(client) client->eventMessages.push_back(CString(gameVar.lang_joinBlueTeamP.s, players[playerID]->name.s));
-#endif
-                break;
-            case PLAYER_TEAM_RED:
-                console->add(CString("%s\x4 joins red team ID:%i", players[playerID]->name.s, playerID));
-#ifndef DEDICATED_SERVER
-                if(client) client->eventMessages.push_back(CString(gameVar.lang_joinRedTeamP.s, players[playerID]->name.s));
-#endif
-                break;
-            }
+            onTeamSwitch(players[playerID]);
         }
 
         // Just in case
@@ -1037,8 +1034,6 @@ int Game::createNewPlayerSV(int babonetID)
             bb_serverSend((char*)&gameVersion, sizeof(net_svcl_gameversion), NET_SVCL_GAMEVERSION, babonetID);
 
             //--- Est-ce que c'est le seul joueur? ou il y a 2 joueur? On restart le server.
-
-
             return i;
         }
     }
@@ -1059,3 +1054,826 @@ int Game::numPlayers(void)
 
     return nbPlayer;
 }
+
+//
+// Spawner un player
+//
+bool Game::spawnPlayer(int playerID)
+{
+    if(players[playerID] && map)
+    {
+        if(players[playerID]->teamID == PLAYER_TEAM_BLUE || players[playerID]->teamID == PLAYER_TEAM_RED)
+        {
+            // On lui trouve une place libre loin des ennemies
+            if(gameType == GAME_TYPE_DM)
+            {
+                float currentScore = 0;
+                int bestFound = 0;
+                if(map->dm_spawns.size() > 0)
+                {
+                    for(int i = 0; i < (int)map->dm_spawns.size(); ++i)
+                    {
+                        float nearestPlayer = 100000;
+                        int nbPlayer = 0;
+                        // Pour chaque spawn point on check pour chaque player
+                        for(int j = 0; j < MAX_PLAYER; ++j)
+                        {
+                            if(players[j] && j != playerID)
+                            {
+                                if(players[j]->status == PLAYER_STATUS_ALIVE)
+                                {
+                                    nbPlayer++;
+                                    float dis = distanceSquared(map->dm_spawns[i], players[j]->currentCF.position);
+                                    if(dis < nearestPlayer) nearestPlayer = dis;
+                                }
+                            }
+                        }
+                        if(nearestPlayer > currentScore)
+                        {
+                            currentScore = nearestPlayer;
+                            bestFound = i;
+                        }
+                        if(nbPlayer == 0)
+                        {
+                            bestFound = rand() % (int)map->dm_spawns.size();
+                            break;
+                        }
+                    }
+                    players[playerID]->spawn(CVector3f(map->dm_spawns[bestFound][0], map->dm_spawns[bestFound][1], .25f));
+#ifndef DEDICATED_SERVER
+                    map->setCameraPos(players[playerID]->currentCF.position);
+#endif
+                    return true;
+                }
+            }
+
+            // On lui trouve une place libre loin des ennemies
+            if(gameType == GAME_TYPE_TDM || gameType == GAME_TYPE_CTF)
+            {
+                float currentScore = 0;
+                int bestFound = 0;
+                if(map->dm_spawns.size() > 0)
+                {
+                    for(int i = 0; i < (int)map->dm_spawns.size(); ++i)
+                    {
+                        float nearestPlayer = 100000;
+                        int nbPlayer = 0;
+                        // Pour chaque spawn point on check pour chaque player
+                        for(int j = 0; j < MAX_PLAYER; ++j)
+                        {
+                            if(players[j] && j != playerID)
+                            {
+                                if(players[j]->teamID != players[playerID]->teamID && players[j]->status == PLAYER_STATUS_ALIVE)
+                                {
+                                    nbPlayer++;
+                                    float dis = distanceSquared(map->dm_spawns[i], players[j]->currentCF.position);
+                                    if(dis < nearestPlayer) nearestPlayer = dis;
+                                }
+                            }
+                        }
+                        if(nearestPlayer > currentScore)
+                        {
+                            currentScore = nearestPlayer;
+                            bestFound = i;
+                        }
+                        if(nbPlayer == 0)
+                        {
+                            bestFound = rand() % (int)map->dm_spawns.size();
+                            break;
+                        }
+                    }
+                    CVector3f spawnPosition(map->dm_spawns[bestFound][0], map->dm_spawns[bestFound][1], .25f);
+
+                    if((gameType == GAME_TYPE_CTF) && (spawnType == SPAWN_TYPE_LADDER))
+                    {
+                        float timeElapsed = gameVar.sv_gameTimeLimit - gameTimeLeft;
+                        if(timeElapsed < 10.0f)
+                        {
+                            spawnPosition = map->flagPodPos[players[playerID]->teamID];
+                        }
+                    }
+
+                    players[playerID]->spawn(spawnPosition);
+#ifndef DEDICATED_SERVER
+                    map->setCameraPos(players[playerID]->currentCF.position);
+#endif
+                    return true;
+                }
+            }
+            /*  while (!found)
+                {
+                    int index = rand()%(int)map->dm_spawns.size();
+                    int x = rand((int)0, (int)map->size[0]);
+                    int y = rand((int)0, (int)map->size[1]);
+                    if (map->cells[y*map->size[0]+x].passable)
+                    {
+                        found = true;
+                        players[playerID]->spawn(CVector3f((float)x+.5f,(float)y+.5f,.25f));
+                        if (players[playerID] == thisPlayer)
+                        {
+                            map->setCameraPos(players[playerID]->currentCF.position);
+                        }
+                    }
+                }
+                return true;*/
+        }
+    }
+    return false;
+}
+
+void Game::spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID)
+{
+    Projectile* projectile = new Projectile(position, vel, pFromID, pProjectileType, pRemoteEntity, pUniqueProjectileID);
+    projectiles.push_back(projectile);
+}
+
+//
+// On spawn un projectile!
+//
+bool Game::spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, bool imServer)
+{
+    //  if (playerProjectile.projectileType == PROJECTILE_FLAME) return;
+        // On le push toujours à la fin du vector, si on respect bien ça les clients devraient tous les avoir
+        // dans l'ordre
+    if(imServer)
+    {
+        ++(Projectile::uniqueProjectileID);
+        playerProjectile.uniqueID = Projectile::uniqueProjectileID;
+
+        if(playerProjectile.projectileType == PROJECTILE_GRENADE)
+        {
+            if(players[playerProjectile.playerID]->nbGrenadeLeft <= 0) return false;
+            if(players[playerProjectile.playerID]) players[playerProjectile.playerID]->nbGrenadeLeft--;
+        }
+        if(playerProjectile.projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
+        {
+            if(players[playerProjectile.playerID]->nbMolotovLeft <= 0) return false;
+            if(players[playerProjectile.playerID]) players[playerProjectile.playerID]->nbMolotovLeft--;
+        }
+        if(playerProjectile.projectileType == PROJECTILE_DROPED_WEAPON)
+        {
+            CVector3f position;
+            position[0] = (float)playerProjectile.position[0] / 100.0f;
+            position[1] = (float)playerProjectile.position[1] / 100.0f;
+            position[2] = (float)playerProjectile.position[2] / 100.0f;
+            CVector3f vel;
+            vel[0] = (float)playerProjectile.vel[0] / 10.0f;
+            vel[1] = (float)playerProjectile.vel[1] / 10.0f;
+            vel[2] = (float)playerProjectile.vel[2] / 10.0f;
+            spawnProjectileSpecific(position, vel, playerProjectile.weaponID, playerProjectile.projectileType, false, Projectile::uniqueProjectileID);
+        }
+        else
+        {
+            CVector3f position;
+            position[0] = (float)playerProjectile.position[0] / 100.0f;
+            position[1] = (float)playerProjectile.position[1] / 100.0f;
+            position[2] = (float)playerProjectile.position[2] / 100.0f;
+            CVector3f vel;
+            vel[0] = (float)playerProjectile.vel[0] / 10.0f;
+            vel[1] = (float)playerProjectile.vel[1] / 10.0f;
+            vel[2] = (float)playerProjectile.vel[2] / 10.0f;
+            spawnProjectileSpecific(position, vel, playerProjectile.playerID, playerProjectile.projectileType, false, Projectile::uniqueProjectileID);
+        }
+        projectiles[projectiles.size() - 1]->projectileID = (short)projectiles.size() - 1;
+
+        if(playerProjectile.projectileType == PROJECTILE_FLAME)
+        {
+            Projectile * projectile = projectiles[projectiles.size() - 1];
+
+            // On demande au server de créer une instance d'une flame
+            net_clsv_svcl_player_projectile playerProjectile;
+            playerProjectile.playerID = projectile->fromID;
+            playerProjectile.nuzzleID = 0;
+            playerProjectile.projectileType = projectile->projectileType;
+            playerProjectile.weaponID = WEAPON_COCKTAIL_MOLOTOV;
+            playerProjectile.position[0] = (short)(projectile->currentCF.position[0] * 100);
+            playerProjectile.position[1] = (short)(projectile->currentCF.position[1] * 100);
+            playerProjectile.position[2] = (short)(projectile->currentCF.position[2] * 100);
+            playerProjectile.vel[0] = (char)(projectile->currentCF.vel[0] * 10);
+            playerProjectile.vel[1] = (char)(projectile->currentCF.vel[1] * 10);
+            playerProjectile.vel[2] = (char)(projectile->currentCF.vel[2] * 10);
+            playerProjectile.uniqueID = projectile->uniqueID;
+            bb_serverSend((char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE, 0);
+        }
+    }
+#ifndef DEDICATED_SERVER
+    else
+    {
+        if(playerProjectile.projectileType == PROJECTILE_DROPED_WEAPON)
+        {
+            CVector3f position;
+            position[0] = (float)playerProjectile.position[0] / 100.0f;
+            position[1] = (float)playerProjectile.position[1] / 100.0f;
+            position[2] = (float)playerProjectile.position[2] / 100.0f;
+            CVector3f vel;
+            vel[0] = (float)playerProjectile.vel[0] / 10.0f;
+            vel[1] = (float)playerProjectile.vel[1] / 10.0f;
+            vel[2] = (float)playerProjectile.vel[2] / 10.0f;
+            spawnProjectileSpecific(position, vel, playerProjectile.weaponID, playerProjectile.projectileType, true, playerProjectile.uniqueID);
+        }
+        else
+        {
+            CVector3f position;
+            position[0] = (float)playerProjectile.position[0] / 100.0f;
+            position[1] = (float)playerProjectile.position[1] / 100.0f;
+            position[2] = (float)playerProjectile.position[2] / 100.0f;
+            CVector3f vel;
+            vel[0] = (float)playerProjectile.vel[0] / 10.0f;
+            vel[1] = (float)playerProjectile.vel[1] / 10.0f;
+            vel[2] = (float)playerProjectile.vel[2] / 10.0f;
+            spawnProjectileSpecific(position, vel, playerProjectile.playerID, playerProjectile.projectileType, true, playerProjectile.uniqueID);
+        }
+        projectiles[projectiles.size() - 1]->projectileID = (short)projectiles.size() - 1;
+        //  projectiles[projectiles.size()-1]->remoteEntity = false;
+        //  projectiles[projectiles.size()-1]->uniqueID = playerProjectile.uniqueID;
+    }
+#endif
+
+    return true;
+}
+
+//
+// Constructeur
+//
+Projectile::Projectile(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID)
+{
+    fromID = pFromID;
+
+    uniqueID = pUniqueProjectileID;
+
+
+    timeSinceThrown = 0.0f;
+
+    projectileType = pProjectileType;
+    currentCF.position = position;
+    currentCF.vel = vel;
+    damageTime = 0;
+
+
+    lastCF = currentCF;
+    netCF0.reset();
+    netCF1.reset();
+    cFProgression = 0;
+
+    stickToPlayer = -1;
+    stickFor = 0;
+
+    whenToShoot = 0;
+
+    remoteEntity = pRemoteEntity; // Ça c'est server only
+    needToBeDeleted = false;
+    reallyNeedToBeDeleted = false;
+    movementLock = false;
+
+    projectileID = 0;
+
+    switch(projectileType)
+    {
+    case PROJECTILE_ROCKET:
+    {
+        duration = 10; // 10 sec
+        // On calcul l'angle que la rocket devrait avoir (dépendanment de sa vel, qui est l'Orientation)
+        CVector3f dirVect = vel;
+        dirVect[2] = 0; // L'orientation est juste en Z
+        normalize(dirVect);
+        float dotWithY = dot(CVector3f(0, 1, 0), dirVect);
+        float dotWithX = dot(CVector3f(1, 0, 0), dirVect);
+        currentCF.angle = acosf(dotWithY)*TO_DEGREE;
+        if(dotWithX > 0) currentCF.angle = -currentCF.angle;
+        // La rocket démarre plus vite
+        currentCF.vel *= 2.5f;
+
+        break;
+    }
+    case PROJECTILE_GRENADE:
+    {
+        duration = 2;
+        // La grenade démarre plus vite
+        currentCF.vel *= 5;
+        currentCF.vel[2] += 5; // Pas trop apique, on veut pogner les murs
+        break;
+    }
+    case PROJECTILE_COCKTAIL_MOLOTOV:
+    {
+        duration = 10;
+        currentCF.vel *= 6;
+        currentCF.vel[2] += 2;
+        break;
+    }
+    case PROJECTILE_LIFE_PACK:
+    {
+        //  currentCF.vel.set(0,0,1);
+        //  currentCF.vel = rotateAboutAxis(currentCF.vel, rand(-45.0f, 45.0f), CVector3f(1,0,0));
+        //  currentCF.vel = rotateAboutAxis(currentCF.vel, rand(-0.0f, 360.0f), CVector3f(0,0,1)) * 3;
+        duration = 20;
+        break;
+    }
+    case PROJECTILE_DROPED_WEAPON:
+    {
+        //  currentCF.vel.set(0,0,1);
+        //  currentCF.vel = rotateAboutAxis(currentCF.vel, rand(-45.0f, 45.0f), CVector3f(1,0,0));
+        //  currentCF.vel = rotateAboutAxis(currentCF.vel, rand(-0.0f, 360.0f), CVector3f(0,0,1)) * 3;
+        duration = 30;
+        break;
+    }
+    case PROJECTILE_DROPED_GRENADE:
+    {
+        //  currentCF.vel.set(0,0,1);
+        //  currentCF.vel = rotateAboutAxis(currentCF.vel, rand(-45.0f, 45.0f), CVector3f(1,0,0));
+        //  currentCF.vel = rotateAboutAxis(currentCF.vel, rand(-0.0f, 360.0f), CVector3f(0,0,1)) * 3;
+        duration = 25;
+        break;
+    }
+    case PROJECTILE_FLAME:
+    {
+        duration = 10;
+        break;
+    }
+    case PROJECTILE_GIB:
+    {
+        //      isClientOnly
+        break;
+    }
+    }
+}
+
+//
+// Son update
+//
+void Projectile::update(float delay, Map* map)
+{
+    lastCF = currentCF; // On garde une copie du dernier coordFrame
+    currentCF.frameID++; // Ça ça reste inchangé
+
+    timeSinceThrown += delay;
+
+        // On la clamp quand meme (1 sqrtf par rocket, pas si pire..)
+    float speed = currentCF.vel.length();
+    if(projectileType == PROJECTILE_ROCKET)
+    {
+        if(speed > 10) // 10 = fast enough :P
+        {
+            currentCF.vel /= speed;
+            speed = 10;
+            currentCF.vel *= speed;
+        }
+
+        // On déplace avec la velocity
+        currentCF.position += currentCF.vel * delay;
+
+        // On incrémente la vel, la rocket à fuse en sale! (accélération exponentiel!)
+        currentCF.vel += currentCF.vel * delay * 3;
+    }
+
+    if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
+    {
+        // On déplace avec la velocity
+        currentCF.position += currentCF.vel * delay;
+
+        // On affecte la gravitée!
+        currentCF.vel[2] -= 9.8f * delay;
+    }
+
+    if(projectileType == PROJECTILE_FLAME && !movementLock)
+    {
+        // On déplace avec la velocity
+        currentCF.position += currentCF.vel * delay;
+
+        // On affecte la gravitée!
+        currentCF.vel[2] -= 9.8f * delay;
+    }
+
+    //--- Le feu est pogné sur un player
+    if(projectileType == PROJECTILE_FLAME)
+    {
+        if(!remoteEntity)
+        {
+            if(stickToPlayer >= 0 && scene->server)
+            {
+                if(scene->server->game->players[stickToPlayer])
+                {
+                    if(scene->server->game->players[stickToPlayer]->status == PLAYER_STATUS_DEAD)
+                    {
+                        stickToPlayer = -1;
+                    }
+                    else
+                    {
+                        currentCF.position = scene->server->game->players[stickToPlayer]->currentCF.position;
+                    }
+                }
+                stickFor -= delay;
+                if(stickFor <= 0)
+                {
+                    stickFor = 0;
+                    stickToPlayer = -1;
+                    net_svcl_flame_stick_to_player flameStickToPlayer;
+                    flameStickToPlayer.playerID = -1;
+                    flameStickToPlayer.projectileID = projectileID;
+                    bb_serverSend((char*)&flameStickToPlayer, sizeof(net_svcl_flame_stick_to_player), NET_SVCL_FLAME_STICK_TO_PLAYER, 0);
+                    movementLock = false;
+                    stickFor = 1.0f; // 1 sec sans retoucher à un autre joueur (quand meme là)
+                //  net_svcl_flame_stick_to_player flameStickToPlayer;
+                    flameStickToPlayer.playerID = -1;
+                    flameStickToPlayer.projectileID = projectileID;
+                    bb_serverSend((char*)&flameStickToPlayer, sizeof(net_svcl_flame_stick_to_player), NET_SVCL_FLAME_STICK_TO_PLAYER, 0);
+                }
+            }
+            if(stickToPlayer == -1)
+            {
+                stickFor -= delay;
+                if(stickFor <= 0)
+                {
+                    stickFor = 0;
+                    Player * playerInRadius = scene->server->game->playerInRadius(currentCF.position, .5f, this->timeSinceThrown > 0.5f ? -1 : this->fromID);
+                    if(playerInRadius)
+                    {
+                        movementLock = true;
+                        stickToPlayer = playerInRadius->playerID;
+                        stickFor = 3;
+                        net_svcl_flame_stick_to_player flameStickToPlayer;
+                        flameStickToPlayer.playerID = playerInRadius->playerID;
+                        flameStickToPlayer.projectileID = projectileID;
+                        bb_serverSend((char*)&flameStickToPlayer, sizeof(net_svcl_flame_stick_to_player), NET_SVCL_FLAME_STICK_TO_PLAYER, 0);
+                    }
+                }
+            }
+
+            damageTime++;
+            if(damageTime >= 20)
+            {
+                damageTime = 0;
+                if(scene->server)
+                {
+                    scene->server->game->radiusHit(currentCF.position, .5f, fromID, WEAPON_COCKTAIL_MOLOTOV);
+                }
+            }
+        }
+        else
+        {
+            if(stickToPlayer >= 0)
+            {
+#ifndef DEDICATED_SERVER
+                if(scene->client->game->players[stickToPlayer])
+                {
+                    if(scene->client->game->players[stickToPlayer]->status == PLAYER_STATUS_DEAD)
+                    {
+                        stickToPlayer = -1;
+                    }
+                    else
+                    {
+                        currentCF.position = scene->client->game->players[stickToPlayer]->currentCF.position;
+                    }
+                }
+#endif
+            }
+        }
+    }
+
+    // On check les collisions
+    if(map && projectileType == PROJECTILE_FLAME && !movementLock)
+    {
+        // On test si on ne pogne pas un babo!
+        CVector3f p1 = lastCF.position;
+        CVector3f p2 = currentCF.position;
+        CVector3f normal;
+        if(map->rayTest(p1, p2, normal))
+        {
+            // On lock les mouvements du feu
+            movementLock = true;
+
+            // On se cré un spot par terre, pis on lock les mouvement du feu là
+            currentCF.position = p2 + normal * .1f;
+        }
+    }
+
+    if(speed > .5f || currentCF.position[2] > .2f)
+    {
+        if(projectileType == PROJECTILE_GRENADE || projectileType == PROJECTILE_LIFE_PACK || projectileType == PROJECTILE_DROPED_WEAPON || projectileType == PROJECTILE_DROPED_GRENADE)
+        {
+            // On déplace avec la velocity
+            currentCF.position += currentCF.vel * delay;
+
+            // On affecte la gravitée!
+            currentCF.vel[2] -= 9.8f * delay; // (suposont q'un babo fait 50cm de diamètre)
+        }
+
+        if(map && projectileType == PROJECTILE_GRENADE || projectileType == PROJECTILE_LIFE_PACK || projectileType == PROJECTILE_DROPED_WEAPON || projectileType == PROJECTILE_DROPED_GRENADE)
+        {
+            CVector3f p1 = lastCF.position;
+            CVector3f p2 = currentCF.position;
+            CVector3f normal;
+            if(map->rayTest(p1, p2, normal))
+            {
+                if(remoteEntity)
+                {
+                    //--- Play the sound
+#ifndef DEDICATED_SERVER
+                    dksPlay3DSound(gameVar.sfx_grenadeRebond, -1, 1, p2, 200);
+#endif
+                }
+                currentCF.position = p2 + normal * .01f;
+                currentCF.vel = reflect(currentCF.vel, normal);
+                currentCF.vel *= .65f;
+            }
+        }
+    }
+    else
+    {
+        currentCF.vel.set(0, 0, 0);
+    }
+
+    // C le server et lui seul qui décide quand il est temps de mettre fin à ses jours
+    if(!remoteEntity)
+    {
+        duration -= delay;
+        if(duration <= 0)
+        {
+
+            // KATABOOM
+            if(projectileType == PROJECTILE_GRENADE)
+            {
+                if(needToBeDeleted) return;
+
+                needToBeDeleted = true;
+
+                // On se cré DA explosion :P
+                net_svcl_explosion explosion;
+                explosion.position[0] = currentCF.position[0];
+                explosion.position[1] = currentCF.position[1];
+                explosion.position[2] = currentCF.position[2];
+                explosion.playerID = (char)(-1);
+                explosion.normal[0] = 0;
+                explosion.normal[1] = 0;
+                explosion.normal[2] = 1;
+                explosion.radius = 1.5f;
+                bb_serverSend((char*)&explosion, sizeof(net_svcl_explosion), NET_SVCL_EXPLOSION, 0);
+                if(scene->server) scene->server->game->radiusHit(currentCF.position, 3, fromID, WEAPON_GRENADE);
+                return;
+            }
+            else
+            {
+                needToBeDeleted = true;
+            }
+            return;
+        }
+    }
+
+    // On check les collisions
+    float zookaRadius = 3.0;
+    if(gameVar.sv_zookaRemoteDet && gameVar.sv_serverType == 1)
+        zookaRadius = gameVar.sv_zookaRadius;
+    if(gameVar.sv_serverType = 1)
+    {
+        gameVar.weapons[WEAPON_BAZOOKA]->damage = gameVar.sv_zookaDamage;
+    }
+    else
+    {
+        gameVar.weapons[WEAPON_BAZOOKA]->damage = 0.75f;
+    }
+    if(map && projectileType == PROJECTILE_ROCKET && !remoteEntity && !needToBeDeleted)
+    {
+        // On test si on ne pogne pas un babo!
+        Player * playerInRadius = (scene->server) ? scene->server->game->playerInRadius(currentCF.position, .25f) : 0;
+        if(playerInRadius) if(playerInRadius->playerID == fromID) playerInRadius = 0;
+        if(playerInRadius)
+        {
+            scene->server->game->players[fromID]->rocketInAir = false;
+            scene->server->game->players[fromID]->detonateRocket = false;
+            // On frappe un mec !!! KKAAAABBOOOUUMM PLEIN DE SANG MOUHOUHAHAHAHHA
+            needToBeDeleted = true;
+            // On se cré DA explosion :P
+            net_svcl_explosion explosion;
+            explosion.position[0] = playerInRadius->currentCF.position[0];
+            explosion.position[1] = playerInRadius->currentCF.position[1];
+            explosion.position[2] = playerInRadius->currentCF.position[2];
+            explosion.normal[0] = 0;
+            explosion.normal[1] = 0;
+            explosion.normal[2] = 1;
+            explosion.radius = zookaRadius;
+            explosion.playerID = fromID;
+            bb_serverSend((char*)&explosion, sizeof(net_svcl_explosion), NET_SVCL_EXPLOSION, 0);
+            if(scene->server) scene->server->game->radiusHit(playerInRadius->currentCF.position, zookaRadius, fromID, WEAPON_BAZOOKA);
+            return;
+        }
+        else
+        {
+            CVector3f p1 = lastCF.position;
+            CVector3f p2 = currentCF.position;
+            CVector3f normal;
+            if(map->rayTest(p1, p2, normal) || scene->server->game->players[fromID]->detonateRocket)
+            {
+                scene->server->game->players[fromID]->rocketInAir = false;
+                scene->server->game->players[fromID]->detonateRocket = false;
+                p2 += normal * .1f;
+                // On frappe un mur !!! KKAAAABBOOOUUMM
+                needToBeDeleted = true;
+                // On se cré DA explosion :P
+                net_svcl_explosion explosion;
+                explosion.position[0] = p2[0];
+                explosion.position[1] = p2[1];
+                explosion.position[2] = p2[2];
+                explosion.normal[0] = normal[0];
+                explosion.normal[1] = normal[1];
+                explosion.normal[2] = normal[2];
+                explosion.radius = zookaRadius;
+                explosion.playerID = fromID;
+                bb_serverSend((char*)&explosion, sizeof(net_svcl_explosion), NET_SVCL_EXPLOSION, 0);
+                if(scene->server) scene->server->game->radiusHit(p2, zookaRadius, fromID, WEAPON_BAZOOKA);
+
+                return;
+            }
+        }
+    }
+
+    // On check les collisions
+    if(map && projectileType == PROJECTILE_COCKTAIL_MOLOTOV && !remoteEntity && !needToBeDeleted)
+    {
+        // On test si on ne pogne pas un babo!
+        Player * playerInRadius = (scene->server) ? scene->server->game->playerInRadius(currentCF.position, .25f, (int)fromID) : 0;
+        if(playerInRadius)
+        {
+            if(playerInRadius->playerID == fromID) playerInRadius = 0;
+        }
+        if(playerInRadius)
+        {
+            //console->add( CString("from id : %i",playerInRadius->playerID));
+            // On frappe un mec !!! Flak MOLOTOV PARTY!
+            needToBeDeleted = true;
+
+            // On se cré DA FLAME explosion :P
+            net_svcl_play_sound playSound;
+            playSound.position[0] = (unsigned char)currentCF.position[0];
+            playSound.position[1] = (unsigned char)currentCF.position[1];
+            playSound.position[2] = (unsigned char)currentCF.position[2];
+            playSound.volume = 250;
+            playSound.range = 5;
+            playSound.soundID = SOUND_MOLOTOV;
+            bb_serverSend((char*)&playSound, sizeof(net_svcl_play_sound), NET_SVCL_PLAY_SOUND, 0);
+
+            // On spawn du feu
+            net_clsv_svcl_player_projectile playerProjectile;
+            playerProjectile.playerID = fromID;
+            playerProjectile.nuzzleID = 0;
+            playerProjectile.position[0] = (short)(currentCF.position[0] * 100);
+            playerProjectile.position[1] = (short)(currentCF.position[1] * 100);
+            playerProjectile.position[2] = (short)(currentCF.position[2] * 100);
+            playerProjectile.weaponID = 0;//WEAPON_COCKTAIL_MOLOTOV;
+            playerProjectile.projectileType = PROJECTILE_FLAME;
+            playerProjectile.vel[0] = 0;
+            playerProjectile.vel[1] = 0;
+            playerProjectile.vel[2] = 0;
+            scene->server->game->spawnProjectile(playerProjectile, true);
+
+            //for (int i=0;i<1;++i)
+            //{
+            //  console->add("Creating flame");
+                //net_clsv_svcl_player_projectile playerProjectile;
+            playerProjectile.playerID = fromID;
+            playerProjectile.nuzzleID = 0;
+            playerProjectile.position[0] = (short)(currentCF.position[0] * 100);
+            playerProjectile.position[1] = (short)(currentCF.position[1] * 100);
+            playerProjectile.position[2] = (short)(currentCF.position[2] * 100);
+            playerProjectile.weaponID = 0;//WEAPON_COCKTAIL_MOLOTOV;
+            playerProjectile.projectileType = PROJECTILE_FLAME;
+            CVector3f vel = currentCF.vel*.5f + rand(CVector3f(-1, -1, 1), CVector3f(1, 1, 2));
+            playerProjectile.vel[0] = 0; (char)(vel[0] * 10);
+            playerProjectile.vel[1] = 0; (char)(vel[1] * 10);
+            playerProjectile.vel[2] = 0; (char)(vel[2] * 10);
+            scene->server->game->spawnProjectile(playerProjectile, true);
+            //}
+            return;
+        }
+        else
+        {
+            CVector3f p1 = lastCF.position;
+            CVector3f p2 = currentCF.position;
+            CVector3f normal;
+            if(map->rayTest(p1, p2, normal))
+            {
+                currentCF.position = p2 + normal * .1f;
+
+                // On frappe un mur ou un plancher, Molotov Party time
+                needToBeDeleted = true;
+                // On se cré DA FLAME explosion :P
+                net_svcl_play_sound playSound;
+                playSound.position[0] = (unsigned char)p2[0];
+                playSound.position[1] = (unsigned char)p2[1];
+                playSound.position[2] = (unsigned char)p2[2];
+                playSound.volume = 250;
+                playSound.range = 5;
+                playSound.soundID = SOUND_MOLOTOV;
+                bb_serverSend((char*)&playSound, sizeof(net_svcl_play_sound), NET_SVCL_PLAY_SOUND, 0);
+
+                // On spawn du feu
+                net_clsv_svcl_player_projectile playerProjectile;
+                playerProjectile.playerID = fromID;
+                playerProjectile.nuzzleID = 0;
+                playerProjectile.position[0] = (short)(currentCF.position[0] * 100);
+                playerProjectile.position[1] = (short)(currentCF.position[1] * 100);
+                playerProjectile.position[2] = (short)(currentCF.position[2] * 100);
+                playerProjectile.weaponID = 0;//WEAPON_COCKTAIL_MOLOTOV;
+                playerProjectile.projectileType = PROJECTILE_FLAME;
+                playerProjectile.vel[0] = 0;
+                playerProjectile.vel[1] = 0;
+                playerProjectile.vel[2] = 0;
+                scene->server->game->spawnProjectile(playerProjectile, true);
+                for(int i = 0; i < 1; ++i)
+                {
+                    //  console->add("Creating flame");
+                    net_clsv_svcl_player_projectile playerProjectile;
+                    playerProjectile.playerID = fromID;
+                    playerProjectile.nuzzleID = 0;
+                    playerProjectile.position[0] = (short)(currentCF.position[0] * 100);
+                    playerProjectile.position[1] = (short)(currentCF.position[1] * 100);
+                    playerProjectile.position[2] = (short)(currentCF.position[2] * 100);
+                    playerProjectile.weaponID = 0;//WEAPON_COCKTAIL_MOLOTOV;
+                    playerProjectile.projectileType = PROJECTILE_FLAME;
+                    CVector3f vel = reflect(currentCF.vel*.5f, normal) + rand(CVector3f(-1, -1, 0), CVector3f(1, 1, 1));
+                    playerProjectile.vel[0] = (char)(vel[0] * 10);
+                    playerProjectile.vel[1] = (char)(vel[1] * 10);
+                    playerProjectile.vel[2] = (char)(vel[2] * 10);
+                    scene->server->game->spawnProjectile(playerProjectile, true);
+                }
+                return;
+            }
+        }
+    }
+
+    // On ramasse de la vie
+    if(projectileType == PROJECTILE_LIFE_PACK && !remoteEntity && !needToBeDeleted)
+    {
+        // On test si on ne pogne pas un babo!
+        Player * playerInRadius = (scene->server) ? scene->server->game->playerInRadius(CVector3f(currentCF.position[0], currentCF.position[1], .25f), .25f) : 0;
+        if(playerInRadius)
+        {
+            // On lui donne de la vie yééé
+            playerInRadius->life += .5f;
+            if(playerInRadius->life > 1) playerInRadius->life = 1;
+            needToBeDeleted = true;
+            net_svcl_pickup_item pickupItem;
+            pickupItem.playerID = playerInRadius->playerID;
+            pickupItem.itemType = ITEM_LIFE_PACK;
+            pickupItem.itemFlag = 0;
+            bb_serverSend((char*)&pickupItem, sizeof(net_svcl_pickup_item), NET_SVCL_PICKUP_ITEM, 0);
+            return;
+        }
+    }
+
+    // On ramasse les grenades
+    if(projectileType == PROJECTILE_DROPED_GRENADE && !remoteEntity && !needToBeDeleted)
+    {
+        // On test si on ne pogne pas un babo!
+        Player * playerInRadius = (scene->server) ? scene->server->game->playerInRadius(CVector3f(currentCF.position[0], currentCF.position[1], .25f), .25f) : 0;
+        if(playerInRadius)
+        {
+            // On lui donne la grenade
+            playerInRadius->nbGrenadeLeft += 1;
+            if(playerInRadius->nbGrenadeLeft > 3) playerInRadius->nbGrenadeLeft = 3;
+            needToBeDeleted = true;
+            net_svcl_pickup_item pickupItem;
+            pickupItem.playerID = playerInRadius->playerID;
+            pickupItem.itemType = ITEM_GRENADE;
+            pickupItem.itemFlag = 0;
+            bb_serverSend((char*)&pickupItem, sizeof(net_svcl_pickup_item), NET_SVCL_PICKUP_ITEM, 0);
+            return;
+        }
+    }
+}
+
+//
+// pour updater le coordFrame avec celui du server
+//
+void Projectile::setCoordFrame(net_svcl_projectile_coord_frame & projectileCoordFrame)
+{
+    if(netCF1.frameID > projectileCoordFrame.frameID) return;
+
+    // Notre dernier keyframe change pour celui qu'on est rendu
+    netCF0 = currentCF;
+    netCF0.frameID = netCF1.frameID; // On pogne le frameID de l'ancien packet par contre
+    cFProgression = 0; // On commence au début de la courbe ;)
+
+    // On donne la nouvelle velocity à notre entity
+    currentCF.vel[0] = (float)projectileCoordFrame.vel[0] / 10.0f;
+    currentCF.vel[1] = (float)projectileCoordFrame.vel[1] / 10.0f;
+    currentCF.vel[2] = (float)projectileCoordFrame.vel[2] / 10.0f;
+
+    // Son frame ID
+    netCF1.frameID = projectileCoordFrame.frameID;
+
+    // Va faloir interpoler ici et prédire (job's done!)
+    netCF1.position[0] = (float)projectileCoordFrame.position[0] / 100.0f;
+    netCF1.position[1] = (float)projectileCoordFrame.position[1] / 100.0f;
+    netCF1.position[2] = (float)projectileCoordFrame.position[2] / 100.0f;
+
+    // Sa velocity
+    netCF1.vel[0] = (float)projectileCoordFrame.vel[0] / 10.0f;
+    netCF1.vel[1] = (float)projectileCoordFrame.vel[1] / 10.0f;
+    netCF1.vel[2] = (float)projectileCoordFrame.vel[2] / 10.0f;
+
+    // Si notre frameID était à 0, on le copie direct
+    if(netCF0.frameID == 0)
+    {
+        netCF0 = netCF1;
+    }
+}
+

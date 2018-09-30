@@ -944,3 +944,548 @@ void ClientGame::castVote(const net_clsv_svcl_vote_request & voteRequest)
     else
         voting.voted = true;
 }
+
+
+void ClientGame::onTeamSwitch(Player* player)
+{
+    Game::onTeamSwitch(player);
+    // On print dans console
+    switch(player->teamID)
+    {
+    case PLAYER_TEAM_SPECTATOR:
+        if(scene->client) scene->client->eventMessages.push_back(CString(gameVar.lang_goesSpectator.s, player->name.s));
+        break;
+    case PLAYER_TEAM_BLUE:
+        if(scene->client) scene->client->eventMessages.push_back(CString(gameVar.lang_joinBlueTeamP.s, player->name.s));
+        break;
+    case PLAYER_TEAM_RED:
+        if(scene->client) scene->client->eventMessages.push_back(CString(gameVar.lang_joinRedTeamP.s, player->name.s));
+        break;
+    }
+}
+
+void ClientGame::spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID)
+{
+    Projectile* projectile = new ClientProjectile(position, vel, pFromID, pProjectileType, pRemoteEntity, pUniqueProjectileID);
+    projectiles.push_back(projectile);
+}
+
+ClientProjectile::ClientProjectile(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID)
+    : Projectile(position, vel, pFromID, pProjectileType, pRemoteEntity, pUniqueProjectileID)
+{
+    spawnParticleTime = 0;
+    rotation = 0;
+
+    switch(projectileType)
+    {
+    case PROJECTILE_ROCKET:
+    {
+        rotateVel = 360;
+        if(remoteEntity)
+        {
+            for(int i = 0; i < 10; ++i)
+            {
+                // On spawn des particules dans son cul (une par frame)
+                dkpCreateParticleEx(
+                    position - vel, //CVector3f & positionFrom,
+                    position - vel, //CVector3f & positionTo,
+                    -vel, //CVector3f & direction,
+                    1, //float speedFrom,
+                    2, //float speedTo,
+                    0, //float pitchFrom,
+                    45, //float pitchTo,
+                    .05f, //float startSizeFrom,
+                    .25f, //float startSizeTo,
+                    .25f, //float endSizeFrom,
+                    .45f, //float endSizeTo,
+                    .5f, //float durationFrom,
+                    2, //float durationTo,
+                    CColor4f(.5f, .5f, .5f, 1), //CColor4f & startColorFrom,
+                    CColor4f(.5f, .5f, .5f, 1), //CColor4f & startColorTo,
+                    CColor4f(.5f, .5f, .5f, 0), //CColor4f & endColorFrom,
+                    CColor4f(.5f, .5f, .5f, 0), //CColor4f & endColorTo,
+                    0, //float angleFrom,
+                    360, //float angleTo,
+                    -30, //float angleSpeedFrom,
+                    30, //float angleSpeedTo,
+                    0, //float gravityInfluence,
+                    .25f, //float airResistanceInfluence,
+                    5, //unsigned int particleCountFrom,
+                    5, //unsigned int particleCountTo,
+                    &gameVar.tex_smoke1,
+                    0, //int textureFrameCount,
+                    DKP_SRC_ALPHA, //unsigned int srcBlend,
+                    DKP_ONE_MINUS_SRC_ALPHA);//unsigned int dstBlend);
+                // On spawn des particules dans son cul (une par frame)
+                dkpCreateParticleEx(
+                    position, //CVector3f & positionFrom,
+                    position, //CVector3f & positionTo,
+                    vel, //CVector3f & direction,
+                    1, //float speedFrom,
+                    2, //float speedTo,
+                    0, //float pitchFrom,
+                    45, //float pitchTo,
+                    .05f, //float startSizeFrom,
+                    .25f, //float startSizeTo,
+                    .25f, //float endSizeFrom,
+                    .45f, //float endSizeTo,
+                    .5f, //float durationFrom,
+                    2, //float durationTo,
+                    CColor4f(.5f, .5f, .5f, 1), //CColor4f & startColorFrom,
+                    CColor4f(.5f, .5f, .5f, 1), //CColor4f & startColorTo,
+                    CColor4f(.5f, .5f, .5f, 0), //CColor4f & endColorFrom,
+                    CColor4f(.5f, .5f, .5f, 0), //CColor4f & endColorTo,
+                    0, //float angleFrom,
+                    360, //float angleTo,
+                    -30, //float angleSpeedFrom,
+                    30, //float angleSpeedTo,
+                    0, //float gravityInfluence,
+                    .25f, //float airResistanceInfluence,
+                    5, //unsigned int particleCountFrom,
+                    5, //unsigned int particleCountTo,
+                    &gameVar.tex_smoke1,
+                    0, //int textureFrameCount,
+                    DKP_SRC_ALPHA, //unsigned int srcBlend,
+                    DKP_ONE_MINUS_SRC_ALPHA);//unsigned int dstBlend);
+            }
+        }
+        break;
+    }
+    case PROJECTILE_GRENADE:
+    {
+        rotateVel = 360;
+    }
+    case PROJECTILE_COCKTAIL_MOLOTOV:
+    {
+        rotateVel = 360;
+        break;
+    }
+    case PROJECTILE_LIFE_PACK:
+    {
+        rotateVel = rand(-90.0f, 90.0f);
+        break;
+    }
+    case PROJECTILE_DROPED_WEAPON:
+    {
+        rotateVel = rand(-90.0f, 90.0f);
+        break;
+    }
+    case PROJECTILE_DROPED_GRENADE:
+    {
+        rotateVel = rand(-90.0f, 90.0f);
+        break;
+    }
+    case PROJECTILE_FLAME:
+    {
+        rotateVel = 0;
+        break;
+    }
+    }
+}
+
+//
+// Pour l'afficher (client Only)
+//
+void ClientProjectile::render()
+{
+    // Les effects de la rocket
+    if(projectileType == PROJECTILE_ROCKET)
+    {
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
+        glDisable(GL_LIGHTING);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glPushMatrix();
+        // Shot glow
+        glTranslatef(currentCF.position[0], currentCF.position[1], 0);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+        glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+        glColor4f(1, 1, 1, rand(.05f, .25f));
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1);
+        glVertex3f(-2.5f, 2.5f, 0);
+        glTexCoord2f(0, 0);
+        glVertex3f(-2.5f, -2.5f, 0);
+        glTexCoord2f(1, 0);
+        glVertex3f(2.5f, -2.5f, 0);
+        glTexCoord2f(1, 1);
+        glVertex3f(2.5f, 2.5f, 0);
+        glEnd();
+        glEnable(GL_DEPTH_TEST);
+        glPopMatrix();
+        glPushMatrix();
+        glTranslatef(currentCF.position[0], currentCF.position[1], currentCF.position[2]);
+        glRotatef(currentCF.angle, 0, 0, 1);
+        glRotatef(rand(.0f, 360.0f), 0, 1, 0);
+        glScalef(.5f, .5f, .5f);
+        glEnable(GL_BLEND);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, gameVar.tex_nuzzleFlash);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_FOG);
+        glColor4f(1, 1, 1, 1.0f);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 0);
+        glVertex3f(-.25f, 0, 0);
+        glTexCoord2f(0, 1);
+        glVertex3f(-.25f, -1, 0);
+        glTexCoord2f(1, 1);
+        glVertex3f(.25f, -1, 0);
+        glTexCoord2f(1, 0);
+        glVertex3f(.25f, 0, 0);
+
+        glTexCoord2f(0, 0);
+        glVertex3f(0, 0, .25f);
+        glTexCoord2f(0, 1);
+        glVertex3f(0, -1, .25f);
+        glTexCoord2f(1, 1);
+        glVertex3f(0, -1, -.25f);
+        glTexCoord2f(1, 0);
+        glVertex3f(0, 0, -.25f);
+        glEnd();
+        glPopMatrix();
+        glPopAttrib();
+    }
+
+    // Les effects du molotov
+    if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
+    {
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
+        glDisable(GL_LIGHTING);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glPushMatrix();
+        // Le glow lumineux
+        glTranslatef(currentCF.position[0], currentCF.position[1], 0);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+        glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+        glColor4f(1, 1, 1, rand(.05f, .25f));
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1);
+        glVertex3f(-2.5f, 2.5f, 0);
+        glTexCoord2f(0, 0);
+        glVertex3f(-2.5f, -2.5f, 0);
+        glTexCoord2f(1, 0);
+        glVertex3f(2.5f, -2.5f, 0);
+        glTexCoord2f(1, 1);
+        glVertex3f(2.5f, 2.5f, 0);
+        glEnd();
+        glEnable(GL_DEPTH_TEST);
+        glPopMatrix();
+        glPopAttrib();
+    }
+
+    if(projectileType != PROJECTILE_FLAME)
+    {
+        glPushAttrib(GL_ENABLE_BIT);
+        glEnable(GL_LIGHTING);
+        glPushMatrix();
+        glTranslatef(currentCF.position[0], currentCF.position[1], currentCF.position[2]);
+        if(projectileType == PROJECTILE_ROCKET)
+        {
+            glRotatef(currentCF.angle, 0, 0, 1);
+            glScalef(.0025f, .0025f, .0025f);
+            dkoRender(gameVar.dko_rocket); // Voilà!
+        }
+        if(projectileType == PROJECTILE_GRENADE)
+        {
+            glRotatef(rotation, currentCF.vel[0], currentCF.vel[1], 0);
+            glScalef(.0025f, .0025f, .0025f);
+            dkoRender(gameVar.dko_grenade); // Voilà!
+        }
+        if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
+        {
+            glRotatef(rotation, currentCF.vel[0], currentCF.vel[1], 0);
+            glScalef(.0025f, .0025f, .0025f);
+            dkoRender(gameVar.dko_cocktailMolotov); // Voilà!
+        }
+        if(projectileType == PROJECTILE_DROPED_GRENADE)
+        {
+            //  glTranslatef(0,0,.30f);
+            glScalef(.0025f, .0025f, .0025f);
+            dkoRender(gameVar.dko_grenade); // Voilà!
+        }
+        if(projectileType == PROJECTILE_LIFE_PACK)
+        {
+            glTranslatef(0, 0, -.20f);
+            glScalef(.0025f, .0025f, .0025f);
+            dkoRender(gameVar.dko_lifePack); // Voilà!
+        }
+        if(projectileType == PROJECTILE_DROPED_WEAPON)
+        {
+            glTranslatef(0, 0, -.30f);
+            glRotatef(rotation, 0, 0, 1);
+            glScalef(.005f, .005f, .005f);
+            if(fromID >= 0)
+            {
+                if(gameVar.weapons[fromID]) dkoRender(gameVar.weapons[fromID]->dkoModel); // Voilà!
+            }
+        }
+        glPopMatrix();
+        glPopAttrib();
+    }
+    else
+    {
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
+        glDisable(GL_LIGHTING);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glPushMatrix();
+        // Shot glow
+        glTranslatef(currentCF.position[0], currentCF.position[1], 0);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+        glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+        glColor4f(1, .75f, 0, rand(.10f, .15f)*(1 - currentCF.position[2]));
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 1);
+        glVertex3f(-1.0f, 1.0f, 0);
+        glTexCoord2f(0, 0);
+        glVertex3f(-1.0f, -1.0f, 0);
+        glTexCoord2f(1, 0);
+        glVertex3f(1.0f, -1.0f, 0);
+        glTexCoord2f(1, 1);
+        glVertex3f(1.0f, 1.0f, 0);
+        glEnd();
+        glEnable(GL_DEPTH_TEST);
+        glPopMatrix();
+        glPopAttrib();
+    }
+}
+
+void ClientProjectile::renderShadow()
+{
+    // On render son shadow :)
+    glPushMatrix();
+    glTranslatef(currentCF.position[0] + .1f, currentCF.position[1] - .1f, 0.025f);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 1);
+    glVertex2f(-.25f, .25f);
+    glTexCoord2f(0, 0);
+    glVertex2f(-.25f, -.25f);
+    glTexCoord2f(1, 0);
+    glVertex2f(.25f, -.25f);
+    glTexCoord2f(1, 1);
+    glVertex2f(.25f, .25f);
+    glEnd();
+    glPopMatrix();
+}
+
+void ClientProjectile::update(float delay, Map* map)
+{
+    rotation += delay * rotateVel; // 1 tour à la seconde :D
+    while(rotation >= 360) rotation -= 360;
+    while(rotation < 0) rotation += 360;
+
+    Projectile::update(delay, map);
+
+    if(remoteEntity)
+    {
+        // Là on va créer une genre d'interpolation (cubic spline (bezier), pour être plus précis)
+    //  currentCF.interpolate(cFProgression, netCF0, netCF1, delay); //--- Client side maintenant
+
+        if(projectileType == PROJECTILE_ROCKET)
+        {
+            //  scene->client->game->trails.push_back(new Trail(lastCF.position, currentCF.position, 1.5f, CVector4f(.6f,.6f,.6f,.5f), 4));
+    //rotation
+
+            float colorArg1 = 1.0;
+            float colorArg2 = 1.0;
+            float colorArg3 = 1.0;
+            if((scene->client->game->gameType == 1 || scene->client->game->gameType == 2) && scene->client->game->players[fromID])
+                //If we're CTF or TDM, our zooka trails should be coloured
+            {
+                if(scene->client->game->players[fromID]->teamID == PLAYER_TEAM_BLUE)
+                {
+                    colorArg3 = 1.0f;
+                    colorArg1 = colorArg2 = 0.25f;
+                }
+                else if(scene->client->game->players[fromID]->teamID == PLAYER_TEAM_RED)
+                {
+                    colorArg1 = 1.0f;
+                    colorArg2 = colorArg3 = 0.25f;
+                }
+            }
+            // On spawn des particules dans son cul (une par frame)
+            dkpCreateParticle(currentCF.position.s,//float *position,
+                (-currentCF.vel * 0/*.25f*/).s,//float *vel,
+                CVector4f(colorArg1, colorArg2, colorArg3, 0.75f).s,//float *startColor,
+                CVector4f(colorArg1, colorArg2, colorArg3, 0.0f).s,//float *endColor,
+                .125f,//float startSize,
+                rand(.6f, 1.0f),//float endSize,
+                gameVar.r_reducedParticles ? .5f : 5.0f,//float duration,
+                0,//float gravityInfluence,
+                0,//float airResistanceInfluence,
+                rand(0.0f, 30.0f),//float rotationSpeed,
+                gameVar.tex_smoke1,//unsigned int texture,
+                DKP_SRC_ALPHA,//unsigned int srcBlend,
+                DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
+                0);//int transitionFunc);
+
+// On spawn des particules dans son cul (une par frame)
+/*  dkpCreateParticle(  currentCF.position.s,//float *position,
+                        (-currentCF.vel*.015f).s,//float *vel,
+                        CVector4f(1,1,1,.75f).s,//float *startColor,
+                        CVector4f(1,1,1,0.0f).s,//float *endColor,
+                        .125f,//float startSize,
+                        rand(.6f,1.0f),//float endSize,
+                        5.0f,//float duration,
+                        0,//float gravityInfluence,
+                        0,//float airResistanceInfluence,
+                        rand(0.0f, 30.0f),//float rotationSpeed,
+                        gameVar.tex_smoke1,//unsigned int texture,
+                        DKP_SRC_ALPHA,//unsigned int srcBlend,
+                        DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
+                        0);//int transitionFunc);*/
+        }
+
+        if(projectileType == PROJECTILE_GRENADE)
+        {
+            //--- Depending of the team, the color change
+            if(scene->client->game->gameType == GAME_TYPE_DM)
+            {
+                // On spawn des particules dans son cul (une par frame)
+                dkpCreateParticle(currentCF.position.s,//float *position,
+                    (-currentCF.vel * 0/*.25f*/).s,//float *vel,
+                    CVector4f(1, 1, 1, .25f).s,//float *startColor,
+                    CVector4f(1, 1, 1, 0.0f).s,//float *endColor,
+                    .125f,//float startSize,
+                    rand(.2f, .2f),//float endSize,
+                    gameVar.r_reducedParticles ? 1.0f : 2.0f,//float duration,,//float duration,
+                    0,//float gravityInfluence,
+                    0,//float airResistanceInfluence,
+                    rand(0.0f, 30.0f),//float rotationSpeed,
+                    gameVar.tex_shotGlow,//unsigned int texture,
+                    DKP_SRC_ALPHA,//unsigned int srcBlend,
+                    DKP_ONE/*_MINUS_SRC_ALPHA*/,//unsigned int dstBlend,
+                    0);//int transitionFunc);
+            }
+            else if(scene->client->game->players[fromID])
+            {
+                if(scene->client->game->players[fromID]->teamID == PLAYER_TEAM_RED)
+                {
+                    // On spawn des particules dans son cul (une par frame)
+                    dkpCreateParticle(currentCF.position.s,//float *position,
+                        (-currentCF.vel * 0/*.25f*/).s,//float *vel,
+                        CVector4f(1, .25f, .25f, .25f).s,//float *startColor,
+                        CVector4f(1, .25f, .25f, 0.0f).s,//float *endColor,
+                        .125f,//float startSize,
+                        rand(.2f, .2f),//float endSize,
+                        gameVar.r_reducedParticles ? 1.0f : 2.0f,//float duration,
+                        0,//float gravityInfluence,
+                        0,//float airResistanceInfluence,
+                        rand(0.0f, 30.0f),//float rotationSpeed,
+                        gameVar.tex_shotGlow,//unsigned int texture,
+                        DKP_SRC_ALPHA,//unsigned int srcBlend,
+                        DKP_ONE/*_MINUS_SRC_ALPHA*/,//unsigned int dstBlend,
+                        0);//int transitionFunc);
+                }
+                else if(scene->client->game->players[fromID]->teamID == PLAYER_TEAM_BLUE)
+                {
+                    // On spawn des particules dans son cul (une par frame)
+                    dkpCreateParticle(currentCF.position.s,//float *position,
+                        (-currentCF.vel * 0/*.25f*/).s,//float *vel,
+                        CVector4f(.25f, .25f, 1, .25f).s,//float *startColor,
+                        CVector4f(.25f, .25f, 1, 0.0f).s,//float *endColor,
+                        .125f,//float startSize,
+                        rand(.2f, .2f),//float endSize,
+                        gameVar.r_reducedParticles ? 1.0f : 2.0f,//float duration,
+                        0,//float gravityInfluence,
+                        0,//float airResistanceInfluence,
+                        rand(0.0f, 30.0f),//float rotationSpeed,
+                        gameVar.tex_shotGlow,//unsigned int texture,
+                        DKP_SRC_ALPHA,//unsigned int srcBlend,
+                        DKP_ONE/*_MINUS_SRC_ALPHA*/,//unsigned int dstBlend,
+                        0);//int transitionFunc);
+                }
+            }
+        }
+
+        if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
+        {
+            CVector3f fireDirection(0, 0, 1);
+            fireDirection = rotateAboutAxis(fireDirection, rotation, CVector3f(currentCF.vel[0], currentCF.vel[1], 0));
+            // On spawn des particules de feu dans son cul (une par frame)
+            dkpCreateParticle(currentCF.position.s,//float *position,
+                (fireDirection*.15f).s,//float *vel,
+                CVector4f(1, .75f, 0, 1.0f).s,//float *startColor,
+                CVector4f(1, .75f, 0, 0.0f).s,//float *endColor,
+                .25f,//float startSize,
+                .025f,//float endSize,
+                0.25f,//float duration,
+                0,//float gravityInfluence,
+                0,//float airResistanceInfluence,
+                rand(0.0f, 30.0f),//float rotationSpeed,
+                gameVar.tex_smoke1,//unsigned int texture,
+                DKP_SRC_ALPHA,//unsigned int srcBlend,
+                DKP_ONE,//unsigned int dstBlend,
+                0);//int transitionFunc);
+        }
+
+        if(projectileType == PROJECTILE_FLAME)
+        {
+            spawnParticleTime++;
+            if(spawnParticleTime >= 30) spawnParticleTime = 0;
+
+            if(spawnParticleTime % 3 == 0)
+            {
+                // On spawn des particules de feu dans son cul (une par frame)
+                dkpCreateParticle((currentCF.position + rand(CVector3f(-.20f, -.20f, 0), CVector3f(.20f, .20f, 0))).s,//float *position,
+                    (CVector3f(0, 0, 1)).s,//float *vel,
+                    rand(CVector4f(1, 0, 0, 0.0f), CVector4f(1, .75f, 0, 0.0f)).s,//float *startColor,
+                    CVector4f(1, .75f, 0, 1.0f).s,//float *endColor,
+                    .3f,//float startSize,
+                    .0f,//float endSize,
+                    1.0f,//float duration,
+                    0,//float gravityInfluence,
+                    0,//float airResistanceInfluence,
+                    rand(0.0f, 30.0f),//float rotationSpeed,
+                    gameVar.tex_smoke1,//unsigned int texture,
+                    DKP_SRC_ALPHA,//unsigned int srcBlend,
+                    DKP_ONE,//unsigned int dstBlend,
+                    0);//int transitionFunc);
+// On spawn des particules de feu dans son cul (une par frame)
+                dkpCreateParticle((currentCF.position + rand(CVector3f(-.20f, -.20f, 0), CVector3f(.20f, .20f, 0))).s,//float *position,
+                    (CVector3f(0, 0, 1) + rand(CVector3f(-.20f, -.20f, 0), CVector3f(.20f, .20f, 0))).s,//float *vel,
+                    rand(CVector4f(1, 0, 0, 1.0f), CVector4f(1, .75f, 0, 1.0f)).s,//float *startColor,
+                    CVector4f(1, .75f, 0, 0.0f).s,//float *endColor,
+                    .0f,//float startSize,
+                    .3f,//float endSize,
+                    1.0f,//float duration,
+                    0,//float gravityInfluence,
+                    0,//float airResistanceInfluence,
+                    rand(0.0f, 30.0f),//float rotationSpeed,
+                    gameVar.tex_smoke1,//unsigned int texture,
+                    DKP_SRC_ALPHA,//unsigned int srcBlend,
+                    DKP_ONE,//unsigned int dstBlend,
+                    0);//int transitionFunc);
+            }
+            if(spawnParticleTime % 10 == 0)
+            {
+                // On spawn des particules de feu dans son cul (une par frame)
+                dkpCreateParticle((currentCF.position).s,//float *position,
+                    (CVector3f(-.5f, 0, .5f)).s,//float *vel,
+                    CVector4f(.5f, .5f, .5f, 0.5f).s,//float *startColor,
+                    CVector4f(.5f, .5f, .5f, 0.0f).s,//float *endColor,
+                    .15f,//float startSize,
+                    1.0,//float endSize,
+                    3.0f,//float duration,
+                    0,//float gravityInfluence,
+                    0,//float airResistanceInfluence,
+                    rand(0.0f, 30.0f),//float rotationSpeed,
+                    gameVar.tex_smoke1,//unsigned int texture,
+                    DKP_SRC_ALPHA,//unsigned int srcBlend,
+                    DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
+                    0);//int transitionFunc);
+            }
+        }
+    }
+    //  else
+    //  {
+}

@@ -20,6 +20,26 @@
 #define CLIENT_GAME_H
 
 #include "Game.h"
+#define MAX_FLOOR_MARK 500
+
+// Projectiles (rocket, grenade, etc)
+struct ClientProjectile : public Projectile
+{
+    // La rocket tourne sur elle même
+    float rotation;
+    float rotateVel;
+
+    bool isClientOnly;
+
+    int spawnParticleTime;
+
+    ClientProjectile(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID);
+    void update(float delay, Map * map);
+
+    // Pour l'afficher (client Only)
+    void render();
+    void renderShadow();
+};
 
 struct NukeFlash
 {
@@ -349,6 +369,8 @@ struct ClientGame : public Game
 
     void update(float delay);
     void castVote(const net_clsv_svcl_vote_request & voteRequest);
+    void onTeamSwitch(Player* player);
+    void spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID);
 
     // Pour l'afficher
     void render();

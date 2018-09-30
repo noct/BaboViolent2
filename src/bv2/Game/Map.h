@@ -102,9 +102,7 @@
 #define FLAG_RED 1
 
 
-class Game;
-
-
+struct Game;
 struct mapInfo
 {
     CString mapName;

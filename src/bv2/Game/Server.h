@@ -54,11 +54,6 @@ public:
     // Le jeu controll�
     Game * game;
 
-#ifndef DEDICATED_SERVER
-    // La font
-    unsigned int font;
-#endif
-
     std::vector<CChecksumQuery *> m_checksumQueries;
 
     // Si le server run

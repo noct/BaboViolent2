@@ -396,7 +396,6 @@ void Player::render()
         CVector2i res = dkwGetResolution();
         onScreenPos[0] = (int)screenPos[0];
         onScreenPos[1] = res[1] - (int)screenPos[1];
-        if(gameVar.r_widescreen > 1) onScreenPos[0] = static_cast<int>(onScreenPos[0] - (res[0] - res[1] * 1.333f) / 2);
         glPopMatrix();
 
         glPushMatrix();

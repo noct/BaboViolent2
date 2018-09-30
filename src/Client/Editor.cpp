@@ -388,9 +388,6 @@ void Editor2::render()
         CVector2i res = dkwGetResolution();
         CVector2i mousePos = dkwGetCursorPos_main();
 
-        if(gameVar.r_widescreen > 1)
-            mousePos[0] = static_cast<int>(mousePos[0] * res[1]*1.333f / res[0] + (res[0] - res[1]*1.333f)/2);
-
         mousePos[1] = res[1] - mousePos[1];
         CVector3f nearMouse = dkglUnProject(mousePos, 0.0f);
         CVector3f farMouse = dkglUnProject(mousePos, 1.0f);

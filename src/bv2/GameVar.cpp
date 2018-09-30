@@ -643,8 +643,6 @@ void GameVar::init()
     dksvarRegister(CString("r_reducedParticles [bool : true | false (default false)]"), &r_reducedParticles, true);
     r_simpleText = false;
     dksvarRegister(CString("r_simpleText [bool : true | false (default false)]"), &r_simpleText, true);
-    r_widescreen = 0;
-    dksvarRegister(CString("r_widescreen [int : 0=disabled, 1=stretch, 2=bars (default 0)]"), &r_widescreen, 0, 2, LIMIT_MIN | LIMIT_MAX, true);
     r_maxNameLenOverBabo = 0;
     dksvarRegister(CString("r_maxNameLenOverBabo [int : (default 0=no limit)]"), &r_maxNameLenOverBabo, 0, 0, LIMIT_MIN, true);
 

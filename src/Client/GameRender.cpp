@@ -214,17 +214,11 @@ void Game::render()
                 CVector2i res = dkwGetResolution();
                 CVector2i mousePos = dkwGetCursorPos_main();
 
-                if(gameVar.r_widescreen > 1)
-                    mousePos[0] = static_cast<int>(mousePos[0] * res[1] * 1.333f / res[0] + (res[0] - res[1] * 1.333f) / 2);
-
                 mousePos[1] = res[1] - mousePos[1];
                 CVector3f nearMouse = dkglUnProject(mousePos, 0.0f);
                 CVector3f farMouse = dkglUnProject(mousePos, 1.0f);
                 float percent = nearMouse[2] / (nearMouse[2] - farMouse[2]);
-                //  if (!(thisPlayer->weapon->weaponID == WEAPON_PHOTON_RIFLE && dkiGetState(gameVar.k_shoot)))
-                //  {
                 thisPlayer->currentCF.mousePosOnMap = nearMouse + (farMouse - nearMouse) * percent;
-                //  }
             }
         }
 
@@ -420,7 +414,6 @@ void Game::render()
             renderMiniMap();
 
         CVector2i res = dkwGetResolution();
-        if(gameVar.r_widescreen > 1) res[0] = static_cast<int>(res[1] * 1.333f);
         dkglPushOrtho((float)res[0], (float)res[1]);
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
         glEnable(GL_TEXTURE_2D);
@@ -442,7 +435,6 @@ void Game::render()
     if(voting.votingInProgress)
     {
         CVector2i res = dkwGetResolution();
-        if(gameVar.r_widescreen > 1) res[0] = static_cast<int>(res[1] * 1.333f);
         dkglPushOrtho((float)res[0], (float)res[1]);
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
         glEnable(GL_TEXTURE_2D);
@@ -487,7 +479,7 @@ void Game::render()
 //
 void Game::renderMiniMap()
 {
-    CVector2i res(800, 600);// = dkwGetResolution();
+    CVector2i res(1280, 720);// = dkwGetResolution();
 
     dkglPushOrtho((float)res[0], (float)res[1]);
     glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);

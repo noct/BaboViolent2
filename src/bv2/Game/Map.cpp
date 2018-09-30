@@ -49,11 +49,8 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     CVector2i res = dkwGetResolution();
 
-    if(gameVar.r_widescreen > 1)
-        glViewport((GLint)((res[0] - res[1] * 1.333f) / 2.0f), 0, (GLsizei)(res[1] * 1.333f), (GLsizei)res[1]);
-    else
-        glViewport(0, 0, res[0], res[1]);
-    dkglSetProjection(60, 1, 50, (float)res[1] * 1.333f, (float)res[1]);
+    glViewport(0, 0, res[0], res[1]);
+    dkglSetProjection(60, 1, 50, (float)res[0], (float)res[1]);
 
     // Truc par default à enabeler
     glEnable(GL_DEPTH_TEST);
@@ -402,7 +399,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     {
         return;
     }
-    
+
 #ifndef DEDICATED_SERVER
     //--- We load now the minimap thumbnail
     {
@@ -1077,112 +1074,8 @@ void Map::update(float delay, Player * thisPlayer)
     if(flagState[1] == -2) flagPos[1] = flagPodPos[1];
     if(flagState[0] >= 0) if(game->players[flagState[0]]) flagPos[0] = game->players[flagState[0]]->currentCF.position;
     if(flagState[1] >= 0) if(game->players[flagState[1]]) flagPos[1] = game->players[flagState[1]]->currentCF.position;
-
-    /*
-        CVector3f newAccel[2];
-        for (int i=0;i<2;++i)
-        {
-            newAccel[i] = (flagPos[i] - flagLastPos[i]) / delay;
-            flagLastAccel[i] = newAccel[i];
-            flagLastPos[i] = flagPos[i];
-
-            if (flagLastAccel[i].length() > 3.0f)
-            {
-                //--- Determine angle
-                if (flagAnims[i] > 10)
-                {
-                    CVector3f dir = -flagLastAccel[i];
-                    normalize(dir);
-                    float angleX = dot(dir, CVector3f(1,0,0));
-                    float angleY = dot(dir, CVector3f(0,1,0));
-                    flagAngle[i] = acosf(angleX) * TO_DEGREE;
-                    if (angleY < 0) flagAngle[i] = 180 + (180 - flagAngle[i]);
-
-                    flagAnims[i] = 0;
-                }
-            }
-            else if (flagLastAccel[i].length() > 1.5f)
-            {
-                //--- Determine angle
-                if (flagAnims[i] > 18)
-                {
-                    //--- Determine angle
-                    CVector3f dir = -flagLastAccel[i];
-                    normalize(dir);
-                    float angleX = dot(dir, CVector3f(1,0,0));
-                    float angleY = dot(dir, CVector3f(0,1,0));
-                    flagAngle[i] = acosf(angleX) * TO_DEGREE;
-                    if (angleY < 0) flagAngle[i] = 180 + (180 - flagAngle[i]);
-
-                    flagAnims[i] = 11;
-                }
-            }
-
-            if (flagAnims[i] < 25)
-            {
-                flagAnims[i] += delay * 10;
-                if (flagAnims[i] >= 25) flagAnims[i] = 25;
-            }
-        }*/
-
-        /*  if (game)
-            {
-                if (game->gameType == GAME_TYPE_CTF)
-                {
-                    //--- Get dummy position
-                    CVector3f dumPos;
-                    dkoGetDummyPosition("Dummy01", dko_flagPole, dumPos.s, (short)flagAnims[0]);
-                    dumPos *= .005f; // Scale
-                    dumPos = rotateAboutAxis(dumPos, flagAngle[0], CVector3f(0,0,1)); // Rotate
-                    dumPos += flagPos[0]; // Translate
-
-                    //--- Spawn particule for the flag
-                    dkpCreateParticle(  dumPos.s,//float *position,
-                                        CVector3f(0,0,1).s,//float *vel,
-                                        CVector4f(.2f,.2f,1,1.0f).s,//float *startColor,
-                                        CVector4f(.2f,.2f,1,0.0f).s,//float *endColor,
-                                        0,//float startSize,
-                                        .5f,//float endSize,
-                                        .5f,//float duration,
-                                        0,//float gravityInfluence,
-                                        0,//float airResistanceInfluence,
-                                        360,//float rotationSpeed,
-                                        gameVar.tex_smoke1,//unsigned int texture,
-                                        DKP_SRC_ALPHA,//unsigned int srcBlend,
-                                        DKP_ONE,//unsigned int dstBlend,
-                                        0);//int transitionFunc);
-
-                    // Red flag
-                    dkoGetDummyPosition("Dummy01", dko_flagPole, dumPos.s, (short)flagAnims[1]);
-                    dumPos *= .005f; // Scale
-                    dumPos = rotateAboutAxis(dumPos, flagAngle[1], CVector3f(0,0,1)); // Rotate
-                    dumPos += flagPos[1]; // Translate
-
-                    //--- Spawn particule for the flag
-                    dkpCreateParticle(  dumPos.s,//float *position,
-                                        CVector3f(0,0,0).s,//float *vel,
-                                        CVector4f(1,.2f,.2f,1.0f).s,//float *startColor,
-                                        CVector4f(1,.2f,.2f,0.0f).s,//float *endColor,
-                                        0,//float startSize,
-                                        .5f,//float endSize,
-                                        .5f,//float duration,
-                                        0,//float gravityInfluence,
-                                        0,//float airResistanceInfluence,
-                                        360,//float rotationSpeed,
-                                        gameVar.tex_smoke1,//unsigned int texture,
-                                        DKP_SRC_ALPHA,//unsigned int srcBlend,
-                                        DKP_ONE,//unsigned int dstBlend,
-                                        0);//int transitionFunc);
-                }
-            }*/
 }
 #endif
-
-
-//-- Dummies are visual only
-void Map::renderDummies()
-{
-}
 
 void Map::updateDummies()
 {

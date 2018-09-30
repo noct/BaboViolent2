@@ -204,7 +204,7 @@ public:
     // La texture de la map (la meme en tant que tel !)
     unsigned int texMap;
     CVector2f texMapSize;
- 
+
     // [PM] Author name
     CString author_name;
 
@@ -298,7 +298,6 @@ public:
 #endif
 
     //-- Dummies are visual only
-    void renderDummies();
     void updateDummies();
 
     // Pour faire une collision sur un coordFrame

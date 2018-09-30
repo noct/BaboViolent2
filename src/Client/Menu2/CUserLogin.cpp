@@ -267,13 +267,6 @@ void CUserLogin::Paint(CControl * control)
                     CVector2i   res = dkwGetResolution();
                     float       offset = 0;
 
-                    if(gameVar.r_widescreen > 1)
-                    {
-                        offset = (float)res[0];
-                        res[0] = (int)(res[1]*1.333f);
-                        offset = (offset - res[0])/2;
-                    }
-
                     glViewport(
                         (GLint)((((float)control->Rect[0]/800.0f) * (float)res[0]) + offset),
                         res[1] - (int)(((float)(control->Rect[1])/600.0f) * (float)res[1]) - (int)(((float)control->Rect[3]/600.0f) * (float)res[1] + 1),

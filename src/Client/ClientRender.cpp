@@ -97,7 +97,7 @@ void Client::render(float & alphaScope)
     // Si on doit spawner on marque dans combient de temps
     if(game->thisPlayer)
     {
-        dkglPushOrtho(800, 600);
+        dkglPushOrtho(1280, 720);
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
@@ -408,7 +408,6 @@ void Client::render(float & alphaScope)
         glPopAttrib();
         dkglPopOrtho();
 
-        if(gameVar.r_widescreen > 1) res[0] = static_cast<int>(res[1] * 1.333f);
         if(gameVar.r_showLatency)
         {
             dkglPushOrtho((float)res[0], (float)res[1]);

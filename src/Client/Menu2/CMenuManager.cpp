@@ -133,7 +133,6 @@ void CMenuManager::render(CControl * toRender)
     glClear(GL_DEPTH_BUFFER_BIT);
 
     CVector2i res = dkwGetResolution();
-    if(gameVar.r_widescreen > 1) res[0] = static_cast<int>(res[1]*1.333f);
 
     dkglPushOrtho(800, 600);
         glPushAttrib(GL_ENABLE_BIT);
@@ -155,7 +154,6 @@ void CMenuManager::renderDialogs()
         glClear(GL_DEPTH_BUFFER_BIT);
 
         CVector2i res = dkwGetResolution();
-        if(gameVar.r_widescreen > 1) res[0] = static_cast<int>(res[1]*1.333f);
 
         dkglPushOrtho(800, 600);
             glPushAttrib(GL_ENABLE_BIT);

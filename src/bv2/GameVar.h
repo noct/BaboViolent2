@@ -209,7 +209,6 @@ public:
     bool r_showLatency;
     bool r_reducedParticles;
     bool r_simpleText;
-    int r_widescreen;
     int r_maxNameLenOverBabo;
 
     int r_chatTextSize;

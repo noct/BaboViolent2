@@ -24,7 +24,7 @@
 #ifndef DEDICATED_SERVER
 #include "ClientHelper.h"
 #include "ClientConsole.h"
-#endif 
+#endif
 
 extern char* bbNetVersion;
 
@@ -54,10 +54,7 @@ Scene::Scene(dkContext* dk)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         CVector2i res = dkwGetResolution();
 
-        if(gameVar.r_widescreen > 1)
-            glViewport((GLint)((res[0] - res[1]*1.333f)/2.0f), 0, (GLsizei)(res[1]*1.333f), (GLsizei)res[1]);
-        else
-            glViewport(0, 0, res[0], res[1]);
+        glViewport(0, 0, res[0], res[1]);
         dkglSetProjection(60, 1, 50, (float)res[1]*1.333f, (float)res[1]);
 
         // Truc par default � enabeler
@@ -244,10 +241,7 @@ void Scene::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     CVector2i res = dkwGetResolution();
 
-    if(gameVar.r_widescreen > 1)
-        glViewport( (GLint)((res[0] - res[1]*1.333f)/2.0f), 0, (GLsizei)(res[1]*1.333f), (GLsizei)res[1]);
-    else
-        glViewport(0, 0, res[0], res[1]);
+    glViewport(0, 0, res[0], res[1]);
     dkglSetProjection(60, 1, 50, (float)res[1]*1.333f, (float)res[1]);
 
     // Truc par default � enabeler

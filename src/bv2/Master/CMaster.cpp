@@ -102,7 +102,6 @@ void CMaster::pingReceived(int ping)
 	ZEVEN_SAFE_DELETE(m_ping);
 
 	//--- Show that in console
-	//if (gameVar.c_debug) console->add(CString("\x3> Ping received : %i", ping));
 
 	if (m_games.size() > 0)
 	{
@@ -137,7 +136,6 @@ void CMaster::update(float in_delay)
 	int result = bb_peerUpdate(in_delay, isNew);
 	if (result == -1)
 	{
-		if (gameVar.c_debug) console->add(CString("\x4> Error in peerUpdate : %s",  bb_peerGetLastError()));
 	}
 	else if (isNew)
 	{
@@ -193,7 +191,6 @@ void CMaster::update(float in_delay)
 		if (result == 1)
 		{
 			// Une erreur !!! On arr�e tout !!!
-			if (gameVar.c_debug) console->add(CString("\x4> Error connection to master : %s", bb_clientGetLastError(uniqueClientID)));
 			uniqueClientID = 0;
 			m_isConnected = false;
 			ZEVEN_SAFE_DELETE(m_ping);
@@ -201,14 +198,12 @@ void CMaster::update(float in_delay)
 		else if (result == 2)
 		{
 			// Le server a foutu le CAMP !
-			//if (gameVar.c_debug) console->add("\x9> Master server disconnected");
 			uniqueClientID = 0;
 			m_isConnected = false;
 			ZEVEN_SAFE_DELETE(m_ping);
 		}
 		else if (result == 3)
 		{
-			//if (gameVar.c_debug) console->add("\x3> Master server connected");
 
 			//--- We are connected.
 			m_isConnected = true;
@@ -223,7 +218,6 @@ void CMaster::update(float in_delay)
 			it != messageStack.end(); ++it)
 		{
 			bb_clientSend(uniqueClientID, (*it)->buffer, (*it)->size, (*it)->typeID);
-			//if (gameVar.c_debug) console->add("\x3> Packet sent to master");
 		}
 
 		//--- Delete the stack
@@ -739,7 +733,6 @@ void CMaster::recvPacket(const char * buffer, int typeID)
 			//	disconnectMaster();
 			//}
 
-			if (gameVar.c_debug) console->add(CString("\x9> Received game %i/%i", (int)m_games.size(), m_nbGameFound));
 			break;
 		}
 	case CACHE_ANSWER:

@@ -119,7 +119,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                                     game->players[i]->voted = false;
                                 }
                             }
-                            game->voting.castVote(game, voteRequest);
+                            game->castVote(voteRequest);
                             /*for (i=0;i<MAX_PLAYER;++i)
                             {
                                 if ( (game->players[i]) && (game->players[i]->teamID != PLAYER_TEAM_AUTO_ASSIGN) &&

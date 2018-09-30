@@ -189,12 +189,10 @@ public:
         float remaining;
         bool voted;
         std::vector<int> activePlayersID;
-        SVoting();
-        void castVote(Game* game, const net_clsv_svcl_vote_request & voteRequest);
-        bool update(float delay);
-
     } voting;
 
+    virtual void castVote(const net_clsv_svcl_vote_request & voteRequest);
+    bool votingUpdate(float delay);
 public:
     // Constructeur
     Game(CString pMapName="");

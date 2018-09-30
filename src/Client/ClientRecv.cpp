@@ -194,7 +194,7 @@ void Client::recvPacket(char * buffer, int typeID)
             if(game->players[voteRequest.playerID])
             {
                 //--- Start the voting
-                game->voting.castVote(game, voteRequest);
+                game->castVote(voteRequest);
                 game->voting.votingFrom = textColorLess(game->players[voteRequest.playerID]->name);
 
                 /*for (int i=0;i<MAX_PLAYER;++i)

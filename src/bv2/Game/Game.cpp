@@ -26,68 +26,50 @@
 
 extern Scene * scene;
 
-Game::SVoting::SVoting()
-{
-    //nbActivePlayers = 0;
-    voted = false;
-    remaining = 0;
-    votingInProgress = false;
-    votingResults[0] = 0;
-    votingResults[1] = 0;
-}
 
-void Game::SVoting::castVote(Game* game, const net_clsv_svcl_vote_request & voteRequest)
+void Game::castVote(const net_clsv_svcl_vote_request & voteRequest)
 {
     //nbActivePlayers = 0;
-    activePlayersID.clear();
+    voting.activePlayersID.clear();
     for(int i = 0; i < MAX_PLAYER; ++i)
     {
-        if(game->players[i])
+        if(players[i])
         {
-            if((game->players[i]->teamID != PLAYER_TEAM_AUTO_ASSIGN) &&
-                (game->players[i]->teamID != PLAYER_TEAM_SPECTATOR))
+            if((players[i]->teamID != PLAYER_TEAM_AUTO_ASSIGN) &&
+                (players[i]->teamID != PLAYER_TEAM_SPECTATOR))
             {
-                activePlayersID.push_back(game->players[i]->babonetID);
-                game->players[i]->voted = false;
+                voting.activePlayersID.push_back(players[i]->babonetID);
+                players[i]->voted = false;
             }
             else
-                game->players[i]->voted = true;
+                players[i]->voted = true;
         }
     }
-#ifndef DEDICATED_SERVER
-    auto cgame = static_cast<ClientGame*>(game);
-    if(cgame->thisPlayer && (cgame->thisPlayer->teamID != PLAYER_TEAM_AUTO_ASSIGN) &&
-        (cgame->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR))
-        voted = false;
-    else
-        voted = true;
-#else
-    voted = true;
-#endif
-    votingWhat = voteRequest.vote;
-    votingResults[0] = 0;
-    votingResults[1] = 0;
-    remaining = 30; // 30 sec to vote
-    votingInProgress = true;
+    voting.voted = true;
+    voting.votingWhat = voteRequest.vote;
+    voting.votingResults[0] = 0;
+    voting.votingResults[1] = 0;
+    voting.remaining = 30; // 30 sec to vote
+    voting.votingInProgress = true;
 }
 
-bool Game::SVoting::update(float delay)
+bool Game::votingUpdate(float delay)
 {
-    if(votingInProgress)
+    if(voting.votingInProgress)
     {
-        remaining -= delay;
-        if(remaining <= 0)
+        voting.remaining -= delay;
+        if(voting.remaining <= 0)
         {
-            remaining = 0;
-            votingInProgress = false;
+            voting.remaining = 0;
+            voting.votingInProgress = false;
             return true;
         }
 
-        if(votingResults[0] > (int)activePlayersID.size() / 2 ||
-            votingResults[1] > (int)activePlayersID.size() / 2 ||
-            votingResults[0] + votingResults[1] >= (int)activePlayersID.size())
+        if(voting.votingResults[0] > (int)voting.activePlayersID.size() / 2 ||
+            voting.votingResults[1] > (int)voting.activePlayersID.size() / 2 ||
+            voting.votingResults[0] + voting.votingResults[1] >= (int)voting.activePlayersID.size())
         {
-            votingInProgress = false;
+            voting.votingInProgress = false;
             return true;
         }
     }
@@ -134,6 +116,13 @@ Game::Game(CString pMapName)
     spectatorPing = 0;
 
     UpdateProSettings();
+
+
+    voting.voted = false;
+    voting.remaining = 0;
+    voting.votingInProgress = false;
+    voting.votingResults[0] = 0;
+    voting.votingResults[1] = 0;
 }
 
 //
@@ -300,7 +289,7 @@ void Game::update(float delay)
     int i;
     if(voting.votingInProgress)
     {
-        if(voting.update(delay))
+        if(votingUpdate(delay))
         {
             if(isServerGame)
             {

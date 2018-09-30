@@ -934,3 +934,13 @@ void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float 
         }
     }// screen shake moved elsewhere (so that it shakes only when you are hit!) */
 }
+
+void ClientGame::castVote(const net_clsv_svcl_vote_request & voteRequest)
+{
+    Game::castVote(voteRequest);
+
+    if(thisPlayer && (thisPlayer->teamID != PLAYER_TEAM_AUTO_ASSIGN) && (thisPlayer->teamID != PLAYER_TEAM_SPECTATOR))
+        voting.voted = false;
+    else
+        voting.voted = true;
+}

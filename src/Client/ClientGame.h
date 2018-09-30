@@ -348,6 +348,7 @@ struct ClientGame : public Game
     void resetRound();
 
     void update(float delay);
+    void castVote(const net_clsv_svcl_vote_request & voteRequest);
 
     // Pour l'afficher
     void render();

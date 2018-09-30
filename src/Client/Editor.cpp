@@ -371,14 +371,14 @@ void Editor2::render()
         normalize(up);
         if (gameVar.sv_topView)
         {
-            gluLookAt(
+            dkglLookAt(
                 map->camPos[0], map->camPos[1], map->camPos[2],
                 map->camPos[0], map->camPos[1], 0,
                 up[0], up[1], up[2]);
         }
         else
         {
-            gluLookAt(
+            dkglLookAt(
                 map->camPos[0], map->camPos[1]-4.0f, map->camPos[2],
                 map->camPos[0], map->camPos[1]-1.0f, 0,
                 up[0], up[1], up[2]);

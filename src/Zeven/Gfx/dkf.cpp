@@ -20,21 +20,11 @@
 
 
 #include <Zeven/Gfx.h>
+#include <glad/glad.h>
 #include <vector>
-
 #include <fstream>
 
 using namespace std;
-
-
-#include <windows.h>
-// Les includes pour opengl
-#include "dkgl.h"
-
-// pour pouvoir loader une texture
-#include "dkt.h"
-
-
 
 struct typ_characterProp {
     float u1, v1;

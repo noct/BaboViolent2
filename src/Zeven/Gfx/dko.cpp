@@ -18,21 +18,7 @@
 
 #include <cstdint>
 #include <Zeven/Gfx.h>
-
-#ifdef WIN32
-#ifndef DEDICATED_SERVER
 #include <glad/glad.h>
-#endif
-
-#else
-#include "LinuxHeader.h"
-
-#ifdef __MACOSX__
-#include <SDL_opengl.h>
-#else
-#include <glad/glad.h>
-#endif
-#endif
 
 // Les constantes
 #define DKO_BUMP_MAP            0x0001
@@ -78,9 +64,7 @@ public:
     }
     virtual ~_typLayer()
     {
-#ifndef DEDICATED_SERVER
         if(textureID == 0) glDeleteTextures(1, &textureID);
-#endif
     }
 };
 
@@ -1298,10 +1282,9 @@ void            dkoInit()
         DKO_MULTIPASS);
 
     CDko::bitFieldPile = 0;
-#ifndef DEDICATED_SERVER
+
     // Init les textures
     dktInit();
-#endif
 }
 
 
@@ -1506,7 +1489,6 @@ bool            dkoRayIntersection(unsigned int modelID, float *mp1, float *mp2,
 //
 void dkoRender(unsigned int modelID)
 {
-#ifndef DEDICATED_SERVER
     glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
         glEnable(GL_RESCALE_NORMAL);
         if (CDko::modelArray[modelID])
@@ -1631,9 +1613,6 @@ void dkoRender(unsigned int modelID)
             }
         }
     glPopAttrib();
-#else
-    (void)modelID;
-#endif
 }
 
 
@@ -1643,7 +1622,6 @@ void dkoRender(unsigned int modelID)
 //
 void dkoRender(unsigned int modelID, unsigned short frameID)
 {
-#ifndef DEDICATED_SERVER
     glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
         glEnable(GL_RESCALE_NORMAL);
         if (CDko::modelArray[modelID])
@@ -1768,9 +1746,6 @@ void dkoRender(unsigned int modelID, unsigned short frameID)
             }
         }
     glPopAttrib();
-#else
-    (void)modelID; (void)frameID;
-#endif
 }
 
 //
@@ -1778,7 +1753,6 @@ void dkoRender(unsigned int modelID, unsigned short frameID)
 //
 void dkoRender(unsigned int modelID, float frameID)
 {
-#ifndef DEDICATED_SERVER
     glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
         glEnable(GL_RESCALE_NORMAL);
         if (CDko::modelArray[modelID])
@@ -1907,9 +1881,6 @@ void dkoRender(unsigned int modelID, float frameID)
             }
         }
     glPopAttrib();
-#else
-    (void)modelID; (void)frameID;
-#endif
 }
 
 //
@@ -1927,10 +1898,6 @@ void dkoShutDown()
         toKill = ptrBitField;
         ptrBitField = ptrBitField->previous;
     }
-
-#ifndef DEDICATED_SERVER
-    dktShutDown();
-#endif
 }
 
 //
@@ -2322,7 +2289,6 @@ bool COctreeNode::findSphereIntersection(CVector &p1, CVector &p2, float rayon, 
 //
 void COctreeNode::render()
 {
-#ifndef DEDICATED_SERVER
     glPushAttrib(GL_POLYGON_BIT | GL_CURRENT_BIT | GL_ENABLE_BIT);
     glDisable(GL_TEXTURE_2D);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -2396,7 +2362,6 @@ void COctreeNode::render()
     glEnd();
     glPopMatrix();
     glPopAttrib();
-#endif
 
     // On dessine le cube genreeee
     if(haveChild)
@@ -3312,7 +3277,6 @@ void CdkoMesh::drawIt()
             }
         }
 
-#ifndef DEDICATED_SERVER
         glPushAttrib(GL_ENABLE_BIT);
         if(!(CDko::renderStateBitField & DKO_DYNAMIC_LIGHTING)) glDisable(GL_LIGHTING);
 
@@ -3400,7 +3364,6 @@ void CdkoMesh::drawIt()
         glDisableClientState(GL_VERTEX_ARRAY);
         glDepthMask(GL_TRUE);
         glPopAttrib();
-#endif
     }
 }
 
@@ -3473,12 +3436,10 @@ CdkoMaterial::~CdkoMaterial()
     if(textureMat) delete textureMat;
     if(matName) delete matName;
 
-#ifndef DEDICATED_SERVER
     dktDeleteTexture(&texDiffuse);
     dktDeleteTexture(&texBump);
     dktDeleteTexture(&texSpecular);
     dktDeleteTexture(&texSelfIll);
-#endif
 }
 
 
@@ -3488,7 +3449,6 @@ CdkoMaterial::~CdkoMaterial()
 //
 void CdkoMaterial::setDiffusePass()
 {
-#ifndef DEDICATED_SERVER
     glMaterialfv(GL_FRONT, GL_AMBIENT, ambient); // L'ambient
     glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse); // La couleur diffuse
     glMaterialfv(GL_FRONT, GL_SPECULAR, specular); // La couleur et intensité spécular
@@ -3530,12 +3490,10 @@ void CdkoMaterial::setDiffusePass()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(wireSize);
     }
-#endif
 }
 
 void CdkoMaterial::setDetailPass()
 {
-#ifndef DEDICATED_SERVER
     glPushAttrib(GL_POLYGON_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDisable(GL_LIGHTING);
@@ -3556,12 +3514,10 @@ void CdkoMaterial::setDetailPass()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(wireSize);
     }
-#endif
 }
 
 void CdkoMaterial::setSpecularPass()
 {
-#ifndef DEDICATED_SERVER
     float zero[] = { 0,0,0,1 };
     glMaterialfv(GL_FRONT, GL_AMBIENT, zero); // L'ambient
     glMaterialfv(GL_FRONT, GL_DIFFUSE, zero); // La couleur diffuse
@@ -3602,12 +3558,10 @@ void CdkoMaterial::setSpecularPass()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(wireSize);
     }
-#endif
 }
 
 void CdkoMaterial::setSelfIllPass()
 {
-#ifndef DEDICATED_SERVER
     glPushAttrib(GL_POLYGON_BIT | GL_LINE_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDisable(GL_LIGHTING);
@@ -3632,7 +3586,6 @@ void CdkoMaterial::setSelfIllPass()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glLineWidth(wireSize);
     }
-#endif
 }
 
 
@@ -3669,9 +3622,7 @@ int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
             char *texFilename = readString(ficIn);
             char strTMP[512];
             sprintf(strTMP, "%s%s", path, texFilename);
-#ifndef DEDICATED_SERVER
             texDiffuse = dktCreateTextureFromFile(strTMP, DKT_FILTER_BILINEAR);
-#endif
             delete[] texFilename;
             break;
         }
@@ -3680,9 +3631,7 @@ int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
             char *texFilename = readString(ficIn);
             char strTMP[512];
             sprintf(strTMP, "%s%s", path, texFilename);
-#ifndef DEDICATED_SERVER
             texBump = dktCreateTextureFromFile(strTMP, DKT_FILTER_BILINEAR);
-#endif
             delete[] texFilename;
             break;
         }
@@ -3691,9 +3640,7 @@ int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
             char *texFilename = readString(ficIn);
             char strTMP[512];
             sprintf(strTMP, "%s%s", path, texFilename);
-#ifndef DEDICATED_SERVER
             texSpecular = dktCreateTextureFromFile(strTMP, DKT_FILTER_BILINEAR);
-#endif
             delete[] texFilename;
             break;
         }
@@ -3702,9 +3649,7 @@ int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
             char *texFilename = readString(ficIn);
             char strTMP[512];
             sprintf(strTMP, "%s%s", path, texFilename);
-#ifndef DEDICATED_SERVER
             texSelfIll = dktCreateTextureFromFile(strTMP, DKT_FILTER_BILINEAR);
-#endif
             delete[] texFilename;
             break;
         }
@@ -3898,7 +3843,6 @@ void eHierarchic::drawAll()
     if(enable)
     {
         // On fait son push pop
-#ifndef DEDICATED_SERVER
         glPushMatrix();
         glTranslatef(position[0], position[1], position[2]);
         float Matrix[16] = {
@@ -3907,7 +3851,6 @@ void eHierarchic::drawAll()
             matrix[6], matrix[7], matrix[8], 0,
             0,          0,          0,          1 };
         glMultMatrixf(Matrix);
-#endif
 
         // On le dessine lui en premier
         drawIt();
@@ -3915,9 +3858,7 @@ void eHierarchic::drawAll()
         // Ensuite ses childs
         for(eHierarchic* ptrObject = childList; ptrObject; ptrObject = ptrObject->next)
             ptrObject->drawAll(); // hum pas vraiment d'hierarchi �l'interieur d'un dko mais bon
-#ifndef DEDICATED_SERVER
         glPopMatrix();
-#endif
     }
 }
 
@@ -4164,11 +4105,7 @@ void ePTexture::loadTexture(_typLayer* ptrLayer, FILE* ficIn)
         }
         case CHUNK_MAP_TEXTURE_DATA:
         {
-#ifndef DEDICATED_SERVER
             GLubyte* imageData = new GLubyte[ptrLayer->w*ptrLayer->h*ptrLayer->bpp];
-#else
-            unsigned char* imageData = new unsigned char[ptrLayer->w*ptrLayer->h*ptrLayer->bpp];
-#endif
             fread(imageData, 1, ptrLayer->w*ptrLayer->h*ptrLayer->bpp, ficIn);
             if(ptrLayer->bpp == 4)
                 ptrLayer->textureID = createTextureFromBuffer(imageData, ptrLayer->w, ptrLayer->h, ptrLayer->bpp, 1, false);
@@ -4210,7 +4147,6 @@ void ePTexture::loadString(char* string, FILE* ficIn)
 //
 unsigned int createTextureFromBuffer(unsigned char *Buffer, int Width, int Height, int BytePerPixel, int Filter, bool inverse)
 {
-#ifndef DEDICATED_SERVER
     // On cré la texture
     unsigned int Texture = 0;
     GLint Level = (BytePerPixel == 3) ? GL_RGB : GL_RGBA;
@@ -4279,5 +4215,4 @@ unsigned int createTextureFromBuffer(unsigned char *Buffer, int Width, int Heigh
     glGenerateMipmap(GL_TEXTURE_2D);
 
     return Texture;
-#endif
 }

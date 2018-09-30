@@ -78,7 +78,7 @@ Scene::Scene(dkContext* dk)
         dkglPopOrtho();
 
         // On swap les buffers
-        SDL_GL_SwapWindow(dkwGetHandle());
+        dkwSwap();
 #endif
     gameVar.loadModels();
 #ifndef DEDICATED_SERVER

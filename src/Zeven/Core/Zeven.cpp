@@ -1022,10 +1022,6 @@ void CSystemVariable::registerSystemVariable(const CString &screenName, CString 
     variables.push_back(newType);
 }
 
-
-
-
-
 dkContext* dkInit(dkConfig config)
 {
     dkContext* ctx = new dkContext;

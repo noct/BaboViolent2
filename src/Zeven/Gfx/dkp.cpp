@@ -19,17 +19,9 @@
 
 
 #include <Zeven/Gfx.h>
-
-#ifdef WIN32
-#include <windows.h>
-#endif
-
+#include <glad/glad.h>
 #include <vector>
-#include "dkgl.h"
 
-
-
-#include <Zeven/CVector.h>
 
 
 class CParticle

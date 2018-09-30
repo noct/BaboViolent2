@@ -20,6 +20,7 @@
 
 #include "CWeather.h"
 #include <Zeven/Gfx.h>
+#include <glad/glad.h>
 
 struct SSnow
 {

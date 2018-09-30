@@ -389,7 +389,7 @@ void Player::render()
         glPolygonMode(GL_FRONT, GL_FILL);
         //gluQuadricTexture(qObj, true);
         //gluSphere(qObj, .25f, 16, 16);
-        drawSphere(0.25f, 16, 16, GL_TRIANGLES);
+        dkglDrawSphere(0.25f, 16, 16, GL_TRIANGLES);
 
         //--- On pogne la position sur l'�ran
         CVector3f screenPos = dkglProject(CVector3f(0, 0, 0));

@@ -23,6 +23,7 @@
 #include "GameVar.h"
 #include "ClientHelper.h"
 
+#include <glad/glad.h>
 
 
 

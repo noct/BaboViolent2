@@ -20,6 +20,8 @@
 
 
 #include <Zeven/Gfx.h>
+#include <SDL2/SDL.h>
+#include <glad/glad.h>
 
 static SDL_GLContext glContext = nullptr;
 
@@ -679,7 +681,7 @@ static void lookAt(
     glTranslatef(-eyex, -eyey, -eyez);
 }
 
-void gluLookAt(
+void dkglLookAt(
     GLdouble eyex,
     GLdouble eyey,
     GLdouble eyez,
@@ -696,7 +698,7 @@ void gluLookAt(
 #define PI2 6.283185307179586476925286766559f
 
 // Very expensive call
-void drawSphere(GLdouble radius, GLint slices, GLint stacks, GLenum topology)
+void dkglDrawSphere(GLdouble radius, GLint slices, GLint stacks, GLenum topology)
 {
     glBegin(topology);
     for (int j = 0; j < stacks; ++j)

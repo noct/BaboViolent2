@@ -369,7 +369,7 @@ void ToolSpawn::render(Editor2 * editor)
             //gluQuadricDrawStyle(editor->map->qObj, GLU_SILHOUETTE);
             //gluSphere(editor->map->qObj, 0.25f, 8, 4);
             //gluQuadricDrawStyle(editor->map->qObj, GLU_FILL);
-            drawSphere(0.25f, 8, 4, GL_LINES);
+            dkglDrawSphere(0.25f, 8, 4, GL_LINES);
         glPopMatrix();
     glPopAttrib();
 }

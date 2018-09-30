@@ -26,7 +26,6 @@
 #include "imgui_impl_opengl3.h"
 #include <SDL2/SDL.h>
 #include <string>
-#include "dki.h"
 
 static std::string last_error = "";
 static SDL_Window* window = nullptr;
@@ -171,6 +170,10 @@ int dkwMainLoop()
             done = true;
         if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window))
             done = true;
+        if(event.type == SDL_TEXTINPUT)
+        {
+            mainLoopObject->textWrite(event.text.text[0]);
+        }
         //if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
         //{
         //    width = event.window.data1;

@@ -19,6 +19,7 @@
 /* TCE (c) All rights reserved */
 #include <Zeven/Gfx.h>
 #include <memory.h>
+#include <SDL2/SDL.h>
 
 static CVector2i mousePos(0, 0);
 static SDL_Window* window;

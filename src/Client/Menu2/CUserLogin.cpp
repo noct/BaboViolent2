@@ -20,6 +20,7 @@
 #include "GameVar.h"
 #include "Console.h"
 #include "ClientHelper.h"
+#include <glad/glad.h>
 
 
 CUserLogin::CUserLogin(CControl * in_parent, CControl * in_alignTo)
@@ -288,7 +289,7 @@ void CUserLogin::Paint(CControl * control)
                     glColor3f(1,1,1);
 
                     //--- Camera
-                    gluLookAt(-4, -12, 7, 0, 0, 5, 0, 0, 1);
+                    dkglLookAt(-4, -12, 7, 0, 0, 5, 0, 0, 1);
 
                     //--- Shadow
                     glColor4f(1,1,1,.75f);
@@ -315,7 +316,7 @@ void CUserLogin::Paint(CControl * control)
 
                         glColor3f(1,1,1);
                         glPolygonMode(GL_FRONT, GL_FILL);
-                        drawSphere(5, 24, 24, GL_TRIANGLES);
+                        dkglDrawSphere(5, 24, 24, GL_TRIANGLES);
                     glPopMatrix();
 
                 glPopAttrib();

@@ -20,6 +20,7 @@
 #include "Scene.h"
 #include "ClientHelper.h"
 #include "ClientConsole.h"
+#include <glad/glad.h>
 
 #include <algorithm>
 
@@ -73,7 +74,7 @@ void Game::render()
                     {
                         CVector2i res = dkwGetResolution();
                         dkglSetProjection(80, .1f, 50, (float)res[1] * 1.333f, (float)res[1]);
-                        gluLookAt(
+                        dkglLookAt(
                             thisPlayer->currentCF.position[0],
                             thisPlayer->currentCF.position[1],
                             .4f,
@@ -88,14 +89,14 @@ void Game::render()
             {
                 if(thisPlayer)
                 {
-                    gluLookAt(
+                    dkglLookAt(
                         map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, map->camPos[2]/* + thisPlayer->shootShakeDis[2] * .25f*/,
                         map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, 0/* + thisPlayer->shootShakeDis[2] * .25f*/,
                         up[0], up[1], up[2]);
                 }
                 else
                 {
-                    gluLookAt(
+                    dkglLookAt(
                         map->camPos[0], map->camPos[1], map->camPos[2],
                         map->camPos[0], map->camPos[1], 0,
                         up[0], up[1], up[2]);
@@ -103,7 +104,7 @@ void Game::render()
             }
             else
             {
-                gluLookAt(
+                dkglLookAt(
                     map->camPos[0], map->camPos[1] - 4.0f, map->camPos[2],
                     map->camPos[0], map->camPos[1] - 1.0f, 0,
                     up[0], up[1], up[2]);

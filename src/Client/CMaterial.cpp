@@ -16,6 +16,7 @@
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 #include "CMaterial.h"
+#include <glad/glad.h>
 
 CMaterial::CMaterial(texture_t tex, blend_t blend, bool diffuse, bool lit): m_tex(tex), m_blend(blend), m_diffuse(diffuse), m_lit(lit)
 {

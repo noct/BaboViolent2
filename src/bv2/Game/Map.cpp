@@ -74,7 +74,7 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     dkglPopOrtho();
 
     // On swap les buffers
-    SDL_GL_SwapWindow(dkwGetHandle());
+    dkwSwap();
 #endif
 #ifndef DEDICATED_SERVER
     zoom = 0;

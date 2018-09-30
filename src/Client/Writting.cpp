@@ -213,6 +213,19 @@ void Writting::updateWritting(float delay)
             if (m_cursorPos > len()) m_cursorPos = len();
         }
     }
+    // Si on déplace avec les flèches
+    if(dkiGetState(KeyBackspace) == DKI_DOWN)
+    {
+        dksPlaySound(m_sfxWrite, -1, 200);
+        m_cursorAnim = 0;
+        if(m_cursorPos < len())
+        {
+            remove(m_cursorPos);
+            if(m_cursorPos > len()) m_cursorPos = len();
+        }
+        m_cursorPos--;
+        if(m_cursorPos < 0) m_cursorPos = 0;
+    }
 }
 
 

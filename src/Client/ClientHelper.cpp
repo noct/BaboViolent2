@@ -20,6 +20,7 @@
 #include "ClientHelper.h"
 #include <Zeven/Gfx.h>
 #include <GameVar.h>
+#include <glad/glad.h>
 bool enableShadow = true;
 
 //

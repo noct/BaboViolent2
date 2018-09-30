@@ -712,7 +712,7 @@ void Map::renderMisc()
             glPushMatrix();
             glTranslatef(dm_spawns[i][0], dm_spawns[i][1], dm_spawns[i][2]);
             //gluSphere(qObj, .25f, 8, 4);
-            drawSphere(0.25f, 8, 4, GL_TRIANGLES);
+            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
             glPopMatrix();
         }
         for(i = 0; i < (int)blue_spawns.size(); ++i)
@@ -721,7 +721,7 @@ void Map::renderMisc()
             glPushMatrix();
             glTranslatef(blue_spawns[i][0], blue_spawns[i][1], blue_spawns[i][2]);
             //gluSphere(qObj, .25f, 8, 4);
-            drawSphere(0.25f, 8, 4, GL_TRIANGLES);
+            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
             glPopMatrix();
         }
         for(i = 0; i < (int)red_spawns.size(); ++i)
@@ -730,7 +730,7 @@ void Map::renderMisc()
             glPushMatrix();
             glTranslatef(red_spawns[i][0], red_spawns[i][1], red_spawns[i][2]);
             //gluSphere(qObj, .25f, 8, 4);
-            drawSphere(0.25f, 8, 4, GL_TRIANGLES);
+            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
             glPopMatrix();
         }
     }

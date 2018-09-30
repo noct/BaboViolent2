@@ -16,6 +16,7 @@
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 #include "Write.h"
+#include <glad/glad.h>
 
 
 

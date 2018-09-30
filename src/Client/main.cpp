@@ -23,6 +23,7 @@
 #include "CMaster.h"
 #include "CLobby.h"
 #include <exception>
+#include <SDL2/SDL.h>
 
 // notre scene
 Scene * scene = 0;
@@ -174,6 +175,21 @@ public:
 } mainLoopInterface;
 
 
+// Not sure if still usefule
+// // Set single CPU usage
+// if(gameVar.cl_affinityMode > 0)
+// {
+//     ::SetProcessAffinityMask(::GetCurrentProcess(), 0x1);
+// }
+
+// // Restore system settings
+// if(gameVar.cl_affinityMode == 1)
+// {
+//     DWORD_PTR procMask;
+//     DWORD_PTR sysMask;
+//     ::GetProcessAffinityMask(::GetCurrentProcess(), &procMask, &sysMask);
+//     ::SetProcessAffinityMask(::GetCurrentProcess(), sysMask);
+// }
 
 int main(int argc, const char* argv[])
 {
@@ -197,8 +213,18 @@ int main(int argc, const char* argv[])
 
     mainLoopInterface.ctx = ctx;
 
-    //--- Windowed mode requires special handling
-    if (!dkwInit(gameVar.r_resolution[0], gameVar.r_resolution[1], gameVar.lang_gameName.s, &mainLoopInterface, gameVar.r_fullScreen, gameVar.r_refreshRate))
+    dkGfxConfig gconfig = {};
+    gconfig.width = gameVar.r_resolution[0];
+    gconfig.height = gameVar.r_resolution[1];
+    gconfig.title = gameVar.lang_gameName.s;
+    gconfig.mMainLoopObject = &mainLoopInterface;
+    gconfig.fullScreen = gameVar.r_fullScreen;
+    gconfig.refreshRate = gameVar.r_refreshRate;
+    gconfig.mixrate = gameVar.s_mixRate;
+    gconfig.maxsoftwarechannels = gameVar.s_maxSoftwareChannels;
+
+    dkGfxContext* gtx = dkGfxInit(ctx, gconfig);
+    if(!gtx)
     {
         char * error = dkwGetLastError();
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", error, nullptr);
@@ -206,72 +232,11 @@ int main(int argc, const char* argv[])
         return 0;
     }
 
-    // On init les input
-    if (!dkiInit(dkwGetHandle()))
-    {
-        dkwShutDown();
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error creating Input", nullptr);
-        dkFini(ctx);
-        return 0;
-    }
-
-    // Set single CPU usage
-    if(gameVar.cl_affinityMode > 0)
-    {
-        ::SetProcessAffinityMask(::GetCurrentProcess(), 0x1);
-    }
-
-    // On cr�notre API openGL (This does nothing anymore
-    if (!dkglCreateContext(dkwGetDC()))
-    {
-        dkiShutDown();
-        dkwShutDown();
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error creating openGL context", nullptr);
-        dkFini(ctx);
-        return 0;
-    }
-
-    // Restore system settings
-    if(gameVar.cl_affinityMode == 1)
-    {
-        DWORD_PTR procMask;
-        DWORD_PTR sysMask;
-        ::GetProcessAffinityMask(::GetCurrentProcess(), &procMask, &sysMask);
-        ::SetProcessAffinityMask(::GetCurrentProcess(), sysMask);
-    }
-
-    // On init les textures
-    dktInit();
-
-    // On init les objets 3D
-    dkoInit();
-
-    // On init les particles
-    dkpInit();
-
-    // On init le son
-    if (!dksInit(gameVar.s_mixRate, gameVar.s_maxSoftwareChannels))
-    {
-        dkpShutDown();
-        dkoShutDown();
-        dkiShutDown();
-        dkglShutDown();
-        dkwShutDown();
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error creating fmod", nullptr);
-        dkFini(ctx);
-        return 0;
-    }
-
     // On init la network
     if (bb_init() == 1)
     {
-        dksShutDown();
-        dkpShutDown();
-        dkoShutDown();
-        dkiShutDown();
-        dkglShutDown();
-        dkwShutDown();
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error initiating baboNet", nullptr);
+        dkGfxFini(gtx);
         dkFini(ctx);
         return 0;
     }
@@ -281,12 +246,6 @@ int main(int argc, const char* argv[])
         // Error
         bb_peerShutdown();
         bb_shutdown();
-        dksShutDown();
-        dkpShutDown();
-        dkoShutDown();
-        dkiShutDown();
-        dkglShutDown();
-        dkwShutDown();
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Wrong version of BaboNet", nullptr);
         dkFini(ctx);
         return 0;
@@ -338,14 +297,6 @@ int main(int argc, const char* argv[])
     // On shutdown le tout (L'ordre est assez important ici)
     bb_peerShutdown();
     bb_shutdown();
-    dksShutDown();
-    dkpShutDown();
-    dkoShutDown();
-    dkfShutDown();
-    dktShutDown();
-    dkglShutDown();
-    dkiShutDown();
-    dkwShutDown();
 
     dkFini(ctx);
     return 0;

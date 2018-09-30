@@ -17,6 +17,7 @@
 */
 #include "IntroScreen.h"
 #include "GameVar.h"
+#include <glad/glad.h>
 
 //
 // Constructeur

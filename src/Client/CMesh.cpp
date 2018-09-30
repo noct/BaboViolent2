@@ -16,6 +16,7 @@
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 #include "CMesh.h"
+#include <glad/glad.h>
 
 CMesh::CMesh(vb_list_t& vbs)
 {

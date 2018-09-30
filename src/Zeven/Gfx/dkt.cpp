@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <vector>
 #include <Zeven/CVector.h>
+#include <glad/glad.h>
 
 
 // La class pour tenir une texture, son ID et son filename

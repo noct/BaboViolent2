@@ -28,6 +28,7 @@
 #ifndef DEDICATED_SERVER
 #include "CMeshBuilder.h"
 #include "CWeather.h"
+#include <glad/glad.h>
 
 #define SHADOW_DETAIL 32
 

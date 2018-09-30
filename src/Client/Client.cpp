@@ -34,7 +34,7 @@ extern CControl * btn_resume;
 //
 // Constructeur
 //
-Client::Client(Game * pGame)
+Client::Client(ClientGame * pGame)
 {
     requestedAdmin = false;
     wrongVersionReason = false;

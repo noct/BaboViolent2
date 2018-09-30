@@ -231,7 +231,8 @@ void Player::update(float delay)
 
             // On gère les inputs
             auto cconsole = static_cast<ClientConsole*>(console);
-            if(isThisPlayer && !cconsole->isActive() && !writting && !game->showMenu && !menuManager.root->visible)
+            auto cgame = static_cast<ClientGame*>(game);
+            if(isThisPlayer && !cconsole->isActive() && !writting && !cgame->showMenu && !menuManager.root->visible)
             {
                 controlIt(delay);
             }

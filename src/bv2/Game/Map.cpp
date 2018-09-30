@@ -138,7 +138,10 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     if(scene->server || isEditor)
         fptr = &fileObj;
     else
-        fptr = &_game->mapBuffer;
+    {
+        auto cgame = static_cast<ClientGame*>(_game);
+        fptr = &cgame->mapBuffer;
+    }
     FileIO& file = *fptr;
 
 #else

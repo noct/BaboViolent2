@@ -22,7 +22,7 @@
 #define GAME_VERSION_CL 22000
 #define MIN_TIME_BETWEEN_QMSG 0.9f
 
-#include "Game.h"
+#include "ClientGame.h"
 #include "ControlListener.h"
 #include "Button.h"
 #include "Writting.h"
@@ -52,7 +52,7 @@ public:
 	FSOUND_SAMPLE * m_sfxOver;
 
 	// Notre jeu
-	Game * game;
+	ClientGame * game;
 
 	CString adminRequest;
 	bool requestedAdmin;
@@ -145,7 +145,7 @@ public:
 
 public:
 	// Constructeur
-	Client(Game * pGame);
+	Client(ClientGame * pGame);
 
 	// Destructeur
 	virtual ~Client();

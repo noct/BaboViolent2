@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-#include "Game.h"
+#include "ClientGame.h"
 #include "Console.h"
 #include "Scene.h"
 #include "ClientHelper.h"
@@ -36,7 +36,7 @@ extern int renderToggle;
 //
 // Render
 //
-void Game::render()
+void ClientGame::render()
 {
     int i;
     dkoDisable(DKO_MULTIPASS);
@@ -477,7 +477,7 @@ void Game::render()
 // On la render ici et non dans l'objet map,
 // car on a besoin de plein d'info comme la position des joueurs, flag, etc
 //
-void Game::renderMiniMap()
+void ClientGame::renderMiniMap()
 {
     CVector2i res(1280, 720);// = dkwGetResolution();
 

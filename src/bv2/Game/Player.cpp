@@ -232,7 +232,8 @@ void Player::kill(bool silenceDeath)
     {
         status = PLAYER_STATUS_DEAD;
         dksPlay3DSound(gameVar.sfx_baboCreve[rand() % 3], -1, 5, currentCF.position, 255);
-        game->spawnBlood(currentCF.position, 1);
+        auto cgame = static_cast<ClientGame*>(game);
+        cgame->spawnBlood(currentCF.position, 1);
         deadSince = 0;
 
         //--- Spawn some gibs :D
@@ -290,6 +291,7 @@ void MultOglMatrix(CMatrix3x3f m)
 //
 void Player::render()
 {
+    auto cgame = static_cast<ClientGame*>(game);
     if(status == PLAYER_STATUS_ALIVE)
     {
         glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_POLYGON_BIT);
@@ -319,7 +321,7 @@ void Player::render()
             glEnd();
             glPopMatrix();
         }
-        if((game->gameType != GAME_TYPE_DM) && (gameVar.cl_teamIndicatorType == 1 || (gameVar.cl_teamIndicatorType == 2 && teamID == game->thisPlayer->teamID) || (gameVar.cl_teamIndicatorType > 0 && game->thisPlayer->teamID == PLAYER_TEAM_SPECTATOR)))
+        if((game->gameType != GAME_TYPE_DM) && (gameVar.cl_teamIndicatorType == 1 || (gameVar.cl_teamIndicatorType == 2 && teamID == cgame->thisPlayer->teamID) || (gameVar.cl_teamIndicatorType > 0 && cgame->thisPlayer->teamID == PLAYER_TEAM_SPECTATOR)))
         {
             //--- Get up & right vectors
             float modelview[16];
@@ -438,9 +440,10 @@ void Player::render()
 
 void Player::renderName()
 {
-    if(gameVar.sv_showEnemyTag && game->thisPlayer)
+    auto cgame = static_cast<ClientGame*>(game);
+    if(gameVar.sv_showEnemyTag && cgame->thisPlayer)
     {
-        if(!isThisPlayer && teamID != PLAYER_TEAM_SPECTATOR && teamID != game->thisPlayer->teamID && game->gameType != GAME_TYPE_DM)
+        if(!isThisPlayer && teamID != PLAYER_TEAM_SPECTATOR && teamID != cgame->thisPlayer->teamID && game->gameType != GAME_TYPE_DM)
         {
             //--- We don't print it !!!!!!
             return;
@@ -468,9 +471,9 @@ void Player::renderName()
     }
 
     //--- The life of this player
-    if(game->thisPlayer && status == PLAYER_STATUS_ALIVE)
+    if(cgame->thisPlayer && status == PLAYER_STATUS_ALIVE)
     {
-        if((!isThisPlayer && teamID == game->thisPlayer->teamID && game->gameType != GAME_TYPE_DM) ||
+        if((!isThisPlayer && teamID == cgame->thisPlayer->teamID && game->gameType != GAME_TYPE_DM) ||
             teamID == PLAYER_TEAM_SPECTATOR)
         {
             glColor3f(1, 1, 1);
@@ -727,6 +730,7 @@ void Player::switchMeleeWeapon(int newWeaponID, bool forceSwitch)
 //
 void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 {
+    auto cgame = static_cast<ClientGame*>(game);
     float cdamage = life - damage; // La diff�ence :) (boom headshot)
     if(damage == -1) cdamage = fromWeapon->damage; // C'est pus possible �
 
@@ -738,7 +742,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
             if(gameVar.sv_friendlyFire || from->playerID == playerID || game->gameType == GAME_TYPE_DM)
             {
                 dksPlay3DSound(gameVar.sfx_hit[rand() % 2], -1, 5, currentCF.position, 255);
-                game->spawnBlood(currentCF.position, cdamage);
+                cgame->spawnBlood(currentCF.position, cdamage);
                 if(from != this)
                 {
                     from->dmg += (cdamage < life) ? cdamage : life;
@@ -815,7 +819,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
         else
         {
             dksPlay3DSound(gameVar.sfx_hit[rand() % 2], -1, 5, currentCF.position, 255);
-            game->spawnBlood(currentCF.position, cdamage);
+            cgame->spawnBlood(currentCF.position, cdamage);
             if(from != this)
                 from->dmg += (cdamage < life) ? cdamage : life;
             life -= cdamage;

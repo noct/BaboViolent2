@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-#include "Game.h"
+#include "ClientGame.h"
 #include "Helper.h"
 #include "ClientHelper.h"
 
@@ -82,7 +82,7 @@ void renderStatsSlice(const CVector4f & sliceColor, char * text1, char* c1, char
 
 
 
-void Game::renderBlueTeam(std::vector<Player*> & blueTeam, int & vPos)
+void ClientGame::renderBlueTeam(std::vector<Player*> & blueTeam, int & vPos)
 {
     // Blue Team
     renderStatsSlice(CVector4f(0, 0, 1, .75f), gameVar.lang_blueTeamC.s, "","","","",CString("%i", blueScore).s, CString(""/*%i", bluePing*33*/).s, vPos);
@@ -114,7 +114,7 @@ void Game::renderBlueTeam(std::vector<Player*> & blueTeam, int & vPos)
     vPos += 10;
 }
 
-void Game::renderRedTeam(std::vector<Player*> & redTeam, int & vPos)
+void ClientGame::renderRedTeam(std::vector<Player*> & redTeam, int & vPos)
 {
     // Red Team
     renderStatsSlice(CVector4f(1, 0, 0, .75f), gameVar.lang_redTeamC.s,"","","","", CString("%i", redScore).s, CString(""/*%i", redPing*33*/).s, vPos);
@@ -145,7 +145,7 @@ void Game::renderRedTeam(std::vector<Player*> & redTeam, int & vPos)
     vPos += 10;
 }
 
-void Game::renderFFA(std::vector<Player*> & ffaTeam, int & vPos)
+void ClientGame::renderFFA(std::vector<Player*> & ffaTeam, int & vPos)
 {
     // All Team
     renderStatsSlice(CVector4f(1, 1, 1, .75f), CString(gameVar.lang_freeForAllC.s, redWin+blueWin).s,"","","","", CString(""/*%i", blueScore + redScore*/).s, CString("%i", ffaPing*33).s, vPos);
@@ -171,7 +171,7 @@ void Game::renderFFA(std::vector<Player*> & ffaTeam, int & vPos)
     vPos += 10;
 }
 
-void Game::renderSpectator(std::vector<Player*> & spectatorTeam, int & vPos)
+void ClientGame::renderSpectator(std::vector<Player*> & spectatorTeam, int & vPos)
 {
     // Spectators
     renderStatsSlice(CVector4f(.5f, .5f, .5f, .75f), gameVar.lang_spectatorC.s, "","","","","", CString(""/*%i", spectatorPing*33*/).s, vPos);
@@ -203,7 +203,7 @@ void Game::renderSpectator(std::vector<Player*> & spectatorTeam, int & vPos)
 //
 // Afficher les stats
 //
-void Game::renderStats()
+void ClientGame::renderStats()
 {
     CVector2i res(800,600);// = dkwGetResolution();
     dkglPushOrtho((float)res[0], (float)res[1]);

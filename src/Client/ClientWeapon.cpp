@@ -187,6 +187,7 @@ void NuzzleFlash::render()
 //
 void ClientWeapon::shoot(Player * owner)
 {
+    auto cgame = static_cast<ClientGame*>(owner->game);
     if (weaponID == WEAPON_BAZOOKA && owner->rocketInAir && currentFireDelay <= fireDelay - 0.25f)
     {
         //we get the direction right so this doesnt create a bug with older servers
@@ -201,7 +202,7 @@ void ClientWeapon::shoot(Player * owner)
             gameVar.dkpp_firingSmoke.direction = rotateAboutAxis(gameVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
             gameVar.dkpp_firingSmoke.pitchTo = 45;
         }
-        owner->game->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
+        cgame->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
         return;
     }
     if (currentFireDelay <= 0 && !overHeated)
@@ -310,7 +311,7 @@ void ClientWeapon::shoot(Player * owner)
             owner->shootShakeDis = -gameVar.dkpp_firingSmoke.direction * reculVel * .5f;
             //for (int i=0;i<nbShot;++i)
             {
-                owner->game->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
+                cgame->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
             }
 
             if (projectileType == PROJECTILE_DIRECT && weaponID != WEAPON_FLAME_THROWER && weaponID != WEAPON_PHOTON_RIFLE)
@@ -323,7 +324,7 @@ void ClientWeapon::shoot(Player * owner)
                 gameVar.dkpp_firingSmoke.direction = dir;
                 gameVar.dkpp_firingSmoke.pitchTo = 0;
                 dkpCreateParticleExP(gameVar.dkpp_firingSmoke);
-                if (gameVar.r_showCasing) owner->game->douilles.push_back(new Douille(pos, dir*(damage+1), right));
+                if (gameVar.r_showCasing) cgame->douilles.push_back(new Douille(pos, dir*(damage+1), right));
             }
 
             dkpCreateParticleExP(gameVar.dkpp_firingSmoke);
@@ -367,6 +368,7 @@ void ClientWeapon::shootMelee(Player * owner)
 
 void ClientWeapon::shoot(net_svcl_player_shoot & playerShoot, Player * owner)
 {
+    auto cgame = static_cast<ClientGame*>(owner->game);
     modelAnim = 0;
 
     if (weaponID != WEAPON_FLAME_THROWER)
@@ -409,9 +411,9 @@ void ClientWeapon::shoot(net_svcl_player_shoot & playerShoot, Player * owner)
             gameVar.dkpp_firingSmoke.direction = dir;
             gameVar.dkpp_firingSmoke.pitchTo = 0;
             dkpCreateParticleExP(gameVar.dkpp_firingSmoke);
-            if (gameVar.r_showCasing)  owner->game->douilles.push_back(new Douille(pos, dir*(damage+1), right));
+            if (gameVar.r_showCasing)  cgame->douilles.push_back(new Douille(pos, dir*(damage+1), right));
         }
-        owner->game->spawnImpact(p1, p2, normal, this, damage, owner->teamID);
+        cgame->spawnImpact(p1, p2, normal, this, damage, owner->teamID);
     }
     else if (weaponID == WEAPON_FLAME_THROWER)
     {

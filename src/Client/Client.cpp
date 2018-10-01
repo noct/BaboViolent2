@@ -24,6 +24,9 @@
 #include <Zeven/Gfx.h>
 #include "Screengrab.h"
 #include "ClientConsole.h"
+#include "CControl.h"
+#include "CMenuManager.h"
+#include "baboNet.h"
 
 extern Scene * scene;
 

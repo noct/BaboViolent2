@@ -28,6 +28,7 @@
 #include "CSnow.h"
 #include "CLava.h"
 #include "ClientHelper.h"
+#include "ClientGame.h"
 #include <direct.h>
 #include <algorithm>
 #endif

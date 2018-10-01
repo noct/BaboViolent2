@@ -20,7 +20,7 @@
 #include "Console.h"
 #include "CMaster.h"
 #include "CCurl.h"
-#include "Scene.h"
+#include "ClientScene.h"
 #include "CUserLogin.h"
 
 
@@ -151,6 +151,7 @@ void CMainTab::MouseMove(CControl * control)
 }
 void CMainTab::Click(CControl * control)
 {
+    auto cscene = static_cast<ClientScene*>(scene);
 	if (control->style == "BUTTON")
 	{
 		dksPlaySound(m_sfxClic, -1, 200);
@@ -251,11 +252,11 @@ void CMainTab::Click(CControl * control)
 	}
 	if (btn_resume == control)
 	{
-		if (scene && scene->client && scene->client->game->thisPlayer && !scene->client->game->isServerGame)
+		if (cscene && cscene->client && cscene->client->game->thisPlayer && !cscene->client->game->isServerGame)
 		{
-			scene->client->game->thisPlayer->updateSkin();
+            cscene->client->game->thisPlayer->updateSkin();
 
-            Player* tplayer = scene->client->game->thisPlayer;
+            Player* tplayer = cscene->client->game->thisPlayer;
 			net_clsv_svcl_player_update_skin updateSkin;
 			updateSkin.playerID = tplayer->playerID;
 			memcpy(updateSkin.skin, tplayer->skin.s, (tplayer->skin.len() <= 6)?tplayer->skin.len()+1:7);
@@ -268,7 +269,7 @@ void CMainTab::Click(CControl * control)
 			updateSkin.redDecal[0] = (unsigned char)(tplayer->redDecal[0] * 255.0f);
 			updateSkin.redDecal[1] = (unsigned char)(tplayer->redDecal[1] * 255.0f);
 			updateSkin.redDecal[2] = (unsigned char)(tplayer->redDecal[2] * 255.0f);
-			bb_clientSend(scene->client->uniqueClientID, (char*)&updateSkin, sizeof(net_clsv_svcl_player_update_skin), NET_CLSV_SVCL_PLAYER_UPDATE_SKIN);
+			bb_clientSend(cscene->client->uniqueClientID, (char*)&updateSkin, sizeof(net_clsv_svcl_player_update_skin), NET_CLSV_SVCL_PLAYER_UPDATE_SKIN);
 		}
 
 		menuManager.root->visible = false;

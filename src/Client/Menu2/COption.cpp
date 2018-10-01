@@ -18,7 +18,7 @@
 #include "COption.h"
 #include "GameVar.h"
 #include "KeyManager.h"
-#include "Scene.h"
+#include "ClientScene.h"
 
 extern Scene * scene;
 
@@ -596,6 +596,7 @@ void COption::MouseMove(CControl * control)
 }
 void COption::Click(CControl * control)
 {
+    auto cscene = static_cast<ClientScene*>(scene);
     if(control->style == "EDIT" || control->style == "BUTTON" || control->style == "LISTBOX" || control->style == "CHECK" || control->style == "KEY")
     {
         dksPlaySound(m_sfxClic, -1, 200);
@@ -648,8 +649,8 @@ void COption::Click(CControl * control)
     // Must reload weather if changed
     if(gameVar.r_weatherEffects != chk_weatherEffects->check) {
         gameVar.r_weatherEffects = chk_weatherEffects->check;
-        if(scene && scene->client && scene->client->game && scene->client->game->map)
-            scene->client->game->map->reloadWeather();
+        if(cscene && cscene->client && cscene->client->game && cscene->client->game->map)
+            cscene->client->game->map->reloadWeather();
     }
 
 
@@ -712,6 +713,7 @@ void COption::Click(CControl * control)
 }
 void COption::Validate(CControl * control)
 {
+    auto cscene = static_cast<ClientScene*>(scene);
     if(control->style == "EDIT" || control->style == "KEY")
     {
         dksPlaySound(m_sfxClic, -1, 200);
@@ -750,8 +752,8 @@ void COption::Validate(CControl * control)
     // Must reload weather if changed
     if(gameVar.r_weatherEffects != chk_weatherEffects->check) {
         gameVar.r_weatherEffects = chk_weatherEffects->check;
-        if(scene && scene->client && scene->client->game && scene->client->game->map)
-            scene->client->game->map->reloadWeather();
+        if(cscene && cscene->client && cscene->client->game && cscene->client->game->map)
+            cscene->client->game->map->reloadWeather();
     }
 
     switch(lst_refreshRate->selectedIndex)

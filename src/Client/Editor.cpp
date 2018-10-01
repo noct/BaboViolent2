@@ -23,7 +23,7 @@
 #include <algorithm>
 #include "EditorTools.h"
 #include "EditorDialogs.h"
-#include "Scene.h"
+#include "ClientScene.h"
 #include "ClientHelper.h"
 #include "ClientConsole.h"
 
@@ -171,11 +171,10 @@ Editor2::~Editor2()
         delete (*i);
     }
 
-//  scene->createMenu();
-
-    delete scene->mainTab->host;
-    scene->mainTab->host = new CHost(scene->mainTab->parent, scene->mainTab->btn_profile);
-    scene->mainTab->host->setVisible(false);
+    auto cscene = static_cast<ClientScene*>(scene);
+    delete cscene->mainTab->host;
+    cscene->mainTab->host = new CHost(cscene->mainTab->parent, cscene->mainTab->btn_profile);
+    cscene->mainTab->host->setVisible(false);
 
 
     //--- Recreate the host tab

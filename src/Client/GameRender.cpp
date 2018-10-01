@@ -17,7 +17,7 @@
 */
 #include "ClientGame.h"
 #include "Console.h"
-#include "Scene.h"
+#include "ClientScene.h"
 #include "ClientHelper.h"
 #include "ClientConsole.h"
 #include <glad/glad.h>
@@ -38,6 +38,7 @@ extern int renderToggle;
 //
 void ClientGame::render()
 {
+    auto cscene = static_cast<ClientScene*>(scene);
     int i;
     dkoDisable(DKO_MULTIPASS);
     //  dkoEnable(DKO_RENDER_NODE);
@@ -461,7 +462,7 @@ void ClientGame::render()
         //--- Render le vote à l'écran
         if(voting.votingInProgress)
         {
-            if(scene->client->blink <= .25f) printRightText((float)res[0] - 10, 10, 30, CString("\x9VOTING : %i", (int)(voting.remaining)));
+            if(cscene->client->blink <= .25f) printRightText((float)res[0] - 10, 10, 30, CString("\x9VOTING : %i", (int)(voting.remaining)));
             if(voting.voted)
             {
                 //--- Draw the vote bla bla bla
@@ -497,6 +498,7 @@ void ClientGame::render()
 //
 void ClientGame::renderMiniMap()
 {
+    auto cscene = static_cast<ClientScene*>(scene);
     CVector2i res(1280, 720);// = dkwGetResolution();
 
     dkglPushOrtho((float)res[0], (float)res[1]);
@@ -653,7 +655,7 @@ void ClientGame::renderMiniMap()
             if(thisPlayer->teamID == PLAYER_TEAM_RED ||
                 (thisPlayer->teamID == PLAYER_TEAM_BLUE && map->flagState[0] < 0))
             {
-                glBindTexture(GL_TEXTURE_2D, scene->client->tex_blueFlag);
+                glBindTexture(GL_TEXTURE_2D, cscene->client->tex_blueFlag);
                 glPushMatrix();
                 glTranslatef(map->flagPos[0][0], map->flagPos[0][1], 0);
                 //--- Da feel flag :)
@@ -673,7 +675,7 @@ void ClientGame::renderMiniMap()
             if(thisPlayer->teamID == PLAYER_TEAM_BLUE ||
                 (thisPlayer->teamID == PLAYER_TEAM_RED && map->flagState[1] < 0))
             {
-                glBindTexture(GL_TEXTURE_2D, scene->client->tex_redFlag);
+                glBindTexture(GL_TEXTURE_2D, cscene->client->tex_redFlag);
                 glPushMatrix();
                 glTranslatef(map->flagPos[1][0], map->flagPos[1][1], 0);
                 glColor3f(1, 1, 1);

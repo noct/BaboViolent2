@@ -20,8 +20,8 @@
 #include "GameVar.h"
 #include "Player.h"
 #include "Map.h"
-#include "Game.h"
-#include "Scene.h"
+#include "ClientGame.h"
+#include "ClientScene.h"
 
 extern Scene * scene;
 
@@ -188,6 +188,7 @@ void NuzzleFlash::render()
 void ClientWeapon::shoot(Player * owner)
 {
     auto cgame = static_cast<ClientGame*>(owner->game);
+    auto cscene = static_cast<ClientScene*>(scene);
     if (weaponID == WEAPON_BAZOOKA && owner->rocketInAir && currentFireDelay <= fireDelay - 0.25f)
     {
         //we get the direction right so this doesnt create a bug with older servers
@@ -222,7 +223,7 @@ void ClientWeapon::shoot(Player * owner)
                     playSound.soundID = SOUND_PHOTON_START;
                     playSound.volume = 150;
                     playSound.range = 5;
-                    bb_clientSend(scene->client->uniqueClientID, (char*)(&playSound), sizeof(net_svcl_play_sound), NET_SVCL_PLAY_SOUND);
+                    bb_clientSend(cscene->client->uniqueClientID, (char*)(&playSound), sizeof(net_svcl_play_sound), NET_SVCL_PLAY_SOUND);
                     dksPlay3DSound(gameVar.sfx_photonStart, -1, 5, owner->currentCF.position, 150);
                 }
             }
@@ -245,7 +246,7 @@ void ClientWeapon::shoot(Player * owner)
                 playSound.soundID = SOUND_OVERHEAT;
                 playSound.volume = 150;
                 playSound.range = 5;
-                bb_clientSend(scene->client->uniqueClientID, (char*)(&playSound), sizeof(net_svcl_play_sound), NET_SVCL_PLAY_SOUND);
+                bb_clientSend(cscene->client->uniqueClientID, (char*)(&playSound), sizeof(net_svcl_play_sound), NET_SVCL_PLAY_SOUND);
                 dksPlay3DSound(gameVar.sfx_overHeat, -1, 5, owner->currentCF.position, 150);
                 overHeated = true;
 
@@ -336,7 +337,7 @@ void ClientWeapon::shoot(Player * owner)
                 // On shoot melee
                 net_clsv_svcl_player_shoot_melee playerShootMelee;
                 playerShootMelee.playerID = owner->playerID;
-                bb_clientSend(scene->client->uniqueClientID, (char*)&playerShootMelee, sizeof(net_clsv_svcl_player_shoot_melee), NET_CLSV_SVCL_PLAYER_SHOOT_MELEE);
+                bb_clientSend(cscene->client->uniqueClientID, (char*)&playerShootMelee, sizeof(net_clsv_svcl_player_shoot_melee), NET_CLSV_SVCL_PLAYER_SHOOT_MELEE);
 
                 // On entends ça
                 if (owner->fireFrameDelay == 0)

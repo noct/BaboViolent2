@@ -18,7 +18,7 @@
 
 #include <Zeven/CThread.h>
 #include <Zeven/Core.h>
-#include "Scene.h"
+#include "ClientScene.h"
 #include "ClientConsole.h"
 #include "CMaster.h"
 #include "CLobby.h"
@@ -164,7 +164,8 @@ public:
         }
 
         // On render le tout
-        scene->render();
+        auto cscene = static_cast<ClientScene*>(scene);
+        cscene->render();
     }
 
     void textWrite(unsigned int caracter)
@@ -262,7 +263,7 @@ int main(int argc, const char* argv[])
     master = new CMaster(lobby);
 
     // On cr�notre scene
-    scene = new Scene(ctx);
+    scene = new ClientScene(ctx);
 
     ShowCursor(FALSE);
 

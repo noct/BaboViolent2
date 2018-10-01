@@ -20,6 +20,7 @@
 #include "Helper.h"
 #include "Scene.h"
 #include "ClientHelper.h"
+#include <glad/glad.h>
 
 CMenuManager menuManager;
 extern Scene *scene;

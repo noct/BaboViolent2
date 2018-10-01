@@ -25,6 +25,7 @@
 
 #ifndef DEDICATED_SERVER
 #include "ClientConsole.h"
+#include "ClientScene.h"
 #endif // !DEDICATED_SERVER
 
 
@@ -144,7 +145,8 @@ void Player::update(float delay)
                 {
                     weapon->shotInc--;
 #ifndef DEDICATED_SERVER
-                    dksPlay3DSound(scene->client->sfxShotyReload, -1, 5, currentCF.position, 230);
+                    auto cscene = static_cast<ClientScene*>(scene);
+                    dksPlay3DSound(cscene->client->sfxShotyReload, -1, 5, currentCF.position, 230);
 #endif
                 }
             }
@@ -166,7 +168,8 @@ void Player::update(float delay)
             net_clsv_svcl_player_change_name playerChangeName;
             memcpy(playerChangeName.playerName, gameVar.cl_playerName.s, gameVar.cl_playerName.len() + 1);
             playerChangeName.playerID = playerID;
-            bb_clientSend(scene->client->uniqueClientID, (char*)&playerChangeName, sizeof(net_clsv_svcl_player_change_name), NET_CLSV_SVCL_PLAYER_CHANGE_NAME);
+            auto cscene = static_cast<ClientScene*>(scene);
+            bb_clientSend(cscene->client->uniqueClientID, (char*)&playerChangeName, sizeof(net_clsv_svcl_player_change_name), NET_CLSV_SVCL_PLAYER_CHANGE_NAME);
             name = gameVar.cl_playerName;
         }
     }
@@ -260,7 +263,8 @@ void Player::update(float delay)
                     playerCoordFrame.mousePos[2] = (short)(currentCF.mousePosOnMap[2] * 100);
                     playerCoordFrame.babonetID = babonetID;
                     playerCoordFrame.camPosZ = (int)game->map->camPos[2];
-                    bb_clientSend(scene->client->uniqueClientID, (char*)&playerCoordFrame, sizeof(net_clsv_svcl_player_coord_frame), NET_CLSV_SVCL_PLAYER_COORD_FRAME, NET_UDP);
+                    auto cscene = static_cast<ClientScene*>(scene);
+                    bb_clientSend(cscene->client->uniqueClientID, (char*)&playerCoordFrame, sizeof(net_clsv_svcl_player_coord_frame), NET_CLSV_SVCL_PLAYER_COORD_FRAME, NET_UDP);
 
                     sendPosFrame = 0;
                 }
@@ -325,7 +329,8 @@ void Player::update(float delay)
             if(isThisPlayer)
             {
                 // On check si on peut requester le spawn, sauf si on est en s&d (là c le server qui choisi ;))
-                if((gameVar.sv_forceRespawn || ((dkiGetState(gameVar.k_shoot) == DKI_DOWN && !scene->client->showMenu) && !scene->client->chatting.haveFocus())) && !spawnRequested)
+                auto cscene = static_cast<ClientScene*>(scene);
+                if((gameVar.sv_forceRespawn || ((dkiGetState(gameVar.k_shoot) == DKI_DOWN && !cscene->client->showMenu) && !cscene->client->chatting.haveFocus())) && !spawnRequested)
                 {
                     if(gameVar.sv_subGameType == SUBGAMETYPE_RANDOMWEAPON)
                     {
@@ -357,7 +362,8 @@ void Player::update(float delay)
                     spawnRequest.redDecal[0] = (unsigned char)(redDecal[0] * 255.0f);
                     spawnRequest.redDecal[1] = (unsigned char)(redDecal[1] * 255.0f);
                     spawnRequest.redDecal[2] = (unsigned char)(redDecal[2] * 255.0f);
-                    bb_clientSend(scene->client->uniqueClientID, (char*)&spawnRequest, sizeof(net_clsv_spawn_request), NET_CLSV_SPAWN_REQUEST);
+                    auto cscene = static_cast<ClientScene*>(scene);
+                    bb_clientSend(cscene->client->uniqueClientID, (char*)&spawnRequest, sizeof(net_clsv_spawn_request), NET_CLSV_SPAWN_REQUEST);
                 }
             }
 #endif
@@ -508,7 +514,8 @@ void Player::controlIt(float delay)
             //--- On shoot ça
             net_clsv_svcl_player_shoot_melee playerShootMelee;
             playerShootMelee.playerID = playerID;
-            bb_clientSend(scene->client->uniqueClientID, (char*)&playerShootMelee, sizeof(net_clsv_svcl_player_shoot_melee), NET_CLSV_SVCL_PLAYER_SHOOT_MELEE);
+            auto cscene = static_cast<ClientScene*>(scene);
+            bb_clientSend(cscene->client->uniqueClientID, (char*)&playerShootMelee, sizeof(net_clsv_svcl_player_shoot_melee), NET_CLSV_SVCL_PLAYER_SHOOT_MELEE);
 
             //      meleeWeapon->shoot(this);
 
@@ -561,7 +568,8 @@ void Player::controlIt(float delay)
     {
         net_clsv_pickup_request pickupRequest;
         pickupRequest.playerID = playerID;
-        bb_clientSend(scene->client->uniqueClientID, (char*)&pickupRequest, sizeof(net_clsv_pickup_request), NET_CLSV_PICKUP_REQUEST);
+        auto cscene = static_cast<ClientScene*>(scene);
+        bb_clientSend(cscene->client->uniqueClientID, (char*)&pickupRequest, sizeof(net_clsv_pickup_request), NET_CLSV_PICKUP_REQUEST);
     }
 
     // On clamp sa vel /* Upgrade, faster ! haha */

@@ -19,26 +19,15 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-
 #include <Zeven/Core.h>
-#include "Game.h"
-#include "Server.h"
-#include "CMaster.h"
-#ifndef DEDICATED_SERVER
-#include "Client.h"
-#include "Editor.h"
-#include "CMainTab.h"
-#include "CMenuManager.h"
-#include "IntroScreen.h"
-#endif
+//#include "CMaster.h"
 
 #define ICONE_DEDICATED         0x0001
 #define ICONE_PASSWORDED        0x0002
 #define ICONE_FRIENDLYFIRE      0x0004
 #define ICONE_3DVIEW            0x0008
 
-
-class CCurl;
+class Server;
 
 // Implemented in main.cpp
 void MainLoopForceQuit();
@@ -52,27 +41,6 @@ public:
     // Le server
     Server * server;
 
-#ifndef DEDICATED_SERVER
-    // Le client
-    Client * client;
-
-    // Le Map editor (Ça ne peut pas coexister avec client et server)
-    Editor * editor;
-
-    // Le menu
-//  Menu * menu;
-    CMainTab * mainTab;
-
-    // Notre intro screen (quand que lui n'est pas fini, on update ni affiche rien d'autre)
-    IntroScreen * introScreen;
-
-    // Notre curseur
-    unsigned int tex_crosshair;
-    unsigned int tex_menuCursor;
-
-    //--- Head games logo bottom right
-    //unsigned int tex_miniHeadGames;
-#endif
     // Le delait pour sender les server info (à chaque 20sec)
     float serverInfoDelay;
     bool masterReady;
@@ -89,22 +57,11 @@ public:
     virtual ~Scene();
 
     // Update
-    void update(float delay);
-#ifndef DEDICATED_SERVER
-    // Renderer
-    void render();
+    virtual void update(float delay);
 
-    // Creating menu
-    void createMenu();
-#endif
     // Pour créer, join, disconnecter d'une game
-    void host(CString mapName);
-    void dedicate(CString mapName);
-#ifndef DEDICATED_SERVER
-    void join(CString IPAddress, int port, CString password = "");
-#endif
-    void disconnect();
-    void edit(CString command);
+    virtual void dedicate(CString mapName);
+    virtual void disconnect();
     void kick(CString playerName);
     void kick(int ID);
     void ban(CString playerName);
@@ -113,12 +70,8 @@ public:
     void unban(int banID);
 
     // Pour chatter
-    void sayall(CString message);
-#ifndef DEDICATED_SERVER
-    void sayteam(CString message);
-#endif
+    virtual void sayall(CString message);
 };
-
 
 #endif
 

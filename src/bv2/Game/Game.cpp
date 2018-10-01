@@ -24,6 +24,11 @@
 #include <time.h>
 #include <algorithm>
 
+#ifndef DEDICATED_SERVER
+#include "ClientScene.h"
+#endif // !DEDICATED_SERVER
+
+
 extern Scene * scene;
 
 long Projectile::uniqueProjectileID = 0;
@@ -1513,15 +1518,16 @@ void Projectile::update(float delay, Map* map)
             if(stickToPlayer >= 0)
             {
 #ifndef DEDICATED_SERVER
-                if(scene->client->game->players[stickToPlayer])
+                auto cscene = static_cast<ClientScene*>(scene);
+                if(cscene->client->game->players[stickToPlayer])
                 {
-                    if(scene->client->game->players[stickToPlayer]->status == PLAYER_STATUS_DEAD)
+                    if(cscene->client->game->players[stickToPlayer]->status == PLAYER_STATUS_DEAD)
                     {
                         stickToPlayer = -1;
                     }
                     else
                     {
-                        currentCF.position = scene->client->game->players[stickToPlayer]->currentCF.position;
+                        currentCF.position = cscene->client->game->players[stickToPlayer]->currentCF.position;
                     }
                 }
 #endif

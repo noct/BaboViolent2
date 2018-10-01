@@ -20,7 +20,10 @@
 #define CMASTER_H_INCLUDED
 
 #include "RemoteAdminPackets.h"
-
+#include "sqlite3.h"
+#include "CPing.h"
+#include <vector>
+#include "Server.h"
 
 // some macros to help fetch data after an sql query
 #define MASTER_SCORE		i*nColumn+5
@@ -28,14 +31,6 @@
 #define MASTER_IP			i*nColumn+7
 #define MASTER_LOCATION		i*nColumn+8
 #define MASTER_PORT			i*nColumn+9
-
-#include "sqlite3.h"
-
-#include "CPing.h"
-
-#include <vector>
-
-#include "Server.h"
 
 extern bool surveyReceived;
 

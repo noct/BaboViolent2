@@ -23,8 +23,11 @@
 #include "Game.h"
 #include "Scene.h"
 #include <limits>
+#include "Server.h"
 
 #ifndef DEDICATED_SERVER
+#include "ClientGame.h"
+#include "ClientScene.h"
 #include "ClientHelper.h"
 #endif
 
@@ -441,6 +444,7 @@ void Player::render()
 void Player::renderName()
 {
     auto cgame = static_cast<ClientGame*>(game);
+    auto cscene = static_cast<ClientScene*>(scene);
     if(gameVar.sv_showEnemyTag && cgame->thisPlayer)
     {
         if(!isThisPlayer && teamID != PLAYER_TEAM_SPECTATOR && teamID != cgame->thisPlayer->teamID && game->gameType != GAME_TYPE_DM)
@@ -456,7 +460,7 @@ void Player::renderName()
             onScreenPos[1] > 0 && onScreenPos[1] < res[1])
         {
             CString showName;
-            if(ping > 12 && scene->client->blink < .25f) showName.insert(CString(" \x5%s", gameVar.lang_laggerC.s).s, 0);
+            if(ping > 12 && cscene->client->blink < .25f) showName.insert(CString(" \x5%s", gameVar.lang_laggerC.s).s, 0);
             if(gameVar.r_maxNameLenOverBabo > 0 && name.len() > gameVar.r_maxNameLenOverBabo)
             {
                 CString sname(CString("%%.%is[...]", gameVar.r_maxNameLenOverBabo).s, name.s);
@@ -465,7 +469,7 @@ void Player::renderName()
             else
                 showName.insert(name.s, 0);
             showName.insert("\x8", 0);
-            if(ping > 12 && scene->client->blink < .25f) showName.insert(CString("\x5%s ", gameVar.lang_laggerC.s).s, 0);
+            if(ping > 12 && cscene->client->blink < .25f) showName.insert(CString("\x5%s ", gameVar.lang_laggerC.s).s, 0);
             printCenterText((float)onScreenPos[0], (float)onScreenPos[1] - 28, 28, showName);
         }
     }
@@ -480,7 +484,7 @@ void Player::renderName()
             renderTexturedQuad(onScreenPos[0] - 15, onScreenPos[1] - 8, 30, 7, 0);
             glColor3f(0, 0, 0);
             renderTexturedQuad(onScreenPos[0] - 14, onScreenPos[1] - 7, 28, 5, 0);
-            if(life > .25f || scene->client->blink < .25f)
+            if(life > .25f || cscene->client->blink < .25f)
             {
                 glColor3f(1 - life, life, 0);
                 renderTexturedQuad(onScreenPos[0] - 14, onScreenPos[1] - 7, (int)(life*28.0f), 5, 0);
@@ -690,7 +694,8 @@ void Player::switchWeapon(int newWeaponID, bool forceSwitch)
 
     // On entends �
 #ifndef DEDICATED_SERVER
-    if(scene->client) dksPlay3DSound(gameVar.sfx_equip, -1, 1, currentCF.position, 255);
+    auto cscene = static_cast<ClientScene*>(scene);
+    if(cscene->client) dksPlay3DSound(gameVar.sfx_equip, -1, 1, currentCF.position, 255);
 #endif
 
     // Reset rapid-fire hack check
@@ -731,6 +736,7 @@ void Player::switchMeleeWeapon(int newWeaponID, bool forceSwitch)
 void Player::hit(Weapon * fromWeapon, Player * from, float damage)
 {
     auto cgame = static_cast<ClientGame*>(game);
+    auto cscene = static_cast<ClientScene*>(scene);
     float cdamage = life - damage; // La diff�ence :) (boom headshot)
     if(damage == -1) cdamage = fromWeapon->damage; // C'est pus possible �
 
@@ -753,8 +759,8 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
                 if(cdamage > 1) screenHit = 0;
                 if(from->isThisPlayer)
                 {
-                    scene->client->hitIndicator = 1;
-                    dksPlaySound(scene->client->sfxHit, -1, 250);
+                    cscene->client->hitIndicator = 1;
+                    dksPlaySound(cscene->client->sfxHit, -1, 250);
                 }
             }
             if(gameVar.sv_reflectedDamage && from->playerID != playerID)
@@ -765,7 +771,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
             // Oups, on cr�e?
             if(life <= std::numeric_limits<float>::epsilon())
             {
-                if(scene->client)
+                if(cscene->client)
                 {
                     CString message = /*textColorLess*/(name);
                     switch(teamID)
@@ -783,7 +789,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
                     case PLAYER_TEAM_RED:message.insert("}", 0); break;
                     }
                     console->add(message);
-                    scene->client->eventMessages.push_back(TimedMessage(message));
+                    cscene->client->eventMessages.push_back(TimedMessage(message));
                 }
                 kill(false);
                 if(game->gameType == GAME_TYPE_TDM)
@@ -828,14 +834,14 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
             if(cdamage > 1) screenHit = 0;
             if(from->isThisPlayer)
             {
-                scene->client->hitIndicator = 1;
-                dksPlaySound(scene->client->sfxHit, -1, 250);
+                cscene->client->hitIndicator = 1;
+                dksPlaySound(cscene->client->sfxHit, -1, 250);
             }
 
             // Oups, on cr�e?
             if(life <= std::numeric_limits<float>::epsilon())
             {
-                if(scene->client)
+                if(cscene->client)
                 {
                     CString message = /*textColorLess*/(name);
                     switch(teamID)
@@ -853,7 +859,7 @@ void Player::hit(Weapon * fromWeapon, Player * from, float damage)
                     case PLAYER_TEAM_RED:message.insert("}", 0); break;
                     }
                     console->add(message);
-                    scene->client->eventMessages.push_back(TimedMessage(message));
+                    cscene->client->eventMessages.push_back(TimedMessage(message));
                 }
                 kill(false);
                 if(from != this)
@@ -1005,7 +1011,8 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
             if(life <= std::numeric_limits<float>::epsilon())
             {
 #ifndef DEDICATED_SERVER
-                if(scene->client || (scene->server && gameVar.sv_showKills))
+                auto cscene = static_cast<ClientScene*>(scene);
+                if(cscene->client || (scene->server && gameVar.sv_showKills))
 #else
                 if(scene->server && gameVar.sv_showKills)
 #endif
@@ -1147,7 +1154,8 @@ void Player::hitSV(Weapon * fromWeapon, Player * from, float damage)
             if(life <= std::numeric_limits<float>::epsilon())
             {
 #ifndef DEDICATED_SERVER
-                if(scene->client || (scene->server && gameVar.sv_showKills))
+                auto cscene = static_cast<ClientScene*>(scene);
+                if(cscene->client || (scene->server && gameVar.sv_showKills))
 #else
                 if(scene->server && gameVar.sv_showKills)
 #endif

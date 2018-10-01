@@ -16,14 +16,14 @@
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 
-#include "Game.h"
+#include "ClientGame.h"
 #include "netPacket.h"
 #include "Console.h"
 #include "GameVar.h"
 #include "Client.h"
 #include "ClientConsole.h"
 #include "Server.h"
-#include "Scene.h"
+#include "ClientScene.h"
 #include <time.h>
 #include <algorithm>
 #include "Client.h"
@@ -173,10 +173,11 @@ void ClientGame::createMap()
     {
         console->add("\x4> Invalid map");
         ZEVEN_SAFE_DELETE(map);
-        if(scene->client)
+        auto cscene = static_cast<ClientScene*>(scene);
+        if(cscene->client)
         {
-            scene->client->needToShutDown = true;
-            scene->client->isRunning = false;
+            cscene->client->needToShutDown = true;
+            cscene->client->isRunning = false;
         }
         if(scene->server)
         {
@@ -203,6 +204,8 @@ void ClientGame::createMap()
 
 void ClientGame::update(float delay)
 {
+    auto cscene = static_cast<ClientScene*>(scene);
+    auto client = cscene->client;
     int i;
     Game::update(delay);
 
@@ -310,7 +313,7 @@ void ClientGame::update(float delay)
                     spawnRequest.redDecal[0] = (unsigned char)(thisPlayer->redDecal[0] * 255.0f);
                     spawnRequest.redDecal[1] = (unsigned char)(thisPlayer->redDecal[1] * 255.0f);
                     spawnRequest.redDecal[2] = (unsigned char)(thisPlayer->redDecal[2] * 255.0f);
-                    bb_clientSend(scene->client->uniqueClientID, (char*)&spawnRequest, sizeof(net_clsv_spawn_request), NET_CLSV_SPAWN_REQUEST);
+                    bb_clientSend(cscene->client->uniqueClientID, (char*)&spawnRequest, sizeof(net_clsv_spawn_request), NET_CLSV_SPAWN_REQUEST);
                 }
             }
         }
@@ -414,24 +417,24 @@ void ClientGame::update(float delay)
 
 
         //-- We check for all enable guns
-        scene->client->btn_guns[WEAPON_SMG]->enable = gameVar.sv_enableSMG;
-        scene->client->btn_guns[WEAPON_SHOTGUN]->enable = gameVar.sv_enableShotgun;
-        scene->client->btn_guns[WEAPON_SNIPER]->enable = gameVar.sv_enableSniper;
-        scene->client->btn_guns[WEAPON_DUAL_MACHINE_GUN]->enable = gameVar.sv_enableDualMachineGun;
-        scene->client->btn_guns[WEAPON_CHAIN_GUN]->enable = gameVar.sv_enableChainGun;
-        scene->client->btn_guns[WEAPON_BAZOOKA]->enable = gameVar.sv_enableBazooka;
-        scene->client->btn_guns[WEAPON_PHOTON_RIFLE]->enable = gameVar.sv_enablePhotonRifle;
-        scene->client->btn_guns[WEAPON_FLAME_THROWER]->enable = gameVar.sv_enableFlameThrower;
+        client->btn_guns[WEAPON_SMG]->enable = gameVar.sv_enableSMG;
+        client->btn_guns[WEAPON_SHOTGUN]->enable = gameVar.sv_enableShotgun;
+        client->btn_guns[WEAPON_SNIPER]->enable = gameVar.sv_enableSniper;
+        client->btn_guns[WEAPON_DUAL_MACHINE_GUN]->enable = gameVar.sv_enableDualMachineGun;
+        client->btn_guns[WEAPON_CHAIN_GUN]->enable = gameVar.sv_enableChainGun;
+        client->btn_guns[WEAPON_BAZOOKA]->enable = gameVar.sv_enableBazooka;
+        client->btn_guns[WEAPON_PHOTON_RIFLE]->enable = gameVar.sv_enablePhotonRifle;
+        client->btn_guns[WEAPON_FLAME_THROWER]->enable = gameVar.sv_enableFlameThrower;
 
         if(gameVar.sv_enableSecondary)
         {
-            scene->client->btn_meleeguns[WEAPON_KNIVES - WEAPON_KNIVES]->enable = gameVar.sv_enableKnives;
-            scene->client->btn_meleeguns[WEAPON_SHIELD - WEAPON_KNIVES]->enable = gameVar.sv_enableShield;
+            client->btn_meleeguns[WEAPON_KNIVES - WEAPON_KNIVES]->enable = gameVar.sv_enableKnives;
+            client->btn_meleeguns[WEAPON_SHIELD - WEAPON_KNIVES]->enable = gameVar.sv_enableShield;
         }
         else
         {
-            scene->client->btn_meleeguns[WEAPON_KNIVES - WEAPON_KNIVES]->enable = false;
-            scene->client->btn_meleeguns[WEAPON_SHIELD - WEAPON_KNIVES]->enable = false;
+            client->btn_meleeguns[WEAPON_KNIVES - WEAPON_KNIVES]->enable = false;
+            client->btn_meleeguns[WEAPON_SHIELD - WEAPON_KNIVES]->enable = false;
         }
 
     }
@@ -508,7 +511,8 @@ void Douille::update(float pDelay, Map * map)
                 if(type == DOUILLE_TYPE_DOUILLE) dksPlay3DSound(gameVar.sfx_douille[rand() % 3], -1, 1, position, 255);
                 else if(type == DOUILLE_TYPE_GIB)
                 {
-                    auto cgame = static_cast<ClientGame*>(scene->client->game);
+                    auto cscene = static_cast<ClientScene*>(scene);
+                    auto cgame = static_cast<ClientGame*>(cscene->client->game);
                     cgame->spawnBlood(position, .1f);
                     //  delay = 0;
                 }
@@ -526,6 +530,7 @@ void Douille::update(float pDelay, Map * map)
 //
 void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, float imp, float damage, Player * from, int projectileType)
 {
+    auto cscene = static_cast<ClientScene*>(scene);
     if(map)
     {
         CVector3f p2 = direction * 128; // Ça c'est le range, 128 c'est assez, grosseur max de map (c fucking big ça)
@@ -550,7 +555,7 @@ void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, 
             playerShoot.p2[1] = (short)(direction[1] * 100);
             playerShoot.p2[2] = (short)(direction[2] * 100);
             playerShoot.weaponID = from->weapon->weaponID;
-            bb_clientSend(scene->client->uniqueClientID, (char*)&playerShoot, sizeof(net_clsv_player_shoot), NET_CLSV_PLAYER_SHOOT);
+            bb_clientSend(cscene->client->uniqueClientID, (char*)&playerShoot, sizeof(net_clsv_player_shoot), NET_CLSV_PLAYER_SHOOT);
         }
         else if(projectileType == PROJECTILE_ROCKET && from->weapon)
         {
@@ -568,7 +573,7 @@ void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, 
             playerProjectile.vel[0] = (char)(direction[0] * 10.0f);
             playerProjectile.vel[1] = (char)(direction[1] * 10.0f);
             playerProjectile.vel[2] = (char)(direction[2] * 10.0f);
-            bb_clientSend(scene->client->uniqueClientID, (char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE);
+            bb_clientSend(cscene->client->uniqueClientID, (char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE);
 
             // duplicate rocket was for hacking test only
             //playerProjectile.vel[1] = (char)(direction[0] * 10.0f);
@@ -595,7 +600,7 @@ void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, 
             playerProjectile.vel[0] = (char)(direction[0] * 10.0f);
             playerProjectile.vel[1] = (char)(direction[1] * 10.0f);
             playerProjectile.vel[2] = (char)(direction[2] * 10.0f);
-            bb_clientSend(scene->client->uniqueClientID, (char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE);
+            bb_clientSend(cscene->client->uniqueClientID, (char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE);
             //  }
         }
         else if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
@@ -614,7 +619,7 @@ void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, 
             playerProjectile.vel[0] = (char)(direction[0] * 10.0f);
             playerProjectile.vel[1] = (char)(direction[1] * 10.0f);
             playerProjectile.vel[2] = (char)(direction[2] * 10.0f);
-            bb_clientSend(scene->client->uniqueClientID, (char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE);
+            bb_clientSend(cscene->client->uniqueClientID, (char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE);
         }
     }
 }
@@ -948,18 +953,19 @@ void ClientGame::castVote(const net_clsv_svcl_vote_request & voteRequest)
 
 void ClientGame::onTeamSwitch(Player* player)
 {
+    auto cscene = static_cast<ClientScene*>(scene);
     Game::onTeamSwitch(player);
     // On print dans console
     switch(player->teamID)
     {
     case PLAYER_TEAM_SPECTATOR:
-        if(scene->client) scene->client->eventMessages.push_back(CString(gameVar.lang_goesSpectator.s, player->name.s));
+        if(cscene->client) cscene->client->eventMessages.push_back(CString(gameVar.lang_goesSpectator.s, player->name.s));
         break;
     case PLAYER_TEAM_BLUE:
-        if(scene->client) scene->client->eventMessages.push_back(CString(gameVar.lang_joinBlueTeamP.s, player->name.s));
+        if(cscene->client) cscene->client->eventMessages.push_back(CString(gameVar.lang_joinBlueTeamP.s, player->name.s));
         break;
     case PLAYER_TEAM_RED:
-        if(scene->client) scene->client->eventMessages.push_back(CString(gameVar.lang_joinRedTeamP.s, player->name.s));
+        if(cscene->client) cscene->client->eventMessages.push_back(CString(gameVar.lang_joinRedTeamP.s, player->name.s));
         break;
     }
 }
@@ -1279,6 +1285,8 @@ void ClientProjectile::renderShadow()
 
 void ClientProjectile::update(float delay, Map* map)
 {
+    auto cscene = static_cast<ClientScene*>(scene);
+
     rotation += delay * rotateVel; // 1 tour à la seconde :D
     while(rotation >= 360) rotation -= 360;
     while(rotation < 0) rotation += 360;
@@ -1298,15 +1306,15 @@ void ClientProjectile::update(float delay, Map* map)
             float colorArg1 = 1.0;
             float colorArg2 = 1.0;
             float colorArg3 = 1.0;
-            if((scene->client->game->gameType == 1 || scene->client->game->gameType == 2) && scene->client->game->players[fromID])
+            if((cscene->client->game->gameType == 1 || cscene->client->game->gameType == 2) && cscene->client->game->players[fromID])
                 //If we're CTF or TDM, our zooka trails should be coloured
             {
-                if(scene->client->game->players[fromID]->teamID == PLAYER_TEAM_BLUE)
+                if(cscene->client->game->players[fromID]->teamID == PLAYER_TEAM_BLUE)
                 {
                     colorArg3 = 1.0f;
                     colorArg1 = colorArg2 = 0.25f;
                 }
-                else if(scene->client->game->players[fromID]->teamID == PLAYER_TEAM_RED)
+                else if(cscene->client->game->players[fromID]->teamID == PLAYER_TEAM_RED)
                 {
                     colorArg1 = 1.0f;
                     colorArg2 = colorArg3 = 0.25f;
@@ -1348,7 +1356,7 @@ void ClientProjectile::update(float delay, Map* map)
         if(projectileType == PROJECTILE_GRENADE)
         {
             //--- Depending of the team, the color change
-            if(scene->client->game->gameType == GAME_TYPE_DM)
+            if(cscene->client->game->gameType == GAME_TYPE_DM)
             {
                 // On spawn des particules dans son cul (une par frame)
                 dkpCreateParticle(currentCF.position.s,//float *position,
@@ -1366,9 +1374,9 @@ void ClientProjectile::update(float delay, Map* map)
                     DKP_ONE/*_MINUS_SRC_ALPHA*/,//unsigned int dstBlend,
                     0);//int transitionFunc);
             }
-            else if(scene->client->game->players[fromID])
+            else if(cscene->client->game->players[fromID])
             {
-                if(scene->client->game->players[fromID]->teamID == PLAYER_TEAM_RED)
+                if(cscene->client->game->players[fromID]->teamID == PLAYER_TEAM_RED)
                 {
                     // On spawn des particules dans son cul (une par frame)
                     dkpCreateParticle(currentCF.position.s,//float *position,
@@ -1386,7 +1394,7 @@ void ClientProjectile::update(float delay, Map* map)
                         DKP_ONE/*_MINUS_SRC_ALPHA*/,//unsigned int dstBlend,
                         0);//int transitionFunc);
                 }
-                else if(scene->client->game->players[fromID]->teamID == PLAYER_TEAM_BLUE)
+                else if(cscene->client->game->players[fromID]->teamID == PLAYER_TEAM_BLUE)
                 {
                     // On spawn des particules dans son cul (une par frame)
                     dkpCreateParticle(currentCF.position.s,//float *position,

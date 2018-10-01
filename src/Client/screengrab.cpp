@@ -20,7 +20,7 @@
 #include "GameVar.h"
 #include "Game.h"
 #include "Player.h"
-#include "Scene.h"
+#include "ClientScene.h"
 #include <glad/glad.h>
 #include <time.h>
 #include <stdio.h>
@@ -105,7 +105,8 @@ bool SaveStatsAuto()
     pFile = fopen(path, "w");
     if(pFile != NULL)
     {
-        Game* pGame = scene->client->game;
+        auto cscene = static_cast<ClientScene*>(scene);
+        Game* pGame = cscene->client->game;
 
         fputs(pGame->mapName.s, pFile);
         fprintf(pFile, "\nBlue:%d\nRed:%d\n", pGame->blueScore, pGame->redScore);

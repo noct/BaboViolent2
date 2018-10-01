@@ -142,7 +142,6 @@ void CUserLogin::updateSkin()
     //--- On reload le skin si ça changé
     dktDeleteTexture(&tex_skinOriginal);
     tex_skinOriginal = dktCreateTextureFromFile(CString("main/skins/%s.tga", gameVar.cl_skin.s).s, DKT_FILTER_BILINEAR);
-//  dktBlurTexture(tex_skinOriginal, 1);
 
     //--- Hey oui, un recré une texture ogl à chaque fois pour chaque babo qui spawn!!!!
     //--- On est en ogl, faq ça kick ass MOUHOUHOUHAHAHA

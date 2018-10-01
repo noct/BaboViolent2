@@ -1282,9 +1282,6 @@ void            dkoInit()
         DKO_MULTIPASS);
 
     CDko::bitFieldPile = 0;
-
-    // Init les textures
-    dktInit();
 }
 
 

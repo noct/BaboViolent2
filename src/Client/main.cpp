@@ -145,7 +145,7 @@ public:
         while (nbFrameElapsed)
         {
             // On update nos input
-            dkiUpdate(delay, resW, resH);
+            dkiUpdate(delay);
 
             // Xbox mouse pos
             updateXBoxMouse_main(delay);

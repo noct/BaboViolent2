@@ -29,6 +29,7 @@
 #include "ClientGame.h"
 #include <direct.h>
 #include <algorithm>
+#include <glad/glad.h>
 
 #ifdef RENDER_LAYER_TOGGLE
 int renderToggle = 0;

@@ -22,6 +22,7 @@
 #include "Map.h"
 #include "ClientGame.h"
 #include "ClientScene.h"
+#include <glad/glad.h>
 
 extern Scene * scene;
 

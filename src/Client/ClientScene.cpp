@@ -18,6 +18,7 @@
 #include "ClientScene.h"
 #include "ClientHelper.h"
 #include "ClientConsole.h"
+#include <glad/glad.h>
 
 ClientScene::ClientScene(dkContext* dk) : Scene(dk)
 {

@@ -22,7 +22,6 @@
 #include "ClientGameVar.h"
 #include "ClientPlayer.h"
 #include "Game.h"
-#include <glad/glad.h>
 #define MAX_FLOOR_MARK 500
 
 // Projectiles (rocket, grenade, etc)
@@ -54,35 +53,9 @@ public:
     float fadeSpeed;
     float density;
     float radius;
-    NukeFlash()
-    {
-        life = 1;
-        density = 2;
-        fadeSpeed = .50f;
-        radius = 16;
-    }
-    void update(float pdelay)
-    {
-        life -= pdelay * fadeSpeed;
-    }
-    void render()
-    {
-        glPushMatrix();
-            glTranslatef(position[0], position[1], position[2]);
-            glScalef(radius, radius, radius);
-            glColor4f(1, 1, 1, density*life);
-            glBegin(GL_QUADS);
-                glTexCoord2i(0,1);
-                glVertex2i(-1,1);
-                glTexCoord2i(0,0);
-                glVertex2i(-1,-1);
-                glTexCoord2i(1,0);
-                glVertex2i(1,-1);
-                glTexCoord2i(1,1);
-                glVertex2i(1,1);
-            glEnd();
-        glPopMatrix();
-    }
+    NukeFlash();
+    void update(float pdelay);
+    void render();
 };
 
 struct Drip
@@ -91,35 +64,9 @@ struct Drip
     float life;
     float size;
     float fadeSpeed;
-    Drip()
-    {
-        life = 1;
-        size = .15f;
-        fadeSpeed = 2;
-    }
-    void update(float pdelay)
-    {
-        life -= pdelay * fadeSpeed;
-    }
-    void render()
-    {
-        glPushMatrix();
-            glTranslatef(position[0], position[1], position[2]);
-            float _size = (1 - life) * size;
-            glScalef(_size, _size, _size);
-            glColor4f(.25f, .7f, .3f, life*2);
-            glBegin(GL_QUADS);
-                glTexCoord2i(0,1);
-                glVertex2i(-1,1);
-                glTexCoord2i(0,0);
-                glVertex2i(-1,-1);
-                glTexCoord2i(1,0);
-                glVertex2i(1,-1);
-                glTexCoord2i(1,1);
-                glVertex2i(1,1);
-            glEnd();
-        glPopMatrix();
-    }
+    Drip();
+    void update(float pdelay);
+    void render();
 };
 
 struct FloorMark
@@ -131,57 +78,10 @@ struct FloorMark
     float startDelay;
     unsigned int texture;
     CVector4f color;
-    FloorMark()
-    {
-        delay = 0;
-    }
-    void set(CVector3f & pposition, float pangle, float psize, float pdelay, float pstartDelay, unsigned int ptexture, CVector4f pcolor)
-    {
-        position = pposition;
-        angle = pangle;
-        size = psize;
-        delay = pdelay;
-        startDelay = pstartDelay;
-        texture = ptexture;
-        color = pcolor;
-    }
-    void update(float pdelay)
-    {
-        if (startDelay > 0)
-        {
-            startDelay -= pdelay;
-        }
-        else
-        {
-            delay -= pdelay;
-        }
-    }
-    void render()
-    {
-        if (startDelay <= 0)
-        {
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glPushMatrix();
-                glTranslatef(position[0], position[1], position[2] + .025f);
-                glRotatef(angle, 0, 0, 1);
-                glScalef(size, size, size);
-                if (delay < 10)
-                    glColor4f(color[0], color[1], color[2], color[3] * ((delay)*0.1f));
-                else
-                    glColor4fv(color.s);
-                glBegin(GL_QUADS);
-                    glTexCoord2i(0,1);
-                    glVertex2i(-1,1);
-                    glTexCoord2i(0,0);
-                    glVertex2i(-1,-1);
-                    glTexCoord2i(1,0);
-                    glVertex2i(1,-1);
-                    glTexCoord2i(1,1);
-                    glVertex2i(1,1);
-                glEnd();
-            glPopMatrix();
-        }
-    }
+    FloorMark();
+    void set(CVector3f & pposition, float pangle, float psize, float pdelay, float pstartDelay, unsigned int ptexture, CVector4f pcolor);
+    void update(float pdelay);
+    void render();
 };
 
 #define DOUILLE_TYPE_DOUILLE 0
@@ -195,34 +95,9 @@ struct Douille
     float delay;
     bool soundPlayed;
     int type;
-    Douille(CVector3f pPosition, CVector3f pDirection, CVector3f right, int in_type=DOUILLE_TYPE_DOUILLE)
-    {
-        type = in_type;
-        vel = pDirection * 1.5f;
-        if (type == DOUILLE_TYPE_DOUILLE)
-        {
-            delay = 2; // Ça dure 2sec ça, en masse
-            vel = rotateAboutAxis(vel, rand(-30.0f, 30.0f), right);
-            vel = rotateAboutAxis(vel, rand(0.0f, 360.0f), pDirection);
-        }
-        else if (type == DOUILLE_TYPE_GIB)
-        {
-            delay = 2; // 5 sec haha malade
-        }
-        position = pPosition;
-        soundPlayed = false;
-    }
+    Douille(CVector3f pPosition, CVector3f pDirection, CVector3f right, int in_type = DOUILLE_TYPE_DOUILLE);
     void update(float pDelay, Map * map);
-    void render()
-    {
-        glPushMatrix();
-            glTranslatef(position[0], position[1], position[2]);
-            glRotatef(delay*90,vel[0], vel[1],0);
-            glScalef(.005f,.005f,.005f);
-            if (type == DOUILLE_TYPE_DOUILLE) dkoRender(clientVar.dko_douille);
-            else if (type == DOUILLE_TYPE_GIB) dkoRender(clientVar.dko_gib);
-        glPopMatrix();
-    }
+    void render();
 };
 
 // Pour nos trail (smoke, rocket, etc)
@@ -238,80 +113,10 @@ struct Trail
     int trailType;
     CVector4f color;
     CVector3f right;
-    Trail(CVector3f & pP1, CVector3f & pP2, float pSize, CVector4f & pColor, float duration, int in_trailType=0)
-    {
-        trailType = in_trailType;
-        dis = distance(pP1, pP2);
-        delay = 0;
-        delaySpeed = 1.0f / (duration);
-        p1 = pP1;
-        p2 = pP2;
-        size = pSize;
-        color = pColor;
-        right = cross(p2 - p1, CVector3f(0,0,1));
-        normalize(right);
-        offset = rand(0.0f, 1.0f);
-    }
-    void render()
-    {
-        glColor4f(.7f, .7f, .7f, (1-delay)*.5f);
-        if (trailType == 1) glColor4f(color[0], color[1], color[2],(1-delay));
-        glBegin(GL_QUADS);
-            glTexCoord2f(0,dis);
-            glVertex3fv((p2-right*delay*size).s);
-            glTexCoord2f(0,0);
-            glVertex3fv((p1-right*delay*size).s);
-            glTexCoord2f(1,0);
-            glVertex3fv((p1+right*delay*size).s);
-            glTexCoord2f(1,dis);
-            glVertex3fv((p2+right*delay*size).s);
-        glEnd();
-    }
-    void renderBullet()
-    {
-        float progress = ((delay/delaySpeed)*40 + offset*1) / dis;
-        if (progress < 1)
-        {
-            CVector3f dir = p2 - p1;
-            float x = p1[0]+dir[0]*progress;
-            float y = p1[1]+dir[1]*progress;
-
-            glColor4f(color[0], color[1], color[2],.1f);
-            glBegin(GL_QUADS);
-                glTexCoord2f(0,1);
-                glVertex3f(x-1.0f,y+1.0f,0);
-                glTexCoord2f(0,0);
-                glVertex3f(x-1.0f,y-1.0f,0);
-                glTexCoord2f(1,0);
-                glVertex3f(x+1.0f,y-1.0f,0);
-                glTexCoord2f(1,1);
-                glVertex3f(x+1.0f,y+1.0f,0);
-            glEnd();
-
-            glColor4f(color[0], color[1], color[2], 1);
-            glBegin(GL_QUADS);
-                glTexCoord2f(0,1);
-                glVertex3fv((p1+dir*progress+dir/dis-right*.05f).s);
-                glTexCoord2f(0,0);
-                glVertex3fv((p1+dir*progress-right*.05f).s);
-                glTexCoord2f(1,0);
-                glVertex3fv((p1+dir*progress+right*.05f).s);
-                glTexCoord2f(1,1);
-                glVertex3fv((p1+dir*progress+dir/dis+right*.05f).s);
-            glEnd();
-        }
-    }
-    void update(float pDelay)
-    {
-        if (delay > 0)
-        {
-            delay += pDelay * delaySpeed;
-        }
-        else
-        {
-            delay = .001f;
-        }
-    }
+    Trail(CVector3f & pP1, CVector3f & pP2, float pSize, CVector4f & pColor, float duration, int in_trailType = 0);
+    void render();
+    void renderBullet();
+    void update(float pDelay);
 };
 
 struct ClientGame : public Game

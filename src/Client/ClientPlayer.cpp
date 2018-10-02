@@ -24,13 +24,12 @@
 #include "Scene.h"
 #include <limits>
 #include "Server.h"
-
 #include "ClientGame.h"
 #include "ClientScene.h"
 #include "ClientHelper.h"
 #include "ClientMap.h"
 #include "ClientConsole.h"
-
+#include <glad/glad.h>
 extern Scene * scene;
 
 ClientPlayer::ClientPlayer(char pPlayerID, Map * pMap, Game * pGame) : Player(pPlayerID, pMap, pGame)

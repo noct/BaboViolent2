@@ -27,6 +27,7 @@
 #include "ClientHelper.h"
 #include "ClientConsole.h"
 #include "ClientMap.h"
+#include <glad/glad.h>
 
 extern Scene * scene;
 

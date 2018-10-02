@@ -23,6 +23,7 @@
 #include "Game.h"
 #include "ClientMap.h"
 #include <algorithm>
+#include <glad/glad.h>
 
 const float Selection = 0.001f;
 

@@ -23,6 +23,7 @@
 #include "md5_2.h"
 #include "baboNet.h"
 #include "ClientMap.h"
+#include <Windows.h>
 
 extern Scene * scene;
 

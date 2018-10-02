@@ -22,6 +22,7 @@
 #include "CMenuManager.h"
 #include "ClientHelper.h"
 #include "ClientMap.h"
+#include <glad/glad.h>
 
 #ifdef RENDER_LAYER_TOGGLE
 extern int renderToggle;

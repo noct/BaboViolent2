@@ -23,6 +23,7 @@
 #include "ClientMap.h"
 #include <algorithm>
 #include <string>
+#include <glad/glad.h>
 
 #include "KeyManager.h"
 #define CONSOLE_MAX_RECOGNITION_VAR 10

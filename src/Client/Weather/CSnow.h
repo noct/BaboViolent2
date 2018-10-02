@@ -20,33 +20,15 @@
 
 #include "CWeather.h"
 #include <Zeven/Gfx.h>
-#include <glad/glad.h>
 
 struct SSnow
 {
 public:
     CVector3f pos;
 public:
-    SSnow()
-    {
-    }
-    void update(float delay)
-    {
-        pos[2] -= 2 * delay;
-        pos += rand(CVector3f(-1,-1,0), CVector3f(1,1,0)) * delay;
-    }
-    void render()
-    {
-        glColor4f(1, 1, 1,((pos[2] > 2)?2:pos[2]) / 2.0f);
-        glTexCoord2f(0,1);
-        glVertex3f(pos[0]-.05f,pos[1]+.05f,pos[2]);
-        glTexCoord2f(0,0);
-        glVertex3f(pos[0]-.05f,pos[1]-.05f,pos[2]);
-        glTexCoord2f(1,0);
-        glVertex3f(pos[0]+.05f,pos[1]-.05f,pos[2]);
-        glTexCoord2f(1,1);
-        glVertex3f(pos[0]+.05f,pos[1]+.05f,pos[2]);
-    }
+    SSnow();
+    void update(float delay);
+    void render();
 };
 
 

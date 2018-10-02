@@ -17,6 +17,7 @@
 */
 #include "ClientMap.h"
 #include "Game.h"
+#include <glad/glad.h>
 
 #ifdef RENDER_LAYER_TOGGLE
 extern int renderToggle;

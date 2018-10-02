@@ -133,7 +133,7 @@ public:
         // LAG GENERATOR , use it to bind a key and test in lag conditions
         if (dkiGetState(KeyBackspace) == DKI_DOWN)
         {
-            Sleep(300);
+            SDL_Delay(300);
         }
 #endif
 
@@ -266,7 +266,7 @@ int main(int argc, const char* argv[])
     // On cr�notre scene
     scene = new ClientScene(ctx);
 
-    ShowCursor(FALSE);
+    SDL_ShowCursor(false);
 
     // check command line options
     for(int i = 0; i < argc - 1; ++i)

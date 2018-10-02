@@ -18,6 +18,7 @@
 #include "ClientGame.h"
 #include "Helper.h"
 #include "ClientHelper.h"
+#include <glad/glad.h>
 
 void renderStatsSlice(const CVector4f & sliceColor, char * text1, char* c1, char* c2, char* c3, char* c4, char* c5, char * pingText, int & vPos)
 {

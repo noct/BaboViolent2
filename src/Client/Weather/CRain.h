@@ -20,26 +20,13 @@
 
 #include "CWeather.h"
 #include <Zeven/Gfx.h>
-#include <glad/glad.h>
 
 struct SRain
 {
-public:
     CVector3f pos;
-public:
-    SRain()
-    {
-    }
-    void update(float delay)
-    {
-        pos[2] -= 15 * delay;
-    }
-    void render()
-    {
-        glColor4f(.25f, .7f, .3f,((pos[2] > 2)?2:pos[2]) / 2.0f * .3f);
-        glVertex3fv(pos.s);
-        glVertex3f(pos[0],pos[1],pos[2]-.5f);
-    }
+    SRain();
+    void update(float delay);
+    void render();
 };
 
 

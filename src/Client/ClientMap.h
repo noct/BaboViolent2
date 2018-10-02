@@ -22,7 +22,6 @@
 #include "Map.h"
 #include "CMeshBuilder.h"
 #include "CWeather.h"
-#include <glad/glad.h>
 
 #define SHADOW_DETAIL 32
 

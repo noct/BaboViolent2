@@ -57,7 +57,7 @@ void Scene::update(float delay)
     //--- Update master server client
     if (master) master->update(delay);
     {
-        // On update le server, tr�s important
+        // On update le server, trclientVar.dkpp_s important
         if (server)
         {
             server->update(delay);

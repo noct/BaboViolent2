@@ -19,10 +19,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#ifndef DEDICATED_SERVER
-#include "ClientWeapon.h"
-#endif
-
 #include <Zeven/Core.h>
 #include "netPacket.h"
 #include "Helper.h"
@@ -74,7 +70,7 @@ struct CoordFrame
 
     void interpolate(long & cFProgression, CoordFrame & from, CoordFrame & to, float delay)
     {
-        cFProgression++; // On incr�ent
+        cFProgression++; // On incrclientVar.dkpp_ent
         long size = to.frameID - from.frameID;
         if (cFProgression > size)
         {
@@ -90,7 +86,7 @@ struct CoordFrame
         }
         else if (cFProgression >= 0)
         {
-            // On pogne le temps t en float de 0 �1 de sa progression
+            // On pogne le temps t en float de 0 clientVar.dkpp_1 de sa progression
             float t = (float)cFProgression / (float)size;
             float animTime = (float)size / (30.0f*3.0f);
 
@@ -175,8 +171,8 @@ struct Player
     float timeIdle;
 
     //--- Si ce joueur est admin.
-    //    � veut dire quil peut envoyer des commandes au server.
-    //    Et tout les messages server vont lui �re envoy�
+    //    clientVar.dkpp_ veut dire quil peut envoyer des commandes au server.
+    //    Et tout les messages server vont lui clientVar.dkpp_re envoyclientVar.dkpp_
     bool isAdmin;
 
     // Son nom
@@ -231,22 +227,22 @@ struct Player
     // Time played(total time alive), reset on round start
     float timePlayedCurGame;
 
-    // Son socket ID (en string) (� y a juste le server qui le sait)
+    // Son socket ID (en string) (clientVar.dkpp_ y a juste le server qui le sait)
     CString socketNumber;
 
     // Ses coord frames
     CoordFrame currentCF; // Celui qu'on affiche
     CoordFrame lastCF; // Le key frame de sauvegarde du frame courant
-    CoordFrame netCF0; // L'avant dernier keyframe re� du net
-    CoordFrame netCF1; // Le dernier keyframe re� du net
+    CoordFrame netCF0; // L'avant dernier keyframe reclientVar.dkpp_ du net
+    CoordFrame netCF1; // Le dernier keyframe reclientVar.dkpp_ du net
 
     // Sa progression sur la courbe
     long cFProgression;
 
-    // sa matrice d'orientation (� c'est client side only)
+    // sa matrice d'orientation (clientVar.dkpp_ c'est client side only)
     CMatrix3x3f matrix;
 
-    // Server only �
+    // Server only clientVar.dkpp_
     bool waitForPong;
 
     // ON attends de spawner
@@ -260,7 +256,7 @@ struct Player
 
     float immuneTime;
 
-    // Si c'est un entity controll�par le server
+    // Si c'est un entity controllclientVar.dkpp_par le server
     bool remoteEntity;
 
     // Le gun avec lequel je vais spawner
@@ -279,7 +275,7 @@ struct Player
     float firedShowDelay;
     float secondsFired;
 
-    // On compteur qui dit � fait combient de temps que je suis dead
+    // On compteur qui dit clientVar.dkpp_ fait combient de temps que je suis dead
     float deadSince;
 
     // Un timer qui dit que le player vient de se faire toucher
@@ -322,21 +318,21 @@ struct Player
     virtual ~Player();
 
     // Pour l'updater
-    void update(float delay);
+    virtual void update(float delay);
 
     void updatePing(float delay);
 
-    // Pour remettre ses stats �0
+    // Pour remettre ses stats clientVar.dkpp_0
     void reinit();
 
     // Pour lui donner les info de notre joueur
-    void setThisPlayerInfo();
+    virtual void setThisPlayerInfo();
 
-    // Pour le forcer �crever (suposons quil change de team)
-    void kill(bool silenceDeath);
+    // Pour le forcer clientVar.dkpp_crever (suposons quil change de team)
+    virtual void kill(bool silenceDeath);
 
-    // Pour spawner un joueur y�
-    void spawn(const CVector3f & spawnPoint);
+    // Pour spawner un joueur yclientVar.dkpp_
+    virtual void spawn(const CVector3f & spawnPoint);
 
     // Pour setter le coordframe du player
     void setCoordFrame(net_clsv_svcl_player_coord_frame & playerCoordFrame);
@@ -345,45 +341,13 @@ struct Player
     void hitSV(Weapon * fromWeapon, Player * from, float damage=-1);
 
     // Pour changer son gun!
-    void switchWeapon(int newWeaponID, bool forceSwitch=false);
-    void switchMeleeWeapon(int newWeaponID, bool forceSwitch=false);
+    virtual void switchWeapon(int newWeaponID, bool forceSwitch=false);
+    virtual void switchMeleeWeapon(int newWeaponID, bool forceSwitch=false);
 
-#ifndef DEDICATED_SERVER
-    // Si on est le joueur controll�
-    bool isThisPlayer;
-    // Son shadow
-    unsigned int tex_baboShadow;
-    unsigned int tex_baboHalo;
-    // Pour savoir si on a initialis�le mouse down ici, et non dans le menu
-    bool initedMouseClic;
 
-    // Le player qu'on suis
-    int followingPlayer;
-
-    // La position du babo on screen
-    CVector2i onScreenPos;
-
-    // Est-ce qu'on est en mode scope FPS ou pas?
-    bool scopeMode;
-
-    unsigned int tex_skin;
-    unsigned int tex_skinOriginal;
-
-    // Pour le controller
-    void controlIt(float delay);
-
-    // Pour l'afficher
-    void render();
-    void renderName();
-
-    void hit(Weapon * fromWeapon, Player * from, float damage=-1);
-
-    // Pour updater la skin texture
-    void updateSkin();
-#endif
+    virtual void onShotgunReload() {}
+    virtual void onSpawnRequest() {}
+    virtual void onDeath(Player* from, Weapon * fromWeapon, bool friendlyFire);
 };
 
-
 #endif
-
-

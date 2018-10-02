@@ -51,7 +51,7 @@ struct invalidChecksumEntity
 class Server
 {
 public:
-    // Le jeu controll�
+    // Le jeu controllclientVar.dkpp_
     Game * game;
 
     std::vector<CChecksumQuery *> m_checksumQueries;
@@ -69,7 +69,7 @@ public:
     float changeMapDelay;
     CString nextMap;
 
-    // La liste des maps � jouer
+    // La liste des maps clientVar.dkpp_ jouer
     std::vector<CString> mapList;
 
     //A list of all maps + their sizes;
@@ -141,7 +141,7 @@ public:
     // Pour chatter
     void sayall(CString message);
 
-    // On a re�u un message y�� !
+    // On a reclientVar.dkpp_u un message yclientVar.dkpp_clientVar.dkpp_ !
     void recvPacket(char * buffer, int typeID, unsigned long bbnetID);
 
     // Pour modifier une variable remotly
@@ -150,7 +150,7 @@ public:
     // Send player list to a remote admin
     void SendPlayerList( long in_peerId );
 
-    // Pour aller chercher la prochaine map � loader
+    // Pour aller chercher la prochaine map clientVar.dkpp_ loader
     CString queryNextMap();
 
     // Auto balance

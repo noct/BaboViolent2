@@ -138,7 +138,14 @@ void ClientGame::render()
                     cmap->renderMisc();
 
                     // On render les players
-                    for(i = 0; i < MAX_PLAYER; ++i) if(players[i]) players[i]->render();
+                    for(i = 0; i < MAX_PLAYER; ++i)
+                    {
+                        auto cplayer = static_cast<ClientPlayer*>(players[i]);
+                        if(cplayer)
+                        {
+                            cplayer->render();
+                        }
+                    }
 
                     // On render les rockets, grenades et autres projectiles
                     for(auto p : projectiles)
@@ -307,7 +314,15 @@ void ClientGame::render()
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 6)
 #endif
-            for(i = 0; i < MAX_PLAYER; ++i) if(players[i]) players[i]->render();
+
+            for(i = 0; i < MAX_PLAYER; ++i)
+            {
+                auto cplayer = static_cast<ClientPlayer*>(players[i]);
+                if(cplayer)
+                {
+                    cplayer->render();
+                }
+            }
 
         // On render les rockets, grenades et autres projectiles
 #ifdef RENDER_LAYER_TOGGLE
@@ -433,9 +448,15 @@ void ClientGame::render()
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // On render le nom des players
+
         for(i = 0; i < MAX_PLAYER; ++i)
-            if(players[i] && players[i] != thisPlayer)
-                players[i]->renderName();
+        {
+            auto cplayer = static_cast<ClientPlayer*>(players[i]);
+            if(cplayer && cplayer != thisPlayer)
+            {
+                cplayer->renderName();
+            }
+        }
 
         // On va renderer le nb de projectile (temporaire)
     //  dkfBindFont(font);

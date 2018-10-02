@@ -150,7 +150,7 @@ int Server::host()
     else
     {
         srand((unsigned int)time(0));
-        game->mapSeed = rand() % 1000000; // Quin, 1000000 maps, c tu assez �?
+        game->mapSeed = rand() % 1000000; // Quin, 1000000 maps, c tu assez clientVar.dkpp_?
         game->createMap();
         nextMap = game->mapName;
         mapList.push_back(game->mapName);
@@ -240,7 +240,7 @@ void Server::addmap(CString & mapName)
         fclose(fic);
     }
 
-    // Un map ne peut pas �re l�2 fois (c poche mais c hot)
+    // Un map ne peut pas clientVar.dkpp_re lclientVar.dkpp_2 fois (c poche mais c hot)
     for(int i = 0; i < (int)mapList.size(); ++i)
     {
         if(mapList[i] == mapName) return;
@@ -350,7 +350,7 @@ std::vector<CString> Server::populateMapList(bool all)
 
 
 //
-// Pour aller chercher la prochaine map �loader
+// Pour aller chercher la prochaine map clientVar.dkpp_loader
 //
 CString Server::queryNextMap()
 {
@@ -448,7 +448,7 @@ void Server::updateNet(float delay, bool send)
             }
         }
 
-        // On le cr�A
+        // On le crclientVar.dkpp_A
         playerID = game->createNewPlayerSV(clientID);
         if(playerID == -1)
         {
@@ -464,13 +464,13 @@ void Server::updateNet(float delay, bool send)
     }
     else if(clientID == BBNET_ERROR)
     {
-        // Une erreur !!! On arr�e tout !!!
+        // Une erreur !!! On arrclientVar.dkpp_e tout !!!
         console->add(CString("\x3> Error : %s", bb_serverGetLastError()), true);
         needToShutDown = true;
     }
     else if(clientID < 0)
     {
-        // On client a disconnect�
+        // On client a disconnectclientVar.dkpp_
         for(int i = 0; i < MAX_PLAYER; ++i)
         {
             if(game->players[i])
@@ -772,11 +772,11 @@ void Server::update(float delay)
                     mapChange.gameType = gameVar.sv_gameType;
                     bb_serverSend((char*)&mapChange, sizeof(net_svcl_map_change), NET_SVCL_MAP_CHANGE, 0);
 
-                    // On change le round �playing
+                    // On change le round clientVar.dkpp_playing
                     net_svcl_round_state roundState;
                     game->roundState = GAME_PLAYING;
                     roundState.newState = game->roundState;
-                    roundState.reInit = true; // On remets tout �0, les scores etc
+                    roundState.reInit = true; // On remets tout clientVar.dkpp_0, les scores etc
                     bb_serverSend((char*)&roundState, sizeof(net_svcl_round_state), NET_SVCL_GAME_STATE, 0);
                 }
             }
@@ -809,14 +809,14 @@ void Server::update(float delay)
         {
             bool changeRoundState = false;
 
-            // � c le plus simple
+            // clientVar.dkpp_ c le plus simple
             if(game->gameType == GAME_TYPE_DM)
             {
                 if(game->gameTimeLeft == 0 && gameVar.sv_gameTimeLimit > 0)
                 {
                     game->roundState = GAME_DONT_SHOW;
                     changeRoundState = true;
-                } // Sinon c'est temps illimit�
+                } // Sinon c'est temps illimitclientVar.dkpp_
 
                 // On check si un joueur atteint pas le score max
                 for(int i = 0; i < MAX_PLAYER; ++i)
@@ -880,7 +880,7 @@ void Server::update(float delay)
                     changeRoundState = true;
                 }
 
-                // On check si le temps est �oul�
+                // On check si le temps est clientVar.dkpp_oulclientVar.dkpp_
                 if(game->gameTimeLeft == 0 && gameVar.sv_gameTimeLimit > 0)
                 {
                     if(game->blueWin == game->redWin)
@@ -935,7 +935,7 @@ void Server::update(float delay)
         uint32_t babonetID;
         while(buffer = bb_serverReceive(babonetID, messageID))
         {
-            // On g�e les messages re�the
+            // On gclientVar.dkpp_e les messages reclientVar.dkpp_the
             recvPacket(buffer, messageID, babonetID);
         }
 
@@ -949,7 +949,7 @@ void Server::update(float delay)
 
                 if(!game->players[i]->waitForPong)
                 {
-                    // On est pret �lui envoyer un ping?
+                    // On est pret clientVar.dkpp_lui envoyer un ping?
                     if(game->players[i]->currentPingFrame >= 30)
                     {
                         game->players[i]->currentPingFrame = 0;
@@ -967,7 +967,7 @@ void Server::update(float delay)
                 {
                     if(game->players[i]->currentPingFrame > game->players[i]->ping)
                     {
-                        // On a d�ass�l'encient ping, on le met �jour (pour les updates l�
+                        // On a dclientVar.dkpp_assclientVar.dkpp_l'encient ping, on le met clientVar.dkpp_jour (pour les updates lclientVar.dkpp_
                         game->players[i]->ping = game->players[i]->currentPingFrame;
                     }
                     if(game->players[i]->currentPingFrame > 30)
@@ -976,16 +976,16 @@ void Server::update(float delay)
                         game->players[i]->currentCF = game->players[i]->netCF1; // Pour les autres joueurs
                         game->players[i]->currentCF.frameID = saveFrame;
                         game->players[i]->connectionInterrupted = true;
-                        game->players[i]->sendPosFrame = 0; // On interrupt sont envoit de data non important (coordFrame), pour al�er le tout
+                        game->players[i]->sendPosFrame = 0; // On interrupt sont envoit de data non important (coordFrame), pour alclientVar.dkpp_er le tout
                     }
 
-                    // Est-ce que � fait trop longtemps qu'on attends l�??
-                    if(game->players[i]->currentPingFrame > 300) // ouf � fait 3sec l� on est assez tolerant:P
+                    // Est-ce que clientVar.dkpp_ fait trop longtemps qu'on attends lclientVar.dkpp_??
+                    if(game->players[i]->currentPingFrame > 300) // ouf clientVar.dkpp_ fait 3sec lclientVar.dkpp_ on est assez tolerant:P
                     {
                         // Save stats to cache
                         if(game->players[i]->timePlayedCurGame > EPSILON)
                             cacheStats(game->players[i]);
-                        // Connection interrupted (on le disconnect, on est s��e)
+                        // Connection interrupted (on le disconnect, on est sclientVar.dkpp_clientVar.dkpp_e)
                         if(master) master->RA_DisconnectedPlayer(textColorLess(game->players[i]->name).s, game->players[i]->playerIP, (long)game->players[i]->playerID);
                         bb_serverDisconnectClient(game->players[i]->babonetID);
                         console->add("\x3> Disconnecting client, no respond since 3sec", true);
@@ -998,7 +998,7 @@ void Server::update(float delay)
                         //						game->players[i]->currentCF = game->players[i]->netCF1; // Pour les autres joueurs
                     }
                 }
-                // On incr�ente son ping
+                // On incrclientVar.dkpp_ente son ping
                 game->players[i]->currentPingFrame++;
             }
         }
@@ -1043,7 +1043,7 @@ void Server::update(float delay)
             }
         }
 
-        // On update le jeu (� c'est autant client que server side)
+        // On update le jeu (clientVar.dkpp_ c'est autant client que server side)
         game->update(delay);
 
         // On check pour sender les coordframes des players au autres players s'il en ont le temps
@@ -1059,7 +1059,7 @@ void Server::update(float delay)
                     {
                         game->players[i]->sendPosFrame = 0;
 
-                        // Lui il est ready �se faire envoyer les coordFrames
+                        // Lui il est ready clientVar.dkpp_se faire envoyer les coordFrames
                         for(int j = 0; j < MAX_PLAYER; ++j)
                         {
                             if(game->players[j])
@@ -1275,7 +1275,7 @@ bool Server::filterMapFromRotation(const mapInfo & map)
 //
 void Server::autoBalance()
 {
-    //--- Voil� on autobalance les teams
+    //--- VoilclientVar.dkpp_ on autobalance les teams
     std::vector<Player*> reds;
     std::vector<Player*> blues;
     for(int i = 0; i < MAX_PLAYER; ++i)
@@ -1316,7 +1316,7 @@ void Server::autoBalance()
             net_clsv_svcl_team_request teamRequest;
             teamRequest.playerID = blues[switchID]->playerID;
             teamRequest.teamRequested = PLAYER_TEAM_RED;
-            // On l'envoit �tout le monde, (si � chang�
+            // On l'envoit clientVar.dkpp_tout le monde, (si clientVar.dkpp_ changclientVar.dkpp_
             bb_serverSend((char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST, 0);
             nbToSwitch--;
         }
@@ -1343,14 +1343,14 @@ void Server::autoBalance()
             net_clsv_svcl_team_request teamRequest;
             teamRequest.playerID = reds[switchID]->playerID;
             teamRequest.teamRequested = PLAYER_TEAM_BLUE;
-            // On l'envoit �tout le monde, (si � chang�
+            // On l'envoit clientVar.dkpp_tout le monde, (si clientVar.dkpp_ changclientVar.dkpp_
             bb_serverSend((char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST, 0);
             nbToSwitch--;
         }
     }
     else
     {
-        //--- Ha ok, les teams �aient balanc�
+        //--- Ha ok, les teams clientVar.dkpp_aient balancclientVar.dkpp_
     }
 }
 
@@ -1375,15 +1375,15 @@ void Server::sayall(CString message)
     if(message.isNull()) return;
     if(game && isRunning)
     {
-        // On send � sur la network oui messieur
+        // On send clientVar.dkpp_ sur la network oui messieur
         net_clsv_svcl_chat chat_message;
 
         //	chat_message.fromID = game->thisPlayer->playerID;
         chat_message.teamID = PLAYER_TEAM_SPECTATOR - 1; // All player!
 
-        // On insert la couleur d�endament du team
+        // On insert la couleur dclientVar.dkpp_endament du team
         // (une fois apres le nom du joueur, parce que ce dernier a surement
-        // mis plein de caract�es de couleurs)
+        // mis plein de caractclientVar.dkpp_es de couleurs)
         message.insert(" : \x8", 0);
 
         // On insert le nom du joueur
@@ -1393,10 +1393,10 @@ void Server::sayall(CString message)
         // Si le message est trop grand, on le resize
         if(message.len() > 49 + 80) message.resize(49 + 80);
 
-        // Voil� on copie le finale
+        // VoilclientVar.dkpp_ on copie le finale
         memcpy(chat_message.message, message.s, sizeof(char) * (message.len() + 1));
 
-        // Voil� on send � sur le network!
+        // VoilclientVar.dkpp_ on send clientVar.dkpp_ sur le network!
         bb_serverSend((char*)&chat_message, sizeof(net_clsv_svcl_chat), NET_CLSV_SVCL_CHAT, 0);
     }
 }
@@ -1863,7 +1863,7 @@ void Server::updateCTF(float delay)
 
 
 //
-// On a re� un message y� !
+// On a reclientVar.dkpp_ un message yclientVar.dkpp_ !
 //
 void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 {
@@ -1975,7 +1975,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                 if(game->players[playerShootMelee.playerID]->meleeWeapon)
                 {
                     game->players[playerShootMelee.playerID]->meleeWeapon->shootMeleeSV(game->players[playerShootMelee.playerID]);
-                    //--- Shoot � aux autres
+                    //--- Shoot clientVar.dkpp_ aux autres
                 //  for (int i=0;i<MAX_PLAYER;++i)
                 //  {
                 //      if (game->players[i] && i != playerShootMelee.playerID)
@@ -2104,7 +2104,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                 break;
             }
 
-            // On envoi �CE player l'info sur la game
+            // On envoi clientVar.dkpp_CE player l'info sur la game
             net_svcl_server_info serverInfo;
             serverInfo.mapSeed = 0; // Pour l'instant on mettra rien (on va mettre le non dla map bientot)
             memcpy(serverInfo.mapName, game->mapName.s, game->mapName.len() + 1);
@@ -2206,7 +2206,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                 bb_serverSend((char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE, game->players[gameVersionAccepted.playerID]->babonetID);
             }
 
-            // Hum les deux sont des entities, note �moi m�e : les consid�er comme la meme chose next time
+            // Hum les deux sont des entities, note clientVar.dkpp_moi mclientVar.dkpp_e : les considclientVar.dkpp_er comme la meme chose next time
 
             // Envoyer l'etat des flags
             if(game->gameType == GAME_TYPE_CTF)
@@ -2235,11 +2235,8 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
             game->players[playerInfo.playerID]->name = playerInfo.playerName;
             memcpy(playerInfo.playerIP, game->players[playerInfo.playerID]->playerIP, 16);
             bb_serverSend((char*)&playerInfo, sizeof(net_clsv_svcl_player_info), NET_CLSV_SVCL_PLAYER_INFO, 0);
-#ifndef DEDICATED_SERVER
-            console->add(CString("\x3server> %s joined the game", playerInfo.playerName), true);
-#else
             console->add(CString("server> %s joined the game id:%d", playerInfo.playerName, playerInfo.playerID), true);
-#endif
+
             // broadcast the info at remote admins
             if(master) master->RA_NewPlayer(textColorLess(playerInfo.playerName).s, playerInfo.playerIP, (long)playerInfo.playerID);
 
@@ -2300,7 +2297,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
     }
     case NET_SVCL_PLAY_SOUND:
     {
-        //--- On l'envoit �toute les autres player
+        //--- On l'envoit clientVar.dkpp_toute les autres player
         for(int i = 0; i < MAX_PLAYER; ++i)
         {
             if(game->players[i])
@@ -2408,7 +2405,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                     game->players[teamRequest.playerID]->reinit();
                 }
                 teamRequest.teamRequested = newTeam;
-                // On l'envoit �tout le monde, (si � chang�
+                // On l'envoit clientVar.dkpp_tout le monde, (si clientVar.dkpp_ changclientVar.dkpp_
                 bb_serverSend((char*)&teamRequest, sizeof(net_clsv_svcl_team_request), NET_CLSV_SVCL_TEAM_REQUEST, 0);
             }
         }
@@ -2474,7 +2471,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                 // C'est impossible qu'il ne spawn pas (mais bon au cas)
                 if(game->spawnPlayer(spawnRequest.playerID))
                 {
-                    // On renvois � �tout le monde
+                    // On renvois clientVar.dkpp_ clientVar.dkpp_tout le monde
                     net_svcl_player_spawn playerSpawn;
                     memcpy(playerSpawn.skin, spawnRequest.skin, 7);
                     memcpy(playerSpawn.blueDecal, spawnRequest.blueDecal, 3);
@@ -2522,7 +2519,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                 }
                 else
                 {
-                    // Ici le joueur qui l'a request�est bais�
+                    // Ici le joueur qui l'a requestclientVar.dkpp_est baisclientVar.dkpp_
                 }
             }
         }
@@ -2582,7 +2579,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                                 //cacheStats(game->players[playerCoordFrame.playerID]);
 
                                 //printf("anti hack count = 3\n");
-                                //--- On envoit �tout le monde (y compris lui) quil essaye de speedhacking
+                                //--- On envoit clientVar.dkpp_tout le monde (y compris lui) quil essaye de speedhacking
                                 //sayall(CString("Disconnecting %s (%s): Speed Hack Detected", game->players[playerCoordFrame.playerID]->name.s, game->players[playerCoordFrame.playerID]->playerIP));
                                 if(master) master->RA_DisconnectedPlayer(textColorLess(game->players[playerCoordFrame.playerID]->name).s, game->players[playerCoordFrame.playerID]->playerIP, (long)game->players[playerCoordFrame.playerID]->playerID);
                                 bb_serverDisconnectClient(game->players[playerCoordFrame.playerID]->babonetID);
@@ -2658,7 +2655,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
 
 
                 }
-                // Sinon ce babonet ID est d�uet
+                // Sinon ce babonet ID est dclientVar.dkpp_uet
             }
             else
             {
@@ -2683,7 +2680,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
             console->add(CString("\x3server> Player %s changed his name for %s", game->players[playerChangeName.playerID]->name.s, playerChangeName.playerName));
             game->players[playerChangeName.playerID]->name = playerChangeName.playerName;
 
-            // On envoit maintenant � �tout les autres joueurs
+            // On envoit maintenant clientVar.dkpp_ clientVar.dkpp_tout les autres joueurs
             for(int i = 0; i < MAX_PLAYER; ++i)
             {
                 if(game->players[i] && i != playerChangeName.playerID)
@@ -2861,7 +2858,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
             //--- Is he alive? Else we ignore it
             if(game->players[pickupRequest.playerID]->status == PLAYER_STATUS_ALIVE)
             {
-                // On check s'il n'y a pas un weapon �pickuper proche
+                // On check s'il n'y a pas un weapon clientVar.dkpp_pickuper proche
                 for(int i = 0; i < (int)game->projectiles.size(); ++i)
                 {
                     Projectile * projectile = game->projectiles[i];
@@ -2889,7 +2886,7 @@ void Server::recvPacket(char * buffer, int typeID, unsigned long bbnetID)
                             game->spawnProjectile(playerProjectile, true);
                             bb_serverSend((char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE, 0);
 
-                            // On pickup � !!
+                            // On pickup clientVar.dkpp_ !!
                             game->players[pickupRequest.playerID]->switchWeapon(projectile->fromID);
                             net_svcl_pickup_item pickupItem;
                             pickupItem.playerID = pickupRequest.playerID;

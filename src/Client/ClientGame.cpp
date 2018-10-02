@@ -639,7 +639,7 @@ void ClientGame::createNewPlayerCL(int playerID, long babonetID)
     {
         // On l'efface au cas quil existe déjà (très pas bon ça)
         ZEVEN_SAFE_DELETE(players[playerID]);
-        players[playerID] = new Player(playerID, map, this);
+        players[playerID] = new ClientPlayer(playerID, map, this);
         players[playerID]->babonetID = babonetID;
     }
 }

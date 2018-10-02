@@ -20,6 +20,7 @@
 #define CLIENT_GAME_H
 
 #include "ClientGameVar.h"
+#include "ClientPlayer.h"
 #include "Game.h"
 #include <glad/glad.h>
 #define MAX_FLOOR_MARK 500
@@ -316,7 +317,7 @@ struct Trail
 struct ClientGame : public Game
 {
     // Notre player
-    Player * thisPlayer;
+    ClientPlayer * thisPlayer;
     // La font
     unsigned int font;
 

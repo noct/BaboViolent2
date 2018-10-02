@@ -90,7 +90,7 @@ void CMaster::disconnectMaster()
 
 
 //
-//--- La row est valid� on a le ping pis toute
+//--- La row est validclientVar.dkpp_ on a le ping pis toute
 //
 void CMaster::pingReceived(int ping)
 {
@@ -186,7 +186,7 @@ void CMaster::update(float in_delay)
 
         if(result == 1)
         {
-            // Une erreur !!! On arr�e tout !!!
+            // Une erreur !!! On arrclientVar.dkpp_e tout !!!
             uniqueClientID = 0;
             m_isConnected = false;
             ZEVEN_SAFE_DELETE(m_ping);
@@ -229,7 +229,7 @@ void CMaster::update(float in_delay)
         int messageID;
         while(buffer = bb_clientReceive(uniqueClientID, &messageID))
         {
-            // On g�e les messages re�
+            // On gclientVar.dkpp_e les messages reclientVar.dkpp_
             recvPacket(buffer, messageID);
         }
     }

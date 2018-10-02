@@ -237,7 +237,7 @@ void Client::recvPacket(char * buffer, int typeID)
 
         if(!game->thisPlayer)
         {
-            game->thisPlayer = game->players[newPlayer.newPlayerID];
+            game->thisPlayer = static_cast<ClientPlayer*>(game->players[newPlayer.newPlayerID]);
             game->thisPlayer->setThisPlayerInfo();
         }
         break;
@@ -411,7 +411,8 @@ void Client::recvPacket(char * buffer, int typeID)
             ((float)playerState.redDecal[0]) / 255.0f,
             ((float)playerState.redDecal[1]) / 255.0f,
             ((float)playerState.redDecal[2]) / 255.0f);
-        game->players[playerState.playerID]->updateSkin();
+        auto cplayer = static_cast<ClientPlayer*>(game->players[playerState.playerID]);
+        cplayer->updateSkin();
         console->add(CString("\x3> Adding player %s", game->players[playerState.playerID]->name.s));
         break;
     }
@@ -783,7 +784,9 @@ void Client::recvPacket(char * buffer, int typeID)
                     }
                 }
             }
-            game->players[playerHit.playerID]->hit(clientVar.weapons[playerHit.weaponID], game->players[playerHit.fromID], playerHit.damage);
+            auto cplayer = static_cast<ClientPlayer*>(game->players[playerHit.playerID]);
+            auto cplayerFrom = static_cast<ClientPlayer*>(game->players[playerHit.fromID]);
+            cplayer->hit(clientVar.weapons[playerHit.weaponID], cplayerFrom, playerHit.damage);
         }
         break;
     }
@@ -1112,7 +1115,8 @@ void Client::recvPacket(char * buffer, int typeID)
                 ((float)updateSkin.redDecal[0]) / 255.0f,
                 ((float)updateSkin.redDecal[1]) / 255.0f,
                 ((float)updateSkin.redDecal[2]) / 255.0f);
-            game->players[updateSkin.playerID]->updateSkin();
+            auto cplayer = static_cast<ClientPlayer*>(game->players[updateSkin.playerID]);
+            cplayer->updateSkin();
         }
 
         break;

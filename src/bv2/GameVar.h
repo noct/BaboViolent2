@@ -210,7 +210,7 @@ struct GameVar
     float s_masterVolume;
     bool s_inGameMusic;
 
-    // Si on est en debug !!! tr�s important
+    // Si on est en debug !!! trclientVar.dkpp_s important
     bool c_debug;
     bool c_huge;
     bool d_showPath;

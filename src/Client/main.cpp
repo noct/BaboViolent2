@@ -200,12 +200,13 @@ int main(int argc, const char* argv[])
     dkContext* ctx = dkInit(config);
 
     gameVar.init();
+    clientVar.init();
 
     dksvarLoadConfig("main/bv2.cfg");
     dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
 
     // On load tout suite le language utilis�par le joueur
-    if (!gameVar.isLanguageLoaded())
+    if (!clientVar.isLanguageLoaded())
     {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Can not load language file\nTry deleting the config file.", nullptr);
         dkFini(ctx);
@@ -217,7 +218,7 @@ int main(int argc, const char* argv[])
     dkGfxConfig gconfig = {};
     gconfig.width = gameVar.r_resolution[0];
     gconfig.height = gameVar.r_resolution[1];
-    gconfig.title = gameVar.lang_gameName.s;
+    gconfig.title = clientVar.lang_gameName.s;
     gconfig.mMainLoopObject = &mainLoopInterface;
     gconfig.fullScreen = gameVar.r_fullScreen;
     gconfig.refreshRate = gameVar.r_refreshRate;

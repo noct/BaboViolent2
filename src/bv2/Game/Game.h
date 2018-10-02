@@ -109,6 +109,8 @@ struct Projectile
     // Son update
     virtual void update(float delay, Map * map);
 
+    virtual void onGrenadeRebound(CVector3f p);
+
     // pour updater le coordFrame avec celui du server
     void setCoordFrame(net_svcl_projectile_coord_frame & projectileCoordFrame);
 };
@@ -178,6 +180,7 @@ public:
     bool votingUpdate(float delay);
 
     virtual void onTeamSwitch(Player* player);
+    virtual void onSpawnPlayer(Player* player);
 
     virtual void spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID);
 
@@ -229,7 +232,7 @@ public:
     void shootSV(net_clsv_player_shoot & playerShoot);
 
     // On spawn un projectile!
-    bool spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, bool imServer);
+    virtual bool spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, bool imServer);
 
     // Pour toucher les joueurs dans un rayon
     void radiusHit(CVector3f & position, float radius, char fromID, char weaponID, bool sameDmg = false);

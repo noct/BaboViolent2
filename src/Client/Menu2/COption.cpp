@@ -19,6 +19,7 @@
 #include "GameVar.h"
 #include "KeyManager.h"
 #include "ClientScene.h"
+#include "ClientMap.h"
 
 extern Scene * scene;
 
@@ -135,13 +136,6 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     chk_weatherEffects = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
     chk_weatherEffects->check = gameVar.r_weatherEffects;
 
-    //--- Reflection
-    label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Reflection:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
-    label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
-    label1->toolTips = "When weather effects are enabled, adds reflection to some themes.";
-    chk_reflection = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
-    chk_reflection->check = gameVar.r_reflection;
-
     //--- Wall's shadow
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Wall's shadow:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -160,41 +154,12 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     chk_projectileShadow = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
     chk_projectileShadow->check = gameVar.r_projectileShadow;
 
-    //--- Particles Lighting
-    label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Particles lighting:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
-    label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
-    label1->toolTips = "Enable lighting effect on particles.";
-    chk_particleLighting = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
-    chk_particleLighting->check = gameVar.r_particleLighting;
-
-    //--- Particles Sorting
-    label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Particles sorting:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
-    label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
-    label1->toolTips = "Sort particle in depth for more accurate result.\nNote: In this game the difference is not really apparent\nand it use a lot of CPU time.";
-    chk_particleSorting = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
-    chk_particleSorting->check = gameVar.r_particleSort;
-
-    //--- Reduced Particles
-    label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Reduced Particles:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
-    label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
-    label1->toolTips = "Reduce number of particles in the game";
-    chk_reducedParticles = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
-    chk_reducedParticles->check = gameVar.r_reducedParticles;
-
     //--- Simple Text
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Basic Text:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Draw in a simplified way, usually increases frame rate";
     chk_simpleText = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
     chk_simpleText->check = gameVar.r_simpleText;
-
-
-    //--- Terrain Splater
-    label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Terrain splater:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
-    label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
-    label1->toolTips = "Enable dirt on the terrain.";
-    chk_terrainSplater = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
-    chk_terrainSplater->check = gameVar.r_terrainSplater;
 
     //--- Casing
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Show casing:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
@@ -286,120 +251,120 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Rolling up or forward.";
     key_moveUp = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_moveUp), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_moveUp->selectedIndex = gameVar.k_moveUp;
+        keyManager.getKeyName(clientVar.k_moveUp), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_moveUp->selectedIndex = clientVar.k_moveUp;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Move down:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Rolling down or backward.";
     key_moveDown = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_moveDown), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_moveDown->selectedIndex = gameVar.k_moveDown;
+        keyManager.getKeyName(clientVar.k_moveDown), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_moveDown->selectedIndex = clientVar.k_moveDown;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Move right:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Rolling right.";
     key_moveRight = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_moveRight), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_moveRight->selectedIndex = gameVar.k_moveRight;
+        keyManager.getKeyName(clientVar.k_moveRight), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_moveRight->selectedIndex = clientVar.k_moveRight;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Move left:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Rolling left.";
     key_moveLeft = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_moveLeft), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_moveLeft->selectedIndex = gameVar.k_moveLeft;
+        keyManager.getKeyName(clientVar.k_moveLeft), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_moveLeft->selectedIndex = clientVar.k_moveLeft;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Shoot:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Trigger to shoot, and also used for spawning.";
     key_shoot = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_shoot), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_shoot->selectedIndex = gameVar.k_shoot;
+        keyManager.getKeyName(clientVar.k_shoot), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_shoot->selectedIndex = clientVar.k_shoot;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Use secondary:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Trigger to activate your secondary weapons or power up.";
     key_secondary = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_melee), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_secondary->selectedIndex = gameVar.k_melee;
+        keyManager.getKeyName(clientVar.k_melee), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_secondary->selectedIndex = clientVar.k_melee;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Throw grenade:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Throw a grenade.";
     key_throwGrenade = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_throwGrenade), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_throwGrenade->selectedIndex = gameVar.k_throwGrenade;
+        keyManager.getKeyName(clientVar.k_throwGrenade), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_throwGrenade->selectedIndex = clientVar.k_throwGrenade;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Throw molotov:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Throw a molotov Cocktail.";
     key_throwMolotov = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_throwMolotov), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_throwMolotov->selectedIndex = gameVar.k_throwMolotov;
+        keyManager.getKeyName(clientVar.k_throwMolotov), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_throwMolotov->selectedIndex = clientVar.k_throwMolotov;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Use key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Pick up a gun on ground.\nPlank bomb.\nDesamorse bomb.";
     key_pickUp = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_pickUp), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_pickUp->selectedIndex = gameVar.k_pickUp;
+        keyManager.getKeyName(clientVar.k_pickUp), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_pickUp->selectedIndex = clientVar.k_pickUp;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Chat all:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Chat to all (Friendly and ennemy).";
     key_chatAll = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_chatAll), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_chatAll->selectedIndex = gameVar.k_chatAll;
+        keyManager.getKeyName(clientVar.k_chatAll), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_chatAll->selectedIndex = clientVar.k_chatAll;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Chat team:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Chat to team only.";
     key_chatTeam = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_chatTeam), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_chatTeam->selectedIndex = gameVar.k_chatTeam;
+        keyManager.getKeyName(clientVar.k_chatTeam), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_chatTeam->selectedIndex = clientVar.k_chatTeam;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Show score:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Show the score board.";
     key_showScore = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_showScore), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_showScore->selectedIndex = gameVar.k_showScore;
+        keyManager.getKeyName(clientVar.k_showScore), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_showScore->selectedIndex = clientVar.k_showScore;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Menu access:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Show the menu to select team and weapon.";
     key_menuAccess = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_menuAccess), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_menuAccess->selectedIndex = gameVar.k_menuAccess;
+        keyManager.getKeyName(clientVar.k_menuAccess), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_menuAccess->selectedIndex = clientVar.k_menuAccess;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Screen shot:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Take a screen shot.";
     key_screenShot = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_screenShot), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_screenShot->selectedIndex = gameVar.k_screenShot;
+        keyManager.getKeyName(clientVar.k_screenShot), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_screenShot->selectedIndex = clientVar.k_screenShot;
 
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Stats:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Write statistics.";
     key_stats = new CControl(instance, CVector2i(10, 10), CVector2i(100, 25),
-        keyManager.getKeyName(gameVar.k_stats), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_stats->selectedIndex = gameVar.k_stats;
+        keyManager.getKeyName(clientVar.k_stats), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_stats->selectedIndex = clientVar.k_stats;
 
     //--- QUICK MESSAGES OPTIONS
     separator = new CControl(instance, CVector2i(10, 20), CVector2i(200, 25), "Quick messages' options", this, "SEPARATOR", label1, CONTROL_SNAP_BOTTOM, 15);
@@ -417,8 +382,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg01 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg01), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg01->selectedIndex = gameVar.k_qMsg01;
+    key_qMsg01 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg01), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg01->selectedIndex = clientVar.k_qMsg01;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message  2:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -432,8 +397,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg02 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg02), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg02->selectedIndex = gameVar.k_qMsg02;
+    key_qMsg02 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg02), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg02->selectedIndex = clientVar.k_qMsg02;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message  3:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -447,8 +412,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg03 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg03), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg03->selectedIndex = gameVar.k_qMsg03;
+    key_qMsg03 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg03), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg03->selectedIndex = clientVar.k_qMsg03;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message  4:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -462,8 +427,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg04 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg04), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg04->selectedIndex = gameVar.k_qMsg04;
+    key_qMsg04 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg04), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg04->selectedIndex = clientVar.k_qMsg04;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message  5:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -477,8 +442,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg05 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg05), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg05->selectedIndex = gameVar.k_qMsg05;
+    key_qMsg05 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg05), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg05->selectedIndex = clientVar.k_qMsg05;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message  6:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -492,8 +457,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg06 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg06), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg06->selectedIndex = gameVar.k_qMsg06;
+    key_qMsg06 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg06), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg06->selectedIndex = clientVar.k_qMsg06;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message  7:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -507,8 +472,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg07 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg07), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg07->selectedIndex = gameVar.k_qMsg07;
+    key_qMsg07 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg07), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg07->selectedIndex = clientVar.k_qMsg07;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message  8:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -522,8 +487,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg08 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg08), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg08->selectedIndex = gameVar.k_qMsg08;
+    key_qMsg08 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg08), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg08->selectedIndex = clientVar.k_qMsg08;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message  9:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -537,8 +502,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg09 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg09), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg09->selectedIndex = gameVar.k_qMsg09;
+    key_qMsg09 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg09), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg09->selectedIndex = clientVar.k_qMsg09;
     //--- Key
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Quick Message 10:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM, 5);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -552,8 +517,8 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Key:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
     label1->toolTips = "Select the preferd key.";
-    key_qMsg10 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(gameVar.k_qMsg10), this, "KEY", label1, CONTROL_SNAP_RIGHT);
-    key_qMsg10->selectedIndex = gameVar.k_qMsg10;
+    key_qMsg10 = new CControl(instance, CVector2i(10, 10), CVector2i(200, 25), keyManager.getKeyName(clientVar.k_qMsg10), this, "KEY", label1, CONTROL_SNAP_RIGHT);
+    key_qMsg10->selectedIndex = clientVar.k_qMsg10;
 
     //--- FINAL SEPARATOR
     separator = new CControl(instance, CVector2i(10, 20), CVector2i(200, 25), "", this, "SEPARATOR", label1, CONTROL_SNAP_BOTTOM, 15);
@@ -635,22 +600,20 @@ void COption::Click(CControl * control)
     gameVar.r_shadowQuality = (chk_wallShadow->check) ? 2 : 0;
     gameVar.r_playerShadow = chk_playerShadow->check;
     gameVar.r_projectileShadow = chk_projectileShadow->check;
-    gameVar.r_particleLighting = chk_particleLighting->check;
-    gameVar.r_particleSort = chk_particleSorting->check;
-    gameVar.r_terrainSplater = chk_terrainSplater->check;
     gameVar.r_showCasing = chk_showCasing->check;
     gameVar.r_showGroundMark = chk_groundMark->check;
-    gameVar.r_reflection = chk_reflection->check;
     gameVar.r_highDetailMenu = chk_highDetailMenus->check;
     gameVar.r_animatedMenu = chk_animatedMenus->check;
-    gameVar.r_reducedParticles = chk_reducedParticles->check;
     gameVar.r_simpleText = chk_simpleText->check;
 
     // Must reload weather if changed
     if(gameVar.r_weatherEffects != chk_weatherEffects->check) {
         gameVar.r_weatherEffects = chk_weatherEffects->check;
         if(cscene && cscene->client && cscene->client->game && cscene->client->game->map)
-            cscene->client->game->map->reloadWeather();
+        {
+            auto cmap = static_cast<ClientMap*>(cscene->client->game->map);
+            cmap->reloadWeather();
+        }
     }
 
 
@@ -672,21 +635,21 @@ void COption::Click(CControl * control)
     gameVar.s_inGameMusic = chk_inGameMusic->check;
 
     // Key options
-    gameVar.k_moveUp = key_moveUp->selectedIndex;
-    gameVar.k_moveDown = key_moveDown->selectedIndex;
-    gameVar.k_moveRight = key_moveRight->selectedIndex;
-    gameVar.k_moveLeft = key_moveLeft->selectedIndex;
-    gameVar.k_shoot = key_shoot->selectedIndex;
-    gameVar.k_throwGrenade = key_throwGrenade->selectedIndex;
-    gameVar.k_throwMolotov = key_throwMolotov->selectedIndex;
-    gameVar.k_pickUp = key_pickUp->selectedIndex;
-    gameVar.k_chatAll = key_chatAll->selectedIndex;
-    gameVar.k_chatTeam = key_chatTeam->selectedIndex;
-    gameVar.k_showScore = key_showScore->selectedIndex;
-    gameVar.k_menuAccess = key_menuAccess->selectedIndex;
+    clientVar.k_moveUp = key_moveUp->selectedIndex;
+    clientVar.k_moveDown = key_moveDown->selectedIndex;
+    clientVar.k_moveRight = key_moveRight->selectedIndex;
+    clientVar.k_moveLeft = key_moveLeft->selectedIndex;
+    clientVar.k_shoot = key_shoot->selectedIndex;
+    clientVar.k_throwGrenade = key_throwGrenade->selectedIndex;
+    clientVar.k_throwMolotov = key_throwMolotov->selectedIndex;
+    clientVar.k_pickUp = key_pickUp->selectedIndex;
+    clientVar.k_chatAll = key_chatAll->selectedIndex;
+    clientVar.k_chatTeam = key_chatTeam->selectedIndex;
+    clientVar.k_showScore = key_showScore->selectedIndex;
+    clientVar.k_menuAccess = key_menuAccess->selectedIndex;
 
-    gameVar.k_screenShot = key_screenShot->selectedIndex;
-    gameVar.k_stats = key_stats->selectedIndex;
+    clientVar.k_screenShot = key_screenShot->selectedIndex;
+    clientVar.k_stats = key_stats->selectedIndex;
 
     gameVar.cl_qMsg01.set("%c%s", (chk_qMsg01->check ? 'a' : 't'), txt_qMsg01->text.s);
     gameVar.cl_qMsg02.set("%c%s", (chk_qMsg02->check ? 'a' : 't'), txt_qMsg02->text.s);
@@ -699,16 +662,16 @@ void COption::Click(CControl * control)
     gameVar.cl_qMsg09.set("%c%s", (chk_qMsg09->check ? 'a' : 't'), txt_qMsg09->text.s);
     gameVar.cl_qMsg10.set("%c%s", (chk_qMsg10->check ? 'a' : 't'), txt_qMsg10->text.s);
 
-    gameVar.k_qMsg01 = key_qMsg01->selectedIndex;
-    gameVar.k_qMsg02 = key_qMsg02->selectedIndex;
-    gameVar.k_qMsg03 = key_qMsg03->selectedIndex;
-    gameVar.k_qMsg04 = key_qMsg04->selectedIndex;
-    gameVar.k_qMsg05 = key_qMsg05->selectedIndex;
-    gameVar.k_qMsg06 = key_qMsg06->selectedIndex;
-    gameVar.k_qMsg07 = key_qMsg07->selectedIndex;
-    gameVar.k_qMsg08 = key_qMsg08->selectedIndex;
-    gameVar.k_qMsg09 = key_qMsg09->selectedIndex;
-    gameVar.k_qMsg10 = key_qMsg10->selectedIndex;
+    clientVar.k_qMsg01 = key_qMsg01->selectedIndex;
+    clientVar.k_qMsg02 = key_qMsg02->selectedIndex;
+    clientVar.k_qMsg03 = key_qMsg03->selectedIndex;
+    clientVar.k_qMsg04 = key_qMsg04->selectedIndex;
+    clientVar.k_qMsg05 = key_qMsg05->selectedIndex;
+    clientVar.k_qMsg06 = key_qMsg06->selectedIndex;
+    clientVar.k_qMsg07 = key_qMsg07->selectedIndex;
+    clientVar.k_qMsg08 = key_qMsg08->selectedIndex;
+    clientVar.k_qMsg09 = key_qMsg09->selectedIndex;
+    clientVar.k_qMsg10 = key_qMsg10->selectedIndex;
     //  }
 }
 void COption::Validate(CControl * control)
@@ -740,12 +703,8 @@ void COption::Validate(CControl * control)
     gameVar.r_shadowQuality = (chk_wallShadow->check) ? 2 : 0;
     gameVar.r_playerShadow = chk_playerShadow->check;
     gameVar.r_projectileShadow = chk_projectileShadow->check;
-    gameVar.r_particleLighting = chk_particleLighting->check;
-    gameVar.r_particleSort = chk_particleSorting->check;
-    gameVar.r_terrainSplater = chk_terrainSplater->check;
     gameVar.r_showCasing = chk_showCasing->check;
     gameVar.r_showGroundMark = chk_groundMark->check;
-    gameVar.r_reflection = chk_reflection->check;
     gameVar.r_highDetailMenu = chk_highDetailMenus->check;
     gameVar.r_animatedMenu = chk_animatedMenus->check;
 
@@ -753,7 +712,10 @@ void COption::Validate(CControl * control)
     if(gameVar.r_weatherEffects != chk_weatherEffects->check) {
         gameVar.r_weatherEffects = chk_weatherEffects->check;
         if(cscene && cscene->client && cscene->client->game && cscene->client->game->map)
-            cscene->client->game->map->reloadWeather();
+        {
+            auto cmap = static_cast<ClientMap*>(cscene->client->game->map);
+            cmap->reloadWeather();
+        }
     }
 
     switch(lst_refreshRate->selectedIndex)
@@ -783,22 +745,22 @@ void COption::Validate(CControl * control)
     gameVar.s_inGameMusic = chk_inGameMusic->check;
 
     // Key options
-    gameVar.k_moveUp = key_moveUp->selectedIndex;
-    gameVar.k_moveDown = key_moveDown->selectedIndex;
-    gameVar.k_moveRight = key_moveRight->selectedIndex;
-    gameVar.k_moveLeft = key_moveLeft->selectedIndex;
-    gameVar.k_shoot = key_shoot->selectedIndex;
-    gameVar.k_melee = key_secondary->selectedIndex;
-    gameVar.k_throwGrenade = key_throwGrenade->selectedIndex;
-    gameVar.k_throwMolotov = key_throwMolotov->selectedIndex;
-    gameVar.k_pickUp = key_pickUp->selectedIndex;
-    gameVar.k_chatAll = key_chatAll->selectedIndex;
-    gameVar.k_chatTeam = key_chatTeam->selectedIndex;
-    gameVar.k_showScore = key_showScore->selectedIndex;
-    gameVar.k_menuAccess = key_menuAccess->selectedIndex;
+    clientVar.k_moveUp = key_moveUp->selectedIndex;
+    clientVar.k_moveDown = key_moveDown->selectedIndex;
+    clientVar.k_moveRight = key_moveRight->selectedIndex;
+    clientVar.k_moveLeft = key_moveLeft->selectedIndex;
+    clientVar.k_shoot = key_shoot->selectedIndex;
+    clientVar.k_melee = key_secondary->selectedIndex;
+    clientVar.k_throwGrenade = key_throwGrenade->selectedIndex;
+    clientVar.k_throwMolotov = key_throwMolotov->selectedIndex;
+    clientVar.k_pickUp = key_pickUp->selectedIndex;
+    clientVar.k_chatAll = key_chatAll->selectedIndex;
+    clientVar.k_chatTeam = key_chatTeam->selectedIndex;
+    clientVar.k_showScore = key_showScore->selectedIndex;
+    clientVar.k_menuAccess = key_menuAccess->selectedIndex;
 
-    gameVar.k_screenShot = key_screenShot->selectedIndex;
-    gameVar.k_stats = key_stats->selectedIndex;
+    clientVar.k_screenShot = key_screenShot->selectedIndex;
+    clientVar.k_stats = key_stats->selectedIndex;
 
     gameVar.cl_qMsg01.set("%c%s", (chk_qMsg01->check ? 'a' : 't'), txt_qMsg01->text.s);
     gameVar.cl_qMsg02.set("%c%s", (chk_qMsg02->check ? 'a' : 't'), txt_qMsg02->text.s);
@@ -811,14 +773,14 @@ void COption::Validate(CControl * control)
     gameVar.cl_qMsg09.set("%c%s", (chk_qMsg09->check ? 'a' : 't'), txt_qMsg09->text.s);
     gameVar.cl_qMsg10.set("%c%s", (chk_qMsg10->check ? 'a' : 't'), txt_qMsg10->text.s);
 
-    gameVar.k_qMsg01 = key_qMsg01->selectedIndex;
-    gameVar.k_qMsg02 = key_qMsg02->selectedIndex;
-    gameVar.k_qMsg03 = key_qMsg03->selectedIndex;
-    gameVar.k_qMsg04 = key_qMsg04->selectedIndex;
-    gameVar.k_qMsg05 = key_qMsg05->selectedIndex;
-    gameVar.k_qMsg06 = key_qMsg06->selectedIndex;
-    gameVar.k_qMsg07 = key_qMsg07->selectedIndex;
-    gameVar.k_qMsg08 = key_qMsg08->selectedIndex;
-    gameVar.k_qMsg09 = key_qMsg09->selectedIndex;
-    gameVar.k_qMsg10 = key_qMsg10->selectedIndex;
+    clientVar.k_qMsg01 = key_qMsg01->selectedIndex;
+    clientVar.k_qMsg02 = key_qMsg02->selectedIndex;
+    clientVar.k_qMsg03 = key_qMsg03->selectedIndex;
+    clientVar.k_qMsg04 = key_qMsg04->selectedIndex;
+    clientVar.k_qMsg05 = key_qMsg05->selectedIndex;
+    clientVar.k_qMsg06 = key_qMsg06->selectedIndex;
+    clientVar.k_qMsg07 = key_qMsg07->selectedIndex;
+    clientVar.k_qMsg08 = key_qMsg08->selectedIndex;
+    clientVar.k_qMsg09 = key_qMsg09->selectedIndex;
+    clientVar.k_qMsg10 = key_qMsg10->selectedIndex;
 }

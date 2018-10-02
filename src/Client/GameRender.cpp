@@ -20,6 +20,7 @@
 #include "ClientScene.h"
 #include "ClientHelper.h"
 #include "ClientConsole.h"
+#include "ClientMap.h"
 #include <glad/glad.h>
 
 #include <algorithm>
@@ -39,22 +40,23 @@ extern int renderToggle;
 void ClientGame::render()
 {
     auto cscene = static_cast<ClientScene*>(scene);
+    auto cmap = static_cast<ClientMap*>(map);
     int i;
     dkoDisable(DKO_MULTIPASS);
     //  dkoEnable(DKO_RENDER_NODE);
     //  dkoEnable(DKO_RENDER_FACE);
 
         // On render la map
-    if(map)
+    if(cmap)
     {
-        if(map->fogDensity > 0 && gameVar.r_weatherEffects)
+        if(cmap->fogDensity > 0 && gameVar.r_weatherEffects)
         {
             glEnable(GL_FOG);
             glFogi(GL_FOG_MODE, GL_LINEAR);
-            glFogfv(GL_FOG_COLOR, map->fogColor.s);
-            glFogf(GL_FOG_DENSITY, map->fogDensity);
-            glFogf(GL_FOG_START, map->camPos[2] - map->fogStart);
-            glFogf(GL_FOG_END, map->camPos[2] - map->fogEnd);
+            glFogfv(GL_FOG_COLOR, cmap->fogColor.s);
+            glFogf(GL_FOG_DENSITY, cmap->fogDensity);
+            glFogf(GL_FOG_START, cmap->camPos[2] - cmap->fogStart);
+            glFogf(GL_FOG_END, cmap->camPos[2] - cmap->fogEnd);
         }
         else
         {
@@ -91,23 +93,23 @@ void ClientGame::render()
                 if(thisPlayer)
                 {
                     dkglLookAt(
-                        map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, map->camPos[2]/* + thisPlayer->shootShakeDis[2] * .25f*/,
-                        map->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, map->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, 0/* + thisPlayer->shootShakeDis[2] * .25f*/,
+                        cmap->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, cmap->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, cmap->camPos[2]/* + thisPlayer->shootShakeDis[2] * .25f*/,
+                        cmap->camPos[0]/* + thisPlayer->shootShakeDis[0] * .25f*/, cmap->camPos[1]/* + thisPlayer->shootShakeDis[1] * .25f*/, 0/* + thisPlayer->shootShakeDis[2] * .25f*/,
                         up[0], up[1], up[2]);
                 }
                 else
                 {
                     dkglLookAt(
-                        map->camPos[0], map->camPos[1], map->camPos[2],
-                        map->camPos[0], map->camPos[1], 0,
+                        cmap->camPos[0], cmap->camPos[1], cmap->camPos[2],
+                        cmap->camPos[0], cmap->camPos[1], 0,
                         up[0], up[1], up[2]);
                 }
             }
             else
             {
                 dkglLookAt(
-                    map->camPos[0], map->camPos[1] - 4.0f, map->camPos[2],
-                    map->camPos[0], map->camPos[1] - 1.0f, 0,
+                    cmap->camPos[0], cmap->camPos[1] - 4.0f, cmap->camPos[2],
+                    cmap->camPos[0], cmap->camPos[1] - 1.0f, 0,
                     up[0], up[1], up[2]);
             }
         }
@@ -115,7 +117,7 @@ void ClientGame::render()
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 0)
 #endif
-            if(gameVar.r_reflection && (map->weather == WEATHER_RAIN || map->theme == THEME_SNOW))
+            if(cmap->weather == WEATHER_RAIN || cmap->theme == THEME_SNOW)
             {
                 glPushMatrix();
                 glScalef(1, 1, -1);
@@ -123,9 +125,9 @@ void ClientGame::render()
 
                 {
                     //--- Sky
-                    glColor3fv(map->fogColor.s);
+                    glColor3fv(cmap->fogColor.s);
                     dkglPushOrtho(10, 10);
-                    renderTexturedQuad(0, 0, 10, 10, gameVar.tex_sky);
+                    renderTexturedQuad(0, 0, 10, 10, clientVar.tex_sky);
                     dkglPopOrtho();
 
                     glCullFace(GL_FRONT);
@@ -133,7 +135,7 @@ void ClientGame::render()
                     dkglSetPointLight(1, -1000, 1000, 2000, 1, 1, 1);
 
                     // On render les trucs genre flag pod, flag, canon
-                    map->renderMisc();
+                    cmap->renderMisc();
 
                     // On render les players
                     for(i = 0; i < MAX_PLAYER; ++i) if(players[i]) players[i]->render();
@@ -154,7 +156,7 @@ void ClientGame::render()
                     ZEVEN_VECTOR_CALL(douilles, i, render());
 
                     // On render les murs
-                    map->renderWalls();
+                    cmap->renderWalls();
                 }
 
                 glPopAttrib();
@@ -172,12 +174,12 @@ void ClientGame::render()
                     if(trails[i]->trailType == 0)
                     {
                         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                        glBindTexture(GL_TEXTURE_2D, gameVar.tex_smokeTrail);
+                        glBindTexture(GL_TEXTURE_2D, clientVar.tex_smokeTrail);
                     }
                     else if(trails[i]->trailType == 1)
                     {
                         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-                        glBindTexture(GL_TEXTURE_2D, gameVar.tex_glowTrail);
+                        glBindTexture(GL_TEXTURE_2D, clientVar.tex_glowTrail);
                     }
                     trails[i]->render();
                 }
@@ -186,7 +188,7 @@ void ClientGame::render()
                 {
                     if(trails[i]->trailType != 0) continue;
                     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-                    glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+                    glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
                     trails[i]->renderBullet();
                 }
                 glDepthMask(GL_TRUE);
@@ -195,12 +197,8 @@ void ClientGame::render()
                 // Les particules
                 glPushAttrib(GL_ENABLE_BIT);
                 glDisable(GL_FOG);
-                if(gameVar.r_particleLighting)
-                {
-                    glEnable(GL_LIGHTING);
-                    dkglSetPointLight(1, -2000, 2000, 1000, 1, 1, 1);
-                }
-                dkpSetSorting(gameVar.r_particleSort);
+                glEnable(GL_LIGHTING);
+                dkglSetPointLight(1, -2000, 2000, 1000, 1, 1, 1);
                 dkpRender();
                 glPopAttrib();
                 glCullFace(GL_BACK);
@@ -245,13 +243,13 @@ void ClientGame::render()
                 glEnable(GL_TEXTURE_2D);
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                glBindTexture(GL_TEXTURE_2D, gameVar.tex_drip);
+                glBindTexture(GL_TEXTURE_2D, clientVar.tex_drip);
                 for(int i = 0; i < MAX_FLOOR_MARK; ++i) if(drips[i].life > 0) drips[i].render();
                 glPopAttrib();
             }
 
         // Render la map
-        map->renderGround();
+        cmap->renderGround();
 
         // On render les floor mark et projectile shadows
         glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);
@@ -303,7 +301,7 @@ void ClientGame::render()
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 6)
 #endif
-            map->renderMisc();
+            cmap->renderMisc();
 
         // On render les players
 #ifdef RENDER_LAYER_TOGGLE
@@ -340,13 +338,13 @@ void ClientGame::render()
 #ifdef RENDER_LAYER_TOGGLE
             if(renderToggle >= 10)
 #endif
-                map->renderShadow();
+                cmap->renderShadow();
 
             // On render les murs
 #ifdef RENDER_LAYER_TOGGLE
             if(renderToggle >= 11)
 #endif
-                map->renderWalls();
+                cmap->renderWalls();
         }
         glPopAttrib();
 
@@ -366,12 +364,12 @@ void ClientGame::render()
                 if(trails[i]->trailType == 0)
                 {
                     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                    glBindTexture(GL_TEXTURE_2D, gameVar.tex_smokeTrail);
+                    glBindTexture(GL_TEXTURE_2D, clientVar.tex_smokeTrail);
                 }
                 else if(trails[i]->trailType == 1)
                 {
                     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-                    glBindTexture(GL_TEXTURE_2D, gameVar.tex_glowTrail);
+                    glBindTexture(GL_TEXTURE_2D, clientVar.tex_glowTrail);
                 }
                 trails[i]->render();
             }
@@ -383,7 +381,7 @@ void ClientGame::render()
             {
                 if(trails[i]->trailType != 0) continue;
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-                glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+                glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
                 trails[i]->renderBullet();
             }
         glDepthMask(GL_TRUE);
@@ -392,12 +390,8 @@ void ClientGame::render()
         // Les particules
         glPushAttrib(GL_ENABLE_BIT);
         glDisable(GL_FOG);
-        if(gameVar.r_particleLighting)
-        {
-            glEnable(GL_LIGHTING);
-            dkglSetPointLight(1, -2000, 2000, 1000, 1, 1, 1);
-        }
-        dkpSetSorting(gameVar.r_particleSort);
+        glEnable(GL_LIGHTING);
+        dkglSetPointLight(1, -2000, 2000, 1000, 1, 1, 1);
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 14)
 #endif
@@ -408,7 +402,7 @@ void ClientGame::render()
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 15)
 #endif
-            if(map->m_weather) map->m_weather->render();
+            if(cmap->m_weather) cmap->m_weather->render();
 
         //--- Nuke flash!!!!!!
         glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);
@@ -417,7 +411,7 @@ void ClientGame::render()
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_FOG);
-        glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+        glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         for(i = 0; i < (int)nikeFlashes.size(); ++i)
@@ -499,6 +493,7 @@ void ClientGame::render()
 void ClientGame::renderMiniMap()
 {
     auto cscene = static_cast<ClientScene*>(scene);
+    auto cmap = static_cast<ClientMap*>(map);
     CVector2i res(1280, 720);// = dkwGetResolution();
 
     dkglPushOrtho((float)res[0], (float)res[1]);
@@ -507,7 +502,7 @@ void ClientGame::renderMiniMap()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_CULL_FACE);
-    glBindTexture(GL_TEXTURE_2D, map->texMap);
+    glBindTexture(GL_TEXTURE_2D, cmap->texMap);
     glPushMatrix();
     float scalar = 128.0f / (float)std::max<int>(map->size[0], map->size[1]);
     glTranslatef(20, (float)res[1] - 20, 0);
@@ -515,14 +510,14 @@ void ClientGame::renderMiniMap()
 
     glBegin(GL_QUADS);
     glColor4f(1, 1, 1, .5f);
-    glTexCoord2f(0.0f, map->texMapSize[1]);
-    glVertex2i(0, map->size[1]);
+    glTexCoord2f(0.0f, cmap->texMapSize[1]);
+    glVertex2i(0, cmap->size[1]);
     glTexCoord2f(0.0f, 0.0f);
     glVertex2i(0, 0);
-    glTexCoord2f(map->texMapSize[0], 0.0f);
-    glVertex2i(map->size[0], 0);
-    glTexCoord2f(map->texMapSize[0], map->texMapSize[1]);
-    glVertex2i(map->size[0], map->size[1]);
+    glTexCoord2f(cmap->texMapSize[0], 0.0f);
+    glVertex2i(cmap->size[0], 0);
+    glTexCoord2f(cmap->texMapSize[0], cmap->texMapSize[1]);
+    glVertex2i(cmap->size[0], cmap->size[1]);
     glEnd();
 
     // On dessine les alliers avant

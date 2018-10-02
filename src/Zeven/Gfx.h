@@ -527,7 +527,6 @@ void            dkpRender();
 void            dkpReset();
 void            dkpSetAirDensity(float airDensity);
 void            dkpSetGravity(float *vel);
-void            dkpSetSorting(bool sort);
 int             dkpUpdate(float delay);
 
 const int DKT_FILTER_NEAREST = 0;

@@ -134,7 +134,7 @@ void NuzzleFlash::render()
                 glTranslatef(position[0], position[1], position[2]-(.5f/.005f));
                 glEnable(GL_TEXTURE_2D);
                 glDisable(GL_DEPTH_TEST);
-                glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+                glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
                 glColor4f(1,1,1,(delay/NUZZLE_DELAY)*(delay/NUZZLE_DELAY) * .25f);
                 glBegin(GL_QUADS);
                     glTexCoord2f(0,1);
@@ -154,7 +154,7 @@ void NuzzleFlash::render()
                 glRotatef(angle, 0, 1, 0);
                 glEnable(GL_BLEND);
                 glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, gameVar.tex_nuzzleFlash);
+                glBindTexture(GL_TEXTURE_2D, clientVar.tex_nuzzleFlash);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
                 glDisable(GL_CULL_FACE);
                 glColor4f(1,1,1,delay/NUZZLE_DELAY);
@@ -195,15 +195,15 @@ void ClientWeapon::shoot(Player * owner)
         if (nuzzleFlashes.size() > 0)
         {
             owner->currentCF.position[2] = .25f;
-            gameVar.dkpp_firingSmoke.positionFrom = nuzzleFlashes[firingNuzzle]->position * .005f;
-            gameVar.dkpp_firingSmoke.positionFrom = rotateAboutAxis(gameVar.dkpp_firingSmoke.positionFrom, owner->currentCF.angle, CVector3f(0,0,1)) + owner->currentCF.position;
-            gameVar.dkpp_firingSmoke.positionFrom[2] -= owner->currentCF.position[2];
-            gameVar.dkpp_firingSmoke.positionTo = gameVar.dkpp_firingSmoke.positionFrom;
-            gameVar.dkpp_firingSmoke.direction.set(0,1,0);
-            gameVar.dkpp_firingSmoke.direction = rotateAboutAxis(gameVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
-            gameVar.dkpp_firingSmoke.pitchTo = 45;
+            clientVar.dkpp_firingSmoke.positionFrom = nuzzleFlashes[firingNuzzle]->position * .005f;
+            clientVar.dkpp_firingSmoke.positionFrom = rotateAboutAxis(clientVar.dkpp_firingSmoke.positionFrom, owner->currentCF.angle, CVector3f(0,0,1)) + owner->currentCF.position;
+            clientVar.dkpp_firingSmoke.positionFrom[2] -= owner->currentCF.position[2];
+            clientVar.dkpp_firingSmoke.positionTo = clientVar.dkpp_firingSmoke.positionFrom;
+            clientVar.dkpp_firingSmoke.direction.set(0,1,0);
+            clientVar.dkpp_firingSmoke.direction = rotateAboutAxis(clientVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
+            clientVar.dkpp_firingSmoke.pitchTo = 45;
         }
-        cgame->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
+        cgame->shoot(clientVar.dkpp_firingSmoke.positionFrom, clientVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
         return;
     }
     if (currentFireDelay <= 0 && !overHeated)
@@ -224,7 +224,7 @@ void ClientWeapon::shoot(Player * owner)
                     playSound.volume = 150;
                     playSound.range = 5;
                     bb_clientSend(cscene->client->uniqueClientID, (char*)(&playSound), sizeof(net_svcl_play_sound), NET_SVCL_PLAY_SOUND);
-                    dksPlay3DSound(gameVar.sfx_photonStart, -1, 5, owner->currentCF.position, 150);
+                    dksPlay3DSound(clientVar.sfx_photonStart, -1, 5, owner->currentCF.position, 150);
                 }
             }
             charge += .033333f;
@@ -247,7 +247,7 @@ void ClientWeapon::shoot(Player * owner)
                 playSound.volume = 150;
                 playSound.range = 5;
                 bb_clientSend(cscene->client->uniqueClientID, (char*)(&playSound), sizeof(net_svcl_play_sound), NET_SVCL_PLAY_SOUND);
-                dksPlay3DSound(gameVar.sfx_overHeat, -1, 5, owner->currentCF.position, 150);
+                dksPlay3DSound(clientVar.sfx_overHeat, -1, 5, owner->currentCF.position, 150);
                 overHeated = true;
 
                 //--- Un ti peu de fume?
@@ -277,29 +277,29 @@ void ClientWeapon::shoot(Player * owner)
             {
                 nuzzleFlashes[firingNuzzle]->shoot();
                 owner->currentCF.position[2] = .25f;
-                gameVar.dkpp_firingSmoke.positionFrom = nuzzleFlashes[firingNuzzle]->position * .005f;
-                gameVar.dkpp_firingSmoke.positionFrom = rotateAboutAxis(gameVar.dkpp_firingSmoke.positionFrom, owner->currentCF.angle, CVector3f(0,0,1)) + owner->currentCF.position;
-                gameVar.dkpp_firingSmoke.positionFrom[2] -= owner->currentCF.position[2];
-                gameVar.dkpp_firingSmoke.positionTo = gameVar.dkpp_firingSmoke.positionFrom;
-                gameVar.dkpp_firingSmoke.direction.set(0,1,0);
-                gameVar.dkpp_firingSmoke.direction = rotateAboutAxis(gameVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
-                gameVar.dkpp_firingSmoke.pitchTo = 45;
+                clientVar.dkpp_firingSmoke.positionFrom = nuzzleFlashes[firingNuzzle]->position * .005f;
+                clientVar.dkpp_firingSmoke.positionFrom = rotateAboutAxis(clientVar.dkpp_firingSmoke.positionFrom, owner->currentCF.angle, CVector3f(0,0,1)) + owner->currentCF.position;
+                clientVar.dkpp_firingSmoke.positionFrom[2] -= owner->currentCF.position[2];
+                clientVar.dkpp_firingSmoke.positionTo = clientVar.dkpp_firingSmoke.positionFrom;
+                clientVar.dkpp_firingSmoke.direction.set(0,1,0);
+                clientVar.dkpp_firingSmoke.direction = rotateAboutAxis(clientVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
+                clientVar.dkpp_firingSmoke.pitchTo = 45;
             }
             else
             {*/
                 if (weaponID != WEAPON_FLAME_THROWER) nuzzleFlashes[firingNuzzle]->shoot();
                 owner->currentCF.position[2] = .25f;
-                gameVar.dkpp_firingSmoke.positionFrom = nuzzleFlashes[firingNuzzle]->position * .005f;
-                gameVar.dkpp_firingSmoke.positionFrom = rotateAboutAxis(gameVar.dkpp_firingSmoke.positionFrom, owner->currentCF.angle, CVector3f(0,0,1)) + owner->currentCF.position;
-                gameVar.dkpp_firingSmoke.positionFrom[2] -= owner->currentCF.position[2];
-                gameVar.dkpp_firingSmoke.positionTo = gameVar.dkpp_firingSmoke.positionFrom;
-                gameVar.dkpp_firingSmoke.direction.set(0,1,0);
-                gameVar.dkpp_firingSmoke.direction = rotateAboutAxis(gameVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
-                gameVar.dkpp_firingSmoke.pitchTo = 45;
+                clientVar.dkpp_firingSmoke.positionFrom = nuzzleFlashes[firingNuzzle]->position * .005f;
+                clientVar.dkpp_firingSmoke.positionFrom = rotateAboutAxis(clientVar.dkpp_firingSmoke.positionFrom, owner->currentCF.angle, CVector3f(0,0,1)) + owner->currentCF.position;
+                clientVar.dkpp_firingSmoke.positionFrom[2] -= owner->currentCF.position[2];
+                clientVar.dkpp_firingSmoke.positionTo = clientVar.dkpp_firingSmoke.positionFrom;
+                clientVar.dkpp_firingSmoke.direction.set(0,1,0);
+                clientVar.dkpp_firingSmoke.direction = rotateAboutAxis(clientVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
+                clientVar.dkpp_firingSmoke.pitchTo = 45;
         //  }
 
             // On subit un recul
-            owner->currentCF.vel -= gameVar.dkpp_firingSmoke.direction * reculVel;
+            owner->currentCF.vel -= clientVar.dkpp_firingSmoke.direction * reculVel;
 
             // On entends ça
             if (owner->fireFrameDelay == 0)
@@ -309,10 +309,10 @@ void ClientWeapon::shoot(Player * owner)
             }
 
             // On en shot le nb qui faut
-            owner->shootShakeDis = -gameVar.dkpp_firingSmoke.direction * reculVel * .5f;
+            owner->shootShakeDis = -clientVar.dkpp_firingSmoke.direction * reculVel * .5f;
             //for (int i=0;i<nbShot;++i)
             {
-                cgame->shoot(gameVar.dkpp_firingSmoke.positionFrom, gameVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
+                cgame->shoot(clientVar.dkpp_firingSmoke.positionFrom, clientVar.dkpp_firingSmoke.direction, 0, damage, owner, projectileType);
             }
 
             if (projectileType == PROJECTILE_DIRECT && weaponID != WEAPON_FLAME_THROWER && weaponID != WEAPON_PHOTON_RIFLE)
@@ -320,15 +320,15 @@ void ClientWeapon::shoot(Player * owner)
                 CVector3f pos = rotateAboutAxis(ejectingBrass[firingNuzzle]->position * .005f, owner->currentCF.angle, CVector3f(0,0,1)) + owner->currentCF.position - CVector3f(0,0,.25f);
                 CVector3f dir = rotateAboutAxis(ejectingBrass[firingNuzzle]->matrix.getUp(), owner->currentCF.angle, CVector3f(0,0,1));
                 CVector3f right = rotateAboutAxis(ejectingBrass[firingNuzzle]->matrix.getRight(), owner->currentCF.angle, CVector3f(0,0,1));
-                gameVar.dkpp_firingSmoke.positionFrom = pos;
-                gameVar.dkpp_firingSmoke.positionTo = pos;
-                gameVar.dkpp_firingSmoke.direction = dir;
-                gameVar.dkpp_firingSmoke.pitchTo = 0;
-                dkpCreateParticleExP(gameVar.dkpp_firingSmoke);
+                clientVar.dkpp_firingSmoke.positionFrom = pos;
+                clientVar.dkpp_firingSmoke.positionTo = pos;
+                clientVar.dkpp_firingSmoke.direction = dir;
+                clientVar.dkpp_firingSmoke.pitchTo = 0;
+                dkpCreateParticleExP(clientVar.dkpp_firingSmoke);
                 if (gameVar.r_showCasing) cgame->douilles.push_back(new Douille(pos, dir*(damage+1), right));
             }
 
-            dkpCreateParticleExP(gameVar.dkpp_firingSmoke);
+            dkpCreateParticleExP(clientVar.dkpp_firingSmoke);
         }
         else
         {
@@ -389,16 +389,16 @@ void ClientWeapon::shoot(net_svcl_player_shoot & playerShoot, Player * owner)
     normal[0] = (float)playerShoot.normal[0] / 120.0f;
     normal[1] = (float)playerShoot.normal[1] / 120.0f;
     normal[2] = (float)playerShoot.normal[2] / 120.0f;
-    gameVar.dkpp_firingSmoke.positionFrom = p1;
-    gameVar.dkpp_firingSmoke.positionTo = gameVar.dkpp_firingSmoke.positionFrom;
-    gameVar.dkpp_firingSmoke.direction.set(0,1,0);
-    gameVar.dkpp_firingSmoke.direction = rotateAboutAxis(gameVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
-    gameVar.dkpp_firingSmoke.pitchTo = 45;
+    clientVar.dkpp_firingSmoke.positionFrom = p1;
+    clientVar.dkpp_firingSmoke.positionTo = clientVar.dkpp_firingSmoke.positionFrom;
+    clientVar.dkpp_firingSmoke.direction.set(0,1,0);
+    clientVar.dkpp_firingSmoke.direction = rotateAboutAxis(clientVar.dkpp_firingSmoke.direction, owner->currentCF.angle, CVector3f(0,0,1));
+    clientVar.dkpp_firingSmoke.pitchTo = 45;
 
     // Un ptit son pour agrémenter tout ça!
-    dksPlay3DSound(sfx_sound, -1, 5, gameVar.dkpp_firingSmoke.positionFrom,150);
+    dksPlay3DSound(sfx_sound, -1, 5, clientVar.dkpp_firingSmoke.positionFrom,150);
 
-    dkpCreateParticleExP(gameVar.dkpp_firingSmoke);
+    dkpCreateParticleExP(clientVar.dkpp_firingSmoke);
 
     if (projectileType == PROJECTILE_DIRECT && weaponID != WEAPON_FLAME_THROWER)
     {
@@ -407,11 +407,11 @@ void ClientWeapon::shoot(net_svcl_player_shoot & playerShoot, Player * owner)
             CVector3f pos = rotateAboutAxis(ejectingBrass[playerShoot.nuzzleID]->position * .005f, owner->currentCF.angle, CVector3f(0,0,1)) + owner->currentCF.position - CVector3f(0,0,.25f);
             CVector3f dir = rotateAboutAxis(ejectingBrass[playerShoot.nuzzleID]->matrix.getUp(), owner->currentCF.angle, CVector3f(0,0,1));
             CVector3f right = rotateAboutAxis(ejectingBrass[playerShoot.nuzzleID]->matrix.getRight(), owner->currentCF.angle, CVector3f(0,0,1));
-            gameVar.dkpp_firingSmoke.positionFrom = pos;
-            gameVar.dkpp_firingSmoke.positionTo = pos;
-            gameVar.dkpp_firingSmoke.direction = dir;
-            gameVar.dkpp_firingSmoke.pitchTo = 0;
-            dkpCreateParticleExP(gameVar.dkpp_firingSmoke);
+            clientVar.dkpp_firingSmoke.positionFrom = pos;
+            clientVar.dkpp_firingSmoke.positionTo = pos;
+            clientVar.dkpp_firingSmoke.direction = dir;
+            clientVar.dkpp_firingSmoke.pitchTo = 0;
+            dkpCreateParticleExP(clientVar.dkpp_firingSmoke);
             if (gameVar.r_showCasing)  cgame->douilles.push_back(new Douille(pos, dir*(damage+1), right));
         }
         cgame->spawnImpact(p1, p2, normal, this, damage, owner->teamID);
@@ -434,7 +434,7 @@ void ClientWeapon::shoot(net_svcl_player_shoot & playerShoot, Player * owner)
                                 0,//float gravityInfluence,
                                 0,//float airResistanceInfluence,
                                 rand(0.0f, 30.0f),//float rotationSpeed,
-                                gameVar.tex_smoke1,//unsigned int texture,
+                                clientVar.tex_smoke1,//unsigned int texture,
                                 DKP_SRC_ALPHA,//unsigned int srcBlend,
                                 DKP_ONE,//unsigned int dstBlend,
                                 0);//int transitionFunc);
@@ -448,7 +448,7 @@ void ClientWeapon::shoot(net_svcl_player_shoot & playerShoot, Player * owner)
                                 0,//float gravityInfluence,
                                 0,//float airResistanceInfluence,
                                 rand(0.0f, 30.0f),//float rotationSpeed,
-                                gameVar.tex_smoke1,//unsigned int texture,
+                                clientVar.tex_smoke1,//unsigned int texture,
                                 DKP_SRC_ALPHA,//unsigned int srcBlend,
                                 DKP_ONE,//unsigned int dstBlend,
                                 0);//int transitionFunc);
@@ -512,7 +512,7 @@ void ClientWeapon::render()
                     // Shot glow
                     glEnable(GL_TEXTURE_2D);
                     glDisable(GL_DEPTH_TEST);
-                    glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+                    glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
                     glColor4f(0,.9f,1,1 - (modelAnim/10.0f));
                     glBegin(GL_QUADS);
                         glTexCoord2f(0,1);

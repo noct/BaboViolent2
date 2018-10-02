@@ -15,10 +15,9 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-#include "Map.h"
+#include "ClientMap.h"
 #include "Game.h"
 
-#ifndef DEDICATED_SERVER
 #ifdef RENDER_LAYER_TOGGLE
 extern int renderToggle;
 #endif
@@ -27,15 +26,14 @@ extern int renderToggle;
 // Affichage
 //
 
-void Map::buildAll()
+void ClientMap::buildAll()
 {
     buildGround();
     buildShadow();
     buildWalls();
 }
 
-
-void Map::buildGround()
+void ClientMap::buildGround()
 {
     if(groundMesh) delete groundMesh;
 
@@ -45,38 +43,25 @@ void Map::buildGround()
 
     CMeshBuilder builder(base);
 
-
-    //--- Yay splatting!
-    if(gameVar.r_terrainSplater)
+    //--- Reflections on?
+    if(weather == WEATHER_RAIN || theme == THEME_SNOW)
     {
-        //--- Reflections on?
-        if(gameVar.r_reflection && (weather == WEATHER_RAIN || theme == THEME_SNOW))
-        {
-            //--- Use a blended version
-            builder.bind(base_weather);
-            builder.colour(1, 1, 1, .6f);
-        }
-
-        //--- Base texture
-        buildGroundLayer(builder);
-
-        //--- Splat
-        builder.bind(splat);
-        buildGroundLayer(builder, true);
-
+        //--- Use a blended version
+        builder.bind(base_weather);
+        builder.colour(1, 1, 1, .6f);
     }
-    else
-    {
-        //--- No splatting, just render splat texture
-        builder.bind(splat);
-        buildGroundLayer(builder);
-    }
+
+    //--- Base texture
+    buildGroundLayer(builder);
+
+    //--- Splat
+    builder.bind(splat);
+    buildGroundLayer(builder, true);
 
     groundMesh = builder.compile();
 }
 
-
-void Map::buildGroundLayer(CMeshBuilder& builder, bool splat)
+void ClientMap::buildGroundLayer(CMeshBuilder& builder, bool splat)
 {
     for(int j = 0; j < size[1]; ++j)
     {
@@ -108,7 +93,7 @@ void Map::buildGroundLayer(CMeshBuilder& builder, bool splat)
 
 
 
-void Map::buildShadow()
+void ClientMap::buildShadow()
 {
     if(shadowMesh) delete shadowMesh;
 
@@ -159,7 +144,7 @@ void Map::buildShadow()
     shadowMesh = builder.compile();
 }
 
-void Map::buildWalls()
+void ClientMap::buildWalls()
 {
     if(wallMesh) delete wallMesh;
 
@@ -183,7 +168,7 @@ void Map::buildWalls()
 }
 
 
-void Map::buildWallBlock(CMeshBuilder& builder, int x, int y, int h)
+void ClientMap::buildWallBlock(CMeshBuilder& builder, int x, int y, int h)
 {//since this calls renderWallSide, it would also require that opengl be set to render quads
     float fx = static_cast<float>(x);
     float fy = static_cast<float>(y);
@@ -239,7 +224,7 @@ void Map::buildWallBlock(CMeshBuilder& builder, int x, int y, int h)
 
 }
 
-void Map::buildWallTop(CMeshBuilder& builder, float* vert1, float* vert2, float* vert3, float* vert4, bool top, bool left, bool diag)
+void ClientMap::buildWallTop(CMeshBuilder& builder, float* vert1, float* vert2, float* vert3, float* vert4, bool top, bool left, bool diag)
 {//I don't think this will work if opengl isn't set to render quads before it's called
     float s = 0.4f;
     builder.colour(1, 1, 1);
@@ -260,7 +245,7 @@ void Map::buildWallTop(CMeshBuilder& builder, float* vert1, float* vert2, float*
 
 }
 
-void Map::buildWallSide(CMeshBuilder& builder, float* vert1, float* vert2, float* vert3, float* vert4, float brightness, float h)
+void ClientMap::buildWallSide(CMeshBuilder& builder, float* vert1, float* vert2, float* vert3, float* vert4, float brightness, float h)
 {//I don't think this will work if opengl isn't set to render quads before it's called
     builder.colour(brightness, brightness, brightness);
 
@@ -273,7 +258,7 @@ void Map::buildWallSide(CMeshBuilder& builder, float* vert1, float* vert2, float
     builder.vertex(vert2[0], vert2[1], vert2[2], 1, 0);
 }
 
-void Map::renderGround()
+void ClientMap::renderGround()
 {
     glPushAttrib(GL_ENABLE_BIT);
     glDepthMask(GL_FALSE);
@@ -363,14 +348,14 @@ void Map::renderGround()
     glPopAttrib();
 }
 
-void Map::renderShadow()
+void ClientMap::renderShadow()
 {
     if(gameVar.r_shadowQuality == 0) return;
 
     shadowMesh->render();
 }
 
-void Map::renderWalls()
+void ClientMap::renderWalls()
 {
     wallMesh->render();
 
@@ -385,11 +370,7 @@ void Map::renderWalls()
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
-#endif
-//
-// Pour faire une collision sur un CF
-//
-void Map::performCollision(CoordFrame & lastCF, CoordFrame & CF, float radius)
+void ClientMap::performCollision(CoordFrame & lastCF, CoordFrame & CF, float radius)
 {
     // Ici c'est super dooper easy
     if(cells)
@@ -581,7 +562,7 @@ void Map::performCollision(CoordFrame & lastCF, CoordFrame & CF, float radius)
     lastCF.position = CF.position;
 }
 
-void Map::collisionClip(CoordFrame & CF, float radius)
+void ClientMap::collisionClip(CoordFrame & CF, float radius)
 {
     int x = (int)CF.position[0];
     int y = (int)CF.position[1];
@@ -670,9 +651,7 @@ void Map::collisionClip(CoordFrame & CF, float radius)
     }
 }
 
-#ifndef DEDICATED_SERVER
-
-void Map::renderFlag(int i)
+void ClientMap::renderFlag(int i)
 {
     glPushMatrix();
     glTranslatef(flagPos[i][0], flagPos[i][1], flagPos[i][2]);
@@ -683,7 +662,7 @@ void Map::renderFlag(int i)
 }
 
 
-void Map::renderMisc()
+void ClientMap::renderMisc()
 {
     int i;
     if(game && (game->gameType != GAME_TYPE_CTF))
@@ -744,6 +723,3 @@ void Map::renderMisc()
         renderFlag(1);
     }
 }
-#endif
-
-

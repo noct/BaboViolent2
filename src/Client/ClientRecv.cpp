@@ -22,6 +22,7 @@
 #include "md5.h"
 #include "md5_2.h"
 #include "baboNet.h"
+#include "ClientMap.h"
 
 extern Scene * scene;
 
@@ -216,7 +217,8 @@ void Client::recvPacket(char * buffer, int typeID)
         {
             if(game->players[playerShootMelee.playerID]->meleeWeapon)
             {
-                game->players[playerShootMelee.playerID]->meleeWeapon->shootMelee(game->players[playerShootMelee.playerID]);
+                auto cmeleeWeapon = static_cast<ClientWeapon*>(game->players[playerShootMelee.playerID]->meleeWeapon);
+                cmeleeWeapon->shootMelee(game->players[playerShootMelee.playerID]);
             }
         }
         break;
@@ -290,7 +292,7 @@ void Client::recvPacket(char * buffer, int typeID)
         memcpy(game->players[playerInfo.playerID]->playerIP, playerInfo.playerIP, 16);
         // On a son nom! on le print
         console->add(CString("\x3> %s joined the game", playerInfo.playerName));
-        eventMessages.push_back(CString(gameVar.lang_joinedTheGame.s, playerInfo.playerName));
+        eventMessages.push_back(CString(clientVar.lang_joinedTheGame.s, playerInfo.playerName));
         break;
     }
     case NET_CLSV_SVCL_CHAT:
@@ -317,7 +319,7 @@ void Client::recvPacket(char * buffer, int typeID)
         {
             game->players[playerDisconnect.playerID]->kill(true);
             console->add(CString("\x3> Player disconnected : %s ID:%i", game->players[playerDisconnect.playerID]->name.s, playerDisconnect.playerID));
-            eventMessages.push_back(CString(gameVar.lang_playerDisconnected.s, game->players[playerDisconnect.playerID]->name.s));
+            eventMessages.push_back(CString(clientVar.lang_playerDisconnected.s, game->players[playerDisconnect.playerID]->name.s));
             ZEVEN_SAFE_DELETE(game->players[playerDisconnect.playerID]);
         }
         break;
@@ -535,7 +537,7 @@ void Client::recvPacket(char * buffer, int typeID)
         if(game->players[playerChangeName.playerID])
         {
             console->add(CString("\x3> Player %s changed his name for %s", game->players[playerChangeName.playerID]->name.s, playerChangeName.playerName));
-            eventMessages.push_back(CString(gameVar.lang_playerChangedHisNameFor.s, game->players[playerChangeName.playerID]->name.s, playerChangeName.playerName));
+            eventMessages.push_back(CString(clientVar.lang_playerChangedHisNameFor.s, game->players[playerChangeName.playerID]->name.s, playerChangeName.playerName));
             game->players[playerChangeName.playerID]->name = playerChangeName.playerName;
         }
         break;
@@ -569,7 +571,7 @@ void Client::recvPacket(char * buffer, int typeID)
                 normalize(direction);
                 if(playerShoot.hitPlayerID == game->thisPlayer->playerID)
                 {
-                    game->thisPlayer->currentCF.vel += direction * gameVar.weapons[playerShoot.weaponID]->damage * 2;
+                    game->thisPlayer->currentCF.vel += direction * clientVar.weapons[playerShoot.weaponID]->damage * 2;
                 }
 
                 if(playerShoot.playerID == game->thisPlayer->playerID)
@@ -594,7 +596,7 @@ void Client::recvPacket(char * buffer, int typeID)
                                 0,//float gravityInfluence,
                                 0,//float airResistanceInfluence,
                                 rand(0.0f, 30.0f),//float rotationSpeed,
-                                gameVar.tex_smoke1,//unsigned int texture,
+                                clientVar.tex_smoke1,//unsigned int texture,
                                 DKP_SRC_ALPHA,//unsigned int srcBlend,
                                 DKP_ONE,//unsigned int dstBlend,
                                 0);//int transitionFunc);
@@ -608,7 +610,7 @@ void Client::recvPacket(char * buffer, int typeID)
                                 0,//float gravityInfluence,
                                 0,//float airResistanceInfluence,
                                 rand(0.0f, 30.0f),//float rotationSpeed,
-                                gameVar.tex_smoke1,//unsigned int texture,
+                                clientVar.tex_smoke1,//unsigned int texture,
                                 DKP_SRC_ALPHA,//unsigned int srcBlend,
                                 DKP_ONE,//unsigned int dstBlend,
                                 0);//int transitionFunc);
@@ -628,7 +630,8 @@ void Client::recvPacket(char * buffer, int typeID)
             if(!itsMine)
             {
                 game->players[playerShoot.playerID]->firedShowDelay = 2;
-                game->players[playerShoot.playerID]->weapon->shoot(playerShoot, game->players[playerShoot.playerID]);
+                auto cweapon = static_cast<ClientWeapon*>(game->players[playerShoot.playerID]->weapon);
+                cweapon->shoot(playerShoot, game->players[playerShoot.playerID]);
             }
         }
         break;
@@ -664,7 +667,8 @@ void Client::recvPacket(char * buffer, int typeID)
                 playerShoot.p1[2] = (short)(playerProjectile.position[2] * 100);
                 if(game->players[playerShoot.playerID]->weapon->weaponID == playerShoot.weaponID)
                 {
-                    game->players[playerShoot.playerID]->weapon->shoot(playerShoot, game->players[playerShoot.playerID]);
+                    auto cweapon = static_cast<ClientWeapon*>(game->players[playerShoot.playerID]->weapon);
+                    cweapon->shoot(playerShoot, game->players[playerShoot.playerID]);
                 }
                 else
                 {
@@ -683,7 +687,7 @@ void Client::recvPacket(char * buffer, int typeID)
                             p1[0] = (float)playerShoot.p1[0] / 100.0f;
                             p1[1] = (float)playerShoot.p1[1] / 100.0f;
                             p1[2] = (float)playerShoot.p1[2] / 100.0f;
-                            dksPlay3DSound(gameVar.weapons[playerShoot.weaponID]->sfx_sound, -1, 5, p1, 255);
+                            dksPlay3DSound(clientVar.weapons[playerShoot.weaponID]->sfx_sound, -1, 5, p1, 255);
                         }
                     }
                     else
@@ -773,13 +777,13 @@ void Client::recvPacket(char * buffer, int typeID)
                     if((playerHit.weaponID == WEAPON_BAZOOKA) ||
                         (playerHit.weaponID == WEAPON_GRENADE))
                     {
-                        float realDamage = gameVar.weapons[playerHit.weaponID]->damage;
+                        float realDamage = clientVar.weapons[playerHit.weaponID]->damage;
                         float viewShakeAmount = 2 - (playerHit.damage / realDamage);
                         game->viewShake += viewShakeAmount;
                     }
                 }
             }
-            game->players[playerHit.playerID]->hit(gameVar.weapons[playerHit.weaponID], game->players[playerHit.fromID], playerHit.damage);
+            game->players[playerHit.playerID]->hit(clientVar.weapons[playerHit.weaponID], game->players[playerHit.fromID], playerHit.damage);
         }
         break;
     }
@@ -799,16 +803,16 @@ void Client::recvPacket(char * buffer, int typeID)
         switch(playSound.soundID)
         {
         case SOUND_GRENADE_REBOUND:
-            dksPlay3DSound(gameVar.sfx_grenadeRebond, -1, playSound.range, position, playSound.volume);
+            dksPlay3DSound(clientVar.sfx_grenadeRebond, -1, playSound.range, position, playSound.volume);
             break;
         case SOUND_MOLOTOV:
-            dksPlay3DSound(gameVar.sfx_cocktailMolotov, -1, playSound.range, position, playSound.volume);
+            dksPlay3DSound(clientVar.sfx_cocktailMolotov, -1, playSound.range, position, playSound.volume);
             break;
         case SOUND_OVERHEAT:
-            dksPlay3DSound(gameVar.sfx_overHeat, -1, playSound.range, position, playSound.volume);
+            dksPlay3DSound(clientVar.sfx_overHeat, -1, playSound.range, position, playSound.volume);
             break;
         case SOUND_PHOTON_START:
-            dksPlay3DSound(gameVar.sfx_photonStart, -1, playSound.range, position, playSound.volume);
+            dksPlay3DSound(clientVar.sfx_photonStart, -1, playSound.range, position, playSound.volume);
             break;
         }
         break;
@@ -857,7 +861,7 @@ void Client::recvPacket(char * buffer, int typeID)
                     if(flagState.flagID == 0)
                     {
                         //console->add(CString("\x3> \x1%s\x8 returned the blue flag", textColorLess(game->players[flagState.playerID]->name).s));
-                        //eventMessages.push_back(CString(gameVar.lang_returnBlueFlag.s, textColorLess(game->players[flagState.playerID]->name).s));
+                        //eventMessages.push_back(CString(clientVar.lang_returnBlueFlag.s, textColorLess(game->players[flagState.playerID]->name).s));
                         CString message("\x1%s\x8 returned the blue flag", game->players[flagState.playerID]->name.s);
                         eventMessages.push_back(message);
                         console->add(CString("\x3> %s", message.s));
@@ -865,7 +869,7 @@ void Client::recvPacket(char * buffer, int typeID)
                     else
                     {
                         //console->add(CString("\x3> \x4%s\x8 returned the red flag", textColorLess(game->players[flagState.playerID]->name).s));
-                        //eventMessages.push_back(CString(gameVar.lang_returnRedFlag.s, textColorLess(game->players[flagState.playerID]->name).s));
+                        //eventMessages.push_back(CString(clientVar.lang_returnRedFlag.s, textColorLess(game->players[flagState.playerID]->name).s));
                         CString message("\x4%s\x8 returned the red flag", game->players[flagState.playerID]->name.s);
                         eventMessages.push_back(message);
                         console->add(CString("\x3> %s", message.s));
@@ -893,7 +897,7 @@ void Client::recvPacket(char * buffer, int typeID)
                     if(flagState.flagID == 0)
                     {
                         //console->add(CString("\x3> \x4%s\x8 took the blue flag", textColorLess(game->players[flagState.playerID]->name).s));
-                        //eventMessages.push_back(CString(gameVar.lang_tookRedFlag.s, textColorLess(game->players[flagState.playerID]->name).s));
+                        //eventMessages.push_back(CString(clientVar.lang_tookRedFlag.s, textColorLess(game->players[flagState.playerID]->name).s));
                         CString message("\x4%s\x8 took the blue flag", game->players[flagState.playerID]->name.s);
                         eventMessages.push_back(message);
                         console->add(CString("\x3> %s", message.s));
@@ -901,7 +905,7 @@ void Client::recvPacket(char * buffer, int typeID)
                     else
                     {
                         //console->add(CString("\x3> \x1%s\x8 took the red flag", textColorLess(game->players[flagState.playerID]->name).s));
-                        //eventMessages.push_back(CString(gameVar.lang_tookRedFlag.s, textColorLess(game->players[flagState.playerID]->name).s));
+                        //eventMessages.push_back(CString(clientVar.lang_tookRedFlag.s, textColorLess(game->players[flagState.playerID]->name).s));
                         CString message("\x1%s\x8 took the red flag", game->players[flagState.playerID]->name.s);
                         eventMessages.push_back(message);
                         console->add(CString("\x3> %s", message.s));
@@ -925,7 +929,7 @@ void Client::recvPacket(char * buffer, int typeID)
                     {
                         CString message("\x04%s \x08scores for the Red team!", game->players[flagState.playerID]->name.s);
                         //console->add(CString("\x3> \x4Red team scores!"));
-                        //eventMessages.push_back(gameVar.lang_redScore);
+                        //eventMessages.push_back(clientVar.lang_redScore);
                         eventMessages.push_back(message);
                         console->add(CString("\x03> %s", message.s));
                         game->redWin++;
@@ -935,7 +939,7 @@ void Client::recvPacket(char * buffer, int typeID)
                     {
                         CString message("\x01%s \x08scores for the Blue team!", game->players[flagState.playerID]->name.s);
                         //console->add(CString("\x3>\x1 Blue team scores!"));
-                        //eventMessages.push_back(gameVar.lang_blueScore);
+                        //eventMessages.push_back(clientVar.lang_blueScore);
                         eventMessages.push_back(message);
                         console->add(CString("\x03> %s", message.s));
                         game->blueWin++;
@@ -956,9 +960,10 @@ void Client::recvPacket(char * buffer, int typeID)
         memcpy(&dropFlag, buffer, sizeof(net_svcl_drop_flag));
         if(game->map)
         {
-            game->map->flagState[dropFlag.flagID] = -1;
-            game->map->flagPos[dropFlag.flagID].set(dropFlag.position);
-            game->map->flagAngle[dropFlag.flagID] = 0;
+            auto cmap = static_cast<ClientMap*>(game->map);
+            cmap->flagState[dropFlag.flagID] = -1;
+            cmap->flagPos[dropFlag.flagID].set(dropFlag.position);
+            cmap->flagAngle[dropFlag.flagID] = 0;
         }
         break;
     }
@@ -968,10 +973,11 @@ void Client::recvPacket(char * buffer, int typeID)
         memcpy(&flagEnum, buffer, sizeof(net_svcl_flag_enum));
         if(game->map)
         {
-            game->map->flagState[0] = flagEnum.flagState[0];
-            game->map->flagState[1] = flagEnum.flagState[1];
-            game->map->flagPos[0].set(flagEnum.positionBlue);
-            game->map->flagPos[1].set(flagEnum.positionRed);
+            auto cmap = static_cast<ClientMap*>(game->map);
+            cmap->flagState[0] = flagEnum.flagState[0];
+            cmap->flagState[1] = flagEnum.flagState[1];
+            cmap->flagPos[0].set(flagEnum.positionBlue);
+            cmap->flagPos[1].set(flagEnum.positionRed);
         }
         break;
     }
@@ -1056,14 +1062,14 @@ void Client::recvPacket(char * buffer, int typeID)
                 if(game->players[pickupItem.playerID]->life > 1) game->players[pickupItem.playerID]->life = 1;
                 if(game->players[pickupItem.playerID] == game->thisPlayer)
                 {
-                    dksPlaySound(gameVar.sfx_lifePack, -1, 255);
+                    dksPlaySound(clientVar.sfx_lifePack, -1, 255);
                 }
                 break;
             case ITEM_WEAPON:
                 game->players[pickupItem.playerID]->switchWeapon(pickupItem.itemFlag);
                 if(game->players[pickupItem.playerID] == game->thisPlayer)
                 {
-                    dksPlaySound(gameVar.sfx_equip, -1, 255);
+                    dksPlaySound(clientVar.sfx_equip, -1, 255);
                 }
                 break;
             case ITEM_GRENADE:
@@ -1071,7 +1077,7 @@ void Client::recvPacket(char * buffer, int typeID)
                 if(game->players[pickupItem.playerID]->nbGrenadeLeft > 3) game->players[pickupItem.playerID]->nbGrenadeLeft = 3;
                 if(game->players[pickupItem.playerID] == game->thisPlayer)
                 {
-                    dksPlaySound(gameVar.sfx_equip, -1, 255);
+                    dksPlaySound(clientVar.sfx_equip, -1, 255);
                 }
                 break;
             }

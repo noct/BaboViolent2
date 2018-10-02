@@ -32,7 +32,6 @@ Scene::Scene(dkContext* dk)
     ctx = dk;
     frameID = 0;
     server = 0;
-    gameVar.loadModels();
     serverInfoDelay = GAME_UPDATE_DELAY;
     masterReady = true;
 
@@ -46,7 +45,6 @@ Scene::Scene(dkContext* dk)
 Scene::~Scene()
 {
     disconnect();
-    gameVar.deleteModels();
 }
 
 //

@@ -21,6 +21,7 @@
 #include "CControl.h"
 #include "CMenuManager.h"
 #include "ClientHelper.h"
+#include "ClientMap.h"
 
 #ifdef RENDER_LAYER_TOGGLE
 extern int renderToggle;
@@ -40,13 +41,14 @@ void Client::render(float & alphaScope)
         {
             if(game->map)
             {
-                game->map->camLookAt = (
+                auto cmap = static_cast<ClientMap*>(game->map);
+                cmap->camLookAt = (
                     game->thisPlayer->currentCF.position * 5 +
                     game->thisPlayer->currentCF.mousePosOnMap * 4) / 9.0f;
-                if(game->map->camLookAt[0] < 0) game->map->camLookAt[0] = 0;
-                if(game->map->camLookAt[1] < -1) game->map->camLookAt[1] = -1;
-                if(game->map->camLookAt[0] > (float)game->map->size[0]) game->map->camLookAt[0] = (float)game->map->size[0];
-                if(game->map->camLookAt[1] > (float)game->map->size[1] + 1) game->map->camLookAt[1] = (float)game->map->size[1] + 1;
+                if(cmap->camLookAt[0] < 0) cmap->camLookAt[0] = 0;
+                if(cmap->camLookAt[1] < -1) cmap->camLookAt[1] = -1;
+                if(cmap->camLookAt[0] > (float)game->map->size[0]) cmap->camLookAt[0] = (float)game->map->size[0];
+                if(cmap->camLookAt[1] > (float)game->map->size[1] + 1) cmap->camLookAt[1] = (float)game->map->size[1] + 1;
             }
         }
     }
@@ -68,15 +70,16 @@ void Client::render(float & alphaScope)
     {
         if(game->thisPlayer->weapon && game->thisPlayer->weapon->weaponID == WEAPON_SNIPER)
         {
-            if(game->map && game->map->camPos[2] > 8)
+            auto cmap = static_cast<ClientMap*>(game->map);
+            if(cmap && cmap->camPos[2] > 8)
             {
-                alphaScope = 10 - (game->map->camPos[2] - 2);
+                alphaScope = 10 - (cmap->camPos[2] - 2);
                 alphaScope = (alphaScope > 0) ? 1 - (alphaScope / 2) : 1;
                 glColor4f(0, 0, 0, alphaScope);
                 if(!(menuManager.root && menuManager.root->visible) && !showMenu)
                 {
                     // render the scope view
-                    renderTexturedQuad(xM - 128, yM - 128, 256, 256, gameVar.tex_sniperScope);
+                    renderTexturedQuad(xM - 128, yM - 128, 256, 256, clientVar.tex_sniperScope);
                     renderTexturedQuad(0, 0, 800, yM - 128, 0);
                     renderTexturedQuad(0, yM + 128, 800, 600 - (yM + 128), 0);
                     renderTexturedQuad(0, yM - 128, xM - 128, 256, 0);
@@ -147,7 +150,7 @@ void Client::render(float & alphaScope)
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay*.75f + .25f);
-                        if(blink < .25f) printCenterText(400, 400, 32, gameVar.lang_reloading);
+                        if(blink < .25f) printCenterText(400, 400, 32, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         // La progress bar
@@ -177,7 +180,7 @@ void Client::render(float & alphaScope)
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay*.75f + .25f);
-                        if(blink < .25f) printCenterText(400, 400, 32, gameVar.lang_reloading);
+                        if(blink < .25f) printCenterText(400, 400, 32, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
@@ -206,7 +209,7 @@ void Client::render(float & alphaScope)
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay*.75f + .25f);
-                        if(blink < .25f) printCenterText(400, 400, 32, gameVar.lang_reloading);
+                        if(blink < .25f) printCenterText(400, 400, 32, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
@@ -235,7 +238,7 @@ void Client::render(float & alphaScope)
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay*.75f + .25f);
-                        if(blink < .25f) printCenterText(400, 400, 32, gameVar.lang_reloading);
+                        if(blink < .25f) printCenterText(400, 400, 32, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
@@ -391,8 +394,8 @@ void Client::render(float & alphaScope)
                 game->thisPlayer->status == PLAYER_STATUS_DEAD && !game->thisPlayer->spawnRequested)
             {
                 glColor3f(1, 1, 1);
-                if(game->thisPlayer->timeToSpawn > 0) printCenterText(400, 200, 64, CString(gameVar.lang_spawnIn.s, ((int)game->thisPlayer->timeToSpawn + 1) / 60, ((int)(game->thisPlayer->timeToSpawn + 1) % 60)));
-                else if(!gameVar.sv_forceRespawn) printCenterText(400, 200, 64, CString("Press shoot key [%s] to respawn", keyManager.getKeyName(gameVar.k_shoot).s));
+                if(game->thisPlayer->timeToSpawn > 0) printCenterText(400, 200, 64, CString(clientVar.lang_spawnIn.s, ((int)game->thisPlayer->timeToSpawn + 1) / 60, ((int)(game->thisPlayer->timeToSpawn + 1) % 60)));
+                else if(!gameVar.sv_forceRespawn) printCenterText(400, 200, 64, CString("Press shoot key [%s] to respawn", keyManager.getKeyName(clientVar.k_shoot).s));
             }
 
         //--- Auto balance
@@ -632,16 +635,16 @@ void Client::render(float & alphaScope)
                 {
                 case GAME_PLAYING: break;
                 case GAME_BLUE_WIN:
-                    printCenterText(475, 5, 64, gameVar.lang_blueTeamWin);
+                    printCenterText(475, 5, 64, clientVar.lang_blueTeamWin);
                     break;
                 case GAME_RED_WIN:
-                    printCenterText(475, 5, 64, gameVar.lang_redTeamWin);
+                    printCenterText(475, 5, 64, clientVar.lang_redTeamWin);
                     break;
                 case GAME_DRAW:
-                    printCenterText(475, 5, 64, gameVar.lang_roundDraw);
+                    printCenterText(475, 5, 64, clientVar.lang_roundDraw);
                     break;
                 case GAME_MAP_CHANGE:
-                    printCenterText(475, 5, 64, gameVar.lang_changingMap);
+                    printCenterText(475, 5, 64, clientVar.lang_changingMap);
                     break;
                 }
                 glPopAttrib();
@@ -687,21 +690,22 @@ void Client::render(float & alphaScope)
         switch(game->gameType)
         {
         case GAME_TYPE_DM:
-            printCenterText(400, 5, 64, gameVar.lang_deathmatchC);
-            printCenterText(400, 5 + 88, 32, gameVar.lang_deathmatchD);
+            printCenterText(400, 5, 64, clientVar.lang_deathmatchC);
+            printCenterText(400, 5 + 88, 32, clientVar.lang_deathmatchD);
             break;
         case GAME_TYPE_TDM:
-            printCenterText(400, 5, 64, gameVar.lang_teamDeathmatchC);
-            printCenterText(400, 5 + 88, 32, gameVar.lang_teamDeathmatchD);
+            printCenterText(400, 5, 64, clientVar.lang_teamDeathmatchC);
+            printCenterText(400, 5 + 88, 32, clientVar.lang_teamDeathmatchD);
             break;
         case GAME_TYPE_CTF:
-            printCenterText(400, 5, 64, gameVar.lang_captureTheFlagC);
-            printCenterText(400, 5 + 88, 32, gameVar.lang_captureTheFlagD);
+            printCenterText(400, 5, 64, clientVar.lang_captureTheFlagC);
+            printCenterText(400, 5 + 88, 32, clientVar.lang_captureTheFlagD);
             break;
         }
         CString mapInfo(game->map->mapName);
-        if(game->map->author_name.len() > 0)
-            mapInfo.set("%s created by %s", game->map->mapName.s, game->map->author_name.s);
+        auto cmap = static_cast<ClientMap*>(game->map);
+        if(cmap->author_name.len() > 0)
+            mapInfo.set("%s created by %s", game->map->mapName.s, cmap->author_name.s);
         printCenterText(400, 5 + 64, 32, mapInfo);
         glPopAttrib();
         dkglPopOrtho();
@@ -739,8 +743,8 @@ void Client::render(float & alphaScope)
         glEnable(GL_BLEND);
         glColor3f(1, 1, 1);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        if(blink > .25f) printCenterText(400, 300 - 32, 64, gameVar.lang_connectingC);
-        printCenterText(400, 332, 48, gameVar.lang_pressF10ToCancel);
+        if(blink > .25f) printCenterText(400, 300 - 32, 64, clientVar.lang_connectingC);
+        printCenterText(400, 332, 48, clientVar.lang_pressF10ToCancel);
         if(dkiGetState(KeyF10) == DKI_DOWN) console->sendCommand("disconnect");
         glPopAttrib();
         dkglPopOrtho();

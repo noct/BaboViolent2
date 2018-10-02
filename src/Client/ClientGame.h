@@ -19,7 +19,9 @@
 #ifndef CLIENT_GAME_H
 #define CLIENT_GAME_H
 
+#include "ClientGameVar.h"
 #include "Game.h"
+#include <glad/glad.h>
 #define MAX_FLOOR_MARK 500
 
 // Projectiles (rocket, grenade, etc)
@@ -35,6 +37,8 @@ struct ClientProjectile : public Projectile
 
     ClientProjectile(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID);
     void update(float delay, Map * map);
+
+    void onGrenadeRebound(CVector3f p);
 
     // Pour l'afficher (client Only)
     void render();
@@ -214,8 +218,8 @@ struct Douille
             glTranslatef(position[0], position[1], position[2]);
             glRotatef(delay*90,vel[0], vel[1],0);
             glScalef(.005f,.005f,.005f);
-            if (type == DOUILLE_TYPE_DOUILLE) dkoRender(gameVar.dko_douille);
-            else if (type == DOUILLE_TYPE_GIB) dkoRender(gameVar.dko_gib);
+            if (type == DOUILLE_TYPE_DOUILLE) dkoRender(clientVar.dko_douille);
+            else if (type == DOUILLE_TYPE_GIB) dkoRender(clientVar.dko_gib);
         glPopMatrix();
     }
 };
@@ -370,6 +374,9 @@ struct ClientGame : public Game
     void update(float delay);
     void castVote(const net_clsv_svcl_vote_request & voteRequest);
     void onTeamSwitch(Player* player);
+    void onSpawnPlayer(Player* player);
+
+    bool spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, bool imServer);
     void spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID);
 
     // Pour l'afficher

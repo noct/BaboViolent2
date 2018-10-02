@@ -27,6 +27,7 @@
 #include <time.h>
 #include <algorithm>
 #include "Client.h"
+#include "ClientMap.h"
 
 //
 // Pour spawner du sang quand on touche quelqu'un
@@ -67,7 +68,7 @@ void ClientGame::spawnBlood(CVector3f & position, float damage)
             0, //float airResistanceInfluence,
             1, //unsigned int particleCountFrom,
             1, //unsigned int particleCountTo,
-            gameVar.tex_blood + rand() % 10,
+            clientVar.tex_blood + rand() % 10,
             0, //int textureFrameCount,
             DKP_SRC_ALPHA, //unsigned int srcBlend,
             DKP_ONE_MINUS_SRC_ALPHA);//unsigned int dstBlend);
@@ -80,7 +81,7 @@ void ClientGame::spawnBlood(CVector3f & position, float damage)
         pos *= distance;
         pos += position;
         pos[2] = 0;
-        floorMarks[getNextFloorMark()].set(pos, rand(0.0f, 360.0f), rand(.05f, sizeMax), 30, distance*0.5f, gameVar.tex_blood[rand() % 10], CVector4f(rand(.25f, 0.5f), 0, 0, rand(.5f, 1.0f)));
+        floorMarks[getNextFloorMark()].set(pos, rand(0.0f, 360.0f), rand(.05f, sizeMax), 30, distance*0.5f, clientVar.tex_blood[rand() % 10], CVector4f(rand(.25f, 0.5f), 0, 0, rand(.5f, 1.0f)));
     }
 }
 
@@ -100,7 +101,6 @@ ClientGame::ClientGame(CString pMapName): Game(pMapName), mapBuffer(8192)
     showStats = false;
 
     dkpReset();
-    dkpSetSorting(false);
 
     nextWriteFloorMark = 0;
     nextWriteDrip = 0;
@@ -167,7 +167,7 @@ void ClientGame::createMap()
         }
     }
 
-    map = new Map(mapName, this, font);
+    map = new ClientMap(mapName, this, font);
 
     if(!map->isValid)
     {
@@ -206,6 +206,7 @@ void ClientGame::update(float delay)
 {
     auto cscene = static_cast<ClientScene*>(scene);
     auto client = cscene->client;
+    auto cmap = static_cast<ClientMap*>(map);
     int i;
     Game::update(delay);
 
@@ -215,7 +216,7 @@ void ClientGame::update(float delay)
 
 
     auto cconsole = static_cast<ClientConsole*>(console);
-    if(!cconsole->isActive() && dkiGetState(gameVar.k_showScore) || roundState != GAME_PLAYING)
+    if(!cconsole->isActive() && dkiGetState(clientVar.k_showScore) || roundState != GAME_PLAYING)
     {
         showStats = true;
     }
@@ -241,21 +242,21 @@ void ClientGame::update(float delay)
         {
             // On est spectateur, alors on peut se déplacer comme on veut dans la map
             // Pour l'instant les flèches (a,s,w,d, pomal temp)
-            if(dkiGetState(gameVar.k_moveRight))
+            if(dkiGetState(clientVar.k_moveRight))
             {
-                map->camLookAt[0] += 10 * delay;
+                cmap->camLookAt[0] += 10 * delay;
             }
-            if(dkiGetState(gameVar.k_moveLeft))
+            if(dkiGetState(clientVar.k_moveLeft))
             {
-                map->camLookAt[0] -= 10 * delay;
+                cmap->camLookAt[0] -= 10 * delay;
             }
-            if(dkiGetState(gameVar.k_moveUp))
+            if(dkiGetState(clientVar.k_moveUp))
             {
-                map->camLookAt[1] += 10 * delay;
+                cmap->camLookAt[1] += 10 * delay;
             }
-            if(dkiGetState(gameVar.k_moveDown))
+            if(dkiGetState(clientVar.k_moveDown))
             {
-                map->camLookAt[1] -= 10 * delay;
+                cmap->camLookAt[1] -= 10 * delay;
             }
         }
 
@@ -275,18 +276,18 @@ void ClientGame::update(float delay)
                             normalize(dis);
                             thisPlayer->currentCF.position = players[i]->currentCF.position - dis * .51f;
                             thisPlayer->currentCF.vel = -thisPlayer->currentCF.vel * BOUNCE_FACTOR;
-                            if(map) map->performCollision(thisPlayer->lastCF, thisPlayer->currentCF, .25f);
-                            map->collisionClip(thisPlayer->currentCF, .25f);
+                            if(map) cmap->performCollision(thisPlayer->lastCF, thisPlayer->currentCF, .25f);
+                            cmap->collisionClip(thisPlayer->currentCF, .25f);
                             thisPlayer->lastCF.position = thisPlayer->currentCF.position;
                         }
                     }
                 }
             }
 
-            if(map) map->performCollision(thisPlayer->lastCF, thisPlayer->currentCF, .25f);
+            if(map) cmap->performCollision(thisPlayer->lastCF, thisPlayer->currentCF, .25f);
 
             // Performing a final clip cibole de caliss
-            map->collisionClip(thisPlayer->currentCF, .25f);
+            cmap->collisionClip(thisPlayer->currentCF, .25f);
 
             //--- Est-ce qu'on est stuck dans un wall??? Oui? on respawn request
             int x = (int)thisPlayer->currentCF.position[0];
@@ -320,19 +321,19 @@ void ClientGame::update(float delay)
     }
 
     // On update la map
-    if(map && thisPlayer)
+    if(cmap && thisPlayer)
     {
-        map->update(delay, thisPlayer);
+        cmap->update(delay, thisPlayer);
 
         //--- Est-ce qu'il pleut?
-        if(map->weather == WEATHER_RAIN)
+        if(cmap->weather == WEATHER_RAIN)
         {
             for(int i = 0; i < 5; ++i)
             {
                 //--- Spawn da rain!
                 int idrip = getNextDrip();
                 drips[idrip].life = 1;
-                drips[idrip].position = rand(map->camPos + CVector3f(-5, -5, 0), map->camPos + CVector3f(5, 5, 0));
+                drips[idrip].position = rand(cmap->camPos + CVector3f(-5, -5, 0), cmap->camPos + CVector3f(5, 5, 0));
                 drips[idrip].position[2] = 0;
                 drips[idrip].size = .15f;
                 drips[idrip].fadeSpeed = 2;
@@ -364,7 +365,7 @@ void ClientGame::update(float delay)
         }
 
         //--- Si on roule dans la lave, on spawn de la fumé :D
-        if(map->theme == THEME_LAVA)
+        if(cmap->theme == THEME_LAVA)
         {
             //--- Spawn des drip sous les players
             for(int i = 0; i < MAX_PLAYER; ++i)
@@ -388,13 +389,13 @@ void ClientGame::update(float delay)
                                     0,//float gravityInfluence,
                                     0,//float airResistanceInfluence,
                                     30,//float rotationSpeed,
-                                    gameVar.tex_smoke1,//unsigned int texture,
+                                    clientVar.tex_smoke1,//unsigned int texture,
                                     DKP_SRC_ALPHA,//unsigned int srcBlend,
                                     DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
                                     0);//int transitionFunc);
                             }
 
-                            dksPlay3DSound(gameVar.sfx_lavaSteam, -1, 5, players[i]->currentCF.position, 125);
+                            dksPlay3DSound(clientVar.sfx_lavaSteam, -1, 5, players[i]->currentCF.position, 125);
                         }
                     }
                 }
@@ -410,7 +411,7 @@ void ClientGame::update(float delay)
             dir = rotateAboutAxis(dir, rand(0.0f, 360.0f), CVector3f(0, 0, 1));
             dir *= viewShake * .10f;
 
-            map->camPos += dir;
+            cmap->camPos += dir;
             viewShake -= delay * .75f;
             if(viewShake < 0) viewShake = 0;
         }
@@ -508,7 +509,7 @@ void Douille::update(float pDelay, Map * map)
             // On dit à tout le monde de jouer le son (pour l'instant juste server side)
             if(!soundPlayed)
             {
-                if(type == DOUILLE_TYPE_DOUILLE) dksPlay3DSound(gameVar.sfx_douille[rand() % 3], -1, 1, position, 255);
+                if(type == DOUILLE_TYPE_DOUILLE) dksPlay3DSound(clientVar.sfx_douille[rand() % 3], -1, 1, position, 255);
                 else if(type == DOUILLE_TYPE_GIB)
                 {
                     auto cscene = static_cast<ClientScene*>(scene);
@@ -545,9 +546,10 @@ void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, 
 
         if(projectileType == PROJECTILE_DIRECT && from->weapon)
         {
+            auto cweapon = static_cast<ClientWeapon*>(from->weapon);
             net_clsv_player_shoot playerShoot;
             playerShoot.playerID = from->playerID;
-            playerShoot.nuzzleID = (char)from->weapon->firingNuzzle;
+            playerShoot.nuzzleID = (char)cweapon->firingNuzzle;
             playerShoot.p1[0] = (short)(position[0] * 100);
             playerShoot.p1[1] = (short)(position[1] * 100);
             playerShoot.p1[2] = (short)(position[2] * 100);
@@ -559,10 +561,11 @@ void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, 
         }
         else if(projectileType == PROJECTILE_ROCKET && from->weapon)
         {
+            auto cweapon = static_cast<ClientWeapon*>(from->weapon);
             // On demande au server de créer une instance d'une rocket
             net_clsv_svcl_player_projectile playerProjectile;
             playerProjectile.playerID = from->playerID;
-            playerProjectile.nuzzleID = (char)from->weapon->firingNuzzle;
+            playerProjectile.nuzzleID = (char)cweapon->firingNuzzle;
             playerProjectile.projectileType = (char)projectileType;
             playerProjectile.weaponID = from->weapon->weaponID;
             playerProjectile.position[0] = (short)(position[0] * 100.0f);
@@ -584,12 +587,13 @@ void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, 
         }
         else if(projectileType == PROJECTILE_GRENADE)
         {
+            auto cweapon = static_cast<ClientWeapon*>(from->weapon);
             //  for (int i=0;i<20;++i)
             //  {
                     // On demande au server de créer une instance d'une grenade
             net_clsv_svcl_player_projectile playerProjectile;
             playerProjectile.playerID = from->playerID;
-            playerProjectile.nuzzleID = (char)from->weapon->firingNuzzle;
+            playerProjectile.nuzzleID = (char)cweapon->firingNuzzle;
             playerProjectile.projectileType = (char)projectileType;
             playerProjectile.weaponID = WEAPON_GRENADE;
             playerProjectile.position[0] = (short)(position[0] * 100.0f);
@@ -605,10 +609,11 @@ void ClientGame::shoot(const CVector3f & position, const CVector3f & direction, 
         }
         else if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
         {
+            auto cweapon = static_cast<ClientWeapon*>(from->weapon);
             // On demande au server de créer une instance d'une grenade
             net_clsv_svcl_player_projectile playerProjectile;
             playerProjectile.playerID = from->playerID;
-            playerProjectile.nuzzleID = (char)from->weapon->firingNuzzle;
+            playerProjectile.nuzzleID = (char)cweapon->firingNuzzle;
             playerProjectile.projectileType = (char)projectileType;
             playerProjectile.weaponID = WEAPON_COCKTAIL_MOLOTOV;
             playerProjectile.position[0] = (short)(position[0] * 100.0f);
@@ -672,7 +677,7 @@ void ClientGame::spawnImpact(CVector3f & p1, CVector3f & p2, CVector3f & normal,
         trails.push_back(new Trail(p1, p2, damage / 16, CVector4f((team == PLAYER_TEAM_RED) ? .9f : .25f, .25f, (team == PLAYER_TEAM_BLUE) ? .9f : .25f, 1), damage, 1));
     }
 
-    gameVar.ro_hitPoint = p2;
+    clientVar.ro_hitPoint = p2;
 
     dkpCreateParticle(p2.s,//float *position,
         (mat.getFront()*.0f).s,//float *vel,
@@ -684,7 +689,7 @@ void ClientGame::spawnImpact(CVector3f & p1, CVector3f & p2, CVector3f & normal,
         -.1f,//float gravityInfluence,
         0,//float airResistanceInfluence,
         0,//float rotationSpeed,
-        gameVar.tex_shotGlow,//unsigned int texture,
+        clientVar.tex_shotGlow,//unsigned int texture,
         DKP_SRC_ALPHA,//unsigned int srcBlend,
         DKP_ONE,//unsigned int dstBlend,
         0);//int transitionFunc);
@@ -699,7 +704,7 @@ void ClientGame::spawnImpact(CVector3f & p1, CVector3f & p2, CVector3f & normal,
         -.1f,//float gravityInfluence,
         0,//float airResistanceInfluence,
         90,//float rotationSpeed,
-        gameVar.tex_smoke1,//unsigned int texture,
+        clientVar.tex_smoke1,//unsigned int texture,
         DKP_SRC_ALPHA,//unsigned int srcBlend,
         DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
         0);//int transitionFunc);
@@ -713,7 +718,7 @@ void ClientGame::spawnImpact(CVector3f & p1, CVector3f & p2, CVector3f & normal,
         0,//float gravityInfluence,
         0,//float airResistanceInfluence,
         90,//float rotationSpeed,
-        gameVar.tex_smoke1,//unsigned int texture,
+        clientVar.tex_smoke1,//unsigned int texture,
         DKP_SRC_ALPHA,//unsigned int srcBlend,
         DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
         0);//int transitionFunc);
@@ -727,13 +732,13 @@ void ClientGame::spawnImpact(CVector3f & p1, CVector3f & p2, CVector3f & normal,
         0,//float gravityInfluence,
         0,//float airResistanceInfluence,
         90,//float rotationSpeed,
-        gameVar.tex_smoke1,//unsigned int texture,
+        clientVar.tex_smoke1,//unsigned int texture,
         DKP_SRC_ALPHA,//unsigned int srcBlend,
         DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
         0);//int transitionFunc);
 
 // on ricoche!
-    dksPlay3DSound(gameVar.sfx_ric[rand() % 5], -1, 2, p2, 150);
+    dksPlay3DSound(clientVar.sfx_ric[rand() % 5], -1, 2, p2, 150);
 }
 
 void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float size)
@@ -750,8 +755,8 @@ void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float 
     size *= 3;
 
     // Make it sounds and shake !!!
-    dksPlay3DSound(gameVar.sfx_explosion[0], -1, 10, position, 255);
-    //int channel = FSOUND_PlaySoundEx(-1, gameVar.sfx_explosion[0], 0, TRUE);
+    dksPlay3DSound(clientVar.sfx_explosion[0], -1, 10, position, 255);
+    //int channel = FSOUND_PlaySoundEx(-1, clientVar.sfx_explosion[0], 0, TRUE);
     //FSOUND_3D_SetMinMaxDistance(channel, 10, 10000000.0f);
     //FSOUND_3D_SetAttributes(channel, position.s, 0);
     //if (trueSize >= 4.0f)
@@ -767,7 +772,7 @@ void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float 
 
     float duration = size * .5f;
 
-    float maxDuration = gameVar.r_reducedParticles ? 1.0f : 10.0f;
+    float maxDuration = 10.0f;
 
     if(duration > maxDuration) duration = maxDuration;
 
@@ -797,7 +802,7 @@ void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float 
         1, //float airResistanceInfluence,
         20, //unsigned int particleCountFrom,
         20, //unsigned int particleCountTo,
-        &(gameVar.tex_smoke1),
+        &(clientVar.tex_smoke1),
         0, //int textureFrameCount,
         DKP_SRC_ALPHA, //unsigned int srcBlend,
         DKP_ONE_MINUS_SRC_ALPHA);//unsigned int dstBlend);
@@ -828,7 +833,7 @@ void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float 
         1, //float airResistanceInfluence,
         10, //unsigned int particleCountFrom,
         10, //unsigned int particleCountTo,
-        &(gameVar.tex_smoke1),
+        &(clientVar.tex_smoke1),
         0, //int textureFrameCount,
         DKP_SRC_ALPHA, //unsigned int srcBlend,
         DKP_ONE_MINUS_SRC_ALPHA);//unsigned int dstBlend);
@@ -859,7 +864,7 @@ void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float 
         1, //float airResistanceInfluence,
         20, //unsigned int particleCountFrom,
         20, //unsigned int particleCountTo,
-        &(gameVar.tex_smoke1),
+        &(clientVar.tex_smoke1),
         0, //int textureFrameCount,
         DKP_SRC_ALPHA, //unsigned int srcBlend,
         DKP_ONE);//unsigned int dstBlend);
@@ -890,7 +895,7 @@ void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float 
         1, //float airResistanceInfluence,
         5, //unsigned int particleCountFrom,
         5, //unsigned int particleCountTo,
-        &(gameVar.tex_smoke1),
+        &(clientVar.tex_smoke1),
         0, //int textureFrameCount,
         DKP_SRC_ALPHA, //unsigned int srcBlend,
         DKP_ONE);//unsigned int dstBlend);
@@ -921,12 +926,12 @@ void ClientGame::spawnExplosion(CVector3f & position, CVector3f & normal, float 
         1, //float airResistanceInfluence,
         8, //unsigned int particleCountFrom,
         8, //unsigned int particleCountTo,
-        &(gameVar.tex_smoke1),
+        &(clientVar.tex_smoke1),
         0, //int textureFrameCount,
         DKP_SRC_ALPHA, //unsigned int srcBlend,
         DKP_ONE);//unsigned int dstBlend);
 
-    floorMarks[getNextFloorMark()].set(CVector3f(position[0], position[1], 0), rand(0.0f, 360.0f), size*.18f, 30, 0, gameVar.tex_explosionMark, CVector4f(1, 1, 1, .5f));
+    floorMarks[getNextFloorMark()].set(CVector3f(position[0], position[1], 0), rand(0.0f, 360.0f), size*.18f, 30, 0, clientVar.tex_explosionMark, CVector4f(1, 1, 1, .5f));
 
     /*if (thisPlayer)
     {
@@ -950,7 +955,6 @@ void ClientGame::castVote(const net_clsv_svcl_vote_request & voteRequest)
         voting.voted = true;
 }
 
-
 void ClientGame::onTeamSwitch(Player* player)
 {
     auto cscene = static_cast<ClientScene*>(scene);
@@ -959,15 +963,21 @@ void ClientGame::onTeamSwitch(Player* player)
     switch(player->teamID)
     {
     case PLAYER_TEAM_SPECTATOR:
-        if(cscene->client) cscene->client->eventMessages.push_back(CString(gameVar.lang_goesSpectator.s, player->name.s));
+        if(cscene->client) cscene->client->eventMessages.push_back(CString(clientVar.lang_goesSpectator.s, player->name.s));
         break;
     case PLAYER_TEAM_BLUE:
-        if(cscene->client) cscene->client->eventMessages.push_back(CString(gameVar.lang_joinBlueTeamP.s, player->name.s));
+        if(cscene->client) cscene->client->eventMessages.push_back(CString(clientVar.lang_joinBlueTeamP.s, player->name.s));
         break;
     case PLAYER_TEAM_RED:
-        if(cscene->client) cscene->client->eventMessages.push_back(CString(gameVar.lang_joinRedTeamP.s, player->name.s));
+        if(cscene->client) cscene->client->eventMessages.push_back(CString(clientVar.lang_joinRedTeamP.s, player->name.s));
         break;
     }
+}
+
+void ClientGame::onSpawnPlayer(Player* player)
+{
+    auto cmap = static_cast<ClientMap*>(map);
+    cmap->setCameraPos(player->currentCF.position);
 }
 
 void ClientGame::spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID)
@@ -975,6 +985,44 @@ void ClientGame::spawnProjectileSpecific(CVector3f & position, CVector3f & vel, 
     Projectile* projectile = new ClientProjectile(position, vel, pFromID, pProjectileType, pRemoteEntity, pUniqueProjectileID);
     projectiles.push_back(projectile);
 }
+
+bool ClientGame::spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, bool imServer)
+{
+    if(imServer)
+    {
+        return Game::spawnProjectile(playerProjectile, imServer);
+    }
+    else
+    {
+        if(playerProjectile.projectileType == PROJECTILE_DROPED_WEAPON)
+        {
+            CVector3f position;
+            position[0] = (float)playerProjectile.position[0] / 100.0f;
+            position[1] = (float)playerProjectile.position[1] / 100.0f;
+            position[2] = (float)playerProjectile.position[2] / 100.0f;
+            CVector3f vel;
+            vel[0] = (float)playerProjectile.vel[0] / 10.0f;
+            vel[1] = (float)playerProjectile.vel[1] / 10.0f;
+            vel[2] = (float)playerProjectile.vel[2] / 10.0f;
+            spawnProjectileSpecific(position, vel, playerProjectile.weaponID, playerProjectile.projectileType, true, playerProjectile.uniqueID);
+        }
+        else
+        {
+            CVector3f position;
+            position[0] = (float)playerProjectile.position[0] / 100.0f;
+            position[1] = (float)playerProjectile.position[1] / 100.0f;
+            position[2] = (float)playerProjectile.position[2] / 100.0f;
+            CVector3f vel;
+            vel[0] = (float)playerProjectile.vel[0] / 10.0f;
+            vel[1] = (float)playerProjectile.vel[1] / 10.0f;
+            vel[2] = (float)playerProjectile.vel[2] / 10.0f;
+            spawnProjectileSpecific(position, vel, playerProjectile.playerID, playerProjectile.projectileType, true, playerProjectile.uniqueID);
+        }
+        projectiles[projectiles.size() - 1]->projectileID = (short)projectiles.size() - 1;
+    }
+    return true;
+}
+
 
 ClientProjectile::ClientProjectile(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID)
     : Projectile(position, vel, pFromID, pProjectileType, pRemoteEntity, pUniqueProjectileID)
@@ -1018,7 +1066,7 @@ ClientProjectile::ClientProjectile(CVector3f & position, CVector3f & vel, char p
                     .25f, //float airResistanceInfluence,
                     5, //unsigned int particleCountFrom,
                     5, //unsigned int particleCountTo,
-                    &gameVar.tex_smoke1,
+                    &clientVar.tex_smoke1,
                     0, //int textureFrameCount,
                     DKP_SRC_ALPHA, //unsigned int srcBlend,
                     DKP_ONE_MINUS_SRC_ALPHA);//unsigned int dstBlend);
@@ -1049,7 +1097,7 @@ ClientProjectile::ClientProjectile(CVector3f & position, CVector3f & vel, char p
                     .25f, //float airResistanceInfluence,
                     5, //unsigned int particleCountFrom,
                     5, //unsigned int particleCountTo,
-                    &gameVar.tex_smoke1,
+                    &clientVar.tex_smoke1,
                     0, //int textureFrameCount,
                     DKP_SRC_ALPHA, //unsigned int srcBlend,
                     DKP_ONE_MINUS_SRC_ALPHA);//unsigned int dstBlend);
@@ -1107,7 +1155,7 @@ void ClientProjectile::render()
         glTranslatef(currentCF.position[0], currentCF.position[1], 0);
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_DEPTH_TEST);
-        glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+        glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
         glColor4f(1, 1, 1, rand(.05f, .25f));
         glBegin(GL_QUADS);
         glTexCoord2f(0, 1);
@@ -1128,7 +1176,7 @@ void ClientProjectile::render()
         glScalef(.5f, .5f, .5f);
         glEnable(GL_BLEND);
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, gameVar.tex_nuzzleFlash);
+        glBindTexture(GL_TEXTURE_2D, clientVar.tex_nuzzleFlash);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         glDisable(GL_CULL_FACE);
         glDisable(GL_FOG);
@@ -1169,7 +1217,7 @@ void ClientProjectile::render()
         glTranslatef(currentCF.position[0], currentCF.position[1], 0);
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_DEPTH_TEST);
-        glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+        glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
         glColor4f(1, 1, 1, rand(.05f, .25f));
         glBegin(GL_QUADS);
         glTexCoord2f(0, 1);
@@ -1196,31 +1244,31 @@ void ClientProjectile::render()
         {
             glRotatef(currentCF.angle, 0, 0, 1);
             glScalef(.0025f, .0025f, .0025f);
-            dkoRender(gameVar.dko_rocket); // Voilà!
+            dkoRender(clientVar.dko_rocket); // Voilà!
         }
         if(projectileType == PROJECTILE_GRENADE)
         {
             glRotatef(rotation, currentCF.vel[0], currentCF.vel[1], 0);
             glScalef(.0025f, .0025f, .0025f);
-            dkoRender(gameVar.dko_grenade); // Voilà!
+            dkoRender(clientVar.dko_grenade); // Voilà!
         }
         if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
         {
             glRotatef(rotation, currentCF.vel[0], currentCF.vel[1], 0);
             glScalef(.0025f, .0025f, .0025f);
-            dkoRender(gameVar.dko_cocktailMolotov); // Voilà!
+            dkoRender(clientVar.dko_cocktailMolotov); // Voilà!
         }
         if(projectileType == PROJECTILE_DROPED_GRENADE)
         {
             //  glTranslatef(0,0,.30f);
             glScalef(.0025f, .0025f, .0025f);
-            dkoRender(gameVar.dko_grenade); // Voilà!
+            dkoRender(clientVar.dko_grenade); // Voilà!
         }
         if(projectileType == PROJECTILE_LIFE_PACK)
         {
             glTranslatef(0, 0, -.20f);
             glScalef(.0025f, .0025f, .0025f);
-            dkoRender(gameVar.dko_lifePack); // Voilà!
+            dkoRender(clientVar.dko_lifePack); // Voilà!
         }
         if(projectileType == PROJECTILE_DROPED_WEAPON)
         {
@@ -1229,7 +1277,7 @@ void ClientProjectile::render()
             glScalef(.005f, .005f, .005f);
             if(fromID >= 0)
             {
-                if(gameVar.weapons[fromID]) dkoRender(gameVar.weapons[fromID]->dkoModel); // Voilà!
+                if(clientVar.weapons[fromID]) dkoRender(clientVar.weapons[fromID]->dkoModel); // Voilà!
             }
         }
         glPopMatrix();
@@ -1247,7 +1295,7 @@ void ClientProjectile::render()
         glTranslatef(currentCF.position[0], currentCF.position[1], 0);
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_DEPTH_TEST);
-        glBindTexture(GL_TEXTURE_2D, gameVar.tex_shotGlow);
+        glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
         glColor4f(1, .75f, 0, rand(.10f, .15f)*(1 - currentCF.position[2]));
         glBegin(GL_QUADS);
         glTexCoord2f(0, 1);
@@ -1283,6 +1331,11 @@ void ClientProjectile::renderShadow()
     glPopMatrix();
 }
 
+void ClientProjectile::onGrenadeRebound(CVector3f p)
+{
+    dksPlay3DSound(clientVar.sfx_grenadeRebond, -1, 1, p, 200);
+}
+
 void ClientProjectile::update(float delay, Map* map)
 {
     auto cscene = static_cast<ClientScene*>(scene);
@@ -1292,6 +1345,29 @@ void ClientProjectile::update(float delay, Map* map)
     while(rotation < 0) rotation += 360;
 
     Projectile::update(delay, map);
+
+    //--- Le feu est pogné sur un player
+    if(projectileType == PROJECTILE_FLAME)
+    {
+        if(remoteEntity)
+        {
+            if(stickToPlayer >= 0)
+            {
+                auto cscene = static_cast<ClientScene*>(scene);
+                if(cscene->client->game->players[stickToPlayer])
+                {
+                    if(cscene->client->game->players[stickToPlayer]->status == PLAYER_STATUS_DEAD)
+                    {
+                        stickToPlayer = -1;
+                    }
+                    else
+                    {
+                        currentCF.position = cscene->client->game->players[stickToPlayer]->currentCF.position;
+                    }
+                }
+            }
+        }
+    }
 
     if(remoteEntity)
     {
@@ -1327,11 +1403,11 @@ void ClientProjectile::update(float delay, Map* map)
                 CVector4f(colorArg1, colorArg2, colorArg3, 0.0f).s,//float *endColor,
                 .125f,//float startSize,
                 rand(.6f, 1.0f),//float endSize,
-                gameVar.r_reducedParticles ? .5f : 5.0f,//float duration,
+                5.0f,//float duration,
                 0,//float gravityInfluence,
                 0,//float airResistanceInfluence,
                 rand(0.0f, 30.0f),//float rotationSpeed,
-                gameVar.tex_smoke1,//unsigned int texture,
+                clientVar.tex_smoke1,//unsigned int texture,
                 DKP_SRC_ALPHA,//unsigned int srcBlend,
                 DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
                 0);//int transitionFunc);
@@ -1347,7 +1423,7 @@ void ClientProjectile::update(float delay, Map* map)
                         0,//float gravityInfluence,
                         0,//float airResistanceInfluence,
                         rand(0.0f, 30.0f),//float rotationSpeed,
-                        gameVar.tex_smoke1,//unsigned int texture,
+                        clientVar.tex_smoke1,//unsigned int texture,
                         DKP_SRC_ALPHA,//unsigned int srcBlend,
                         DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
                         0);//int transitionFunc);*/
@@ -1365,11 +1441,11 @@ void ClientProjectile::update(float delay, Map* map)
                     CVector4f(1, 1, 1, 0.0f).s,//float *endColor,
                     .125f,//float startSize,
                     rand(.2f, .2f),//float endSize,
-                    gameVar.r_reducedParticles ? 1.0f : 2.0f,//float duration,,//float duration,
+                    2.0f,//float duration,,//float duration,
                     0,//float gravityInfluence,
                     0,//float airResistanceInfluence,
                     rand(0.0f, 30.0f),//float rotationSpeed,
-                    gameVar.tex_shotGlow,//unsigned int texture,
+                    clientVar.tex_shotGlow,//unsigned int texture,
                     DKP_SRC_ALPHA,//unsigned int srcBlend,
                     DKP_ONE/*_MINUS_SRC_ALPHA*/,//unsigned int dstBlend,
                     0);//int transitionFunc);
@@ -1385,11 +1461,11 @@ void ClientProjectile::update(float delay, Map* map)
                         CVector4f(1, .25f, .25f, 0.0f).s,//float *endColor,
                         .125f,//float startSize,
                         rand(.2f, .2f),//float endSize,
-                        gameVar.r_reducedParticles ? 1.0f : 2.0f,//float duration,
+                        2.0f,//float duration,
                         0,//float gravityInfluence,
                         0,//float airResistanceInfluence,
                         rand(0.0f, 30.0f),//float rotationSpeed,
-                        gameVar.tex_shotGlow,//unsigned int texture,
+                        clientVar.tex_shotGlow,//unsigned int texture,
                         DKP_SRC_ALPHA,//unsigned int srcBlend,
                         DKP_ONE/*_MINUS_SRC_ALPHA*/,//unsigned int dstBlend,
                         0);//int transitionFunc);
@@ -1403,11 +1479,11 @@ void ClientProjectile::update(float delay, Map* map)
                         CVector4f(.25f, .25f, 1, 0.0f).s,//float *endColor,
                         .125f,//float startSize,
                         rand(.2f, .2f),//float endSize,
-                        gameVar.r_reducedParticles ? 1.0f : 2.0f,//float duration,
+                        2.0f,//float duration,
                         0,//float gravityInfluence,
                         0,//float airResistanceInfluence,
                         rand(0.0f, 30.0f),//float rotationSpeed,
-                        gameVar.tex_shotGlow,//unsigned int texture,
+                        clientVar.tex_shotGlow,//unsigned int texture,
                         DKP_SRC_ALPHA,//unsigned int srcBlend,
                         DKP_ONE/*_MINUS_SRC_ALPHA*/,//unsigned int dstBlend,
                         0);//int transitionFunc);
@@ -1430,7 +1506,7 @@ void ClientProjectile::update(float delay, Map* map)
                 0,//float gravityInfluence,
                 0,//float airResistanceInfluence,
                 rand(0.0f, 30.0f),//float rotationSpeed,
-                gameVar.tex_smoke1,//unsigned int texture,
+                clientVar.tex_smoke1,//unsigned int texture,
                 DKP_SRC_ALPHA,//unsigned int srcBlend,
                 DKP_ONE,//unsigned int dstBlend,
                 0);//int transitionFunc);
@@ -1454,7 +1530,7 @@ void ClientProjectile::update(float delay, Map* map)
                     0,//float gravityInfluence,
                     0,//float airResistanceInfluence,
                     rand(0.0f, 30.0f),//float rotationSpeed,
-                    gameVar.tex_smoke1,//unsigned int texture,
+                    clientVar.tex_smoke1,//unsigned int texture,
                     DKP_SRC_ALPHA,//unsigned int srcBlend,
                     DKP_ONE,//unsigned int dstBlend,
                     0);//int transitionFunc);
@@ -1469,7 +1545,7 @@ void ClientProjectile::update(float delay, Map* map)
                     0,//float gravityInfluence,
                     0,//float airResistanceInfluence,
                     rand(0.0f, 30.0f),//float rotationSpeed,
-                    gameVar.tex_smoke1,//unsigned int texture,
+                    clientVar.tex_smoke1,//unsigned int texture,
                     DKP_SRC_ALPHA,//unsigned int srcBlend,
                     DKP_ONE,//unsigned int dstBlend,
                     0);//int transitionFunc);
@@ -1487,7 +1563,7 @@ void ClientProjectile::update(float delay, Map* map)
                     0,//float gravityInfluence,
                     0,//float airResistanceInfluence,
                     rand(0.0f, 30.0f),//float rotationSpeed,
-                    gameVar.tex_smoke1,//unsigned int texture,
+                    clientVar.tex_smoke1,//unsigned int texture,
                     DKP_SRC_ALPHA,//unsigned int srcBlend,
                     DKP_ONE_MINUS_SRC_ALPHA,//unsigned int dstBlend,
                     0);//int transitionFunc);

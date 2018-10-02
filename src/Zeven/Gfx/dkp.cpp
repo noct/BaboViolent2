@@ -16,133 +16,19 @@
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 /* TCE (c) All rights reserved */
-
-
 #include <Zeven/Gfx.h>
 #include <glad/glad.h>
 #include <vector>
 
-
-
-class CParticle
-{
-public:
-    // Sa texture utilisé
-    unsigned int texture;
-
-    // La position de la particle
-    CPoint3f position;
-
-    // Sa position au dernier frame
-    CPoint3f lastPosition;
-
-    // Sa couleur au début
-    CColor4f startColor;
-
-    // Sa couleur à la fin
-    CColor4f endColor;
-
-    // Sa velocité
-    CVector3f vel;
-
-    // Sa vie (0 à 1) (1 étant mort)
-    float life;
-
-    // Sa duré de vie, sec / duré
-    float fadeSpeed;
-
-    // Sa grosseur au début
-    float startSize;
-
-    // Sa grosseur à la fin
-    float endSize;
-
-    // Sa densité (1 = fully attracted by gravity)
-    float density;
-
-    // Son angle de rotation
-    float angle;
-
-    // La vitesse de rotation de son angle
-    float rotationSpeed;
-
-    // La fonction de blending utilisé
-    unsigned int srcBlend;
-    unsigned int dstBlend;
-
-    // Pour la résistance de l'air
-    float airResistanceInfluence;
-
-    // La distance avec la camera
-    float camDis;
-
-    // Si c'est un billboard
-    bool billboard;
-
-    // Son opacity
-    float billboardOpacity;
-
-    // Sa distance avant de fader
-    float billboardFadeDis;
-
-    float billboardFadeDelay;
-
-    bool toDelete;
-
-    bool isMultipleTexture;
-    unsigned int * textureArray;
-    int nbFrame;
-
-public:
-    // Constructeur / Destructeur
-    CParticle(
-        float *position,
-        float *vel,
-        float *startColor,
-        float *endColor,
-        float startSize,
-        float endSize,
-        float duration,
-        float density,
-        float airResistanceInfluence,
-        float rotationSpeed,
-        unsigned int texture,
-        unsigned int srcBlend,
-        unsigned int dstBlend,
-        int transitionFunc);
-    virtual ~CParticle();
-
-    // Pour l'updater
-    int update();
-
-    // Pour le rendre
-    void render();
-};
-
-
-
-
-/* BlendingFactorDest */
-#define DKP_ZERO                           0
-#define DKP_ONE                            1
-#define DKP_SRC_COLOR                      0x0300
-#define DKP_ONE_MINUS_SRC_COLOR            0x0301
-#define DKP_SRC_ALPHA                      0x0302
-#define DKP_ONE_MINUS_SRC_ALPHA            0x0303
-#define DKP_DST_ALPHA                      0x0304
-#define DKP_ONE_MINUS_DST_ALPHA            0x0305
-
-/* BlendingFactorSrc */
-#define DKP_DST_COLOR                      0x0306
-#define DKP_ONE_MINUS_DST_COLOR            0x0307
-#define DKP_SRC_ALPHA_SATURATE             0x0308
+struct Particle;
+typedef std::vector<Particle*> ParticleVec;
 
 // La class static pour tenir les informations importante sur les particles
-class CDkp
+struct CDkp
 {
 public:
     // La liste de toute les particles ouais poupé
-    static std::vector<CParticle*> particles;
+    static ParticleVec particles;
 
     // La gravité
     static CVector3f gravity;
@@ -167,21 +53,13 @@ public:
     // La densité de l'air (en kPa)
     static float airDensity;
 
-    // Si on doit les sorter ou pas
-    static bool sorting;
-
     // Pour sorter où on est rendu
-    static std::vector<CParticle*>::size_type currentSortInteration;
+    static ParticleVec::size_type currentSortInteration;
 
-public:
 };
 
-
-
-#include <Zeven/CMatrix.h>
-
 // Les trucs statics
-std::vector<CParticle*> CDkp::particles;
+ParticleVec CDkp::particles;
 CVector3f CDkp::gravity = CVector3f(0,0,-9.8f);
 float CDkp::delay = 0;
 float CDkp::modelView[16] = {0};
@@ -191,42 +69,209 @@ float* CDkp::vertexArray = 0;
 float* CDkp::normalArray = 0;
 float* CDkp::texCoordArray = 0;
 float CDkp::airDensity = 103.4f;
-bool CDkp::sorting = false;
-std::vector<CParticle*>::size_type CDkp::currentSortInteration = 0;
+ParticleVec::size_type CDkp::currentSortInteration = 0;
 unsigned int CDkp::lastTexture = 0;
 
-
-
-//
-// Pour créer une billboard static (mais trié comme les particule) pour faire du gazon à terre surtout
-//
-void            dkpCreateBillboard( CVector3f & positionFrom,
-                                    CVector3f & positionTo,
-                                    float fadeSpeed,
-                                    float fadeOutDistance,
-                                    float size,
-                                    CColor4f & color,
-                                    unsigned int textureID,
-                                    unsigned int srcBlend,
-                                    unsigned int dstBlend)
+struct Particle
 {
-    CParticle * newPart = new CParticle(
-        rand(positionFrom, positionTo).s, CVector3f().s, color.s, color.s, size, size, 1,
-        0, 0, 0, textureID, srcBlend, dstBlend, 0);
+    CVector3f position;
+    CVector3f lastPosition;
+    CVector4f startColor;
+    CVector4f endColor;
+    CVector3f vel;
+    float life;
+    float fadeSpeed;
+    float startSize;
+    float endSize;
+    float density;
+    float angle;
+    float rotationSpeed;
+    float airResistanceInfluence;
+    float camDis;
+    float billboardOpacity;
+    float billboardFadeDis;
+    float billboardFadeDelay;
+    unsigned int texture;
+    unsigned int srcBlend;
+    unsigned int dstBlend;
+    unsigned int * textureArray;
+    bool billboard;
+    bool toDelete;
+    bool isMultipleTexture;
+    int nbFrame;
+};
 
-    newPart->billboard = true;
-    newPart->billboardFadeDis = fadeOutDistance;
-    newPart->billboardFadeDelay = 1.0f / fadeSpeed;
-    newPart->angle = 0;
+void Particle_Init(Particle * p,
+    float *mposition,
+    float *mvel,
+    float *mstartColor,
+    float *mendColor,
+    float mstartSize,
+    float mendSize,
+    float mduration,
+    float mdensity,
+    float mairResistanceInfluence,
+    float mrotationSpeed,
+    unsigned int mtexture,
+    unsigned int msrcBlend,
+    unsigned int mdstBlend,
+    int mtransitionFunc)
+{
+    p->texture = mtexture;
+    p->position = CPoint3f(mposition);
+    p->lastPosition = p->position;
+    p->startColor = CColor4f(mstartColor);
+    p->endColor = CColor4f(mendColor);
+    p->vel = CVector3f(mvel);
+    p->life = 0;
+    p->fadeSpeed = 1.0f / mduration;
+    p->startSize = mstartSize;
+    p->endSize = mendSize;
+    p->density = mdensity;
+    p->angle = (float)(rand() % 36000) / 100.0f;
+    p->rotationSpeed = mrotationSpeed;
+    p->srcBlend = msrcBlend;
+    p->dstBlend = mdstBlend;
+    //  transitionFunc = mtransitionFunc;  // Pas utilisé
+    (void)mtransitionFunc;// No need to show the warning about unreferenced parameter
+    p->airResistanceInfluence = mairResistanceInfluence;
+    p->billboard = false;
+    p->billboardOpacity = 0;
+    p->billboardFadeDis = 16;
+    p->billboardFadeDelay = 1;
+    p->toDelete = false;
 
-    // On l'ajoute à notre liste
-    // On va tout suite l'ajouter au bon endroit pour pas avoir des tri important à faire tantot
-    if (CDkp::particles.size() > 1 && CDkp::sorting) // Il faut qu'il y en ai au moins 1
+    p->isMultipleTexture = false;
+    p->textureArray = 0;
+    p->nbFrame = 1;
+
+    // Ici on la calcul tout suite pour pouvoir la placer tout suite à bonne place dans le array
+    p->camDis = dot((CDkp::camPos - p->position), (CDkp::camPos - p->position));
+}
+
+int Particle_Update(Particle* p)
+{
+    if(p->billboard)
     {
-        std::vector<CParticle*>::size_type i;
+        // On pogne sa distance
+        p->camDis = distanceSquared(CDkp::camPos, p->position);
+
+        if(p->toDelete)
+        {
+            p->billboardOpacity -= CDkp::delay * p->billboardFadeDelay;
+            if(p->billboardOpacity <= 0) return 0;
+        }
+        else
+        {
+            if(p->camDis >= p->billboardFadeDis * p->billboardFadeDis)
+            {
+                p->toDelete = true;
+            }
+            else
+            {
+                if(p->billboardOpacity < 1)
+                {
+                    p->billboardOpacity += CDkp::delay * p->billboardFadeDelay;
+                    if(p->billboardOpacity > 1) p->billboardOpacity = 1;
+                }
+            }
+        }
+    }
+    else
+    {
+        // On diminu sa vie
+        p->life += p->fadeSpeed * CDkp::delay;
+
+        // On check si elle est encore vivante
+        if(p->life >= 1) return 0;
+
+        // Sa rotation
+        p->angle += p->rotationSpeed * CDkp::delay;
+
+        // On affecte la gravité
+        p->vel += CDkp::gravity * p->density * CDkp::delay;
+
+        // On l'affecte à la densité de l'air
+
+        // On anim finalement sa position
+        p->position += p->vel * CDkp::delay;
+
+        // Sa distance avec notre camera
+        p->camDis = distanceSquared(CDkp::camPos, p->position);
+    }
+
+    return 1;
+}
+
+void Particle_Render(Particle* p)
+{
+
+    // On la positionne
+    glPushMatrix();
+
+    glBlendFunc(p->srcBlend, p->dstBlend);
+
+    CColor4f curColor = p->startColor + (p->endColor - p->startColor) * p->life;
+
+    if(p->billboard) curColor[3] *= p->billboardOpacity;
+
+    float sizeTime = p->startSize + (p->endSize - p->startSize) * p->life;
+    glTranslatef(p->position[0], p->position[1], p->position[2]);
+    glMultMatrixf(CDkp::modelView);
+    glScalef(sizeTime, sizeTime, sizeTime);
+    glRotatef(p->angle, 0, 0, 1);
+
+    if(p->isMultipleTexture)
+    {
+        int currentFrame = (int)(p->nbFrame*p->life);
+        int nextFrame = currentFrame + 1;
+        float midFrame = (float)p->nbFrame * p->life - (float)currentFrame;
+        if(nextFrame >= p->nbFrame) nextFrame = currentFrame;
+
+        glBindTexture(GL_TEXTURE_2D, p->textureArray[currentFrame]);
+        glColor4fv((curColor*CColor4f(1, 1, 1, 1 - midFrame)).s);
+        glPushAttrib(GL_ENABLE_BIT);
+
+        if(p->dstBlend == DKP_ONE || p->dstBlend == DKP_ZERO)
+        {
+            glDisable(GL_FOG);
+            glDisable(GL_LIGHTING);
+        }
+
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+
+        glBindTexture(GL_TEXTURE_2D, p->textureArray[nextFrame]);
+        glColor4fv((curColor*CColor4f(1, 1, 1, midFrame)).s);
+
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+    }
+    else
+    {
+        if(CDkp::lastTexture != p->texture) glBindTexture(GL_TEXTURE_2D, p->texture);
+        CDkp::lastTexture = p->texture;
+        glColor4fv(curColor.s);
+        glPushAttrib(GL_ENABLE_BIT);
+        glDisable(GL_LIGHTING);
+        if(p->dstBlend == DKP_ONE || p->dstBlend == DKP_ZERO)
+        {
+            glDisable(GL_FOG);
+            glDisable(GL_LIGHTING);
+        }
+        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+        glPopAttrib();
+    }
+    glPopMatrix();
+}
+
+
+static void AddParticle(Particle* newPart)
+{
+    if (CDkp::particles.size() > 1)
+    {
+        ParticleVec::size_type i;
         for (i=0;i<CDkp::particles.size();i++)
         {
-            CParticle * p1 = CDkp::particles.at(i);
+            Particle * p1 = CDkp::particles.at(i);
             if (newPart->camDis > p1->camDis)
             {
                 CDkp::particles.insert(CDkp::particles.begin()+i, newPart);
@@ -242,51 +287,46 @@ void            dkpCreateBillboard( CVector3f & positionFrom,
         CDkp::particles.push_back(newPart);
 }
 
-
-
-//
-// Pour créer une particle
-//
-void            dkpCreateParticle(  float *position,
-                                    float *vel,
-                                    float *startColor,
-                                    float *endColor,
-                                    float startSize,
-                                    float endSize,
-                                    float duration,
-                                    float density,
-                                    float airResistanceInfluence,
-                                    float rotationSpeed,
-                                    unsigned int texture,
+void dkpCreateBillboard( CVector3f & positionFrom,
+                                    CVector3f & positionTo,
+                                    float fadeSpeed,
+                                    float fadeOutDistance,
+                                    float size,
+                                    CColor4f & color,
+                                    unsigned int textureID,
                                     unsigned int srcBlend,
-                                    unsigned int dstBlend,
-                                    int transitionFunc)
+                                    unsigned int dstBlend)
 {
-    CParticle * newPart = new CParticle(
+    Particle* newPart = new Particle;
+    Particle_Init(newPart, rand(positionFrom, positionTo).s, CVector3f().s, color.s, color.s, size, size, 1,
+        0, 0, 0, textureID, srcBlend, dstBlend, 0);
+    newPart->billboard = true;
+    newPart->billboardFadeDis = fadeOutDistance;
+    newPart->billboardFadeDelay = 1.0f / fadeSpeed;
+    newPart->angle = 0;
+    AddParticle(newPart);
+}
+
+void dkpCreateParticle(  float *position,
+                         float *vel,
+                         float *startColor,
+                         float *endColor,
+                         float startSize,
+                         float endSize,
+                         float duration,
+                         float density,
+                         float airResistanceInfluence,
+                         float rotationSpeed,
+                         unsigned int texture,
+                         unsigned int srcBlend,
+                         unsigned int dstBlend,
+                         int transitionFunc)
+{
+    Particle* newPart = new Particle;
+    Particle_Init(newPart,
         position, vel, startColor, endColor, startSize, endSize, duration,
         density, airResistanceInfluence, rotationSpeed, texture, srcBlend, dstBlend, transitionFunc);
-
-    // On l'ajoute à notre liste
-    // On va tout suite l'ajouter au bon endroit pour pas avoir des tri important à faire tantot
-    if (CDkp::particles.size() > 1 && CDkp::sorting) // Il faut qu'il y en ai au moins 1
-    {
-        std::vector<CParticle*>::size_type i;
-        for (i=0;i<CDkp::particles.size();i++)
-        {
-            CParticle * p1 = CDkp::particles.at(i);
-            if (newPart->camDis > p1->camDis)
-            {
-                CDkp::particles.insert(CDkp::particles.begin()+i, newPart);
-                break;
-            }
-        }
-        if (i==CDkp::particles.size())
-        {
-            CDkp::particles.push_back(newPart);
-        }
-    }
-    else
-        CDkp::particles.push_back(newPart);
+    AddParticle(newPart);
 }
 
 
@@ -294,35 +334,35 @@ void            dkpCreateParticle(  float *position,
 //
 // Pour créer une particle avec plein d'information de random dessus
 //
-void            dkpCreateParticleEx(const CVector3f & positionFrom,
+void dkpCreateParticleEx(const CVector3f & positionFrom,
     const CVector3f & positionTo,
     const CVector3f & direction,
-                                    float speedFrom,
-                                    float speedTo,
-                                    float pitchFrom,
-                                    float pitchTo,
-                                    float startSizeFrom,
-                                    float startSizeTo,
-                                    float endSizeFrom,
-                                    float endSizeTo,
-                                    float durationFrom,
-                                    float durationTo,
-                                    const CColor4f & startColorFrom,
-                                    const CColor4f & startColorTo,
-                                    const CColor4f & endColorFrom,
-                                    const CColor4f & endColorTo,
-                                    float angleFrom,
-                                    float angleTo,
-                                    float angleSpeedFrom,
-                                    float angleSpeedTo,
-                                    float gravityInfluence,
-                                    float airResistanceInfluence,
-                                    unsigned int particleCountFrom,
-                                    unsigned int particleCountTo,
-                                    unsigned int *texture,
-                                    int textureFrameCount,
-                                    unsigned int srcBlend,
-                                    unsigned int dstBlend)
+    float speedFrom,
+    float speedTo,
+    float pitchFrom,
+    float pitchTo,
+    float startSizeFrom,
+    float startSizeTo,
+    float endSizeFrom,
+    float endSizeTo,
+    float durationFrom,
+    float durationTo,
+    const CColor4f & startColorFrom,
+    const CColor4f & startColorTo,
+    const CColor4f & endColorFrom,
+    const CColor4f & endColorTo,
+    float angleFrom,
+    float angleTo,
+    float angleSpeedFrom,
+    float angleSpeedTo,
+    float gravityInfluence,
+    float airResistanceInfluence,
+    unsigned int particleCountFrom,
+    unsigned int particleCountTo,
+    unsigned int *texture,
+    int textureFrameCount,
+    unsigned int srcBlend,
+    unsigned int dstBlend)
 {
     // On défini combient on en emet
     int total = rand((int)particleCountFrom, (int)particleCountTo);
@@ -338,7 +378,8 @@ void            dkpCreateParticleEx(const CVector3f & positionFrom,
         vel = rotateAboutAxis(vel, rand((float)0, (float)360), direction);
 
         // On cré notre particule
-        CParticle * newPart = new CParticle(
+        Particle * newPart = new Particle;
+        Particle_Init(newPart,
             rand(positionFrom, positionTo).s,
             vel.s,
             rand(startColorFrom, startColorTo).s,
@@ -362,27 +403,7 @@ void            dkpCreateParticleEx(const CVector3f & positionFrom,
             newPart->textureArray = texture;
         }
 
-        // On l'ajoute à notre liste
-        // On va tout suite l'ajouter au bon endroit pour pas avoir des tri important à faire tantot
-        if (CDkp::particles.size() > 1 && CDkp::sorting) // Il faut qu'il y en ai au moins 1
-        {
-            std::vector<CParticle*>::size_type i;
-            for (i=0;i<CDkp::particles.size();i++)
-            {
-                CParticle * p1 = CDkp::particles.at(i);
-                if (newPart->camDis > p1->camDis)
-                {
-                    CDkp::particles.insert(CDkp::particles.begin()+i, newPart);
-                    break;
-                }
-            }
-            if (i==CDkp::particles.size())
-            {
-                CDkp::particles.push_back(newPart);
-            }
-        }
-        else
-            CDkp::particles.push_back(newPart);
+        AddParticle(newPart);
     }
 }
 
@@ -391,7 +412,7 @@ void            dkpCreateParticleEx(const CVector3f & positionFrom,
 //
 // Pour créer une particle ex à partir d'un preset
 //
-void            dkpCreateParticleExP(dkp_preset & preset)
+void dkpCreateParticleExP(dkp_preset & preset)
 {
     dkpCreateParticleEx(preset.positionFrom,
                         preset.positionTo,
@@ -429,7 +450,7 @@ void            dkpCreateParticleExP(dkp_preset & preset)
 //
 // Pour initialiser
 //
-void            dkpInit()
+void dkpInit()
 {
     CDkp::vertexArray = new float [6 * 3];
     CDkp::vertexArray[0] = 0;
@@ -560,8 +581,8 @@ void dkpRender()
         // On render les particles, apres tout c'est la job de ce API
         for (i=0;i<(int)CDkp::particles.size();i++)
         {
-            CParticle * particle = CDkp::particles.at(i);
-            particle->render();
+            Particle * particle = CDkp::particles.at(i);
+            Particle_Render(particle);
         }
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisableClientState(GL_NORMAL_ARRAY);
@@ -569,61 +590,31 @@ void dkpRender()
     glPopAttrib();
 }
 
-
-
-//
-// Resetter les particules
-//
 void dkpReset()
 {
     for (int i=0;i<(int)CDkp::particles.size();i++)
     {
-        CParticle * particle = CDkp::particles.at(i);
+        Particle * particle = CDkp::particles.at(i);
         if (particle) delete particle;
     }
     CDkp::particles.clear();
 }
 
-
-
-//
-// Pour setter la pression atmospherique
-//
 void dkpSetAirDensity(float airDensity)
 {
     CDkp::airDensity = airDensity;
 }
 
-
-
-//
-// Pour setter la direction et la force de la gravité
-//
 void dkpSetGravity(float *vel)
 {
     CDkp::gravity = CVector3f(vel);
 }
 
-
-
-//
-// Si on doit sorter ou pas
-//
-void dkpSetSorting(bool sort)
-{
-    CDkp::sorting = sort;
-}
-
-
-
-//
-// Pour effacer le tout, à la fin du programme
-//
 void dkpShutDown()
 {
     for (int i=0;i<(int)CDkp::particles.size();i++)
     {
-        CParticle * particle = CDkp::particles.at(i);
+        Particle * particle = CDkp::particles.at(i);
         if (particle) delete particle;
     }
     CDkp::particles.clear();
@@ -647,8 +638,8 @@ int dkpUpdate(float delay)
     // On les updates normalement avant tout
     for (int i=0;i<(int)CDkp::particles.size();i++)
     {
-        CParticle * particle = CDkp::particles.at(i);
-        if (!particle->update())
+        Particle * particle = CDkp::particles.at(i);
+        if (!Particle_Update(particle))
         {
             // On doit effacer cette particule
             delete particle;
@@ -660,14 +651,14 @@ int dkpUpdate(float delay)
             particleCount++;
     }
 
-    std::vector<CParticle*>::size_type lastIndex = std::vector<CParticle*>::size_type(-1);
+    ParticleVec::size_type lastIndex = ParticleVec::size_type(-1);
     int curInteration = 0;
     if (CDkp::currentSortInteration >= CDkp::particles.size()-1) CDkp::currentSortInteration = 0;
 
     // Maintenant, il faut trier ses particles par rapport à la camera
-    if (CDkp::particles.size() > 1 && CDkp::sorting) // Il faut qu'il y en ai au moins 2
+    if (CDkp::particles.size() > 1)
     {
-        for (std::vector<CParticle*>::size_type i=CDkp::currentSortInteration;i<CDkp::particles.size()-1;i++)
+        for (ParticleVec::size_type i=CDkp::currentSortInteration;i<CDkp::particles.size()-1;i++)
         {
             curInteration++;
 
@@ -678,8 +669,8 @@ int dkpUpdate(float delay)
                 break;
             }
 
-            CParticle * p1 = CDkp::particles.at(i);
-            CParticle * p2 = CDkp::particles.at(i+1);
+            Particle * p1 = CDkp::particles.at(i);
+            Particle * p2 = CDkp::particles.at(i+1);
             if (p1->camDis < p2->camDis)
             {
                 // Alors il faut switcher les deux
@@ -692,7 +683,7 @@ int dkpUpdate(float delay)
             else if (lastIndex != -1)
             {
                 i = lastIndex - 1;
-                lastIndex = std::vector<CParticle*>::size_type(-1);
+                lastIndex = ParticleVec::size_type(-1);
                 continue;
             }
 
@@ -705,181 +696,4 @@ int dkpUpdate(float delay)
     }
 
     return particleCount;
-}
-
-
-//
-// Constructeur / Destructeur
-//
-CParticle::CParticle(
-    float *mposition,
-    float *mvel,
-    float *mstartColor,
-    float *mendColor,
-    float mstartSize,
-    float mendSize,
-    float mduration,
-    float mdensity,
-    float mairResistanceInfluence,
-    float mrotationSpeed,
-    unsigned int mtexture,
-    unsigned int msrcBlend,
-    unsigned int mdstBlend,
-    int mtransitionFunc)
-{
-    texture = mtexture;
-    position = CPoint3f(mposition);
-    lastPosition = position;
-    startColor = CColor4f(mstartColor);
-    endColor = CColor4f(mendColor);
-    vel = CVector3f(mvel);
-    life = 0;
-    fadeSpeed = 1.0f / mduration;
-    startSize = mstartSize;
-    endSize = mendSize;
-    density = mdensity;
-    angle = (float)(rand() % 36000) / 100.0f;
-    rotationSpeed = mrotationSpeed;
-    srcBlend = msrcBlend;
-    dstBlend = mdstBlend;
-    //  transitionFunc = mtransitionFunc;  // Pas utilisé
-    (void)mtransitionFunc;// No need to show the warning about unreferenced parameter
-    airResistanceInfluence = mairResistanceInfluence;
-    billboard = false;
-    billboardOpacity = 0;
-    billboardFadeDis = 16;
-    billboardFadeDelay = 1;
-    toDelete = false;
-
-    isMultipleTexture = false;
-    textureArray = 0;
-    nbFrame = 1;
-
-    // Ici on la calcul tout suite pour pouvoir la placer tout suite à bonne place dans le array
-    if(CDkp::sorting) camDis = dot((CDkp::camPos - position), (CDkp::camPos - position));
-}
-
-CParticle::~CParticle()
-{
-}
-
-
-
-//
-// Pour l'updater
-//
-int CParticle::update()
-{
-    if(billboard)
-    {
-        // On pogne sa distance
-        camDis = distanceSquared(CDkp::camPos, position);
-
-        if(toDelete)
-        {
-            billboardOpacity -= CDkp::delay * billboardFadeDelay;
-            if(billboardOpacity <= 0) return 0;
-        }
-        else
-        {
-            if(camDis >= billboardFadeDis * billboardFadeDis)
-            {
-                toDelete = true;
-            }
-            else
-            {
-                if(billboardOpacity < 1)
-                {
-                    billboardOpacity += CDkp::delay * billboardFadeDelay;
-                    if(billboardOpacity > 1) billboardOpacity = 1;
-                }
-            }
-        }
-    }
-    else
-    {
-        // On diminu sa vie
-        life += fadeSpeed * CDkp::delay;
-
-        // On check si elle est encore vivante
-        if(life >= 1) return 0;
-
-        // Sa rotation
-        angle += rotationSpeed * CDkp::delay;
-
-        // On affecte la gravité
-        vel += CDkp::gravity * density * CDkp::delay;
-
-        // On l'affecte à la densité de l'air
-
-        // On anim finalement sa position
-        position += vel * CDkp::delay;
-
-        // Sa distance avec notre camera
-        if(CDkp::sorting) camDis = distanceSquared(CDkp::camPos, position);
-    }
-
-    return 1;
-}
-
-//
-// Pour le rendre
-//
-void CParticle::render()
-{
-    // On la positionne
-    glPushMatrix();
-
-    glBlendFunc(srcBlend, dstBlend);
-
-    CColor4f curColor = startColor + (endColor - startColor) * life;
-
-    if(billboard) curColor[3] *= billboardOpacity;
-
-    float sizeTime = startSize + (endSize - startSize) * life;
-    glTranslatef(position[0], position[1], position[2]);
-    glMultMatrixf(CDkp::modelView);
-    glScalef(sizeTime, sizeTime, sizeTime);
-    glRotatef(angle, 0, 0, 1);
-
-    if(isMultipleTexture)
-    {
-        int currentFrame = (int)(nbFrame*life);
-        int nextFrame = currentFrame + 1;
-        float midFrame = (float)nbFrame * life - (float)currentFrame;
-        if(nextFrame >= nbFrame) nextFrame = currentFrame;
-
-        glBindTexture(GL_TEXTURE_2D, textureArray[currentFrame]);
-        glColor4fv((curColor*CColor4f(1, 1, 1, 1 - midFrame)).s);
-        glPushAttrib(GL_ENABLE_BIT);
-
-        if(dstBlend == DKP_ONE || dstBlend == DKP_ZERO)
-        {
-            glDisable(GL_FOG);
-            glDisable(GL_LIGHTING);
-        }
-
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-
-        glBindTexture(GL_TEXTURE_2D, textureArray[nextFrame]);
-        glColor4fv((curColor*CColor4f(1, 1, 1, midFrame)).s);
-
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-    }
-    else
-    {
-        if(CDkp::lastTexture != texture) glBindTexture(GL_TEXTURE_2D, texture);
-        CDkp::lastTexture = texture;
-        glColor4fv(curColor.s);
-        glPushAttrib(GL_ENABLE_BIT);
-        glDisable(GL_LIGHTING);
-        if(dstBlend == DKP_ONE || dstBlend == DKP_ZERO)
-        {
-            glDisable(GL_FOG);
-            glDisable(GL_LIGHTING);
-        }
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-        glPopAttrib();
-    }
-    glPopMatrix();
 }

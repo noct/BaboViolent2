@@ -21,6 +21,7 @@
 
 ClientScene::ClientScene(dkContext* dk) : Scene(dk)
 {
+    clientVar.loadModels();
     mainTab = 0;
     font = dkfCreateFont("main/fonts/babo.tga");
     tex_crosshair = dktCreateTextureFromFile("main/textures/Cross01.tga", DKT_FILTER_LINEAR);
@@ -69,6 +70,7 @@ ClientScene::ClientScene(dkContext* dk) : Scene(dk)
 //
 ClientScene::~ClientScene()
 {
+    clientVar.deleteModels();
     dkfDeleteFont(&font);
     dktDeleteTexture(&tex_crosshair);
     dktDeleteTexture(&tex_menuCursor);
@@ -173,7 +175,7 @@ void ClientScene::update(float delay)
         menuManager.updateDialogs(delay);
     }
 
-    gameVar.ro_nbParticle = dkpUpdate(delay);
+    clientVar.ro_nbParticle = dkpUpdate(delay);
 }
 
 //
@@ -249,11 +251,11 @@ void ClientScene::render()
         {
             if(server)
             {
-                printRightText((float)res[0] - 5, (float)res[1] - 32 - 5, 32, CString(gameVar.lang_serverVersion.s, (int)GAME_VERSION_SV / 10000, (int)(GAME_VERSION_SV % 10000) / 100, ((int)GAME_VERSION_SV % 100)));
+                printRightText((float)res[0] - 5, (float)res[1] - 32 - 5, 32, CString(clientVar.lang_serverVersion.s, (int)GAME_VERSION_SV / 10000, (int)(GAME_VERSION_SV % 10000) / 100, ((int)GAME_VERSION_SV % 100)));
             }
             else
             {
-                printRightText((float)res[0] - 5, (float)res[1] - 32 - 5, 32, CString(gameVar.lang_clientVersion.s, (int)GAME_VERSION_CL / 10000, (int)(GAME_VERSION_CL % 10000) / 100, ((int)GAME_VERSION_CL % 100)));
+                printRightText((float)res[0] - 5, (float)res[1] - 32 - 5, 32, CString(clientVar.lang_clientVersion.s, (int)GAME_VERSION_CL / 10000, (int)(GAME_VERSION_CL % 10000) / 100, ((int)GAME_VERSION_CL % 100)));
             }
 
             //--- Copyrights (replaced by head games logo)

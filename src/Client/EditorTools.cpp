@@ -21,6 +21,7 @@
 #include "CMenuManager.h"
 #include <Zeven/FileIO.h>
 #include "Game.h"
+#include "ClientMap.h"
 #include <algorithm>
 
 const float Selection = 0.001f;
@@ -50,16 +51,17 @@ unsigned int ITool::MapCellIndex(Map * map, const CVector2i & cell) const
 
 void ITool::RegenerateTextures(Map * map, const CVector2i & cell) const
 {
-    map->regenTex();
-    map->regenCell(cell[0]-1, cell[1]+1);
-    map->regenCell(cell[0]-1, cell[1]);
-    map->regenCell(cell[0]-1, cell[1]-1);
-    map->regenCell(cell[0],   cell[1]-1);
-    map->regenCell(cell[0]+1, cell[1]-1);
-    map->regenCell(cell[0]+1, cell[1]);
-    map->regenCell(cell[0]+1, cell[1]+1);
-    map->regenCell(cell[0],   cell[1]+1);
-    map->regenCell(cell[0],   cell[1]);
+    auto cmap = static_cast<ClientMap*>(map);
+    cmap->regenTex();
+    cmap->regenCell(cell[0]-1, cell[1]+1);
+    cmap->regenCell(cell[0]-1, cell[1]);
+    cmap->regenCell(cell[0]-1, cell[1]-1);
+    cmap->regenCell(cell[0],   cell[1]-1);
+    cmap->regenCell(cell[0]+1, cell[1]-1);
+    cmap->regenCell(cell[0]+1, cell[1]);
+    cmap->regenCell(cell[0]+1, cell[1]+1);
+    cmap->regenCell(cell[0],   cell[1]+1);
+    cmap->regenCell(cell[0],   cell[1]);
 }
 
 ToolGround::ToolGround()
@@ -90,7 +92,8 @@ void ToolGround::render(Editor2 * editor)
 
 void ToolGround::LeftClick(Editor2 * editor, float delay)
 {
-    editor->map->buildGround();
+    auto cmap = static_cast<ClientMap*>(editor->map);
+    cmap->buildGround();
     unsigned int index = MapCellIndex(editor->map, editor->cellCursor);
     if(!editor->map->cells[index].passable && (editor->map->cells[index].height != 0))
     {
@@ -144,7 +147,8 @@ void ToolSplat::render(Editor2 * editor)
 
 void ToolSplat::LeftClick(Editor2 * editor, float delay)
 {
-    editor->map->buildGround();
+    auto cmap = static_cast<ClientMap*>(editor->map);
+    cmap->buildGround();
     for (int j = (editor->cellCursor[1] - 3); j <= (editor->cellCursor[1] + 3); ++j)
     {
         for (int i = (editor->cellCursor[0] - 3); i <= (editor->cellCursor[0] + 3); ++i)
@@ -162,7 +166,8 @@ void ToolSplat::LeftClick(Editor2 * editor, float delay)
 
 void ToolSplat::RightClick(Editor2 * editor, float delay)
 {
-    editor->map->buildGround();
+    auto cmap = static_cast<ClientMap*>(editor->map);
+    cmap->buildGround();
     for (int j = (editor->cellCursor[1] - 3); j <= (editor->cellCursor[1] + 3); ++j)
     {
         for (int i = (editor->cellCursor[0] - 3); i <= (editor->cellCursor[0] + 3); ++i)
@@ -291,7 +296,8 @@ void ToolFlag::render(Editor2 * editor)
                 glTranslatef(editor->cellCursor[0] + 0.5f, editor->cellCursor[1] + 0.5f, 0.0f);
                 glScalef(0.005f, 0.005f, 0.005f);
                 //dkoRender(editor->map->dko_flagPod[flag]);
-                dkoRender(editor->map->dko_flag[flag]);
+                auto cmap = static_cast<ClientMap*>(editor->map);
+                dkoRender(cmap->dko_flag[flag]);
             glPopMatrix();
         dkoPopRenderState();
     glPopAttrib();
@@ -475,6 +481,7 @@ void ToolAddLine::render(Editor2 * editor)
 
 void ToolAddLine::LeftClick(Editor2 * editor, float delay)
 {
+    auto cmap = static_cast<ClientMap*>(editor->map);
     lastAction += delay;
     switch(lineType)
     {
@@ -538,12 +545,12 @@ void ToolAddLine::LeftClick(Editor2 * editor, float delay)
             lastAction = 0.0f;
             // Destroy old cells
             delete[] temp;
-            editor->map->regenTex();
+            cmap->regenTex();
             for(int j = 0; j < editor->map->size[1]; ++j)
             {
                 for(int i = 0; i < editor->map->size[0]; ++i)
                 {
-                    editor->map->regenCell(i, j);
+                    cmap->regenCell(i, j);
                 }
             }
             editor->isDirty = true;
@@ -605,12 +612,12 @@ void ToolAddLine::LeftClick(Editor2 * editor, float delay)
             lastAction = 0.0f;
             // Destroy old cells
             delete[] temp;
-            editor->map->regenTex();
+            cmap->regenTex();
             for(int j = 0; j < editor->map->size[1]; ++j)
             {
                 for(int i = 0; i < editor->map->size[0]; ++i)
                 {
-                    editor->map->regenCell(i, j);
+                    cmap->regenCell(i, j);
                 }
             }
             editor->isDirty = true;
@@ -696,6 +703,7 @@ void ToolRemoveLine::render(Editor2 * editor)
 
 void ToolRemoveLine::LeftClick(Editor2 * editor, float delay)
 {
+    auto cmap = static_cast<ClientMap*>(editor->map);
     lastAction += delay;
     switch(lineType)
     {
@@ -748,12 +756,12 @@ void ToolRemoveLine::LeftClick(Editor2 * editor, float delay)
             lastAction = 0.0f;
             // Destroy old cells
             delete[] temp;
-            editor->map->regenTex();
+            cmap->regenTex();
             for(int j = 0; j < editor->map->size[1]; ++j)
             {
                 for(int i = 0; i < editor->map->size[0]; ++i)
                 {
-                    editor->map->regenCell(i, j);
+                    cmap->regenCell(i, j);
                 }
             }
             editor->isDirty = true;
@@ -805,12 +813,12 @@ void ToolRemoveLine::LeftClick(Editor2 * editor, float delay)
             lastAction = 0.0f;
             // Destroy old cells
             delete[] temp;
-            editor->map->regenTex();
+            cmap->regenTex();
             for(int j = 0; j < editor->map->size[1]; ++j)
             {
                 for(int i = 0; i < editor->map->size[0]; ++i)
                 {
-                    editor->map->regenCell(i, j);
+                    cmap->regenCell(i, j);
                 }
             }
             editor->isDirty = true;

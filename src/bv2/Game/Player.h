@@ -19,6 +19,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#ifndef DEDICATED_SERVER
+#include "ClientWeapon.h"
+#endif
 
 #include <Zeven/Core.h>
 #include "netPacket.h"
@@ -36,7 +39,7 @@
 #define PLAYER_TEAM_AUTO_ASSIGN 2
 
 
-class Map;
+struct Map;
 struct Game;
 
 // Notre coordframe
@@ -91,42 +94,26 @@ struct CoordFrame
             float t = (float)cFProgression / (float)size;
             float animTime = (float)size / (30.0f*3.0f);
 
-            // Quadric motion, pas tr� beau
-        /*  if (gameVar.cl_quadricMotion)
+            if (gameVar.cl_cubicMotion)
             {
-                // Il faut scaller nos velocity d�endament du temps �parcourir
-                CVector3f acc = to.vel - from.vel;
-
-                // On interpolate sa position
-                CVector3f coord1 = from.position;
-                CVector3f coord2 = from.position + from.vel * animTime;
-                CVector3f coord3 = to.position + to.vel * animTime + acc * .5f * (animTime * animTime);
-                CVector3f coord4 = coord3 - (to.vel * animTime + acc * animTime);
-                position = cubicSpline(coord1, coord2, coord3, coord4, t);
+                position = cubicSpline(
+                    from.position,
+                    from.position + from.vel * animTime,
+                    to.position - to.vel * animTime,
+                    to.position,
+                    t);
+                mousePosOnMap = cubicSpline(
+                    from.mousePosOnMap,
+                    from.mousePosOnMap + (to.mousePosOnMap-from.mousePosOnMap) * animTime,
+                    to.mousePosOnMap - (from.mousePosOnMap-to.mousePosOnMap) * animTime,
+                    to.mousePosOnMap,
+                    t);
             }
             else
-            {*/
-                if (gameVar.cl_cubicMotion)
-                {
-                    position = cubicSpline(
-                        from.position,
-                        from.position + from.vel * animTime,
-                        to.position - to.vel * animTime,
-                        to.position,
-                        t);
-                    mousePosOnMap = cubicSpline(
-                        from.mousePosOnMap,
-                        from.mousePosOnMap + (to.mousePosOnMap-from.mousePosOnMap) * animTime,
-                        to.mousePosOnMap - (from.mousePosOnMap-to.mousePosOnMap) * animTime,
-                        to.mousePosOnMap,
-                        t);
-                }
-                else
-                {
-                    position = to.position;
-                    vel = to.vel;
-                }
-        //  }
+            {
+                position = to.position;
+                vel = to.vel;
+            }
         }
     }
 };
@@ -152,10 +139,8 @@ struct PlayerStats
 
 #define PING_LOG_SIZE 60
 
-class Player
+struct Player
 {
-public:
-
     //--- Anti-cheat code
     long frameSinceLast;
     long lastFrame;
@@ -229,7 +214,6 @@ public:
     int pingLog[PING_LOG_SIZE];
     float babySitTime;
 
-
     // Sa vie
     float life;
 
@@ -270,10 +254,6 @@ public:
 
     // To send the position at each x frame
     int sendPosFrame;
-#ifndef DEDICATED_SERVER
-    // Si on est le joueur controll�
-    bool isThisPlayer;
-#endif
 
     // On attends 10 sec avant de spawner
     float timeToSpawn;
@@ -287,46 +267,23 @@ public:
     int nextSpawnWeapon;
     int nextMeleeWeapon;
 
-#ifndef DEDICATED_SERVER
-    ClientWeapon * weapon;
-    ClientWeapon * meleeWeapon
-#else
     Weapon * weapon;
-    Weapon * meleeWeapon
-#endif
-        ;
-#ifndef DEDICATED_SERVER
-    // Son shadow
-    unsigned int tex_baboShadow;
-    unsigned int tex_baboHalo;
-#endif
+    Weapon * meleeWeapon;
+
     // On va garder un pointeur sur la map
     Map * map;
 
     // Notre game
     Game * game;
-#ifndef DEDICATED_SERVER
-    // Pour savoir si on a initialis�le mouse down ici, et non dans le menu
-    bool initedMouseClic;
-#endif
     // Il vient de tirer, on le voit pendant 2sec sur la minimap
     float firedShowDelay;
     float secondsFired;
 
     // On compteur qui dit � fait combient de temps que je suis dead
     float deadSince;
-#ifndef DEDICATED_SERVER
-    // Le player qu'on suis
-    int followingPlayer;
-#endif
 
     // Un timer qui dit que le player vient de se faire toucher
     float screenHit;
-
-#ifndef DEDICATED_SERVER
-    // La position du babo on screen
-    CVector2i onScreenPos;
-#endif
 
     // Le delait pour shooter les grenade (2sec)
     float grenadeDelay;
@@ -337,20 +294,11 @@ public:
     // Il est en connection interrupted, il a besoin de recevoir les game state
     bool connectionInterrupted;
 
-#ifndef DEDICATED_SERVER
-    // Est-ce qu'on est en mode scope FPS ou pas?
-    bool scopeMode;
-#endif
-
     long fireFrameDelay; // This is for the shoty bug
 
     bool lastShootWasNade;
 
     //--- Notre skin
-#ifndef DEDICATED_SERVER
-    unsigned int tex_skin;
-    unsigned int tex_skinOriginal;
-#endif
     CString skin;
     CString lastSkin;
 
@@ -367,7 +315,6 @@ public:
     CVector3f p1;
     CVector3f p2;
 
-public:
     // Constructeur
     Player(char pPlayerID, Map * pMap, Game * pGame);
 
@@ -378,15 +325,6 @@ public:
     void update(float delay);
 
     void updatePing(float delay);
-
-#ifndef DEDICATED_SERVER
-    // Pour le controller
-    void controlIt(float delay);
-
-    // Pour l'afficher
-    void render();
-    void renderName();
-#endif
 
     // Pour remettre ses stats �0
     void reinit();
@@ -404,9 +342,6 @@ public:
     void setCoordFrame(net_clsv_svcl_player_coord_frame & playerCoordFrame);
 
     // Si on se fait toucher !
-#ifndef DEDICATED_SERVER
-    void hit(Weapon * fromWeapon, Player * from, float damage=-1);
-#endif
     void hitSV(Weapon * fromWeapon, Player * from, float damage=-1);
 
     // Pour changer son gun!
@@ -414,6 +349,35 @@ public:
     void switchMeleeWeapon(int newWeaponID, bool forceSwitch=false);
 
 #ifndef DEDICATED_SERVER
+    // Si on est le joueur controll�
+    bool isThisPlayer;
+    // Son shadow
+    unsigned int tex_baboShadow;
+    unsigned int tex_baboHalo;
+    // Pour savoir si on a initialis�le mouse down ici, et non dans le menu
+    bool initedMouseClic;
+
+    // Le player qu'on suis
+    int followingPlayer;
+
+    // La position du babo on screen
+    CVector2i onScreenPos;
+
+    // Est-ce qu'on est en mode scope FPS ou pas?
+    bool scopeMode;
+
+    unsigned int tex_skin;
+    unsigned int tex_skinOriginal;
+
+    // Pour le controller
+    void controlIt(float delay);
+
+    // Pour l'afficher
+    void render();
+    void renderName();
+
+    void hit(Weapon * fromWeapon, Player * from, float damage=-1);
+
     // Pour updater la skin texture
     void updateSkin();
 #endif

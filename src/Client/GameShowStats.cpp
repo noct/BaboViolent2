@@ -85,12 +85,12 @@ void renderStatsSlice(const CVector4f & sliceColor, char * text1, char* c1, char
 void ClientGame::renderBlueTeam(std::vector<Player*> & blueTeam, int & vPos)
 {
     // Blue Team
-    renderStatsSlice(CVector4f(0, 0, 1, .75f), gameVar.lang_blueTeamC.s, "","","","",CString("%i", blueScore).s, CString(""/*%i", bluePing*33*/).s, vPos);
+    renderStatsSlice(CVector4f(0, 0, 1, .75f), clientVar.lang_blueTeamC.s, "","","","",CString("%i", blueScore).s, CString(""/*%i", bluePing*33*/).s, vPos);
     for (int j=0;j<(int)blueTeam.size();++j)
     {
         CString showName = blueTeam[j]->name;
         showName.insert("\x1", 0);
-        if (blueTeam[j]->status == PLAYER_STATUS_DEAD) showName.insert(CString("(%s) ", gameVar.lang_dead.s).s, 0);
+        if (blueTeam[j]->status == PLAYER_STATUS_DEAD) showName.insert(CString("(%s) ", clientVar.lang_dead.s).s, 0);
 
         CString pingStr;
         if (blueTeam[j]->ping*33 < 100) /*"Good"*/
@@ -117,12 +117,12 @@ void ClientGame::renderBlueTeam(std::vector<Player*> & blueTeam, int & vPos)
 void ClientGame::renderRedTeam(std::vector<Player*> & redTeam, int & vPos)
 {
     // Red Team
-    renderStatsSlice(CVector4f(1, 0, 0, .75f), gameVar.lang_redTeamC.s,"","","","", CString("%i", redScore).s, CString(""/*%i", redPing*33*/).s, vPos);
+    renderStatsSlice(CVector4f(1, 0, 0, .75f), clientVar.lang_redTeamC.s,"","","","", CString("%i", redScore).s, CString(""/*%i", redPing*33*/).s, vPos);
     for (int j=0;j<(int)redTeam.size();++j)
     {
         CString showName = redTeam[j]->name;
         showName.insert("\x4", 0);
-        if (redTeam[j]->status == PLAYER_STATUS_DEAD) showName.insert(CString("(%s) ", gameVar.lang_dead.s).s, 0);
+        if (redTeam[j]->status == PLAYER_STATUS_DEAD) showName.insert(CString("(%s) ", clientVar.lang_dead.s).s, 0);
 
         CString pingStr;
         if (redTeam[j]->ping*33 < 100) /*"Good"*/
@@ -148,12 +148,12 @@ void ClientGame::renderRedTeam(std::vector<Player*> & redTeam, int & vPos)
 void ClientGame::renderFFA(std::vector<Player*> & ffaTeam, int & vPos)
 {
     // All Team
-    renderStatsSlice(CVector4f(1, 1, 1, .75f), CString(gameVar.lang_freeForAllC.s, redWin+blueWin).s,"","","","", CString(""/*%i", blueScore + redScore*/).s, CString("%i", ffaPing*33).s, vPos);
+    renderStatsSlice(CVector4f(1, 1, 1, .75f), CString(clientVar.lang_freeForAllC.s, redWin+blueWin).s,"","","","", CString(""/*%i", blueScore + redScore*/).s, CString("%i", ffaPing*33).s, vPos);
     for (int j=0;j<(int)ffaTeam.size();++j)
     {
         CString showName = ffaTeam[j]->name;
         showName.insert("\x8", 0);
-        if (ffaTeam[j]->status == PLAYER_STATUS_DEAD) showName.insert((CString("(") + gameVar.lang_dead + ") ").s, 0);
+        if (ffaTeam[j]->status == PLAYER_STATUS_DEAD) showName.insert((CString("(") + clientVar.lang_dead + ") ").s, 0);
         CString pingStr;
         if (ffaTeam[j]->ping*33 < 100) /*"Good"*/
             pingStr = CString("\x2") + ffaTeam[j]->ping*33;
@@ -174,7 +174,7 @@ void ClientGame::renderFFA(std::vector<Player*> & ffaTeam, int & vPos)
 void ClientGame::renderSpectator(std::vector<Player*> & spectatorTeam, int & vPos)
 {
     // Spectators
-    renderStatsSlice(CVector4f(.5f, .5f, .5f, .75f), gameVar.lang_spectatorC.s, "","","","","", CString(""/*%i", spectatorPing*33*/).s, vPos);
+    renderStatsSlice(CVector4f(.5f, .5f, .5f, .75f), clientVar.lang_spectatorC.s, "","","","","", CString(""/*%i", spectatorPing*33*/).s, vPos);
     for (int j=0;j<(int)spectatorTeam.size();++j)
     {
         CString showName = spectatorTeam[j]->name;
@@ -300,13 +300,13 @@ void ClientGame::renderStats()
             switch (gameType)
             {
             case GAME_TYPE_DM:
-                renderStatsSlice(CVector4f(0, 0, 0, .75f), gameVar.lang_playerNameC.s, "Kills", "Death", "Damage", "", "", gameVar.lang_pingC.s, vPos);
+                renderStatsSlice(CVector4f(0, 0, 0, .75f), clientVar.lang_playerNameC.s, "Kills", "Death", "Damage", "", "", clientVar.lang_pingC.s, vPos);
                 vPos += 10;
                 renderFFA(ffaTeam, vPos);
                 renderSpectator(spectatorTeam, vPos);
                 break;
             case GAME_TYPE_TDM:
-                renderStatsSlice(CVector4f(0, 0, 0, .75f), gameVar.lang_playerNameC.s, "Kills", "Death", "Damage", "","", gameVar.lang_pingC.s, vPos);
+                renderStatsSlice(CVector4f(0, 0, 0, .75f), clientVar.lang_playerNameC.s, "Kills", "Death", "Damage", "","", clientVar.lang_pingC.s, vPos);
                 vPos += 10;
                 if (blueScore >= redScore)
                 {
@@ -321,7 +321,7 @@ void ClientGame::renderStats()
                 renderSpectator(spectatorTeam, vPos);
                 break;
             case GAME_TYPE_CTF:
-                renderStatsSlice(CVector4f(0, 0, 0, .75f), gameVar.lang_playerNameC.s, "Kills", "Death", "Damage", "Retrn", "Caps", gameVar.lang_pingC.s, vPos);
+                renderStatsSlice(CVector4f(0, 0, 0, .75f), clientVar.lang_playerNameC.s, "Kills", "Death", "Damage", "Retrn", "Caps", clientVar.lang_pingC.s, vPos);
                 vPos += 10;
                 if (blueWin >= redWin)
                 {

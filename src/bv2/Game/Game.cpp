@@ -24,11 +24,6 @@
 #include <time.h>
 #include <algorithm>
 
-#ifndef DEDICATED_SERVER
-#include "ClientScene.h"
-#endif // !DEDICATED_SERVER
-
-
 extern Scene * scene;
 
 long Projectile::uniqueProjectileID = 0;
@@ -496,6 +491,10 @@ void Game::onTeamSwitch(Player* player)
         console->add(CString("%s\x4 joins red team ID:%i", player->name.s, player->playerID));
         break;
     }
+}
+
+void Game::onSpawnPlayer(Player* player)
+{
 }
 
 //
@@ -1105,9 +1104,7 @@ bool Game::spawnPlayer(int playerID)
                         }
                     }
                     players[playerID]->spawn(CVector3f(map->dm_spawns[bestFound][0], map->dm_spawns[bestFound][1], .25f));
-#ifndef DEDICATED_SERVER
-                    map->setCameraPos(players[playerID]->currentCF.position);
-#endif
+                    onSpawnPlayer(players[playerID]);
                     return true;
                 }
             }
@@ -1159,28 +1156,10 @@ bool Game::spawnPlayer(int playerID)
                     }
 
                     players[playerID]->spawn(spawnPosition);
-#ifndef DEDICATED_SERVER
-                    map->setCameraPos(players[playerID]->currentCF.position);
-#endif
+                    onSpawnPlayer(players[playerID]);
                     return true;
                 }
             }
-            /*  while (!found)
-                {
-                    int index = rand()%(int)map->dm_spawns.size();
-                    int x = rand((int)0, (int)map->size[0]);
-                    int y = rand((int)0, (int)map->size[1]);
-                    if (map->cells[y*map->size[0]+x].passable)
-                    {
-                        found = true;
-                        players[playerID]->spawn(CVector3f((float)x+.5f,(float)y+.5f,.25f));
-                        if (players[playerID] == thisPlayer)
-                        {
-                            map->setCameraPos(players[playerID]->currentCF.position);
-                        }
-                    }
-                }
-                return true;*/
         }
     }
     return false;
@@ -1192,14 +1171,8 @@ void Game::spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char p
     projectiles.push_back(projectile);
 }
 
-//
-// On spawn un projectile!
-//
 bool Game::spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, bool imServer)
 {
-    //  if (playerProjectile.projectileType == PROJECTILE_FLAME) return;
-        // On le push toujours à la fin du vector, si on respect bien ça les clients devraient tous les avoir
-        // dans l'ordre
     if(imServer)
     {
         ++(Projectile::uniqueProjectileID);
@@ -1261,39 +1234,6 @@ bool Game::spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, b
             bb_serverSend((char*)&playerProjectile, sizeof(net_clsv_svcl_player_projectile), NET_CLSV_SVCL_PLAYER_PROJECTILE, 0);
         }
     }
-#ifndef DEDICATED_SERVER
-    else
-    {
-        if(playerProjectile.projectileType == PROJECTILE_DROPED_WEAPON)
-        {
-            CVector3f position;
-            position[0] = (float)playerProjectile.position[0] / 100.0f;
-            position[1] = (float)playerProjectile.position[1] / 100.0f;
-            position[2] = (float)playerProjectile.position[2] / 100.0f;
-            CVector3f vel;
-            vel[0] = (float)playerProjectile.vel[0] / 10.0f;
-            vel[1] = (float)playerProjectile.vel[1] / 10.0f;
-            vel[2] = (float)playerProjectile.vel[2] / 10.0f;
-            spawnProjectileSpecific(position, vel, playerProjectile.weaponID, playerProjectile.projectileType, true, playerProjectile.uniqueID);
-        }
-        else
-        {
-            CVector3f position;
-            position[0] = (float)playerProjectile.position[0] / 100.0f;
-            position[1] = (float)playerProjectile.position[1] / 100.0f;
-            position[2] = (float)playerProjectile.position[2] / 100.0f;
-            CVector3f vel;
-            vel[0] = (float)playerProjectile.vel[0] / 10.0f;
-            vel[1] = (float)playerProjectile.vel[1] / 10.0f;
-            vel[2] = (float)playerProjectile.vel[2] / 10.0f;
-            spawnProjectileSpecific(position, vel, playerProjectile.playerID, playerProjectile.projectileType, true, playerProjectile.uniqueID);
-        }
-        projectiles[projectiles.size() - 1]->projectileID = (short)projectiles.size() - 1;
-        //  projectiles[projectiles.size()-1]->remoteEntity = false;
-        //  projectiles[projectiles.size()-1]->uniqueID = playerProjectile.uniqueID;
-    }
-#endif
-
     return true;
 }
 
@@ -1400,6 +1340,11 @@ Projectile::Projectile(CVector3f & position, CVector3f & vel, char pFromID, int 
         break;
     }
     }
+}
+
+void Projectile::onGrenadeRebound(CVector3f p)
+{
+
 }
 
 //
@@ -1513,26 +1458,6 @@ void Projectile::update(float delay, Map* map)
                 }
             }
         }
-        else
-        {
-            if(stickToPlayer >= 0)
-            {
-#ifndef DEDICATED_SERVER
-                auto cscene = static_cast<ClientScene*>(scene);
-                if(cscene->client->game->players[stickToPlayer])
-                {
-                    if(cscene->client->game->players[stickToPlayer]->status == PLAYER_STATUS_DEAD)
-                    {
-                        stickToPlayer = -1;
-                    }
-                    else
-                    {
-                        currentCF.position = cscene->client->game->players[stickToPlayer]->currentCF.position;
-                    }
-                }
-#endif
-            }
-        }
     }
 
     // On check les collisions
@@ -1572,10 +1497,7 @@ void Projectile::update(float delay, Map* map)
             {
                 if(remoteEntity)
                 {
-                    //--- Play the sound
-#ifndef DEDICATED_SERVER
-                    dksPlay3DSound(gameVar.sfx_grenadeRebond, -1, 1, p2, 200);
-#endif
+                    onGrenadeRebound(p2);
                 }
                 currentCF.position = p2 + normal * .01f;
                 currentCF.vel = reflect(currentCF.vel, normal);

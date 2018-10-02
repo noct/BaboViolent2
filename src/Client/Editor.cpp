@@ -26,21 +26,22 @@
 #include "ClientScene.h"
 #include "ClientHelper.h"
 #include "ClientConsole.h"
+#include "ClientMap.h"
 
 extern Scene * scene;
 
 Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
-    :   needToShutDown(false)
-    ,   map(0)
-    ,   active(0)
-    ,   activeDialog(0)
-    ,   inFrameFor(1.0f)
-    ,   mouseInMenu(false)
-    ,   isDirty(false)
+    : needToShutDown(false)
+    , map(0)
+    , active(0)
+    , activeDialog(0)
+    , inFrameFor(1.0f)
+    , mouseInMenu(false)
+    , isDirty(false)
 {
-    if (mapName.len() > 15)
+    if(mapName.len() > 15)
         mapName.resize(15);
-    else if (mapName.isNull())
+    else if(mapName.isNull())
     {
         needToShutDown = true;
         return;
@@ -60,7 +61,7 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
         sizeY = 64;
 
     map = new Map(mapName, 0, font, true, sizeX, sizeY);
-    if (!map->isValid)
+    if(!map->isValid)
     {
         ZEVEN_SAFE_DELETE(map);
         needToShutDown = true;
@@ -89,66 +90,66 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
     // Editor root
     editorRoot = new CControl();
     editorRoot->font = font;
-    editorRoot->size.set(800,600);
-    editorRoot->backColor.set(.3f,.5f,.8f);
-    editorRoot->foreColor.set(1,1,1);
+    editorRoot->size.set(800, 600);
+    editorRoot->backColor.set(.3f, .5f, .8f);
+    editorRoot->foreColor.set(1, 1, 1);
     editorRoot->textShadow = true;
     editorRoot->noFill = true;
 
     // Create the menu items and their hotkeys
     CControl* spacer = 0;
     frameMain = new CControl(editorRoot, CVector2i(0, 0), CVector2i(800, 50), "", this, "FRAME", 0, CONTROL_SNAP_TOP, 0, true);
-    btn_file    = new CControl(frameMain, CVector2i(10, 10), CVector2i( 70, 30), "File",    this, "BUTTON");
-    spacer      = new CControl(frameMain, CVector2i( 5, 10), CVector2i( 10, 30), "",        this, "LABEL",  btn_file,    CONTROL_SNAP_RIGHT);
-    btn_terrain = new CControl(frameMain, CVector2i(10, 10), CVector2i( 70, 30), "Terrain", this, "BUTTON", spacer,      CONTROL_SNAP_RIGHT);
-    spacer      = new CControl(frameMain, CVector2i( 5, 10), CVector2i( 10, 30), "",        this, "LABEL",  btn_terrain, CONTROL_SNAP_RIGHT);
-    btn_objects = new CControl(frameMain, CVector2i(10, 10), CVector2i( 70, 30), "Objects", this, "BUTTON", spacer,      CONTROL_SNAP_RIGHT);
-    spacer      = new CControl(frameMain, CVector2i( 5, 10), CVector2i( 10, 30), "",        this, "LABEL",  btn_objects, CONTROL_SNAP_RIGHT);
-    btn_size    = new CControl(frameMain, CVector2i(10, 10), CVector2i( 70, 30), "Size",    this, "BUTTON", spacer,      CONTROL_SNAP_RIGHT);
-    spacer      = new CControl(frameMain, CVector2i( 5, 10), CVector2i( 10, 30), "",        this, "LABEL",  btn_size,    CONTROL_SNAP_RIGHT);
-    btn_misc    = new CControl(frameMain, CVector2i(10, 10), CVector2i( 70, 30), "Misc",    this, "BUTTON", spacer,      CONTROL_SNAP_RIGHT);
-    spacer      = new CControl(frameMain, CVector2i( 5, 10), CVector2i(300, 30), "",        this, "LABEL",  btn_misc,    CONTROL_SNAP_RIGHT);
-    btn_quit    = new CControl(frameMain, CVector2i(10, 10), CVector2i( 30, 30), "\x4X",    this, "BUTTON", spacer,      CONTROL_SNAP_RIGHT);
+    btn_file = new CControl(frameMain, CVector2i(10, 10), CVector2i(70, 30), "File", this, "BUTTON");
+    spacer = new CControl(frameMain, CVector2i(5, 10), CVector2i(10, 30), "", this, "LABEL", btn_file, CONTROL_SNAP_RIGHT);
+    btn_terrain = new CControl(frameMain, CVector2i(10, 10), CVector2i(70, 30), "Terrain", this, "BUTTON", spacer, CONTROL_SNAP_RIGHT);
+    spacer = new CControl(frameMain, CVector2i(5, 10), CVector2i(10, 30), "", this, "LABEL", btn_terrain, CONTROL_SNAP_RIGHT);
+    btn_objects = new CControl(frameMain, CVector2i(10, 10), CVector2i(70, 30), "Objects", this, "BUTTON", spacer, CONTROL_SNAP_RIGHT);
+    spacer = new CControl(frameMain, CVector2i(5, 10), CVector2i(10, 30), "", this, "LABEL", btn_objects, CONTROL_SNAP_RIGHT);
+    btn_size = new CControl(frameMain, CVector2i(10, 10), CVector2i(70, 30), "Size", this, "BUTTON", spacer, CONTROL_SNAP_RIGHT);
+    spacer = new CControl(frameMain, CVector2i(5, 10), CVector2i(10, 30), "", this, "LABEL", btn_size, CONTROL_SNAP_RIGHT);
+    btn_misc = new CControl(frameMain, CVector2i(10, 10), CVector2i(70, 30), "Misc", this, "BUTTON", spacer, CONTROL_SNAP_RIGHT);
+    spacer = new CControl(frameMain, CVector2i(5, 10), CVector2i(300, 30), "", this, "LABEL", btn_misc, CONTROL_SNAP_RIGHT);
+    btn_quit = new CControl(frameMain, CVector2i(10, 10), CVector2i(30, 30), "\x4X", this, "BUTTON", spacer, CONTROL_SNAP_RIGHT);
 
     frameFile = new CControl(editorRoot, CVector2i(0, 50), CVector2i(90, 160), "", this, "FRAME", 0, CONTROL_SNAP_TOP, 10, true);
-    btn_new    = new CControl(frameFile, CVector2i(10, 10), CVector2i(70, 30), "New",     this, "BUTTON");
-    btn_open   = new CControl(frameFile, CVector2i(10, 10), CVector2i(70, 30), "Open",    this, "BUTTON", btn_new,  CONTROL_SNAP_BOTTOM);
-    btn_save   = new CControl(frameFile, CVector2i(10, 10), CVector2i(70, 30), "Save",    this, "BUTTON", btn_open, CONTROL_SNAP_BOTTOM);
+    btn_new = new CControl(frameFile, CVector2i(10, 10), CVector2i(70, 30), "New", this, "BUTTON");
+    btn_open = new CControl(frameFile, CVector2i(10, 10), CVector2i(70, 30), "Open", this, "BUTTON", btn_new, CONTROL_SNAP_BOTTOM);
+    btn_save = new CControl(frameFile, CVector2i(10, 10), CVector2i(70, 30), "Save", this, "BUTTON", btn_open, CONTROL_SNAP_BOTTOM);
     btn_saveAs = new CControl(frameFile, CVector2i(10, 10), CVector2i(70, 30), "Save As", this, "BUTTON", btn_save, CONTROL_SNAP_BOTTOM);
 
     frameTerrain = new CControl(editorRoot, CVector2i(0, 50), CVector2i(110, 260), "", this, "FRAME", 0, CONTROL_SNAP_TOP, 10, true);
-    btn_ground      = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Ground",      this, "BUTTON");
-    btn_alternative = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Alternative", this, "BUTTON", btn_ground,      CONTROL_SNAP_BOTTOM);
-    btn_block1      = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 1",      this, "BUTTON", btn_alternative, CONTROL_SNAP_BOTTOM);
-    btn_block2      = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 2",      this, "BUTTON", btn_block1,      CONTROL_SNAP_BOTTOM);
-    btn_block3      = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 3",      this, "BUTTON", btn_block2,      CONTROL_SNAP_BOTTOM);
-    btn_block4      = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 4",      this, "BUTTON", btn_block3,      CONTROL_SNAP_BOTTOM);
-    btn_block5      = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 5",      this, "BUTTON", btn_block4,      CONTROL_SNAP_BOTTOM);
+    btn_ground = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Ground", this, "BUTTON");
+    btn_alternative = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Alternative", this, "BUTTON", btn_ground, CONTROL_SNAP_BOTTOM);
+    btn_block1 = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 1", this, "BUTTON", btn_alternative, CONTROL_SNAP_BOTTOM);
+    btn_block2 = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 2", this, "BUTTON", btn_block1, CONTROL_SNAP_BOTTOM);
+    btn_block3 = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 3", this, "BUTTON", btn_block2, CONTROL_SNAP_BOTTOM);
+    btn_block4 = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 4", this, "BUTTON", btn_block3, CONTROL_SNAP_BOTTOM);
+    btn_block5 = new CControl(frameTerrain, CVector2i(10, 10), CVector2i(90, 30), "Wall 5", this, "BUTTON", btn_block4, CONTROL_SNAP_BOTTOM);
 
     frameObjects = new CControl(editorRoot, CVector2i(0, 50), CVector2i(90, 260), "", this, "FRAME", 0, CONTROL_SNAP_TOP, 10, true);
-    btn_blueFlag  = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "{\x01 flag", this, "BUTTON");
-    btn_redFlag   = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "}\x04 flag", this, "BUTTON", btn_blueFlag,  CONTROL_SNAP_BOTTOM);
-    btn_spawn     = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x05Spawn",  this, "BUTTON", btn_redFlag, CONTROL_SNAP_BOTTOM);
-    btn_blueSpawn = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x01Spawn",  this, "BUTTON", btn_spawn,     CONTROL_SNAP_BOTTOM);
-    btn_redSpawn  = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x04Spawn",  this, "BUTTON", btn_blueSpawn, CONTROL_SNAP_BOTTOM);
+    btn_blueFlag = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "{\x01 flag", this, "BUTTON");
+    btn_redFlag = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "}\x04 flag", this, "BUTTON", btn_blueFlag, CONTROL_SNAP_BOTTOM);
+    btn_spawn = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x05Spawn", this, "BUTTON", btn_redFlag, CONTROL_SNAP_BOTTOM);
+    btn_blueSpawn = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x01Spawn", this, "BUTTON", btn_spawn, CONTROL_SNAP_BOTTOM);
+    btn_redSpawn = new CControl(frameObjects, CVector2i(10, 10), CVector2i(70, 30), "\x04Spawn", this, "BUTTON", btn_blueSpawn, CONTROL_SNAP_BOTTOM);
 
     frameSize = new CControl(editorRoot, CVector2i(0, 50), CVector2i(190, 160), "", this, "FRAME", 0, CONTROL_SNAP_TOP, 10, true);
     btn_insertLineH = new CControl(frameSize, CVector2i(10, 10), CVector2i(170, 30), "Insert horizontal line", this, "BUTTON");
-    btn_insertLineV = new CControl(frameSize, CVector2i(10, 10), CVector2i(170, 30), "Insert vertical line",   this, "BUTTON", btn_insertLineH, CONTROL_SNAP_BOTTOM);
+    btn_insertLineV = new CControl(frameSize, CVector2i(10, 10), CVector2i(170, 30), "Insert vertical line", this, "BUTTON", btn_insertLineH, CONTROL_SNAP_BOTTOM);
     btn_removeLineH = new CControl(frameSize, CVector2i(10, 10), CVector2i(170, 30), "Remove horizontal line", this, "BUTTON", btn_insertLineV, CONTROL_SNAP_BOTTOM);
-    btn_removeLineV = new CControl(frameSize, CVector2i(10, 10), CVector2i(170, 30), "Remove vertical line",   this, "BUTTON", btn_removeLineH, CONTROL_SNAP_BOTTOM);
+    btn_removeLineV = new CControl(frameSize, CVector2i(10, 10), CVector2i(170, 30), "Remove vertical line", this, "BUTTON", btn_removeLineH, CONTROL_SNAP_BOTTOM);
 
     frameMisc = new CControl(editorRoot, CVector2i(0, 50), CVector2i(90, 90), "", this, "FRAME", 0, CONTROL_SNAP_TOP, 10, true);
-    btn_theme    = new CControl(frameMisc, CVector2i(10, 10), CVector2i(70, 30), "Theme",      this, "BUTTON");
-    btn_clearMap = new CControl(frameMisc, CVector2i(10, 10), CVector2i(70, 30), "Clear map",  this, "BUTTON", btn_theme, CONTROL_SNAP_BOTTOM);
+    btn_theme = new CControl(frameMisc, CVector2i(10, 10), CVector2i(70, 30), "Theme", this, "BUTTON");
+    btn_clearMap = new CControl(frameMisc, CVector2i(10, 10), CVector2i(70, 30), "Clear map", this, "BUTTON", btn_theme, CONTROL_SNAP_BOTTOM);
 
     // Set different background for frames
-    frameMain->backColor.set(.25f,.25f,.25f);
-    frameFile->backColor.set(.25f,.25f,.25f);
-    frameTerrain->backColor.set(.25f,.25f,.25f);
-    frameObjects->backColor.set(.25f,.25f,.25f);
-    frameSize->backColor.set(.25f,.25f,.25f);
-    frameMisc->backColor.set(.25f,.25f,.25f);
+    frameMain->backColor.set(.25f, .25f, .25f);
+    frameFile->backColor.set(.25f, .25f, .25f);
+    frameTerrain->backColor.set(.25f, .25f, .25f);
+    frameObjects->backColor.set(.25f, .25f, .25f);
+    frameSize->backColor.set(.25f, .25f, .25f);
+    frameMisc->backColor.set(.25f, .25f, .25f);
     ShowFrame(0);
 
     if((0 <= active) && (active <= tools.size()))
@@ -198,9 +199,9 @@ bool Editor2::isCursorInControl(CControl * control) const
     return
         control->visible &&
         (
-            (control->pos[0] <= menuManager.mousePos[0]) && (menuManager.mousePos[0] <= (control->pos[0] + control->size[0])) &&
+        (control->pos[0] <= menuManager.mousePos[0]) && (menuManager.mousePos[0] <= (control->pos[0] + control->size[0])) &&
             (control->pos[1] <= menuManager.mousePos[1]) && (menuManager.mousePos[1] <= (control->pos[1] + control->size[1]))
-        );
+            );
 }
 
 bool Editor2::isCursorInFrame(float delay)
@@ -256,130 +257,132 @@ void Editor2::update(float delay)
     mouseInMenu = isCursorInFrame(delay);
 
     auto cconsole = static_cast<ClientConsole*>(console);
-    if (map && !cconsole->isActive())
+    auto cmap = static_cast<ClientMap*>(map);
+    if(cmap && !cconsole->isActive())
     {
         // Weather update
-        if (map->m_weather)
-            map->m_weather->update(delay, map);
+        if(cmap->m_weather)
+            cmap->m_weather->update(delay, map);
         // Tool update
-        if ((0 <= this->active) && (this->active < tools.size()) && !mouseInMenu)
+        if((0 <= this->active) && (this->active < tools.size()) && !mouseInMenu)
         {
-            if (dkiGetState(DKI_MOUSE_BUTTON1) && !mouseInMenu)
+            if(dkiGetState(DKI_MOUSE_BUTTON1) && !mouseInMenu)
             {
                 tools.at(active)->LeftClick(this, delay);
                 //ShowFrame(0);
             }
-            if (dkiGetState(DKI_MOUSE_BUTTON2) && !mouseInMenu)
+            if(dkiGetState(DKI_MOUSE_BUTTON2) && !mouseInMenu)
             {
                 tools.at(active)->RightClick(this, delay);
                 //ShowFrame(0);
             }
-            if (dkiGetState(DKI_MOUSE_BUTTON3) && !mouseInMenu)
+            if(dkiGetState(DKI_MOUSE_BUTTON3) && !mouseInMenu)
             {
                 tools.at(active)->MiddleClick(this, delay);
                 //ShowFrame(0);
             }
         }
         // Hotkeys
-        if (dkiGetState(KeyG))
+        if(dkiGetState(KeyG))
         {
             Click(btn_ground);
         }
-        if (dkiGetState(KeyH))
+        if(dkiGetState(KeyH))
         {
             Click(btn_alternative);
         }
-        if (dkiGetState(Key1))
+        if(dkiGetState(Key1))
         {
             Click(btn_block1);
         }
-        if (dkiGetState(Key2))
+        if(dkiGetState(Key2))
         {
             Click(btn_block2);
         }
-        if (dkiGetState(Key3))
+        if(dkiGetState(Key3))
         {
             Click(btn_block3);
         }
-        if (dkiGetState(Key4))
+        if(dkiGetState(Key4))
         {
             Click(btn_block4);
         }
-        if (dkiGetState(Key5))
+        if(dkiGetState(Key5))
         {
             Click(btn_block5);
         }
-        if (dkiGetState(KeyB))
+        if(dkiGetState(KeyB))
         {
             Click(btn_blueFlag);
         }
-        if (dkiGetState(KeyN))
+        if(dkiGetState(KeyN))
         {
             Click(btn_redFlag);
         }
-        if (dkiGetState(KeyU))
+        if(dkiGetState(KeyU))
         {
             Click(btn_spawn);
         }
-        if (dkiGetState(KeyJ))
+        if(dkiGetState(KeyJ))
         {
             Click(btn_blueSpawn);
         }
-        if (dkiGetState(KeyM))
+        if(dkiGetState(KeyM))
         {
             Click(btn_redSpawn);
         }
-        if (dkiGetState(KeyPageUp))
+        if(dkiGetState(KeyPageUp))
         {
             Click(btn_theme);
         }
-        if (dkiGetState(KeyEscape))
+        if(dkiGetState(KeyEscape))
         {
             Click(btn_quit);
         }
         // Movement
-        if (dkiGetState(KeyD))
+        if(dkiGetState(KeyD))
         {
-            map->camLookAt[0] += 20 * delay;
+            cmap->camLookAt[0] += 20 * delay;
         }
-        if (dkiGetState(KeyA))
+        if(dkiGetState(KeyA))
         {
-            map->camLookAt[0] -= 20 * delay;
+            cmap->camLookAt[0] -= 20 * delay;
         }
-        if (dkiGetState(KeyW))
+        if(dkiGetState(KeyW))
         {
-            map->camLookAt[1] += 20 * delay;
+            cmap->camLookAt[1] += 20 * delay;
         }
-        if (dkiGetState(KeyS))
+        if(dkiGetState(KeyS))
         {
-            map->camLookAt[1] -= 20 * delay;
+            cmap->camLookAt[1] -= 20 * delay;
         }
-        map->update(delay, 0);
+        cmap->update(delay, 0);
     }
 }
 
 void Editor2::render()
 {
+    auto cmap = static_cast<ClientMap*>(map);
     dkoDisable(DKO_MULTIPASS);
 
-    if (map)
+    if(map)
     {
         // Position the camera
         glLoadIdentity();
-        CVector3f up(0,1,1);
+        CVector3f up(0, 1, 1);
         normalize(up);
-        if (gameVar.sv_topView)
+        if(gameVar.sv_topView)
         {
             dkglLookAt(
-                map->camPos[0], map->camPos[1], map->camPos[2],
-                map->camPos[0], map->camPos[1], 0,
+                cmap->camPos[0], cmap->camPos[1], cmap->camPos[2],
+                cmap->camPos[0], cmap->camPos[1], 0,
                 up[0], up[1], up[2]);
         }
         else
         {
             dkglLookAt(
-                map->camPos[0], map->camPos[1]-4.0f, map->camPos[2],
-                map->camPos[0], map->camPos[1]-1.0f, 0,
+                cmap->camPos[0], cmap->camPos[1] - 4.0f, cmap->camPos[2],
+                cmap->camPos[0], cmap->camPos[1] - 1.0f, 0,
                 up[0], up[1], up[2]);
         }
 
@@ -394,50 +397,50 @@ void Editor2::render()
         mouseOnMap = nearMouse + (farMouse - nearMouse) * percent;
         cellCursor[0] = (int)mouseOnMap[0];
         cellCursor[1] = (int)mouseOnMap[1];
-        if ((0 <= active) && (active < tools.size()))
+        if((0 <= active) && (active < tools.size()))
         {
             tools.at(active)->ValidateCursor(cellCursor, map->size);
         }
         else
         {
-            if (cellCursor[0] < 1) cellCursor[0] = 1;
-            if (cellCursor[1] < 1) cellCursor[1] = 1;
-            if (cellCursor[0] > map->size[0] - 2) cellCursor[0] = map->size[0] - 2;
-            if (cellCursor[1] > map->size[1] - 2) cellCursor[1] = map->size[1] - 2;
+            if(cellCursor[0] < 1) cellCursor[0] = 1;
+            if(cellCursor[1] < 1) cellCursor[1] = 1;
+            if(cellCursor[0] > map->size[0] - 2) cellCursor[0] = map->size[0] - 2;
+            if(cellCursor[1] > map->size[1] - 2) cellCursor[1] = map->size[1] - 2;
         }
 
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
 
-            // Da Sun!
-            glEnable(GL_LIGHTING);
-            dkglSetPointLight(1, -1000, 1000, 2000, 1, 1, 1);
+        // Da Sun!
+        glEnable(GL_LIGHTING);
+        dkglSetPointLight(1, -1000, 1000, 2000, 1, 1, 1);
 
-            /*if(gameVar.r_weatherEffects) {
-                glEnable(GL_FOG);
-                glFogi(GL_FOG_MODE, GL_LINEAR);
-                glFogfv(GL_FOG_COLOR, map->fogColor.s);
-                glFogf(GL_FOG_DENSITY, map->fogDensity);
-                glFogf(GL_FOG_START, map->camPos[2] - map->fogStart);
-                glFogf(GL_FOG_END, map->camPos[2] - map->fogEnd);
-            }
-            else*/
-                glDisable(GL_FOG);
+        /*if(gameVar.r_weatherEffects) {
+            glEnable(GL_FOG);
+            glFogi(GL_FOG_MODE, GL_LINEAR);
+            glFogfv(GL_FOG_COLOR, map->fogColor.s);
+            glFogf(GL_FOG_DENSITY, map->fogDensity);
+            glFogf(GL_FOG_START, map->camPos[2] - map->fogStart);
+            glFogf(GL_FOG_END, map->camPos[2] - map->fogEnd);
+        }
+        else*/
+        glDisable(GL_FOG);
 
-            // Render the map
-            map->renderGround();
+        // Render the map
+        cmap->renderGround();
 
-            // Render flags, spawns and other shit
-            map->renderMisc();
+        // Render flags, spawns and other shit
+        cmap->renderMisc();
 
-            {
-                // Render shadows
-                map->renderShadow();
+        {
+            // Render shadows
+            cmap->renderShadow();
 
-                // Render walls
-                map->renderWalls();
-            }
+            // Render walls
+            cmap->renderWalls();
+        }
 
-            if (map->m_weather) map->m_weather->render();
+        if(cmap->m_weather) cmap->m_weather->render();
 
         glPopAttrib();
 
@@ -453,12 +456,12 @@ void Editor2::render()
             // Render cursor position
             glClear(GL_DEPTH_BUFFER_BIT);
             dkglPushOrtho(800, 600);
-                glPushAttrib(GL_ENABLE_BIT);
-                    glDisable(GL_DEPTH_TEST);
-                    glEnable(GL_BLEND);
-                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                    printRightText(796, 564, 32, CString("(%d; %d)", cellCursor[0], cellCursor[1]));
-                glPopAttrib();
+            glPushAttrib(GL_ENABLE_BIT);
+            glDisable(GL_DEPTH_TEST);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            printRightText(796, 564, 32, CString("(%d; %d)", cellCursor[0], cellCursor[1]));
+            glPopAttrib();
             dkglPopOrtho();
         }
     }
@@ -469,45 +472,46 @@ void Editor2::render()
 
 void Editor2::renderMiniMap()
 {
-    CVector2i res(800,600);
+    auto cmap = static_cast<ClientMap*>(map);
+    CVector2i res(800, 600);
     dkglPushOrtho((float)res[0], (float)res[1]);
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_TEXTURE_2D);
-            glDisable(GL_CULL_FACE);
-            glBindTexture(GL_TEXTURE_2D, map->texMap);
-            glPushMatrix();
-                float scalar = 128.0f / (float)std::max<int>(map->size[0], map->size[1]);
-                glTranslatef(20, (float)res[1]-20,0);
-                glScalef(scalar,-scalar,scalar); // Invert the Y axis
-                glBegin(GL_QUADS);
-                    glColor4f(1,1,1,.5f);
-                    glTexCoord2f(0.0f, map->texMapSize[1]);
-                    glVertex2i(0, map->size[1]);
-                    glTexCoord2f(0.0f, 0.0f);
-                    glVertex2i(0, 0);
-                    glTexCoord2f(map->texMapSize[0], 0.0f);
-                    glVertex2i(map->size[0], 0);
-                    glTexCoord2f(map->texMapSize[0], map->texMapSize[1]);
-                    glVertex2i(map->size[0], map->size[1]);
-                glEnd();
-                if((activeDialog == 0) && !mouseInMenu)
-                {
-                    glTranslatef((float)cellCursor[0], (float)cellCursor[1], 0);
-                    glDisable(GL_DEPTH_TEST);
-                    glDisable(GL_TEXTURE_2D);
-                    glLineWidth(1);
-                    glColor3f(1,1,0);
-                    glBegin(GL_LINE_LOOP);
-                        glVertex2i(0,1);
-                        glVertex2i(0,0);
-                        glVertex2i(1,0);
-                        glVertex2i(1,1);
-                    glEnd();
-                }
-            glPopMatrix();
-        glPopAttrib();
+    glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_CULL_FACE);
+    glBindTexture(GL_TEXTURE_2D, cmap->texMap);
+    glPushMatrix();
+    float scalar = 128.0f / (float)std::max<int>(map->size[0], map->size[1]);
+    glTranslatef(20, (float)res[1] - 20, 0);
+    glScalef(scalar, -scalar, scalar); // Invert the Y axis
+    glBegin(GL_QUADS);
+    glColor4f(1, 1, 1, .5f);
+    glTexCoord2f(0.0f, cmap->texMapSize[1]);
+    glVertex2i(0, cmap->size[1]);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2i(0, 0);
+    glTexCoord2f(cmap->texMapSize[0], 0.0f);
+    glVertex2i(cmap->size[0], 0);
+    glTexCoord2f(cmap->texMapSize[0], cmap->texMapSize[1]);
+    glVertex2i(map->size[0], map->size[1]);
+    glEnd();
+    if((activeDialog == 0) && !mouseInMenu)
+    {
+        glTranslatef((float)cellCursor[0], (float)cellCursor[1], 0);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
+        glLineWidth(1);
+        glColor3f(1, 1, 0);
+        glBegin(GL_LINE_LOOP);
+        glVertex2i(0, 1);
+        glVertex2i(0, 0);
+        glVertex2i(1, 0);
+        glVertex2i(1, 1);
+        glEnd();
+    }
+    glPopMatrix();
+    glPopAttrib();
     dkglPopOrtho();
 }
 
@@ -517,10 +521,10 @@ void Editor2::renderSquare(const CControl * control, int distance, const CColor4
     {
         glColor4fv(color.s);
         glBegin(GL_LINE_LOOP);
-            glVertex2i(control->pos[0] - distance,                    control->pos[1] - distance);
-            glVertex2i(control->pos[0] - distance,                    control->pos[1] + control->size[1] + distance);
-            glVertex2i(control->pos[0] + control->size[0] + distance, control->pos[1] + control->size[1] + distance);
-            glVertex2i(control->pos[0] + control->size[0] + distance, control->pos[1] - distance);
+        glVertex2i(control->pos[0] - distance, control->pos[1] - distance);
+        glVertex2i(control->pos[0] - distance, control->pos[1] + control->size[1] + distance);
+        glVertex2i(control->pos[0] + control->size[0] + distance, control->pos[1] + control->size[1] + distance);
+        glVertex2i(control->pos[0] + control->size[0] + distance, control->pos[1] - distance);
         glEnd();
     }
 }
@@ -528,58 +532,58 @@ void Editor2::renderSquare(const CControl * control, int distance, const CColor4
 void Editor2::renderSelection() const
 {
     dkglPushOrtho(800, 600);
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-            glDisable(GL_DEPTH_TEST);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glLineWidth(2);
-            // Render selected menu buttons
-            if(frameFile->visible)
-            {
-                renderSquare(btn_file, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
-            }
-            if(frameTerrain->visible)
-            {
-                renderSquare(btn_terrain, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
-                switch(active)
-                {
-                case  0: renderSquare(btn_ground,       3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  1: renderSquare(btn_alternative,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  2: renderSquare(btn_block1,       3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  3: renderSquare(btn_block2,       3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  4: renderSquare(btn_block3,       3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  5: renderSquare(btn_block4,       3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  6: renderSquare(btn_block5,       3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                }
-            }
-            if(frameObjects->visible)
-            {
-                renderSquare(btn_objects, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
-                switch(active)
-                {
-                case  7: renderSquare(btn_redFlag,      3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  8: renderSquare(btn_blueFlag,     3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case  9: renderSquare(btn_spawn,        3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 10: renderSquare(btn_redSpawn,     3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 11: renderSquare(btn_blueSpawn,    3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                }
-            }
-            if(frameSize->visible)
-            {
-                renderSquare(btn_size, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
-                switch(active)
-                {
-                case 12: renderSquare(btn_insertLineH,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 13: renderSquare(btn_insertLineV,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 14: renderSquare(btn_removeLineH,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                case 15: renderSquare(btn_removeLineV,  3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
-                }
-            }
-            if(frameMisc->visible)
-            {
-                renderSquare(btn_misc, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
-            }
-        glPopAttrib();
+    glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glLineWidth(2);
+    // Render selected menu buttons
+    if(frameFile->visible)
+    {
+        renderSquare(btn_file, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+    }
+    if(frameTerrain->visible)
+    {
+        renderSquare(btn_terrain, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+        switch(active)
+        {
+        case  0: renderSquare(btn_ground, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case  1: renderSquare(btn_alternative, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case  2: renderSquare(btn_block1, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case  3: renderSquare(btn_block2, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case  4: renderSquare(btn_block3, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case  5: renderSquare(btn_block4, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case  6: renderSquare(btn_block5, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        }
+    }
+    if(frameObjects->visible)
+    {
+        renderSquare(btn_objects, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+        switch(active)
+        {
+        case  7: renderSquare(btn_redFlag, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case  8: renderSquare(btn_blueFlag, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case  9: renderSquare(btn_spawn, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case 10: renderSquare(btn_redSpawn, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case 11: renderSquare(btn_blueSpawn, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        }
+    }
+    if(frameSize->visible)
+    {
+        renderSquare(btn_size, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+        switch(active)
+        {
+        case 12: renderSquare(btn_insertLineH, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case 13: renderSquare(btn_insertLineV, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case 14: renderSquare(btn_removeLineH, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        case 15: renderSquare(btn_removeLineV, 3, CColor4f(0.0f, 1.0f, 0.0f, 1.0f)); break;
+        }
+    }
+    if(frameMisc->visible)
+    {
+        renderSquare(btn_misc, 5, CColor4f(0.0f, 1.0f, 0.0f, 1.0f));
+    }
+    glPopAttrib();
     dkglPopOrtho();
 }
 
@@ -600,44 +604,45 @@ void Editor2::Open(CString mapName)
 
 void Editor2::Save(CString mapName)
 {
+    auto cmap = static_cast<ClientMap*>(map);
     int i, j;
     map->mapName = mapName;
     // On save la map dans ce cas!
     FileIO file(CString("main/maps/%s.bvm", mapName.s), "wb");
-    if (!file.isValid())
+    if(!file.isValid())
     {
         console->add("\x4> Error saving map");
     }
     else
     {
-// 20202 version save
-        // save version
+        // 20202 version save
+                // save version
         file.put((unsigned long)MAP_VERSION);
         // save author name
-        char author_name_buffer[25] = {0};
-        strncpy(author_name_buffer, map->author_name.s, 24);
+        char author_name_buffer[25] = { 0 };
+        strncpy(author_name_buffer, cmap->author_name.s, 24);
         file.put(author_name_buffer, 25);
         // save theme and weather
-        file.put(map->theme);
-        file.put(map->weather);
+        file.put(cmap->theme);
+        file.put(cmap->weather);
 
         // map size
-        file.put(map->size[0]);
-        file.put(map->size[1]);
+        file.put(cmap->size[0]);
+        file.put(cmap->size[1]);
 
         // map cells
-        for (j = 0; j < map->size[1]; ++j)
+        for(j = 0; j < cmap->size[1]; ++j)
         {
-            for (i = 0; i < map->size[0]; ++i)
+            for(i = 0; i < cmap->size[0]; ++i)
             {
                 unsigned int index = j * map->size[0] + i;
                 // passable or not
                 unsigned char data = 0;
-                if (map->cells[index].passable)
+                if(map->cells[index].passable)
                     data = 128;
                 data = data | (unsigned char)(map->cells[index].height);
                 file.put(data);
-                file.put((unsigned char)(map->cells[index].splater[1]*255.0f));
+                file.put((unsigned char)(map->cells[index].splater[1] * 255.0f));
             }
         }
 
@@ -655,7 +660,7 @@ void Editor2::Save(CString mapName)
 
         // now save the common spawns
         file.put((int)map->dm_spawns.size());
-        for (i=0;i<(int)map->dm_spawns.size();++i) file.put(map->dm_spawns[i]);
+        for(i = 0; i < (int)map->dm_spawns.size(); ++i) file.put(map->dm_spawns[i]);
 
         // save game-type specific data
         // although DM and TDM doesn't have any data, we put their ID's, too
@@ -679,7 +684,7 @@ void Editor2::Save(CString mapName)
         temp_spawns.clear();
         // now save the spawns
         file.put((int)map->blue_spawns.size());
-        for (i=0;i<(int)map->blue_spawns.size();++i) file.put(map->blue_spawns[i]);
+        for(i = 0; i < (int)map->blue_spawns.size(); ++i) file.put(map->blue_spawns[i]);
         // Trim duplicate spawns (if any) before saving
         temp_spawns = map->red_spawns;
         map->red_spawns.clear();
@@ -693,7 +698,7 @@ void Editor2::Save(CString mapName)
         temp_spawns.clear();
         // now save the spawns
         file.put((int)map->red_spawns.size());
-        for (i=0;i<(int)map->red_spawns.size();++i) file.put(map->red_spawns[i]);
+        for(i = 0; i < (int)map->red_spawns.size(); ++i) file.put(map->red_spawns[i]);
 
         isDirty = false;
     }
@@ -701,42 +706,43 @@ void Editor2::Save(CString mapName)
 
 void Editor2::Click(CControl * control)
 {
-    if (control == btn_file)
+    auto cmap = static_cast<ClientMap*>(map);
+    if(control == btn_file)
     {
         ShowFrame(frameFile->visible ? 0 : frameFile);
         return;
     }
-    if (control == btn_terrain)
+    if(control == btn_terrain)
     {
         ShowFrame(frameTerrain->visible ? 0 : frameTerrain);
         return;
     }
-    if (control == btn_objects)
+    if(control == btn_objects)
     {
         ShowFrame(frameObjects->visible ? 0 : frameObjects);
         return;
     }
-    if (control == btn_size)
+    if(control == btn_size)
     {
         ShowFrame(frameSize->visible ? 0 : frameSize);
         return;
     }
-    if (control == btn_misc)
+    if(control == btn_misc)
     {
         ShowFrame(frameMisc->visible ? 0 : frameMisc);
         return;
     }
-    if (control == btn_new)
+    if(control == btn_new)
     {
         activeDialog = new NewMapDialog(this, editorRoot->font, gameVar.cl_mapAuthorName);
         return;
     }
-    if (control == btn_open)
+    if(control == btn_open)
     {
         activeDialog = new OpenMapDialog(this, editorRoot->font);
         return;
     }
-    if (control == btn_save)
+    if(control == btn_save)
     {
         if(isDirty)
         {
@@ -746,112 +752,112 @@ void Editor2::Click(CControl * control)
             }
             else
             {
-                activeDialog = new SaveAsMapDialog(this, editorRoot->font, map->author_name, map->mapName);
+                activeDialog = new SaveAsMapDialog(this, editorRoot->font, cmap->author_name, map->mapName);
             }
         }
         return;
     }
-    if (control == btn_saveAs)
+    if(control == btn_saveAs)
     {
-        activeDialog = new SaveAsMapDialog(this, editorRoot->font, map->author_name, map->mapName);
+        activeDialog = new SaveAsMapDialog(this, editorRoot->font, cmap->author_name, map->mapName);
         return;
     }
-    if (control == btn_ground)
+    if(control == btn_ground)
     {
         ActivateTool(0);
         return;
     }
-    if (control == btn_alternative)
+    if(control == btn_alternative)
     {
         ActivateTool(1);
         return;
     }
-    if (control == btn_block1)
+    if(control == btn_block1)
     {
         ActivateTool(2);
         return;
     }
-    if (control == btn_block2)
+    if(control == btn_block2)
     {
         ActivateTool(3);
         return;
     }
-    if (control == btn_block3)
+    if(control == btn_block3)
     {
         ActivateTool(4);
         return;
     }
-    if (control == btn_block4)
+    if(control == btn_block4)
     {
         ActivateTool(5);
         return;
     }
-    if (control == btn_block5)
+    if(control == btn_block5)
     {
         ActivateTool(6);
         return;
     }
-    if (control == btn_redFlag)
+    if(control == btn_redFlag)
     {
         ActivateTool(7);
         return;
     }
-    if (control == btn_blueFlag)
+    if(control == btn_blueFlag)
     {
         ActivateTool(8);
         return;
     }
-    if (control == btn_spawn)
+    if(control == btn_spawn)
     {
         ActivateTool(9);
         return;
     }
-    if (control == btn_redSpawn)
+    if(control == btn_redSpawn)
     {
         ActivateTool(10);
         return;
     }
-    if (control == btn_blueSpawn)
+    if(control == btn_blueSpawn)
     {
         ActivateTool(11);
         return;
     }
-    if (control == btn_insertLineH)
+    if(control == btn_insertLineH)
     {
         ActivateTool(12);
         return;
     }
-    if (control == btn_insertLineV)
+    if(control == btn_insertLineV)
     {
         ActivateTool(13);
         return;
     }
-    if (control == btn_removeLineH)
+    if(control == btn_removeLineH)
     {
         ActivateTool(14);
         return;
     }
-    if (control == btn_removeLineV)
+    if(control == btn_removeLineV)
     {
         ActivateTool(15);
         return;
     }
-    if (control == btn_theme)
+    if(control == btn_theme)
     {
-        map->theme++;
-        if (map->theme > THEME_END)
+        cmap->theme++;
+        if(cmap->theme > THEME_END)
         {
-            map->theme = THEME_START;
+            cmap->theme = THEME_START;
         }
-        map->reloadTheme();
-        map->reloadWeather();
+        cmap->reloadTheme();
+        cmap->reloadWeather();
         isDirty = true;
         return;
     }
-    if (control == btn_clearMap)
+    if(control == btn_clearMap)
     {
-        map->theme = THEME_START;
-        map->weather = WEATHER_NONE;
+        cmap->theme = THEME_START;
+        cmap->weather = WEATHER_NONE;
         map->dm_spawns.clear();
         map->blue_spawns.clear();
         map->red_spawns.clear();
@@ -878,15 +884,15 @@ void Editor2::Click(CControl * control)
                 map->cells[index].splater[3] = 0.0f;
             }
         }
-        map->regenTex();
-        map->reloadTheme();
-        map->reloadWeather();
+        cmap->regenTex();
+        cmap->reloadTheme();
+        cmap->reloadWeather();
         isDirty = true;
         return;
     }
-    if (control == btn_quit)
+    if(control == btn_quit)
     {
-        if (!isDirty)
+        if(!isDirty)
         {
             needToShutDown = true;
             ShowFrame(0);

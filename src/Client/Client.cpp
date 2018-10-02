@@ -27,6 +27,7 @@
 #include "CControl.h"
 #include "CMenuManager.h"
 #include "baboNet.h"
+#include "ClientMap.h"
 
 extern Scene * scene;
 
@@ -254,7 +255,7 @@ void Client::update(float delay)
         else if(result == 2)
         {
             // Le server a foutu le CAMP !
-            console->add(CString("\x3> ") + gameVar.lang_serverDisconnected);
+            console->add(CString("\x3> ") + clientVar.lang_serverDisconnected);
             needToShutDown = true;
             //  scene->menu->currentMenu = MENU_SERVER_SHUTDOWN;
         }
@@ -273,19 +274,19 @@ void Client::update(float delay)
         if(!(menuManager.root && menuManager.root->visible) && !showMenu)
         {
             auto cconsole = static_cast<ClientConsole*>(console);
-            if(!cconsole->isActive() && dkiGetState(gameVar.k_chatAll) == DKI_DOWN && !chatting.haveFocus())
+            if(!cconsole->isActive() && dkiGetState(clientVar.k_chatAll) == DKI_DOWN && !chatting.haveFocus())
             {
                 isChattingTeam = false;
                 cconsole->lock();
                 chatting.giveFocus();
             }
-            if(!cconsole->isActive() && dkiGetState(gameVar.k_chatTeam) == DKI_DOWN && !chatting.haveFocus())
+            if(!cconsole->isActive() && dkiGetState(clientVar.k_chatTeam) == DKI_DOWN && !chatting.haveFocus())
             {
                 isChattingTeam = true;
                 cconsole->lock();
                 chatting.giveFocus();
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg01) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg01) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg01.s[1]));
                 if(gameVar.cl_qMsg01.s[0] == 'a')
@@ -294,7 +295,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg02) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg02) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg02.s[1]));
                 if(gameVar.cl_qMsg02.s[0] == 'a')
@@ -303,7 +304,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg03) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg03) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg03.s[1]));
                 if(gameVar.cl_qMsg03.s[0] == 'a')
@@ -312,7 +313,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg04) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg04) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg04.s[1]));
                 if(gameVar.cl_qMsg04.s[0] == 'a')
@@ -321,7 +322,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg05) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg05) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg05.s[1]));
                 if(gameVar.cl_qMsg05.s[0] == 'a')
@@ -330,7 +331,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg06) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg06) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg06.s[1]));
                 if(gameVar.cl_qMsg06.s[0] == 'a')
@@ -339,7 +340,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg07) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg07) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg07.s[1]));
                 if(gameVar.cl_qMsg07.s[0] == 'a')
@@ -348,7 +349,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg08) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg08) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg08.s[1]));
                 if(gameVar.cl_qMsg08.s[0] == 'a')
@@ -357,7 +358,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg09) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg09) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg09.s[1]));
                 if(gameVar.cl_qMsg09.s[0] == 'a')
@@ -366,7 +367,7 @@ void Client::update(float delay)
                     this->sayteam(msg);
                 timeSinseLastQMsg = 0.0f;
             }
-            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(gameVar.k_qMsg10) == DKI_DOWN && !chatting.haveFocus())
+            if((timeSinseLastQMsg >= MIN_TIME_BETWEEN_QMSG) && !cconsole->isActive() && dkiGetState(clientVar.k_qMsg10) == DKI_DOWN && !chatting.haveFocus())
             {
                 CString msg("%s", &(gameVar.cl_qMsg10.s[1]));
                 if(gameVar.cl_qMsg10.s[0] == 'a')
@@ -400,7 +401,7 @@ void Client::update(float delay)
 
         // Si on fait Esc, on spawn un menu
         auto cconsole = static_cast<ClientConsole*>(console);
-        if(dkiGetState(gameVar.k_menuAccess) == DKI_DOWN && !cconsole->isActive() && isConnected && !(menuManager.root && menuManager.root->visible))
+        if(dkiGetState(clientVar.k_menuAccess) == DKI_DOWN && !cconsole->isActive() && isConnected && !(menuManager.root && menuManager.root->visible))
         {
             if(!chatting.haveFocus())
             {
@@ -416,12 +417,12 @@ void Client::update(float delay)
 
         // Screenshot
 #ifdef WIN32
-        if(dkiGetState(gameVar.k_screenShot) == DKI_DOWN && !cconsole->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
+        if(dkiGetState(clientVar.k_screenShot) == DKI_DOWN && !cconsole->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
         {
             SaveScreenGrabAuto();
         }
 
-        if(dkiGetState(gameVar.k_stats) == DKI_DOWN && !cconsole->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
+        if(dkiGetState(clientVar.k_stats) == DKI_DOWN && !cconsole->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
         {
             SaveStatsAuto();
         }
@@ -476,7 +477,7 @@ void Client::update(float delay)
     else if(result == 2)
     {
         // Le server a foutu le CAMP !
-        console->add(CString("\x3> ") + gameVar.lang_serverDisconnected);
+        console->add(CString("\x3> ") + clientVar.lang_serverDisconnected);
         needToShutDown = true;
     }
     else if(result == 3)
@@ -488,7 +489,8 @@ void Client::update(float delay)
     {
         if(game->map)
         {
-            FSOUND_3D_Listener_SetAttributes(game->map->camPos.s, 0, 0, 0, 1, 0, 1, 0);
+            auto cmap = static_cast<ClientMap*>(game->map);
+            FSOUND_3D_Listener_SetAttributes(cmap->camPos.s, 0, 0, 0, 1, 0, 1, 0);
             FSOUND_Update();
         }
     }
@@ -737,14 +739,14 @@ void Client::sayall(CString message)
             // On insert son �tat (mort)
             if(game->thisPlayer->status == PLAYER_STATUS_DEAD && game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
             {
-                message.insert(CString("(%s)", gameVar.lang_dead.s).s, 0);
+                message.insert(CString("(%s)", clientVar.lang_dead.s).s, 0);
             }
 
             // On insert la couleur d�pendament du team
             switch(game->thisPlayer->teamID)
             {
             case PLAYER_TEAM_SPECTATOR:
-                message.insert(CString("\x8(%s)", gameVar.lang_spectator.s).s, 0);
+                message.insert(CString("\x8(%s)", clientVar.lang_spectator.s).s, 0);
                 break;
             case PLAYER_TEAM_BLUE:
                 message.insert("{\x1 ", 0);
@@ -802,14 +804,14 @@ void Client::sayteam(CString message)
             }
 
             // C'est un team message
-            message.insert(CString("(%s)", gameVar.lang_team.s).s, 0);
+            message.insert(CString("(%s)", clientVar.lang_team.s).s, 0);
 
             if(game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
             {
                 // On insert son �tat (mort)
                 if(game->thisPlayer->status == PLAYER_STATUS_DEAD)
                 {
-                    message.insert(CString("(%s)", gameVar.lang_dead.s).s, 0);
+                    message.insert(CString("(%s)", clientVar.lang_dead.s).s, 0);
                 }
             }
 
@@ -817,7 +819,7 @@ void Client::sayteam(CString message)
             switch(game->thisPlayer->teamID)
             {
             case PLAYER_TEAM_SPECTATOR:
-                message.insert(CString("\x8(%s)", gameVar.lang_spectator.s).s, 0);
+                message.insert(CString("\x8(%s)", clientVar.lang_spectator.s).s, 0);
                 break;
             case PLAYER_TEAM_BLUE:
                 message.insert("{\x1 ", 0);

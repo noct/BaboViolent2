@@ -17,6 +17,7 @@
 */
 #include "CSnow.h"
 #include "Map.h"
+#include "ClientMap.h"
 
 //
 //--- Constructor
@@ -53,6 +54,7 @@ CSnow::~CSnow()
 //
 void CSnow::update(float delay, Map* map)
 {
+    auto cmap = static_cast<ClientMap*>(map);
     --nextIn;
     //--- On crée la neige yé
     if (nextIn <= 0)
@@ -60,7 +62,7 @@ void CSnow::update(float delay, Map* map)
         nextIn = 3;
         for (int i=0;i<1;++i)
         {
-            rains[nextRain].pos = rand(map->camPos + CVector3f(-3,-3,-2), map->camPos + CVector3f(3,3,-2));
+            rains[nextRain].pos = rand(cmap->camPos + CVector3f(-3,-3,-2), cmap->camPos + CVector3f(3,3,-2));
             nextRain++;
             if (nextRain == 100) nextRain = 0;
         }

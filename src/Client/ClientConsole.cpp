@@ -20,6 +20,7 @@
 #include <Zeven/FileIO.h>
 #include "CMaster.h"
 #include "Scene.h"
+#include "ClientMap.h"
 #include <algorithm>
 #include <string>
 
@@ -729,7 +730,8 @@ void ClientConsole::sendCommand(CString commandLine, bool isAdmin, unsigned long
             }
         }
         else if(reloadWeather && scene && client && client->game && client->game->map) {
-            client->game->map->reloadWeather();
+            auto cmap = static_cast<ClientMap*>(client->game->map);
+            cmap->reloadWeather();
         }
 
         return;
@@ -1325,7 +1327,8 @@ void ClientConsole::sendCommand(CString commandLine, bool isAdmin, unsigned long
     {
         if(scene && client && client->game && client->game->map)
         {
-            client->game->map->buildAll();
+            auto cmap = static_cast<ClientMap*>(client->game->map);
+            cmap->buildAll();
         }
     }
 

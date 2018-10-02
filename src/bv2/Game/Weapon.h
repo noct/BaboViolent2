@@ -15,14 +15,13 @@
     You should have received a copy of the GNU General Public License along with the
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
-
 #ifndef WEAPON_H
 #define WEAPON_H
 #include <Zeven/Core.h>
 #include "netPacket.h"
 #include <vector>
 
-class Player;
+struct Player;
 #define PROJECTILE_DIRECT 1
 #define PROJECTILE_ROCKET 2
 #define PROJECTILE_GRENADE 3

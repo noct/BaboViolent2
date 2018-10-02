@@ -22,6 +22,7 @@
 #include <Zeven/FileIO.h>
 #include <Zeven/Gfx.h>
 #include <algorithm>
+#include "ClientMap.h"
 
 IEditorDialog::IEditorDialog(Editor2 * in_editor, unsigned int font, CString dialogTitle, CVector2i size, DialogButtons buttons)
     :   IDialog(font, dialogTitle, size, buttons)

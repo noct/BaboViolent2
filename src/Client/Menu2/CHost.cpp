@@ -21,6 +21,7 @@
 #include <Zeven/FileIO.h>
 #include "Scene.h"
 #include "Console.h"
+#include <Windows.h>
 
 
 extern Scene * scene;

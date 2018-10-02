@@ -1472,8 +1472,9 @@ dkGfxContext* dkGfxInit(dkContext* ctx, dkGfxConfig config)
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = nullptr;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     ImGui_ImplSDL2_InitForOpenGL(g_window, g_gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGui::StyleColorsDark();

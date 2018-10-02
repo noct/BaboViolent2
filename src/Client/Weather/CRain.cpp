@@ -17,6 +17,7 @@
 */
 #include "CRain.h"
 #include "Map.h"
+#include "ClientMap.h"
 
 //
 //--- Constructor
@@ -49,19 +50,20 @@ CRain::~CRain()
 //
 void CRain::update(float delay, Map* map)
 {
-  int i;
+    auto cmap = static_cast<ClientMap*>(map);
+    int i;
     //--- On crée la pluit yé
-    for (i=0;i<3;++i)
+    for(i = 0; i < 3; ++i)
     {
-        rains[nextRain].pos = rand(map->camPos + CVector3f(-3,-3,5), map->camPos + CVector3f(3,3,5));
+        rains[nextRain].pos = rand(cmap->camPos + CVector3f(-3, -3, 5), cmap->camPos + CVector3f(3, 3, 5));
         nextRain++;
-        if (nextRain == 100) nextRain = 0;
+        if(nextRain == 100) nextRain = 0;
     }
 
     //--- On anime la plus
-    for (i=0;i<100;++i)
+    for(i = 0; i < 100; ++i)
     {
-        if (rains[i].pos[2] > 0)
+        if(rains[i].pos[2] > 0)
         {
             rains[i].update(delay);
         }
@@ -76,18 +78,18 @@ void CRain::update(float delay, Map* map)
 void CRain::render()
 {
     glPushAttrib(GL_ENABLE_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glLineWidth(2);
-        glBegin(GL_LINES);
-            for (int i=0;i<100;++i)
-            {
-                if (rains[i].pos[2] > 0)
-                {
-                    rains[i].render();
-                }
-            }
-        glEnd();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glLineWidth(2);
+    glBegin(GL_LINES);
+    for(int i = 0; i < 100; ++i)
+    {
+        if(rains[i].pos[2] > 0)
+        {
+            rains[i].render();
+        }
+    }
+    glEnd();
     glPopAttrib();
 }
 

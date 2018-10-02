@@ -145,9 +145,6 @@ solution "BaboViolent"
             "src/BaboNet",
             "src/Common",
             "src/Common/External",
-            "src/bv2",
-            "src/bv2/Game",
-            "src/bv2/Master",
             "src/Client",
             "src/Client/Menu",
             "src/Client/Menu2",
@@ -161,10 +158,6 @@ solution "BaboViolent"
         }
 
         files {
-            "src/bv2/**.hpp",
-            "src/bv2/**.cpp",
-            "src/bv2/**.h",
-            "src/bv2/**.c",
             "src/Client/**.hpp",
             "src/Client/**.cpp",
             "src/Client/**.h",
@@ -218,18 +211,11 @@ solution "BaboViolent"
             "src/BaboNet",
             "src/Common",
             "src/Common/External",
-            "src/bv2",
-            "src/bv2/Game",
-            "src/bv2/Master",
             "src",
             "thirdparty/sqlite",
         }
 
         files {
-            "src/bv2/**.hpp",
-            "src/bv2/**.cpp",
-            "src/bv2/**.h",
-            "src/bv2/**.c",
             "src/Server/**.hpp",
             "src/Server/**.cpp",
             "src/Server/**.h",

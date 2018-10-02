@@ -18,10 +18,6 @@
 #ifndef ZEVEN_GFX_H
 #define ZEVEN_GFX_H
 
-#if defined(DEDICATED_SERVER)
-#error Not allowed
-#endif
-
 #include <Zeven/Core.h>
 
 struct CMainLoopInterface

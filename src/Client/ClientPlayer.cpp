@@ -25,17 +25,14 @@
 #include <limits>
 #include "Server.h"
 
-#ifndef DEDICATED_SERVER
 #include "ClientGame.h"
 #include "ClientScene.h"
 #include "ClientHelper.h"
 #include "ClientMap.h"
 #include "ClientConsole.h"
-#endif
 
 extern Scene * scene;
 
-#ifndef DEDICATED_SERVER
 ClientPlayer::ClientPlayer(char pPlayerID, Map * pMap, Game * pGame) : Player(pPlayerID, pMap, pGame)
 {
     isThisPlayer = false;
@@ -568,14 +565,7 @@ void ClientPlayer::renderName()
         }
     }
 }
-#endif
 
-
-
-#ifndef DEDICATED_SERVER
-//
-// Pour updater la skin texture
-//
 void ClientPlayer::updateSkin()
 {
     CColor3f redDecalT;
@@ -668,10 +658,6 @@ void ClientPlayer::updateSkin()
     // update
     dktCreateTextureFromBuffer(&tex_skin, imgData, 64, 32, 3, DKT_FILTER_BILINEAR);
 }
-#endif
-
-
-#ifndef DEDICATED_SERVER
 
 void ClientPlayer::onDeath(Player* from, Weapon * fromWeapon, bool friendlyFire)
 {
@@ -859,14 +845,7 @@ void ClientPlayer::hit(ClientWeapon * fromWeapon, ClientPlayer * from, float dam
         }
     }
 }
-#endif
 
-
-
-#ifndef DEDICATED_SERVER
-//
-// Pour le controller (ça c'est client side only, on ne gère pas le mouvement des autres players comme ça)
-//
 void ClientPlayer::controlIt(float delay)
 {
     // On gère les inputs
@@ -1073,4 +1052,3 @@ void ClientPlayer::controlIt(float delay)
         currentCF.vel = currentCF.vel * 3.25f;
     }
 }
-#endif

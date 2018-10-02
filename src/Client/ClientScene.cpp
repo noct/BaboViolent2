@@ -206,10 +206,9 @@ void ClientScene::render()
         float alphaScope = 0;
         if(client) client->render(alphaScope);
 
-#ifndef DEDICATED_SERVER
         // On render l'editor
         if(editor) editor->render();
-#endif
+
         // On render les menus
         if((menuManager.root) && (menuManager.root->visible))
         {

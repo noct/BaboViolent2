@@ -1522,6 +1522,7 @@ int dkwMainLoop()
     // Swap buffers if valid context is found
     if(g_gl_context)
     {
+        SDL_ShowCursor(false);
         SDL_GL_SwapWindow(g_window);
     }
 

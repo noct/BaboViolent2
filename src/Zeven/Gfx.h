@@ -533,11 +533,11 @@ const int DKT_LUMINANCE = 1;
 const int DKT_RGB = 3;
 const int DKT_RGBA = 4;
 
-unsigned int dktCreateEmptyTexture(int w, int h, int bpp, int filter);
-void         dktCreateTextureFromBuffer(unsigned int *textureID, unsigned char *buffer, int w, int h, int bpp, int filter);
-unsigned int dktCreateTextureFromFile(char *filename, int filter);
-void         dktDeleteTexture(unsigned int *textureID);
-void         dktGetTextureData(unsigned int textureID, unsigned char * data);
+unsigned int    dktCreateEmptyTexture(int w, int h, int bpp, int filter);
+void            dktCreateTextureFromBuffer(unsigned int *textureID, unsigned char *buffer, int w, int h, int bpp, int filter);
+unsigned int    dktCreateTextureFromFile(char *filename, int filter);
+void            dktDeleteTexture(unsigned int *textureID);
+unsigned char * dktGetTextureData(unsigned int textureID, int* w, int* h, int* bpp);
 
 void      dkwForceQuit();
 void      dkwSwap();

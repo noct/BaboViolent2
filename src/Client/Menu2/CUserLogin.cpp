@@ -145,27 +145,34 @@ void CUserLogin::updateSkin()
 
     //--- Hey oui, un recré une texture ogl à chaque fois pour chaque babo qui spawn!!!!
     //--- On est en ogl, faq ça kick ass MOUHOUHOUHAHAHA
-    unsigned char imgData[64*32*4];
-    dktGetTextureData(tex_skinOriginal, imgData);
+    int w = 0;
+    int h = 0;
+    int bpp = 0;
+    unsigned char* imgData = dktGetTextureData(tex_skinOriginal, &w, &h, &bpp);
 
-    //--- Celon son team, on set la couleur du babo en conséquence
-    for (j=0;j<32;++j)
+    if(imgData)
     {
-        for (i=0;i<64;++i)
+        for(int y = 0; y < h; ++y)
         {
-            k = ((j*64) + i) * 4;
-            r = (float)imgData[k + 0] / 255.0f;
-            g = (float)imgData[k + 1] / 255.0f;
-            b = (float)imgData[k + 2] / 255.0f;
-            finalColor = (redDecalT * r + greenDecalT * g + blueDecalT * b) / (r+g+b);
-            imgData[k + 0] = (unsigned char)(finalColor[0] * 255.0f);
-            imgData[k + 1] = (unsigned char)(finalColor[1] * 255.0f);
-            imgData[k + 2] = (unsigned char)(finalColor[2] * 255.0f);
+            for(int x = 0; x < w; ++x)
+            {
+                int k = ((y * w) + x) * bpp;
+                r = (float)imgData[k + 0] / 255.0f;
+                g = (float)imgData[k + 1] / 255.0f;
+                b = (float)imgData[k + 2] / 255.0f;
+                finalColor = (redDecalT * r + greenDecalT * g + blueDecalT * b) / (r + g + b);
+                imgData[k + 0] = (unsigned char)(finalColor[0] * 255.0f);
+                imgData[k + 1] = (unsigned char)(finalColor[1] * 255.0f);
+                imgData[k + 2] = (unsigned char)(finalColor[2] * 255.0f);
+
+            }
         }
+
+        // update
+        dktCreateTextureFromBuffer(&tex_skin, imgData, w, h, 4, DKT_FILTER_BILINEAR);
+        delete[] imgData;
     }
 
-    // update
-    dktCreateTextureFromBuffer(&tex_skin, imgData, 64, 32, 4, DKT_FILTER_BILINEAR);
 }
 
 

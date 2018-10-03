@@ -604,8 +604,10 @@ void ClientPlayer::updateSkin()
 
     //--- Hey oui, on recrclientVar.dkpp_une texture ogl clientVar.dkpp_chaque fois pour chaque babo qui spawn!!!!
     //--- On est en ogl, faq clientVar.dkpp_ kick ass MOUHOUHOUHAHAHA
-    unsigned char imgData[64 * 32 * 3];
-    dktGetTextureData(tex_skinOriginal, imgData);
+    int w = 0;
+    int h = 0;
+    int bpp = 0;
+    unsigned char* imgData = dktGetTextureData(tex_skinOriginal, &w, &h, &bpp);
 
     //--- Celon son team, on set la couleur du babo en consclientVar.dkpp_uence
     if((game->gameType != GAME_TYPE_DM) && gameVar.cl_teamIndicatorType == 0)
@@ -639,23 +641,29 @@ void ClientPlayer::updateSkin()
     int i, j, k;
     float r, g, b;
     CColor3f finalColor;
-    for(j = 0; j < 32; ++j)
-    {
-        for(i = 0; i < 64; ++i)
-        {
-            k = ((j * 64) + i) * 3;
-            r = (float)imgData[k + 0] / 255.0f;
-            g = (float)imgData[k + 1] / 255.0f;
-            b = (float)imgData[k + 2] / 255.0f;
-            finalColor = (redDecalT * r + greenDecalT * g + blueDecalT * b) / (r + g + b);
-            imgData[k + 0] = (unsigned char)(finalColor[0] * 255.0f);
-            imgData[k + 1] = (unsigned char)(finalColor[1] * 255.0f);
-            imgData[k + 2] = (unsigned char)(finalColor[2] * 255.0f);
-        }
-    }
 
-    // update
-    dktCreateTextureFromBuffer(&tex_skin, imgData, 64, 32, 3, DKT_FILTER_BILINEAR);
+    if(imgData)
+    {
+        for(int y = 0; y < h; ++y)
+        {
+            for(int x = 0; x < w; ++x)
+            {
+                int k = ((y * w) + x) * bpp;
+                r = (float)imgData[k + 0] / 255.0f;
+                g = (float)imgData[k + 1] / 255.0f;
+                b = (float)imgData[k + 2] / 255.0f;
+                finalColor = (redDecalT * r + greenDecalT * g + blueDecalT * b) / (r + g + b);
+                imgData[k + 0] = (unsigned char)(finalColor[0] * 255.0f);
+                imgData[k + 1] = (unsigned char)(finalColor[1] * 255.0f);
+                imgData[k + 2] = (unsigned char)(finalColor[2] * 255.0f);
+
+            }
+        }
+
+        // update
+        dktCreateTextureFromBuffer(&tex_skin, imgData, w, h, bpp, DKT_FILTER_BILINEAR);
+        delete[] imgData;
+    }
 }
 
 void ClientPlayer::onDeath(Player* from, Weapon * fromWeapon, bool friendlyFire)

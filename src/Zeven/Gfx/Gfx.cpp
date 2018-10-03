@@ -954,6 +954,7 @@ bool loadTextureFromFile(char * filename, int filter, unsigned int* id) {
         if(texture->filename == filename)
         {
             texture->nbInstance++;
+            *id = texture->oglID;
             return texture->oglID;
         }
     }
@@ -1416,19 +1417,24 @@ void dktDeleteTexture(unsigned int *textureID)
 //
 // Pour obtenir le data d'une texture ogl
 //
-void dktGetTextureData(unsigned int textureID, unsigned char * data)
+unsigned char * dktGetTextureData(unsigned int textureID, int* w, int* h, int* bpp)
 {
     for(int i = 0; i < (int)CDkt::textures.size(); i++)
     {
         CTexture *texture = CDkt::textures.at(i);
         if(texture->oglID == textureID)
         {
+            unsigned char * data = new unsigned char[texture->size.x()*texture->size.y()*texture->bpp];
             glBindTexture(GL_TEXTURE_2D, textureID);
             glGetTexImage(GL_TEXTURE_2D, 0, (texture->bpp == 3) ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);
+            *w = texture->size.x();
+            *h = texture->size.y();
+            *bpp = texture->bpp;
+            return data;
         }
     }
 
-    data = 0;
+    return nullptr;
 }
 
 //

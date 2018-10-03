@@ -3618,7 +3618,8 @@ int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
         {
             char *texFilename = readString(ficIn);
             char strTMP[512];
-            sprintf(strTMP, "%s%s", path, texFilename);
+            strchr(texFilename, '.')[0] = '\0';
+            sprintf(strTMP, "%s%s.png", path, texFilename);
             texDiffuse = dktCreateTextureFromFile(strTMP, DKT_FILTER_BILINEAR);
             delete[] texFilename;
             break;
@@ -3627,7 +3628,8 @@ int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
         {
             char *texFilename = readString(ficIn);
             char strTMP[512];
-            sprintf(strTMP, "%s%s", path, texFilename);
+            strchr(texFilename, '.')[0] = '\0';
+            sprintf(strTMP, "%s%s.png", path, texFilename);
             texBump = dktCreateTextureFromFile(strTMP, DKT_FILTER_BILINEAR);
             delete[] texFilename;
             break;
@@ -3636,7 +3638,8 @@ int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
         {
             char *texFilename = readString(ficIn);
             char strTMP[512];
-            sprintf(strTMP, "%s%s", path, texFilename);
+            strchr(texFilename, '.')[0] = '\0';
+            sprintf(strTMP, "%s%s.png", path, texFilename);
             texSpecular = dktCreateTextureFromFile(strTMP, DKT_FILTER_BILINEAR);
             delete[] texFilename;
             break;
@@ -3645,7 +3648,8 @@ int CdkoMaterial::loadFromFile(FILE *ficIn, char *path)
         {
             char *texFilename = readString(ficIn);
             char strTMP[512];
-            sprintf(strTMP, "%s%s", path, texFilename);
+            strchr(texFilename, '.')[0] = '\0';
+            sprintf(strTMP, "%s%s.png", path, texFilename);
             texSelfIll = dktCreateTextureFromFile(strTMP, DKT_FILTER_BILINEAR);
             delete[] texFilename;
             break;

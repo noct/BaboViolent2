@@ -1,3 +1,5 @@
+require "res"
+
 solution "BaboViolent"
     configurations {"Debug", "Release"}
     platforms {"x64"}
@@ -116,6 +118,16 @@ solution "BaboViolent"
         language "C++"
         targetdir "."
         debugdir "."
+
+        -- resource file
+        fullname  "BaboViolent 2"
+        shortname "bv2"
+        channel   ""
+        author    "RnD Labs"
+        version   "2.3.0"
+        configuration {"windows"}
+            icon        "bv2.ico"
+        resourcefile "bv2"
 
         defines {
             "SDL_MAIN_HANDLED",

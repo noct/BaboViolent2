@@ -115,7 +115,7 @@ solution "BaboViolent"
         kind "WindowedApp"
         language "C++"
         targetdir "."
-        debugdir "Content"
+        debugdir "."
 
         defines {
             "SDL_MAIN_HANDLED",

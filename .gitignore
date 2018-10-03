@@ -192,4 +192,5 @@ build/
 *.exp
 *.db
 .build
-Content/main/bv2.cfg
+main/bv2.cfg
+*.lastcodeanalysissucceeded

@@ -46,7 +46,7 @@ void SSnow::render()
 CSnow::CSnow()
 {
     m_sfxRain = dksCreateSoundFromFile("main/sounds/wind.wav", true);
-    tex_snow = dktCreateTextureFromFile("main/textures/snowflake.tga", DKT_FILTER_LINEAR);
+    tex_snow = dktCreateTextureFromFile("main/textures/snowflake.png", DKT_FILTER_LINEAR);
 
     //--- Start the sound
     channel = dksPlaySound(m_sfxRain, -1, 50);

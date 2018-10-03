@@ -346,23 +346,23 @@ void ClientGameVar::loadModels()
     weapons[WEAPON_FLAME_THROWER]->loadModels();
     weapons[WEAPON_SHIELD]->loadModels();
 
-    tex_nuzzleFlash = dktCreateTextureFromFile("main/textures/nuzzleFlash.tga", DKT_FILTER_LINEAR);
-    tex_smoke1 = dktCreateTextureFromFile("main/textures/Smoke1.tga", DKT_FILTER_LINEAR);
-    tex_shotGlow = dktCreateTextureFromFile("main/textures/shotGlow.tga", DKT_FILTER_LINEAR);
-    tex_smokeTrail = dktCreateTextureFromFile("main/textures/Smoke2.tga", DKT_FILTER_LINEAR);
-    tex_blood[0] = dktCreateTextureFromFile("main/textures/blood01.tga", DKT_FILTER_LINEAR);
-    tex_blood[1] = dktCreateTextureFromFile("main/textures/blood02.tga", DKT_FILTER_LINEAR);
-    tex_blood[2] = dktCreateTextureFromFile("main/textures/blood03.tga", DKT_FILTER_LINEAR);
-    tex_blood[3] = dktCreateTextureFromFile("main/textures/blood04.tga", DKT_FILTER_LINEAR);
-    tex_blood[4] = dktCreateTextureFromFile("main/textures/blood05.tga", DKT_FILTER_LINEAR);
-    tex_blood[5] = dktCreateTextureFromFile("main/textures/blood06.tga", DKT_FILTER_LINEAR);
-    tex_blood[6] = dktCreateTextureFromFile("main/textures/blood07.tga", DKT_FILTER_LINEAR);
-    tex_blood[7] = dktCreateTextureFromFile("main/textures/blood08.tga", DKT_FILTER_LINEAR);
-    tex_blood[8] = dktCreateTextureFromFile("main/textures/blood09.tga", DKT_FILTER_LINEAR);
-    tex_blood[9] = dktCreateTextureFromFile("main/textures/blood10.tga", DKT_FILTER_LINEAR);
-    tex_explosionMark = dktCreateTextureFromFile("main/textures/ExplosionMark.tga", DKT_FILTER_LINEAR);
+    tex_nuzzleFlash = dktCreateTextureFromFile("main/textures/nuzzleFlash.png", DKT_FILTER_LINEAR);
+    tex_smoke1 = dktCreateTextureFromFile("main/textures/Smoke1.png", DKT_FILTER_LINEAR);
+    tex_shotGlow = dktCreateTextureFromFile("main/textures/shotGlow.png", DKT_FILTER_LINEAR);
+    tex_smokeTrail = dktCreateTextureFromFile("main/textures/Smoke2.png", DKT_FILTER_LINEAR);
+    tex_blood[0] = dktCreateTextureFromFile("main/textures/blood01.png", DKT_FILTER_LINEAR);
+    tex_blood[1] = dktCreateTextureFromFile("main/textures/blood02.png", DKT_FILTER_LINEAR);
+    tex_blood[2] = dktCreateTextureFromFile("main/textures/blood03.png", DKT_FILTER_LINEAR);
+    tex_blood[3] = dktCreateTextureFromFile("main/textures/blood04.png", DKT_FILTER_LINEAR);
+    tex_blood[4] = dktCreateTextureFromFile("main/textures/blood05.png", DKT_FILTER_LINEAR);
+    tex_blood[5] = dktCreateTextureFromFile("main/textures/blood06.png", DKT_FILTER_LINEAR);
+    tex_blood[6] = dktCreateTextureFromFile("main/textures/blood07.png", DKT_FILTER_LINEAR);
+    tex_blood[7] = dktCreateTextureFromFile("main/textures/blood08.png", DKT_FILTER_LINEAR);
+    tex_blood[8] = dktCreateTextureFromFile("main/textures/blood09.png", DKT_FILTER_LINEAR);
+    tex_blood[9] = dktCreateTextureFromFile("main/textures/blood10.png", DKT_FILTER_LINEAR);
+    tex_explosionMark = dktCreateTextureFromFile("main/textures/ExplosionMark.png", DKT_FILTER_LINEAR);
 
-    //tex_sniperScope = dktCreateTextureFromFile("main/textures/sniperScope.tga", DKT_FILTER_LINEAR);
+    //tex_sniperScope = dktCreateTextureFromFile("main/textures/sniperScope.png", DKT_FILTER_LINEAR);
     tex_sniperScope = dktCreateEmptyTexture(256, 256, 4, DKT_FILTER_BILINEAR);
     {
         const int w = 256;
@@ -392,20 +392,20 @@ void ClientGameVar::loadModels()
         dktCreateTextureFromBuffer(&tex_sniperScope, imgData, 256, 256, 4, DKT_FILTER_LINEAR);
     }
 
-    tex_medals[0] = dktCreateTextureFromFile("main/textures/medals/Medal01.tga", DKT_FILTER_LINEAR);
-    tex_medals[1] = dktCreateTextureFromFile("main/textures/medals/Medal02.tga", DKT_FILTER_LINEAR);
-    tex_medals[2] = dktCreateTextureFromFile("main/textures/medals/Medal03.tga", DKT_FILTER_LINEAR);
-    tex_medals[3] = dktCreateTextureFromFile("main/textures/medals/Medal04.tga", DKT_FILTER_LINEAR);
-    tex_medals[4] = dktCreateTextureFromFile("main/textures/medals/Medal05.tga", DKT_FILTER_LINEAR);
-    tex_medals[5] = dktCreateTextureFromFile("main/textures/medals/Medal06.tga", DKT_FILTER_LINEAR);
-    tex_medals[6] = dktCreateTextureFromFile("main/textures/medals/Medal07.tga", DKT_FILTER_LINEAR);
-    tex_medals[7] = dktCreateTextureFromFile("main/textures/medals/Medal08.tga", DKT_FILTER_LINEAR);
-    tex_medals[8] = dktCreateTextureFromFile("main/textures/medals/Medal09.tga", DKT_FILTER_LINEAR);
-    tex_medals[9] = dktCreateTextureFromFile("main/textures/medals/Medal10.tga", DKT_FILTER_LINEAR);
-    tex_medals[10] = dktCreateTextureFromFile("main/textures/medals/Medal11.tga", DKT_FILTER_LINEAR);
-    tex_drip = dktCreateTextureFromFile("main/textures/drip.tga", DKT_FILTER_LINEAR);
-    tex_sky = dktCreateTextureFromFile("main/textures/sky.tga", DKT_FILTER_LINEAR);
-    tex_glowTrail = dktCreateTextureFromFile("main/textures/glowTrail.tga", DKT_FILTER_LINEAR);
+    tex_medals[0] = dktCreateTextureFromFile("main/textures/medals/Medal01.png", DKT_FILTER_LINEAR);
+    tex_medals[1] = dktCreateTextureFromFile("main/textures/medals/Medal02.png", DKT_FILTER_LINEAR);
+    tex_medals[2] = dktCreateTextureFromFile("main/textures/medals/Medal03.png", DKT_FILTER_LINEAR);
+    tex_medals[3] = dktCreateTextureFromFile("main/textures/medals/Medal04.png", DKT_FILTER_LINEAR);
+    tex_medals[4] = dktCreateTextureFromFile("main/textures/medals/Medal05.png", DKT_FILTER_LINEAR);
+    tex_medals[5] = dktCreateTextureFromFile("main/textures/medals/Medal06.png", DKT_FILTER_LINEAR);
+    tex_medals[6] = dktCreateTextureFromFile("main/textures/medals/Medal07.png", DKT_FILTER_LINEAR);
+    tex_medals[7] = dktCreateTextureFromFile("main/textures/medals/Medal08.png", DKT_FILTER_LINEAR);
+    tex_medals[8] = dktCreateTextureFromFile("main/textures/medals/Medal09.png", DKT_FILTER_LINEAR);
+    tex_medals[9] = dktCreateTextureFromFile("main/textures/medals/Medal10.png", DKT_FILTER_LINEAR);
+    tex_medals[10] = dktCreateTextureFromFile("main/textures/medals/Medal11.png", DKT_FILTER_LINEAR);
+    tex_drip = dktCreateTextureFromFile("main/textures/drip.png", DKT_FILTER_LINEAR);
+    tex_sky = dktCreateTextureFromFile("main/textures/sky.png", DKT_FILTER_LINEAR);
+    tex_glowTrail = dktCreateTextureFromFile("main/textures/glowTrail.png", DKT_FILTER_LINEAR);
 
     sfx_ric[0] = dksCreateSoundFromFile("main/sounds/ric1.wav", false);
     sfx_ric[1] = dksCreateSoundFromFile("main/sounds/ric2.wav", false);

@@ -28,13 +28,13 @@ CUserLogin::CUserLogin(CControl * in_parent, CControl * in_alignTo)
     m_sfxClic = dksCreateSoundFromFile("main/sounds/Button.wav", false);
     m_sfxOver = dksCreateSoundFromFile("main/sounds/ControlOver.wav", false);
 
-    tex_baboShadow = dktCreateTextureFromFile("main/textures/BaboShadow.tga", DKT_FILTER_BILINEAR);
+    tex_baboShadow = dktCreateTextureFromFile("main/textures/BaboShadow.png", DKT_FILTER_BILINEAR);
     parent = in_parent;
 
     //--- Da big frame
     instance = new CControl(parent, CVector2i(0,0), CVector2i(736, 506/*in_parent->size.s[0]-20, 450*/), "", this, "FRAME", in_alignTo, CONTROL_SNAP_BOTTOM);
-    instance->texture = dktCreateTextureFromFile("main/textures/Menu1Back.tga", DKT_FILTER_LINEAR);
-//  instance->texture = dktCreateTextureFromFile("main/textures/Smoke2.tga", DKT_FILTER_LINEAR);
+    instance->texture = dktCreateTextureFromFile("main/textures/Menu1Back.png", DKT_FILTER_LINEAR);
+//  instance->texture = dktCreateTextureFromFile("main/textures/Smoke2.png", DKT_FILTER_LINEAR);
     instance->borderColor.set(1,.5f,.25f);
 
     CControl * separator = new CControl(instance, CVector2i(10,20), CVector2i(200,25),"Appearance", this, "SEPARATOR");
@@ -87,7 +87,7 @@ CUserLogin::CUserLogin(CControl * in_parent, CControl * in_alignTo)
     rollingAngle = 0;
 
     //--- For skin purpose
-    tex_skinOriginal = dktCreateTextureFromFile(CString("main/skins/%s.tga", gameVar.cl_skin.s).s, DKT_FILTER_BILINEAR);
+    tex_skinOriginal = dktCreateTextureFromFile(CString("main/skins/%s.png", gameVar.cl_skin.s).s, DKT_FILTER_BILINEAR);
     tex_skin = dktCreateEmptyTexture(64, 32, 3, DKT_FILTER_BILINEAR);
     m_medals = 1430;
     updateSkinInt = 0;
@@ -141,11 +141,11 @@ void CUserLogin::updateSkin()
 
     //--- On reload le skin si ça changé
     dktDeleteTexture(&tex_skinOriginal);
-    tex_skinOriginal = dktCreateTextureFromFile(CString("main/skins/%s.tga", gameVar.cl_skin.s).s, DKT_FILTER_BILINEAR);
+    tex_skinOriginal = dktCreateTextureFromFile(CString("main/skins/%s.png", gameVar.cl_skin.s).s, DKT_FILTER_BILINEAR);
 
     //--- Hey oui, un recré une texture ogl à chaque fois pour chaque babo qui spawn!!!!
     //--- On est en ogl, faq ça kick ass MOUHOUHOUHAHAHA
-    unsigned char imgData[64*32*3];
+    unsigned char imgData[64*32*4];
     dktGetTextureData(tex_skinOriginal, imgData);
 
     //--- Celon son team, on set la couleur du babo en conséquence
@@ -153,7 +153,7 @@ void CUserLogin::updateSkin()
     {
         for (i=0;i<64;++i)
         {
-            k = ((j*64) + i) * 3;
+            k = ((j*64) + i) * 4;
             r = (float)imgData[k + 0] / 255.0f;
             g = (float)imgData[k + 1] / 255.0f;
             b = (float)imgData[k + 2] / 255.0f;
@@ -165,7 +165,7 @@ void CUserLogin::updateSkin()
     }
 
     // update
-    dktCreateTextureFromBuffer(&tex_skin, imgData, 64, 32, 3, DKT_FILTER_BILINEAR);
+    dktCreateTextureFromBuffer(&tex_skin, imgData, 64, 32, 4, DKT_FILTER_BILINEAR);
 }
 
 

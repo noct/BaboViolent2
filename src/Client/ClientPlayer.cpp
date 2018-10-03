@@ -35,12 +35,12 @@ extern Scene * scene;
 ClientPlayer::ClientPlayer(char pPlayerID, Map * pMap, Game * pGame) : Player(pPlayerID, pMap, pGame)
 {
     isThisPlayer = false;
-    tex_baboShadow = dktCreateTextureFromFile("main/textures/BaboShadow.tga", DKT_FILTER_BILINEAR);
-    tex_baboHalo = dktCreateTextureFromFile("main/textures/BaboHalo.tga", DKT_FILTER_BILINEAR);
+    tex_baboShadow = dktCreateTextureFromFile("main/textures/BaboShadow.png", DKT_FILTER_BILINEAR);
+    tex_baboHalo = dktCreateTextureFromFile("main/textures/BaboHalo.png", DKT_FILTER_BILINEAR);
     initedMouseClic = false;
     followingPlayer = 0;
     scopeMode = false;
-    tex_skinOriginal = dktCreateTextureFromFile((CString("main/skins/") + skin + ".tga").s, DKT_FILTER_BILINEAR);
+    tex_skinOriginal = dktCreateTextureFromFile((CString("main/skins/") + skin + ".png").s, DKT_FILTER_BILINEAR);
     tex_skin = dktCreateEmptyTexture(64, 32, 3, DKT_FILTER_BILINEAR);
 }
 
@@ -594,7 +594,7 @@ void ClientPlayer::updateSkin()
     {
         skin = skinT;
         dktDeleteTexture(&tex_skinOriginal);
-        tex_skinOriginal = dktCreateTextureFromFile(CString("main/skins/%s.tga", skin.s).s, DKT_FILTER_BILINEAR);
+        tex_skinOriginal = dktCreateTextureFromFile(CString("main/skins/%s.png", skin.s).s, DKT_FILTER_BILINEAR);
     }
 
     redDecal = redDecalT;

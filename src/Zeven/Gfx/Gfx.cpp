@@ -30,6 +30,9 @@
 #include <sys/stat.h>
 #include <vector>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 struct typ_characterProp {
     float u1, v1;
     float u2, v2;
@@ -269,10 +272,7 @@ static int Font_loadTGAFile(CFont* font, char * tgaFile)
 static int Font_create(CFont* font, CString path)
 {
     font->filename = path;
-    if(strnicmp(&(font->filename.s[strlen(font->filename.s) - 3]), "TGA", 3) == 0)
-    {
-        return Font_loadTGAFile(font, font->filename.s);
-    }
+    return Font_loadTGAFile(font, font->filename.s);
 
     // On ouvre le fichier de définition
     std::ifstream fntFile(font->filename.s, std::ios::in);
@@ -484,10 +484,10 @@ static void Font_printText(CFont* font, float size, float x, float y, float z, c
 //
 void dkfBindFont(unsigned int ID)
 {
-    for (int i=0;i<(int)fonts.size();i++)
+    for(int i = 0; i < (int)fonts.size(); i++)
     {
         CFont *font = fonts.at(i);
-        if (ID == font->fontID)
+        if(ID == font->fontID)
         {
             currentBind = font;
             return;
@@ -501,10 +501,10 @@ void dkfBindFont(unsigned int ID)
 unsigned int dkfCreateFont(char *filename)
 {
     // Bon avant là, on check si il l'a pas loadé 2 fois
-    for (int i=0;i<(int)fonts.size();i++)
+    for(int i = 0; i < (int)fonts.size(); i++)
     {
         CFont *font = fonts.at(i);
-        if (font->filename == filename)
+        if(font->filename == filename)
         {
             font->nbInstance++;
             return font->fontID;
@@ -515,7 +515,7 @@ unsigned int dkfCreateFont(char *filename)
     CFont *font = new CFont();
     Font_Init(font);
     font->fontID = ++currentIDCount;
-    if (!Font_create(font, filename))
+    if(!Font_create(font, filename))
     {
         delete font;
         return 0;
@@ -533,16 +533,16 @@ unsigned int dkfCreateFont(char *filename)
 //
 void dkfDeleteFont(unsigned int *ID)
 {
-    for (int i=0;i<(int)fonts.size();i++)
+    for(int i = 0; i < (int)fonts.size(); i++)
     {
         CFont *font = fonts.at(i);
-        if (font->fontID == *ID)
+        if(font->fontID == *ID)
         {
             font->nbInstance--;
-            if (font->nbInstance == 0)
+            if(font->nbInstance == 0)
             {
                 fonts.erase(fonts.begin() + i);
-                if (currentBind == font) currentBind = 0;
+                if(currentBind == font) currentBind = 0;
                 Font_Fini(font);
                 delete font;
             }
@@ -560,33 +560,33 @@ float dkfGetStringHeight(float size, char *text)
     // Ici on compte les retour de chariot
     size_t len = strlen(text);
     int nbChariot = 1;
-    for (size_t i=0;i<len;i++)
+    for(size_t i = 0; i < len; i++)
     {
-        if (text[i] == '\n') nbChariot++;
+        if(text[i] == '\n') nbChariot++;
     }
     return (float)nbChariot*size; // Pour le height c'est aussi simple que ça
 }
 
 float dkfGetStringWidth(float size, char *text)
 {
-    if (currentBind)
+    if(currentBind)
     {
         float bestScore = 0;
         float currentScore = 0;
         size_t len = strlen(text);
-        for (size_t i=0;i<len;i++)
+        for(size_t i = 0; i < len; i++)
         {
             currentScore += currentBind->finalCaracKerning[(unsigned char)text[i]];
 
-            if (text[i] == '\n' || i == len-1)
+            if(text[i] == '\n' || i == len - 1)
             {
-                if (currentScore > bestScore) bestScore = currentScore;
+                if(currentScore > bestScore) bestScore = currentScore;
                 currentScore = 0;
                 continue;
             }
         }
 
-        if (bestScore > 0)
+        if(bestScore > 0)
             return bestScore * size;
         else
             return currentScore * size;
@@ -597,7 +597,7 @@ float dkfGetStringWidth(float size, char *text)
 
 void dkfPrint(float size, float x, float y, float z, char *text)
 {
-    if (currentBind)
+    if(currentBind)
     {
         Font_printText(currentBind, size, x, y, z, text);
     }
@@ -608,9 +608,9 @@ void dkfPrint(float size, float x, float y, float z, char *text)
 //
 int dkiGetFirstDown()
 {
-    for (int i=0;i<256+8+128;i++)
+    for(int i = 0; i < 256 + 8 + 128; i++)
     {
-        if (allState[i] == DKI_DOWN)
+        if(allState[i] == DKI_DOWN)
         {
             return i;
         }
@@ -639,7 +639,7 @@ int dkiGetState(int inputID)
     int r = DKI_NOTHING;
 
     if(inputID != DKI_NOKEY)
-      r = allState[inputID];
+        r = allState[inputID];
 
     return r;
 }
@@ -679,11 +679,11 @@ void dkiUpdate(float elapsef)
     auto kbState = SDL_GetKeyboardState(&numKeys);
 
     // On update notre clavier
-    for (i = 0; i<256 && i < numKeys; i++)
+    for(i = 0; i < 256 && i < numKeys; i++)
     {
-        if (kbState[i])
+        if(kbState[i])
         {
-            if (allState[i] == DKI_NOTHING)
+            if(allState[i] == DKI_NOTHING)
             {
                 allState[i] = DKI_DOWN;
                 lastDown = i;
@@ -696,7 +696,7 @@ void dkiUpdate(float elapsef)
         }
         else
         {
-            if (allState[i] == DKI_DOWN || allState[i] == DKI_HOLD)
+            if(allState[i] == DKI_DOWN || allState[i] == DKI_HOLD)
             {
                 allState[i] = DKI_UP;
             }
@@ -713,11 +713,11 @@ void dkiUpdate(float elapsef)
         (mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) != 0,
         (mouse_buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) != 0
     };
-    for (i = 0; i<3; i++)
+    for(i = 0; i < 3; i++)
     {
-        if (mouseDown[i])
+        if(mouseDown[i])
         {
-            if (allState[DKI_MOUSE_BUTTON1 + i] == DKI_NOTHING)
+            if(allState[DKI_MOUSE_BUTTON1 + i] == DKI_NOTHING)
             {
                 allState[DKI_MOUSE_BUTTON1 + i] = DKI_DOWN;
             }
@@ -728,7 +728,7 @@ void dkiUpdate(float elapsef)
         }
         else
         {
-            if (allState[DKI_MOUSE_BUTTON1 + i] == DKI_DOWN || allState[DKI_MOUSE_BUTTON1 + i] == DKI_HOLD)
+            if(allState[DKI_MOUSE_BUTTON1 + i] == DKI_DOWN || allState[DKI_MOUSE_BUTTON1 + i] == DKI_HOLD)
             {
                 allState[DKI_MOUSE_BUTTON1 + i] = DKI_UP;
             }
@@ -742,7 +742,7 @@ void dkiUpdate(float elapsef)
     // La position de la sourie
     int wx, wy;
     SDL_Window* focused_window = SDL_GetKeyboardFocus();
-    if (g_window == focused_window)
+    if(g_window == focused_window)
     {
         SDL_GetWindowPosition(g_window, &wx, &wy);
         SDL_GetGlobalMouseState(&mx, &my);
@@ -882,7 +882,7 @@ void reloadTGA(CTexture * texture)
     FILE *file = fopen(texture->filename.s, "rb");
 
     // Si ça marche pas, oups, on returne 0 comme texture.
-    if (file == NULL)
+    if(file == NULL)
     {
         // on écris l'erreur dans le log
         CDkt::updateLastError(CString("ERROR > Can not read file : \"%s\"", texture->filename.s).s);
@@ -890,13 +890,13 @@ void reloadTGA(CTexture * texture)
     }
 
     // On li le header du fichier (12 premiers byte)
-    fread(TGAcompare,1,sizeof(TGAcompare),file);
+    fread(TGAcompare, 1, sizeof(TGAcompare), file);
 
     // On li la suite du header
-    fread(header,1,sizeof(header),file);
+    fread(header, 1, sizeof(header), file);
 
     // On prend le width et le height du header
-    width  = header[1] * 256 + header[0];
+    width = header[1] * 256 + header[0];
     height = header[3] * 256 + header[2];
     texture->size.set(width, height);
 
@@ -904,14 +904,14 @@ void reloadTGA(CTexture * texture)
     bpp = header[4];
 
     // On le divise par 8 pour avoir 3 ou 4 bytes (RGB ou RGBA)
-    bytesPerPixel   = bpp/8;
+    bytesPerPixel = bpp / 8;
     texture->bpp = bytesPerPixel;
 
     // On calcul la grandeur de l'image en byte
-    imageSize       = width * height * bytesPerPixel;
+    imageSize = width * height * bytesPerPixel;
 
     // On alou alors autant de bytes qu'il faut pour tenir l'image
-    imageData = new unsigned char [imageSize];
+    imageData = new unsigned char[imageSize];
 
     // On li maintenant le gros bloc de données
     fread(imageData, 1, imageSize, file);
@@ -920,15 +920,15 @@ void reloadTGA(CTexture * texture)
     GLint Level = (bytesPerPixel == 3) ? GL_RGB : GL_RGBA;
 
     // Ici c'est con, mais faut switcher le rouge avec le bleu
-    for(unsigned int i=0; i<imageSize; i+=bytesPerPixel){
+    for(unsigned int i = 0; i < imageSize; i += bytesPerPixel) {
 
-        temp=imageData[i];
+        temp = imageData[i];
         imageData[i] = imageData[i + 2];
         imageData[i + 2] = temp;
     }
 
     // On ferme maintenant le fichier
-    fclose (file);
+    fclose(file);
 
     // On bind cette texture au context
     glBindTexture(GL_TEXTURE_2D, texture->oglID);
@@ -940,152 +940,261 @@ void reloadTGA(CTexture * texture)
     glGenerateMipmap(GL_TEXTURE_2D);
 
     // On delete notre Data qu'on n'a pus besoin
-    delete [] imageData;
+    delete[] imageData;
 }
 
-//
-// Loader un TGA
-//
+bool loadTextureFromFile(char * filename, int filter, unsigned int* id) {
+    // Notre texture ID de ogl
+    unsigned int Texture = 0;
+
+    // On check quelle n'existe pas déjà
+    for(int l = 0; l < (int)CDkt::textures.size(); l++)
+    {
+        CTexture *texture = CDkt::textures.at(l);
+        if(texture->filename == filename)
+        {
+            texture->nbInstance++;
+            return texture->oglID;
+        }
+    }
+
+    FILE *file = fopen(filename, "rb");
+    if(!file)
+    {
+        // on écris l'erreur dans le log
+        printf("Cannot open texture file: %s\n", filename);
+        CDkt::updateLastError(CString("ERROR > Can not read file : \"%s\"", filename).s);
+        return 0;
+    }
+
+    int w = 0;
+    int h = 0;
+    int bytesPerPixel = 0;
+    stbi_set_flip_vertically_on_load(true);
+    stbi_uc* imageData = stbi_load_from_file(file, &w, &h, &bytesPerPixel, STBI_rgb_alpha);
+    bytesPerPixel = STBI_rgb_alpha;
+    fclose(file);
+
+    if(!imageData)
+    {
+        // on écris l'erreur dans le log
+        printf("Unsupported image format: %s\n", filename);
+        CDkt::updateLastError(CString("ERROR > Unsupported image format : \"%s\"", filename).s);
+        return 0;
+    }
+
+    // On calcul la grandeur de l'image en byte
+    unsigned int imageSize = w * h * bytesPerPixel;
+
+    // On défini si c'est RGB ou RGBA
+    GLint type = (bytesPerPixel == 3) ? GL_RGB : GL_RGBA;
+
+    // On génère une texture
+    glGenTextures(1, &Texture);
+
+    // On bind cette texture au context
+    glBindTexture(GL_TEXTURE_2D, Texture);
+
+    // On set le filter
+    switch(filter)
+    {
+    case DKT_FILTER_NEAREST: // Nearest
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        break;
+    }
+    case DKT_FILTER_LINEAR: // Linear
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        break;
+    }
+    case DKT_FILTER_BILINEAR: // Bilinear
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        break;
+    }
+    case DKT_FILTER_TRILINEAR: // Trilinear
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        break;
+    }
+    default: // Nearest default
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        break;
+    }
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, type, w, h, 0, type, GL_UNSIGNED_BYTE, imageData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(imageData);
+    
+
+    // On se cré notre nouvelle texture
+    CTexture *texture = new CTexture;
+    texture->filename = filename;
+    texture->nbInstance = 1;
+    texture->size.set(w, h);
+    texture->bpp = bytesPerPixel;
+    texture->oglID = Texture;
+
+    struct stat attrib;
+    stat(filename, &attrib);
+    texture->modifDate = int32_t(attrib.st_mtime);
+
+    CDkt::textures.push_back(texture);
+
+    // On retourne l'index de la texture
+    *id = Texture;
+    return Texture;
+}
+
 unsigned int createTextureTGA(char * filename, int filter) {
     // Notre texture ID de ogl
     unsigned int Texture = 0;
 
-        // On check quelle n'existe pas déjà
-        for (int l=0;l<(int)CDkt::textures.size();l++)
+    // On check quelle n'existe pas déjà
+    for(int l = 0; l < (int)CDkt::textures.size(); l++)
+    {
+        CTexture *texture = CDkt::textures.at(l);
+        if(texture->filename == filename)
         {
-            CTexture *texture = CDkt::textures.at(l);
-            if (texture->filename == filename)
-            {
-                texture->nbInstance++;
-                return texture->oglID;
-            }
+            texture->nbInstance++;
+            return texture->oglID;
         }
+    }
 
-        // Les variables utilisé pour tenir l'information loadé du Targa
-        unsigned char TGAcompare[12];
-        unsigned char header[6];
-        unsigned int bytesPerPixel;
-        unsigned int imageSize;
-        unsigned char temp;
-        unsigned char *imageData;
-        unsigned int bpp;
-        unsigned int width;
-        unsigned int height;
+    // Les variables utilisé pour tenir l'information loadé du Targa
+    unsigned char TGAcompare[12];
+    unsigned char header[6];
+    unsigned int bytesPerPixel;
+    unsigned int imageSize;
+    unsigned char temp;
+    unsigned char *imageData;
+    unsigned int bpp;
+    unsigned int width;
+    unsigned int height;
 
-        // On ouvre le fichier targa
-        FILE *file = fopen(filename, "rb");
+    // On ouvre le fichier targa
+    FILE *file = fopen(filename, "rb");
 
-        // Si ça marche pas, oups, on returne 0 comme texture.
-        if (file == NULL)
-        {
-            // on écris l'erreur dans le log
-            printf("Cannot open texutre file: %s\n", filename);
-            CDkt::updateLastError(CString("ERROR > Can not read file : \"%s\"", filename).s);
-            return 0;
-        }
+    // Si ça marche pas, oups, on returne 0 comme texture.
+    if(file == NULL)
+    {
+        // on écris l'erreur dans le log
+        printf("Cannot open texture file: %s\n", filename);
+        CDkt::updateLastError(CString("ERROR > Can not read file : \"%s\"", filename).s);
+        return 0;
+    }
 
-        // On li le header du fichier (12 premiers byte)
-        fread(TGAcompare,1,sizeof(TGAcompare),file);
+    // On li le header du fichier (12 premiers byte)
+    fread(TGAcompare, 1, sizeof(TGAcompare), file);
 
-        // On li la suite du header
-        fread(header,1,sizeof(header),file);
+    // On li la suite du header
+    fread(header, 1, sizeof(header), file);
 
-        // On prend le width et le height du header
-        width  = header[1] * 256 + header[0];
-        height = header[3] * 256 + header[2];
+    // On prend le width et le height du header
+    width = header[1] * 256 + header[0];
+    height = header[3] * 256 + header[2];
 
-        // On prend le bbp (24bit ou 32bit)
-        bpp = header[4];
+    // On prend le bbp (24bit ou 32bit)
+    bpp = header[4];
 
-        // On le divise par 8 pour avoir 3 ou 4 bytes (RGB ou RGBA)
-        bytesPerPixel   = bpp/8;
+    // On le divise par 8 pour avoir 3 ou 4 bytes (RGB ou RGBA)
+    bytesPerPixel = bpp / 8;
 
-        // On calcul la grandeur de l'image en byte
-        imageSize       = width * height * bytesPerPixel;
+    // On calcul la grandeur de l'image en byte
+    imageSize = width * height * bytesPerPixel;
 
-        // On alou alors autant de bytes qu'il faut pour tenir l'image
-        imageData = new unsigned char [imageSize];
+    // On alou alors autant de bytes qu'il faut pour tenir l'image
+    imageData = new unsigned char[imageSize];
 
-        // On li maintenant le gros bloc de données
-        fread(imageData, 1, imageSize, file);
+    // On li maintenant le gros bloc de données
+    fread(imageData, 1, imageSize, file);
 
-        // On défini si c'est RGB ou RGBA
-        GLint Level = (bytesPerPixel == 3) ? GL_RGB : GL_RGBA;
+    // On défini si c'est RGB ou RGBA
+    GLint Level = (bytesPerPixel == 3) ? GL_RGB : GL_RGBA;
 
-        // Ici c'est con, mais faut switcher le rouge avec le bleu
-        for(unsigned int i=0; i<imageSize; i+=bytesPerPixel){
+    // Ici c'est con, mais faut switcher le rouge avec le bleu
+    for(unsigned int i = 0; i < imageSize; i += bytesPerPixel) {
 
-            temp=imageData[i];
-            imageData[i] = imageData[i + 2];
-            imageData[i + 2] = temp;
-        }
+        temp = imageData[i];
+        imageData[i] = imageData[i + 2];
+        imageData[i + 2] = temp;
+    }
 
-        // On ferme maintenant le fichier
-        fclose (file);
+    // On ferme maintenant le fichier
+    fclose(file);
 
-        // On génère une texture
-        glGenTextures(1, &Texture);
+    // On génère une texture
+    glGenTextures(1, &Texture);
 
-        // On bind cette texture au context
-        glBindTexture(GL_TEXTURE_2D, Texture);
+    // On bind cette texture au context
+    glBindTexture(GL_TEXTURE_2D, Texture);
 
-        // On set le filter
-        switch (filter)
-        {
-        case DKT_FILTER_NEAREST: // Nearest
-            {
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-                break;
-            }
-        case DKT_FILTER_LINEAR: // Linear
-            {
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-                break;
-            }
-        case DKT_FILTER_BILINEAR: // Bilinear
-            {
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
-                break;
-            }
-        case DKT_FILTER_TRILINEAR: // Trilinear
-            {
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-                break;
-            }
-        default: // Nearest default
-            {
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST);
-                break;
-            }
-        }
+    // On set le filter
+    switch(filter)
+    {
+    case DKT_FILTER_NEAREST: // Nearest
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        break;
+    }
+    case DKT_FILTER_LINEAR: // Linear
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        break;
+    }
+    case DKT_FILTER_BILINEAR: // Bilinear
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        break;
+    }
+    case DKT_FILTER_TRILINEAR: // Trilinear
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        break;
+    }
+    default: // Nearest default
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        break;
+    }
+    }
 
-        // On construit les mipmaps
-        //gluBuild2DMipmaps(GL_TEXTURE_2D, bytesPerPixel, width, height,
-        //                Level, GL_UNSIGNED_BYTE, imageData);
-        glTexImage2D(GL_TEXTURE_2D, 0, Level, width, height, 0, Level, GL_UNSIGNED_BYTE, imageData);
-        glGenerateMipmap(GL_TEXTURE_2D);
+    // On construit les mipmaps
+    //gluBuild2DMipmaps(GL_TEXTURE_2D, bytesPerPixel, width, height,
+    //                Level, GL_UNSIGNED_BYTE, imageData);
+    glTexImage2D(GL_TEXTURE_2D, 0, Level, width, height, 0, Level, GL_UNSIGNED_BYTE, imageData);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
-        // On delete notre Data qu'on n'a pus besoin
-        delete [] imageData;
+    // On delete notre Data qu'on n'a pus besoin
+    delete[] imageData;
 
-        // On se cré notre nouvelle texture
-        CTexture *texture = new CTexture;
-        texture->filename = filename;
-        texture->nbInstance = 1;
-        texture->size.set(width, height);
-        texture->bpp = bytesPerPixel;
-        texture->oglID = Texture;
+    // On se cré notre nouvelle texture
+    CTexture *texture = new CTexture;
+    texture->filename = filename;
+    texture->nbInstance = 1;
+    texture->size.set(width, height);
+    texture->bpp = bytesPerPixel;
+    texture->oglID = Texture;
 
-        struct stat attrib;
-        stat(filename, &attrib);
-        texture->modifDate = int32_t(attrib.st_mtime);
+    struct stat attrib;
+    stat(filename, &attrib);
+    texture->modifDate = int32_t(attrib.st_mtime);
 
-        CDkt::textures.push_back(texture);
+    CDkt::textures.push_back(texture);
 
     // On retourne l'index de la texture
     return Texture;
@@ -1096,19 +1205,19 @@ unsigned int createTextureTGA(char * filename, int filter) {
 //
 unsigned int     dktCreateEmptyTexture(int w, int h, int bpp, int filter)
 {
-    unsigned int textureID=0;
+    unsigned int textureID = 0;
 
     // On se cré notre nouvelle texture
     CTexture *texture = new CTexture;
     texture->filename = "Custom";
     texture->nbInstance = 1;
     CDkt::textures.push_back(texture);
-    texture->size.set(w,h);
+    texture->size.set(w, h);
 
     // On cré notre array
-    int totalSize = w*h*bpp;
+    int totalSize = w * h*bpp;
     unsigned char *buffer = new unsigned char[w*h*bpp];
-    for (int i=0;i<totalSize;buffer[i++] = 255);
+    for(int i = 0; i < totalSize; buffer[i++] = 255);
 
     // On cré une texture ogl et on la bind
     glGenTextures(1, &textureID);
@@ -1117,50 +1226,50 @@ unsigned int     dktCreateEmptyTexture(int w, int h, int bpp, int filter)
 
     // On check le level
     GLuint level = 0;
-    if (bpp == 1) level = GL_LUMINANCE;
-    if (bpp == 3) level = GL_RGB;
-    if (bpp == 4) level = GL_RGBA;
+    if(bpp == 1) level = GL_LUMINANCE;
+    if(bpp == 3) level = GL_RGB;
+    if(bpp == 4) level = GL_RGBA;
     texture->bpp = bpp;
 
     // On set le filter
-    switch (filter)
+    switch(filter)
     {
     case DKT_FILTER_NEAREST: // Nearest
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        break;
+    }
     case DKT_FILTER_LINEAR: // Linear
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        break;
+    }
     case DKT_FILTER_BILINEAR: // Bilinear
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        break;
+    }
     case DKT_FILTER_TRILINEAR: // Trilinear
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        break;
+    }
     default: // Nearest default
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        break;
+    }
     }
 
     glTexImage2D(GL_TEXTURE_2D, 0, level, w, h, 0, level, GL_UNSIGNED_BYTE, buffer);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    delete [] buffer;
+    delete[] buffer;
 
     return textureID;
 }
@@ -1187,47 +1296,47 @@ void dktCreateTextureFromBuffer(unsigned int *textureID, unsigned char *buffer, 
     glBindTexture(GL_TEXTURE_2D, *textureID);
 
     // On set le filter
-    switch (filter)
+    switch(filter)
     {
     case DKT_FILTER_NEAREST: // Nearest
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        break;
+    }
     case DKT_FILTER_LINEAR: // Linear
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        break;
+    }
     case DKT_FILTER_BILINEAR: // Bilinear
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+        break;
+    }
     case DKT_FILTER_TRILINEAR: // Trilinear
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        break;
+    }
     default: // Nearest default
-        {
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST);
-            break;
-        }
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        break;
+    }
     }
 
     // On check le level
     GLuint level = 0;
-    if (bpp == 1) level = GL_LUMINANCE;
-    if (bpp == 3) level = GL_RGB;
-    if (bpp == 4) level = GL_RGBA;
+    if(bpp == 1) level = GL_LUMINANCE;
+    if(bpp == 3) level = GL_RGB;
+    if(bpp == 4) level = GL_RGBA;
 
-    texture->size.set(w,h);
+    texture->size.set(w, h);
     texture->bpp = bpp;
 
     // On construit la texture et ses mipmap
@@ -1244,14 +1353,20 @@ void dktCreateTextureFromBuffer(unsigned int *textureID, unsigned char *buffer, 
 //
 unsigned int dktCreateTextureFromFile(char *mFilename, int filter)
 {
-    if (strnicmp(&(mFilename[strlen(mFilename)-3]), "TGA", 3) == 0)
+    unsigned int id = 0;
+    if(loadTextureFromFile(mFilename, filter, &id))
+    {
+        return id;
+    }
+
+    if(strnicmp(&(mFilename[strlen(mFilename) - 3]), "TGA", 3) == 0)
     {
         return createTextureTGA(mFilename, filter);
     }
     else
     {
         // Doit obligatoirement être un TGA
-        CDkt::updateLastError("DKT : The image is not a TGA");
+        CDkt::updateLastError("DKT : The image is not supported");
         return 0;
     }
 }
@@ -1261,14 +1376,14 @@ unsigned int dktCreateTextureFromFile(char *mFilename, int filter)
 //
 void CDkt::updateLastError(char *error)
 {
-    if (lastErrorString)
+    if(lastErrorString)
     {
-        delete [] lastErrorString;
+        delete[] lastErrorString;
         lastErrorString = 0;
     }
     if(error)
     {
-        lastErrorString = new char [strlen(error)+1];
+        lastErrorString = new char[strlen(error) + 1];
         strcpy(lastErrorString, error);
     }
 }
@@ -1280,13 +1395,13 @@ void CDkt::updateLastError(char *error)
 //
 void dktDeleteTexture(unsigned int *textureID)
 {
-    for (int i=0;i<(int)CDkt::textures.size();i++)
+    for(int i = 0; i < (int)CDkt::textures.size(); i++)
     {
         CTexture *texture = CDkt::textures.at(i);
-        if (texture->oglID == *textureID)
+        if(texture->oglID == *textureID)
         {
             texture->nbInstance--;
-            if (texture->nbInstance <= 0)
+            if(texture->nbInstance <= 0)
             {
                 CDkt::textures.erase(CDkt::textures.begin() + i);
                 delete texture;
@@ -1303,13 +1418,13 @@ void dktDeleteTexture(unsigned int *textureID)
 //
 void dktGetTextureData(unsigned int textureID, unsigned char * data)
 {
-    for (int i=0;i<(int)CDkt::textures.size();i++)
+    for(int i = 0; i < (int)CDkt::textures.size(); i++)
     {
         CTexture *texture = CDkt::textures.at(i);
-        if (texture->oglID == textureID)
+        if(texture->oglID == textureID)
         {
             glBindTexture(GL_TEXTURE_2D, textureID);
-            glGetTexImage(GL_TEXTURE_2D, 0, (texture->bpp==3)?GL_RGB:GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glGetTexImage(GL_TEXTURE_2D, 0, (texture->bpp == 3) ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, data);
         }
     }
 
@@ -1353,7 +1468,7 @@ CVector2i dkwGetResolution()
 }
 
 // On clip la mouse au window rect
-void dkwClipMouse( bool abEnabled )
+void dkwClipMouse(bool abEnabled)
 {
 }
 
@@ -1371,12 +1486,12 @@ int dkwMainLoop()
 
     int(*sdlEventCall)(SDL_Event * event) = SDL_WaitEvent;
 
-    while (SDL_PollEvent(&event))
+    while(SDL_PollEvent(&event))
     {
         ImGui_ImplSDL2_ProcessEvent(&event);
-        if (event.type == SDL_QUIT)
+        if(event.type == SDL_QUIT)
             done = true;
-        if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(g_window))
+        if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(g_window))
             done = true;
         if(event.type == SDL_TEXTINPUT)
         {
@@ -1457,7 +1572,7 @@ dkGfxContext* dkGfxInit(dkContext* ctx, dkGfxConfig config)
     SDL_DisplayMode current;
     SDL_GetCurrentDisplayMode(0, &current);
     Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
-    if (config.fullScreen) flags |= SDL_WINDOW_FULLSCREEN;
+    if(config.fullScreen) flags |= SDL_WINDOW_FULLSCREEN;
     g_window = SDL_CreateWindow(config.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, config.width, config.height, flags);
     g_gl_context = SDL_GL_CreateContext(g_window);
     SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -1494,19 +1609,19 @@ void dkGfxFini(dkGfxContext* gtx)
     dkpShutDown();
     dkoShutDown();
 
-    for (int i=0;i<(int)fonts.size();i++)
+    for(int i = 0; i < (int)fonts.size(); i++)
     {
         CFont *font = fonts.at(i);
-        if (font) delete font;
+        if(font) delete font;
     }
     fonts.clear();
     currentBind = 0;
     currentIDCount = 0;
 
-    for (int i=0;i<(int)CDkt::textures.size();i++)
+    for(int i = 0; i < (int)CDkt::textures.size(); i++)
     {
         CTexture *texture = CDkt::textures.at(i);
-        if (texture) delete texture;
+        if(texture) delete texture;
     }
     CDkt::textures.clear();
     CDkt::updateLastError(0);
@@ -1558,9 +1673,9 @@ void dkglEnableVsync(bool vsync)
 void dkglPopOrtho()
 {
     // On pop nos matrice
-            glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 
     // On pop nos attribs
@@ -1576,19 +1691,19 @@ void dkglPushOrtho(float mWidth, float mHeight)
 {
     // On push les attribs pour certaines modifications
     glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT);
-//  glCullFace(GL_BACK);
+    //  glCullFace(GL_BACK);
 
-    // En mode 2D on ne veux pas de z-buffer
+        // En mode 2D on ne veux pas de z-buffer
     glDisable(GL_DEPTH_TEST);
 
     // On push nos matrice et on set la matrice ortho
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-        glLoadIdentity();
-        glOrtho(0,mWidth,mHeight,0,-9999,9999);
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-            glLoadIdentity();
+    glLoadIdentity();
+    glOrtho(0, mWidth, mHeight, 0, -9999, 9999);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
 }
 
 
@@ -1598,7 +1713,7 @@ void dkglPushOrtho(float mWidth, float mHeight)
 //
 void dkglSetBlendingFunc(int blending)
 {
-    switch (blending)
+    switch(blending)
     {
     case DKGL_BLENDING_ADD_SATURATE:
         glBlendFunc(GL_ONE, GL_ONE);
@@ -1624,10 +1739,10 @@ void dkglSetPointLight(int ID, float x, float y, float z, float r, float g, floa
 {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0 + ID);
-    float pos[] = {x,y,z,1};
-    float amb[] = {r/6,g/6,b/6,1};
-    float diff[] = {r,g,b,1};
-    float spec[] = {r,g,b,1};
+    float pos[] = { x,y,z,1 };
+    float amb[] = { r / 6,g / 6,b / 6,1 };
+    float diff[] = { r,g,b,1 };
+    float spec[] = { r,g,b,1 };
 
     glLightfv(GL_LIGHT0 + ID, GL_POSITION, pos);
     glLightfv(GL_LIGHT0 + ID, GL_AMBIENT, amb);
@@ -1678,7 +1793,7 @@ int glhProjectf(float objx, float objy, float objz, float *modelview, float *pro
     fTempo[6] = projection[2] * fTempo[0] + projection[6] * fTempo[1] + projection[10] * fTempo[2] + projection[14] * fTempo[3];
     fTempo[7] = -fTempo[2];
     // The result normalizes between -1 and 1
-    if (fTempo[7] == 0.0f) // The w value
+    if(fTempo[7] == 0.0f) // The w value
         return 0;
     fTempo[7] = 1.0f / fTempo[7];
     // Perspective division
@@ -1706,7 +1821,7 @@ int glhUnProjectf(float winx, float winy, float winz, float *modelview, float *p
     // and store in A[16]
     MultiplyMatrices4by4OpenGL_FLOAT(A, projection, modelview);
     // Now compute the inverse of matrix A
-    if (glhInvertMatrixf2(A, m) == 0)
+    if(glhInvertMatrixf2(A, m) == 0)
         return 0;
     // Transformation of normalized coordinates between -1 and 1
     in[0] = (winx - (float)viewport[0]) / (float)viewport[2] * 2.0f - 1.0f;
@@ -1715,7 +1830,7 @@ int glhUnProjectf(float winx, float winy, float winz, float *modelview, float *p
     in[3] = 1.0f;
     // Objects coordinates
     MultiplyMatrixByVector4by4OpenGL_FLOAT(out, m, in);
-    if (out[3] == 0.0f)
+    if(out[3] == 0.0f)
         return 0;
     out[3] = 1.0f / out[3];
     objectCoordinate[0] = out[0] * out[3];
@@ -1824,13 +1939,13 @@ int glhInvertMatrixf2(float *m, float *out)
         r3[2] = MAT(m, 3, 2), r3[3] = MAT(m, 3, 3),
         r3[7] = 1.0, r3[4] = r3[5] = r3[6] = 0.0;
     /* choose pivot - or die */
-    if (fabsf(r3[0]) > fabsf(r2[0]))
+    if(fabsf(r3[0]) > fabsf(r2[0]))
         SWAP_ROWS_FLOAT(r3, r2);
-    if (fabsf(r2[0]) > fabsf(r1[0]))
+    if(fabsf(r2[0]) > fabsf(r1[0]))
         SWAP_ROWS_FLOAT(r2, r1);
-    if (fabsf(r1[0]) > fabsf(r0[0]))
+    if(fabsf(r1[0]) > fabsf(r0[0]))
         SWAP_ROWS_FLOAT(r1, r0);
-    if (0.0 == r0[0])
+    if(0.0 == r0[0])
         return 0;
     /* eliminate first variable */
     m1 = r1[0] / r0[0];
@@ -1849,35 +1964,35 @@ int glhInvertMatrixf2(float *m, float *out)
     r2[3] -= m2 * s;
     r3[3] -= m3 * s;
     s = r0[4];
-    if (s != 0.0) {
+    if(s != 0.0) {
         r1[4] -= m1 * s;
         r2[4] -= m2 * s;
         r3[4] -= m3 * s;
     }
     s = r0[5];
-    if (s != 0.0) {
+    if(s != 0.0) {
         r1[5] -= m1 * s;
         r2[5] -= m2 * s;
         r3[5] -= m3 * s;
     }
     s = r0[6];
-    if (s != 0.0) {
+    if(s != 0.0) {
         r1[6] -= m1 * s;
         r2[6] -= m2 * s;
         r3[6] -= m3 * s;
     }
     s = r0[7];
-    if (s != 0.0) {
+    if(s != 0.0) {
         r1[7] -= m1 * s;
         r2[7] -= m2 * s;
         r3[7] -= m3 * s;
     }
     /* choose pivot - or die */
-    if (fabsf(r3[1]) > fabsf(r2[1]))
+    if(fabsf(r3[1]) > fabsf(r2[1]))
         SWAP_ROWS_FLOAT(r3, r2);
-    if (fabsf(r2[1]) > fabsf(r1[1]))
+    if(fabsf(r2[1]) > fabsf(r1[1]))
         SWAP_ROWS_FLOAT(r2, r1);
-    if (0.0 == r1[1])
+    if(0.0 == r1[1])
         return 0;
     /* eliminate second variable */
     m2 = r2[1] / r1[1];
@@ -1887,36 +2002,36 @@ int glhInvertMatrixf2(float *m, float *out)
     r2[3] -= m2 * r1[3];
     r3[3] -= m3 * r1[3];
     s = r1[4];
-    if (0.0 != s) {
+    if(0.0 != s) {
         r2[4] -= m2 * s;
         r3[4] -= m3 * s;
     }
     s = r1[5];
-    if (0.0 != s) {
+    if(0.0 != s) {
         r2[5] -= m2 * s;
         r3[5] -= m3 * s;
     }
     s = r1[6];
-    if (0.0 != s) {
+    if(0.0 != s) {
         r2[6] -= m2 * s;
         r3[6] -= m3 * s;
     }
     s = r1[7];
-    if (0.0 != s) {
+    if(0.0 != s) {
         r2[7] -= m2 * s;
         r3[7] -= m3 * s;
     }
     /* choose pivot - or die */
-    if (fabsf(r3[2]) > fabsf(r2[2]))
+    if(fabsf(r3[2]) > fabsf(r2[2]))
         SWAP_ROWS_FLOAT(r3, r2);
-    if (0.0f == r2[2])
+    if(0.0f == r2[2])
         return 0;
     /* eliminate third variable */
     m3 = r3[2] / r2[2];
     r3[3] -= m3 * r2[3], r3[4] -= m3 * r2[4],
         r3[5] -= m3 * r2[5], r3[6] -= m3 * r2[6], r3[7] -= m3 * r2[7];
     /* last check */
-    if (0.0f == r3[3])
+    if(0.0f == r3[3])
         return 0;
     s = 1.0f / r3[3];       /* now back substitute row 3 */
     r3[4] *= s;
@@ -2065,11 +2180,11 @@ void dkglLookAt(
 void dkglDrawSphere(GLdouble radius, GLint slices, GLint stacks, GLenum topology)
 {
     glBegin(topology);
-    for (int j = 0; j < stacks; ++j)
+    for(int j = 0; j < stacks; ++j)
     {
         float angleX0 = -(float)j / (float)stacks * PI + PI / 2;
         float angleX1 = -(float)(j + 1) / (float)stacks * PI + PI / 2;
-        for (int i = 0; i < slices; ++i)
+        for(int i = 0; i < slices; ++i)
         {
             float angleZ0 = (float)i / (float)slices * PI2;
             float angleZ1 = (float)(i + 1) / (float)slices * PI2;

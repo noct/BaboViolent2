@@ -32,7 +32,7 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
 
     //--- Da big frame
     instance = new CControl(parent, CVector2i(0, 0), CVector2i(736, 506), "", this, "FRAME", in_alignTo, CONTROL_SNAP_BOTTOM);
-    instance->texture = dktCreateTextureFromFile("main/textures/Menu4Back.tga", DKT_FILTER_LINEAR);
+    instance->texture = dktCreateTextureFromFile("main/textures/Menu4Back.png", DKT_FILTER_LINEAR);
     instance->borderColor.set(1, .5f, .25f);
 
     //--- Labels and controls

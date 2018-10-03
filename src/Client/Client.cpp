@@ -43,7 +43,7 @@ Client::Client(ClientGame * pGame)
     requestedAdmin = false;
     wrongVersionReason = false;
     serverFrameID = 0;
-    font = dkfCreateFont("main/fonts/babo.tga");
+    font = dkfCreateFont("main/fonts/babo.png");
     game = pGame;
     isRunning = false;
     needToShutDown = false;
@@ -60,13 +60,13 @@ Client::Client(ClientGame * pGame)
     m_sfxOver = dksCreateSoundFromFile("main/Sounds/ControlOver.wav", false);
 
     blink = 0;
-    tex_screenHit = dktCreateTextureFromFile("main/textures/screenHit.tga", DKT_FILTER_LINEAR);
-    tex_grenadeLeft = dktCreateTextureFromFile("main/textures/GrenadeIcon.tga", DKT_FILTER_LINEAR);
-    tex_shotgunLeft = dktCreateTextureFromFile("main/textures/CartridgeIcon.tga", DKT_FILTER_LINEAR);
-    tex_molotovLeft = dktCreateTextureFromFile("main/textures/molotovIcon.tga", DKT_FILTER_LINEAR);
-    tex_blueFlag = dktCreateTextureFromFile("main/textures/BlueFlag.tga", DKT_FILTER_LINEAR);
-    tex_redFlag = dktCreateTextureFromFile("main/textures/RedFlag.tga", DKT_FILTER_LINEAR);
-    tex_crossHit = dktCreateTextureFromFile("main/textures/CrossHit.tga", DKT_FILTER_LINEAR);
+    tex_screenHit = dktCreateTextureFromFile("main/textures/screenHit.png", DKT_FILTER_LINEAR);
+    tex_grenadeLeft = dktCreateTextureFromFile("main/textures/GrenadeIcon.png", DKT_FILTER_LINEAR);
+    tex_shotgunLeft = dktCreateTextureFromFile("main/textures/CartridgeIcon.png", DKT_FILTER_LINEAR);
+    tex_molotovLeft = dktCreateTextureFromFile("main/textures/molotovIcon.png", DKT_FILTER_LINEAR);
+    tex_blueFlag = dktCreateTextureFromFile("main/textures/BlueFlag.png", DKT_FILTER_LINEAR);
+    tex_redFlag = dktCreateTextureFromFile("main/textures/RedFlag.png", DKT_FILTER_LINEAR);
+    tex_crossHit = dktCreateTextureFromFile("main/textures/CrossHit.png", DKT_FILTER_LINEAR);
     hitIndicator = 0;
 
     // On hide la mouse

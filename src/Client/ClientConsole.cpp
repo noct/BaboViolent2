@@ -455,7 +455,7 @@ void ClientConsole::update(float delay)
 void ClientConsole::init()
 {
     m_currentText = new Writting();
-    m_font = dkfCreateFont("main/fonts/babo.tga");
+    m_font = dkfCreateFont("main/fonts/babo.png");
     Console::init();
 }
 

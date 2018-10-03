@@ -94,9 +94,9 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
     if(!isServer)
     {
         // Les textures
-        tex_grass = dktCreateTextureFromFile("main/textures/grass.tga", DKT_FILTER_BILINEAR);
-        tex_dirt = dktCreateTextureFromFile("main/textures/dirt1.tga", DKT_FILTER_BILINEAR);
-        tex_wall = dktCreateTextureFromFile("main/textures/dirt2.tga", DKT_FILTER_BILINEAR);
+        tex_grass = dktCreateTextureFromFile("main/textures/grass.png", DKT_FILTER_BILINEAR);
+        tex_dirt = dktCreateTextureFromFile("main/textures/dirt1.png", DKT_FILTER_BILINEAR);
+        tex_wall = dktCreateTextureFromFile("main/textures/dirt2.png", DKT_FILTER_BILINEAR);
 
         // Les models
         dko_flag[0] = dkoLoadFile("main/models/BlueFlag.DKO");
@@ -884,15 +884,15 @@ void ClientMap::reloadTheme()
         themeStr = THEME_GRASS_STR;
     }
 
-    tex_grass = dktCreateTextureFromFile(CString("main/textures/themes/%s/tex_floor.tga", themeStr.s).s, DKT_FILTER_BILINEAR);
+    tex_grass = dktCreateTextureFromFile(CString("main/textures/themes/%s/tex_floor.png", themeStr.s).s, DKT_FILTER_BILINEAR);
     if(tex_grass == 0)
-        tex_grass = dktCreateTextureFromFile(CString("main/textures/themes/grass/tex_floor.tga").s, DKT_FILTER_BILINEAR);
-    tex_dirt = dktCreateTextureFromFile(CString("main/textures/themes/%s/tex_floor_dirt.tga", themeStr.s).s, DKT_FILTER_BILINEAR);
+        tex_grass = dktCreateTextureFromFile(CString("main/textures/themes/grass/tex_floor.png").s, DKT_FILTER_BILINEAR);
+    tex_dirt = dktCreateTextureFromFile(CString("main/textures/themes/%s/tex_floor_dirt.png", themeStr.s).s, DKT_FILTER_BILINEAR);
     if(tex_dirt == 0)
-        tex_dirt = dktCreateTextureFromFile(CString("main/textures/themes/grass/tex_floor_dirt.tga").s, DKT_FILTER_BILINEAR);
-    tex_wall = dktCreateTextureFromFile(CString("main/textures/themes/%s/tex_wall_center.tga", themeStr.s).s, DKT_FILTER_BILINEAR);
+        tex_dirt = dktCreateTextureFromFile(CString("main/textures/themes/grass/tex_floor_dirt.png").s, DKT_FILTER_BILINEAR);
+    tex_wall = dktCreateTextureFromFile(CString("main/textures/themes/%s/tex_wall_center.png", themeStr.s).s, DKT_FILTER_BILINEAR);
     if(tex_wall == 0)
-        tex_wall = dktCreateTextureFromFile(CString("main/textures/themes/grass/tex_wall_center.tga").s, DKT_FILTER_BILINEAR);
+        tex_wall = dktCreateTextureFromFile(CString("main/textures/themes/grass/tex_wall_center.png").s, DKT_FILTER_BILINEAR);
     buildAll();
 }
 

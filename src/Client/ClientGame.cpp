@@ -312,10 +312,10 @@ extern Scene * scene;
 
 ClientGame::ClientGame(CString pMapName): Game(pMapName), mapBuffer(8192)
 {
-    font = dkfCreateFont("main/fonts/babo.tga");
-    tex_miniMapAllied = dktCreateTextureFromFile("main/textures/MiniMapAllied.tga", DKT_FILTER_LINEAR);
-    tex_miniMapEnemy = dktCreateTextureFromFile("main/textures/MiniMapEnemy.tga", DKT_FILTER_LINEAR);;
-    tex_baboShadow = dktCreateTextureFromFile("main/textures/BaboShadow.tga", DKT_FILTER_BILINEAR);
+    font = dkfCreateFont("main/fonts/babo.png");
+    tex_miniMapAllied = dktCreateTextureFromFile("main/textures/MiniMapAllied.png", DKT_FILTER_LINEAR);
+    tex_miniMapEnemy = dktCreateTextureFromFile("main/textures/MiniMapEnemy.png", DKT_FILTER_LINEAR);;
+    tex_baboShadow = dktCreateTextureFromFile("main/textures/BaboShadow.png", DKT_FILTER_BILINEAR);
 
     // On ne cré pas notre player tout de suite, on attends confirmation du server
     thisPlayer = 0;

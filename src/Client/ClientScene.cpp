@@ -24,10 +24,10 @@ ClientScene::ClientScene(dkContext* dk) : Scene(dk)
 {
     clientVar.loadModels();
     mainTab = 0;
-    font = dkfCreateFont("main/fonts/babo.tga");
-    tex_crosshair = dktCreateTextureFromFile("main/textures/Cross01.tga", DKT_FILTER_LINEAR);
-    tex_menuCursor = dktCreateTextureFromFile("main/textures/MenuCursor.tga", DKT_FILTER_LINEAR);
-    //tex_miniHeadGames = dktCreateTextureFromFile("main/textures/miniHeadGames.tga", DKT_FILTER_LINEAR);
+    font = dkfCreateFont("main/fonts/babo.png");
+    tex_crosshair = dktCreateTextureFromFile("main/textures/Cross01.png", DKT_FILTER_LINEAR);
+    tex_menuCursor = dktCreateTextureFromFile("main/textures/MenuCursor.png", DKT_FILTER_LINEAR);
+    //tex_miniHeadGames = dktCreateTextureFromFile("main/textures/miniHeadGames.png", DKT_FILTER_LINEAR);
 
     client = 0;
     editor = 0;
@@ -471,7 +471,7 @@ void ClientScene::createMenu()
     if(gameVar.r_animatedMenu)
     {
         menuManager.root->superPanel = true;
-        menuManager.root->texture = dktCreateTextureFromFile("main/textures/Smoke2.tga", DKT_FILTER_NEAREST);
+        menuManager.root->texture = dktCreateTextureFromFile("main/textures/Smoke2.png", DKT_FILTER_NEAREST);
     }
 
     //--- Create the main tab container

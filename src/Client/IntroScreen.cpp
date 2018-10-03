@@ -25,9 +25,9 @@
 IntroScreen::IntroScreen()
 {
     showDelay = 3;
-    tex_rndLogo = dktCreateTextureFromFile("main/textures/RnDLabs.tga", DKT_FILTER_LINEAR);
-//  tex_glowLogo = dktCreateTextureFromFile("main/textures/RnDLabsGlow.tga", DKT_FILTER_LINEAR);
-    tex_hgLogo = dktCreateTextureFromFile("main/textures/HeadGames.tga", DKT_FILTER_LINEAR);
+    tex_rndLogo = dktCreateTextureFromFile("main/textures/RnDLabs.png", DKT_FILTER_LINEAR);
+//  tex_glowLogo = dktCreateTextureFromFile("main/textures/RnDLabsGlow.png", DKT_FILTER_LINEAR);
+    tex_hgLogo = dktCreateTextureFromFile("main/textures/HeadGames.png", DKT_FILTER_LINEAR);
 //  sfx_intro = dksCreateSoundFromFile("main/Sounds/IntroScreen.mp3", false);
 
 //  FSOUND_SetSFXMasterVolume((int)(255.0f*gameVar.s_masterVolume));

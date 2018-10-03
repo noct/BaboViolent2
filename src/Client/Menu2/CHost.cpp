@@ -126,12 +126,12 @@ unsigned int loadMapPreview(CString mapFilename)
 
     // On cré l'espace pour la texture
     //--- Est-ce qu'on a une minimap possible de ça?
-    FileIO* fileTGA = new FileIO(CString("main/modelmaps___/") + mapFilename + "/minimap.tga", "rb");
+    FileIO* fileTGA = new FileIO(CString("main/modelmaps___/") + mapFilename + "/minimap.png", "rb");
     unsigned int texMap = 0;
     if (fileTGA->isValid())
     {
         delete fileTGA;
-        texMap = dktCreateTextureFromFile((CString("main/modelmaps___/") + mapFilename + "/minimap.tga").s, DKT_FILTER_NEAREST);
+        texMap = dktCreateTextureFromFile((CString("main/modelmaps___/") + mapFilename + "/minimap.png").s, DKT_FILTER_NEAREST);
     }
     else
     {
@@ -200,7 +200,7 @@ CHost::CHost(CControl * in_parent, CControl * in_alignTo)
 
     //--- Da big frame
     instance = new CControl(parent, CVector2i(0,0), CVector2i(736, 506), "", this, "FRAME", in_alignTo, CONTROL_SNAP_BOTTOM);
-    instance->texture = dktCreateTextureFromFile("main/textures/Menu3Back.tga", DKT_FILTER_LINEAR);
+    instance->texture = dktCreateTextureFromFile("main/textures/Menu3Back.png", DKT_FILTER_LINEAR);
     instance->borderColor.set(1,.5f,.25f);
 
     //--- Labels and controls

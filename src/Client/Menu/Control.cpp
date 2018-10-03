@@ -37,7 +37,7 @@ Control::Control(CVector2i screenPosition, CString caption, unsigned int font, f
     anim = 0;
     changeCaption(caption);
     m_sfxOver = dksCreateSoundFromFile("main/sounds/ControlOver.wav", false);
-    tex_menu = dktCreateTextureFromFile("main/textures/Menu.tga", DKT_FILTER_LINEAR);
+    tex_menu = dktCreateTextureFromFile("main/textures/Menu.png", DKT_FILTER_LINEAR);
 }
 
 

@@ -107,7 +107,7 @@ public:
         if (instance->visible)
         {
             updateSkinInt++;
-            if (updateSkinInt == 15)
+            if (updateSkinInt == 150)
             {
                 updateSkin();
                 updateSkinInt = 0;

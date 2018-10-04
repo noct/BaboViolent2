@@ -42,7 +42,6 @@ public:
     CControl * chk_preciseCursor;
     CControl * chk_fullScreen;
     CControl * chk_highDetailMenus;
-    CControl * chk_animatedMenus;
     CControl * lst_resolution;
     CControl * lst_bitDepth;
     CControl * lst_refreshRate;

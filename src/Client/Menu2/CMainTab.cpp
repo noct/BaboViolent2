@@ -49,30 +49,7 @@ CMainTab::CMainTab(CControl * in_parent)
     credit = new CCredit(in_parent, btn_profile);
     option = new COption(in_parent, btn_profile);
 
-    if(gameVar.r_animatedMenu)
-    {
-        unsigned int tex = dktCreateTextureFromFile("main/textures/Smoke2.png", DKT_FILTER_NEAREST);
-        option->instance->superPanel = true;
-        //userLogin->instance->superPanel = true;
-        //news->lst_news->superPanel = true;
-        profile->instance->superPanel = true;
-        browser->lst_browseList->superPanel = true;
-        //friends->lst_browseList->superPanel = true;
-        host->instance->superPanel = true;
-        editor->instance->superPanel = true;
-        option->instance->superPanel = true;
-
-        option->instance->texture = tex;
-        //userLogin->instance->texture = tex;
-        //news->lst_news->texture = tex;
-        profile->instance->texture = tex;
-        browser->lst_browseList->texture = tex;
-        //friends->lst_browseList->texture = tex;
-        host->instance->texture = tex;
-        editor->instance->texture = tex;
-        option->instance->texture = tex;
-    }
-
+    unsigned int tex = dktCreateTextureFromFile("main/textures/Smoke2.png", DKT_FILTER_NEAREST);
 
     btn_resume = new CControl(parent, CVector2i(0,0), CVector2i(100,25), "Resume Game", this, "BUTTON");
     btn_resume->enable = false;

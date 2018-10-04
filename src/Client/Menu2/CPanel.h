@@ -33,8 +33,6 @@ public:
     CPanel()
     {
         instance = 0;
-        animY = 0;
-        velY = 0;
         counterSound = 0;
         m_sfxImpact = dksCreateSoundFromFile("main/sounds/impact.wav", false);
     }
@@ -43,34 +41,10 @@ public:
         dksDeleteSound(m_sfxImpact);
     }
 
-    float animY;
-    float velY;
-    int originalY;
     int counterSound;
 
     virtual void update(float delay)
     {
-        if (velY != 0)
-        {
-            velY -= delay * 2000.0f;
-            animY += velY * delay;
-            if (animY <= 0)
-            {
-                animY = 0;
-                velY *= -.25f;
-                if (velY < .15f) velY = 0;
-                else
-                {
-                    if (counterSound > 0)
-                    {
-                        counterSound--;
-                        dksPlaySound(m_sfxImpact, -1, 150);
-                    }
-                }
-            }
-            instance->localPos[1] = originalY + (int)animY;
-        }
-
         updatePerso(delay);
     }
 
@@ -82,8 +56,6 @@ public:
             if (value == true)
             {
                 counterSound = 2;
-                animY = 600;
-                velY = -1200;
             }
         }
     }

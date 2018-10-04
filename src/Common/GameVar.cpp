@@ -396,8 +396,6 @@ void GameVar::init()
     dksvarRegister(CString("r_showCasing [bool : true | false (default true)]"), &r_showCasing, true);
     r_showGroundMark = true;
     dksvarRegister(CString("r_showGroundMark [bool : true | false (default true)]"), &r_showGroundMark, true);
-    r_animatedMenu = false;
-    dksvarRegister(CString("r_animatedMenu [bool : true | false (default false)]"), &r_animatedMenu, true);
     r_showLatency = false;
     dksvarRegister(CString("r_showLatency [bool : true | false (default false)]"), &r_showLatency, true);
     r_simpleText = false;

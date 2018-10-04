@@ -33,8 +33,6 @@ CStats::CStats(CControl * in_parent, CControl * in_alignTo)
 
     instance->backColor.set(0,.3f,.7f);
     instance->imgColor = instance->backColor;
-
-    originalY = instance->localPos[1];
 }
 
 CStats::~CStats()

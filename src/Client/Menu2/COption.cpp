@@ -71,13 +71,6 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
     chk_fullScreen = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
     chk_fullScreen->check = gameVar.r_fullScreen;
 
-    //--- Animated menus
-    label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 25), "Animated menus:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
-    label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
-    label1->toolTips = "Animated menu background (Requires a good video card, Restart Required).";
-    chk_animatedMenus = new CControl(instance, CVector2i(10, 10), CVector2i(25, 25), "", this, "CHECK", label1, CONTROL_SNAP_RIGHT);
-    chk_animatedMenus->check = gameVar.r_animatedMenu;
-
     //--- Screen resolution
     label1 = new CControl(instance, CVector2i(20, 10), CVector2i(200, 150), "Screen resolution:", this, "LABEL", label1, CONTROL_SNAP_BOTTOM);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLERIGHT;
@@ -519,10 +512,6 @@ COption::COption(CControl * in_parent, CControl * in_alignTo)
 
     instance->backColor.set(0, .3f, .7f);
     instance->imgColor = instance->backColor;
-
-    animY = 0;
-    velY = 0;
-    originalY = instance->localPos[1];
 }
 
 
@@ -595,7 +584,6 @@ void COption::Click(CControl * control)
     gameVar.r_projectileShadow = chk_projectileShadow->check;
     gameVar.r_showCasing = chk_showCasing->check;
     gameVar.r_showGroundMark = chk_groundMark->check;
-    gameVar.r_animatedMenu = chk_animatedMenus->check;
     gameVar.r_simpleText = chk_simpleText->check;
 
     // Must reload weather if changed
@@ -697,7 +685,6 @@ void COption::Validate(CControl * control)
     gameVar.r_projectileShadow = chk_projectileShadow->check;
     gameVar.r_showCasing = chk_showCasing->check;
     gameVar.r_showGroundMark = chk_groundMark->check;
-    gameVar.r_animatedMenu = chk_animatedMenus->check;
 
     // Must reload weather if changed
     if(gameVar.r_weatherEffects != chk_weatherEffects->check) {

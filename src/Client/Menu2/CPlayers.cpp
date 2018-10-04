@@ -43,8 +43,6 @@ CPlayers::CPlayers(CControl * in_parent, CControl * in_alignTo)
 
     lst_browseList->backColor.set(0,.3f,.7f);
     lst_browseList->imgColor = lst_browseList->backColor;
-
-    originalY = instance->localPos[1];
 }
 
 CPlayers::~CPlayers()

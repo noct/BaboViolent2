@@ -119,13 +119,8 @@ CCredit::CCredit(CControl * in_parent, CControl * in_alignTo)
     label1->foreColor.set(.5f,1,.75f);
     label1->textAlign = CONTROL_TEXTALIGN_MIDDLECENTER;
 
-
     instance->backColor.set(0,.3f,.7f);
     instance->imgColor = instance->backColor;
-
-    animY = 0;
-    velY = 0;
-    originalY = instance->localPos[1];
 }
 
 

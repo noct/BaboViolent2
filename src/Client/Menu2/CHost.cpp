@@ -467,10 +467,6 @@ CHost::CHost(CControl * in_parent, CControl * in_alignTo)
 
     instance->backColor.set(0,.3f,.7f);
     instance->imgColor = instance->backColor;
-
-    animY = 0;
-    velY = 0;
-    originalY = instance->localPos[1];
 }
 
 CHost::~CHost()

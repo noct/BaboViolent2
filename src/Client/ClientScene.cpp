@@ -468,11 +468,8 @@ void ClientScene::createMenu()
     menuManager.root->foreColor.set(1, 1, 1);
     menuManager.root->textShadow = true;
     menuManager.root->noFill = true;
-    if(gameVar.r_animatedMenu)
-    {
-        menuManager.root->superPanel = true;
-        menuManager.root->texture = dktCreateTextureFromFile("main/textures/Smoke2.png", DKT_FILTER_NEAREST);
-    }
+    menuManager.root->superPanel = true;
+    menuManager.root->texture = dktCreateTextureFromFile("main/textures/Smoke2.png", DKT_FILTER_NEAREST);
 
     //--- Create the main tab container
     mainTab = new CMainTab(menuManager.root);

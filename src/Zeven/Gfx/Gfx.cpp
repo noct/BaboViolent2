@@ -1494,7 +1494,7 @@ int dkwMainLoop()
 
     while(SDL_PollEvent(&event))
     {
-        ImGui_ImplSDL2_ProcessEvent(&event);
+        //ImGui_ImplSDL2_ProcessEvent(&event);
         if(event.type == SDL_QUIT)
             done = true;
         if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(g_window))
@@ -1511,19 +1511,19 @@ int dkwMainLoop()
     }
 
 
-    bool show_demo_window = false;
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(g_window);
-    ImGui::NewFrame();
-    if(show_demo_window)
-    {
-        ImGui::ShowDemoWindow(&show_demo_window);
-    }
-    ImGui::Render();
+    //bool show_demo_window = false;
+    //ImGui_ImplOpenGL3_NewFrame();
+    //ImGui_ImplSDL2_NewFrame(g_window);
+    //ImGui::NewFrame();
+    //if(show_demo_window)
+    //{
+    //    ImGui::ShowDemoWindow(&show_demo_window);
+    //}
+    //ImGui::Render();
 
     mainLoopObject->paint();
 
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     // Swap buffers if valid context is found
     if(g_gl_context)
@@ -1592,14 +1592,15 @@ dkGfxContext* dkGfxInit(dkContext* ctx, dkGfxConfig config)
         return nullptr;
     }
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.IniFilename = nullptr;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-    ImGui_ImplSDL2_InitForOpenGL(g_window, g_gl_context);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-    ImGui::StyleColorsDark();
+    //IMGUI_CHECKVERSION();
+    //ImGui::CreateContext();
+    //ImGuiIO& io = ImGui::GetIO();
+    //io.IniFilename = nullptr;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    //io.MouseDrawCursor = true;
+    //ImGui_ImplSDL2_InitForOpenGL(g_window, g_gl_context);
+    //ImGui_ImplOpenGL3_Init(glsl_version);
+    //ImGui::StyleColorsDark();
 
     done = false;
 

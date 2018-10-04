@@ -218,69 +218,23 @@ void renderTexturedQuadSmooth(int x, int y, int w, int h, unsigned int texture)
 void renderMenuQuad(int x, int y, int w, int h)
 {
     glPushAttrib(GL_CURRENT_BIT);
-
-        //--- Round corner of 5 units
+    {
         CVector4f color4;
         glGetFloatv(GL_CURRENT_COLOR, color4.s);
+        //--- Round corner of 5 units
 
-        if (gameVar.r_highDetailMenu)
+        glBegin(GL_QUADS);
         {
-            glBegin(GL_QUADS);
-                glColor4f(0, 0, 0, .25f);
-
-                glVertex2i(x - 1, y);
-                glVertex2i(x - 1, y + h);
-                glVertex2i(x + w, y + h);
-                glVertex2i(x + w, y);
-
-                glVertex2i(x, y - 1);
-                glVertex2i(x, y + h);
-                glVertex2i(x + w, y + h);
-                glVertex2i(x + w, y - 1);
-
-                glVertex2i(x, y);
-                glVertex2i(x, y + h + 1);
-                glVertex2i(x + w, y + h + 1);
-                glVertex2i(x + w, y);
-
-                glVertex2i(x, y);
-                glVertex2i(x, y + h);
-                glVertex2i(x + w + 1, y + h);
-                glVertex2i(x + w + 1, y);
-            glEnd();
-
-            glBegin(GL_QUADS);
-                glColor4fv((color4*1.2f).s);
-                glVertex2i(x,y);
-                glColor4fv((color4 * 1).s);
-                glVertex2i(x,y+h / 2);
-                glColor4fv((color4 * 1).s);
-                glVertex2i(x+w,y+h / 2);
-                glColor4fv((color4*1.2f).s);
-                glVertex2i(x+w,y);
-
-                glColor4fv((color4*.9f).s);
-                glVertex2i(x,y + h / 2);
-                glColor4fv((color4*0.6f).s);
-                glVertex2i(x,y+h);
-                glColor4fv((color4*0.6f).s);
-                glVertex2i(x+w,y+h);
-                glColor4fv((color4*.9f).s);
-                glVertex2i(x+w,y + h / 2);
-            glEnd();
+            glColor4fv(color4.s);
+            glVertex2i(x, y);
+            glColor4fv(color4.s);
+            glVertex2i(x, y + h);
+            glColor4fv(color4.s);
+            glVertex2i(x + w, y + h);
+            glColor4fv(color4.s);
+            glVertex2i(x + w, y);
         }
-        else
-        {
-            glBegin(GL_QUADS);
-                glColor4fv((color4*1.2f).s);
-                glVertex2i(x,y);
-                glColor4fv((color4 * 0.6f).s);
-                glVertex2i(x,y+h);
-                glColor4fv((color4 * 0.6f).s);
-                glVertex2i(x+w,y+h);
-                glColor4fv((color4*1.2f).s);
-                glVertex2i(x+w,y);
-            glEnd();
-        }
+        glEnd();
+    }
     glPopAttrib();
 }

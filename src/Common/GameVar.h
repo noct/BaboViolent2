@@ -194,7 +194,6 @@ struct GameVar
     bool r_projectileShadow;
     bool r_showCasing;
     bool r_showGroundMark;
-    bool r_highDetailMenu;
     bool r_animatedMenu;
     bool r_showLatency;
     bool r_simpleText;

@@ -44,7 +44,7 @@ CString textColorLess(const CString & text)
 }
 
 //
-// Pour utiliser une fonction cubic spline pour pr�enir le lag appearance ;)
+// Pour utiliser une fonction cubic spline pour prêenir le lag appearance ;)
 //
 float cubicSpline(float x0, float x1, float x2, float x3, float t)
 {
@@ -120,7 +120,7 @@ bool segmentToSphere(CVector3f & p1, CVector3f & p2, CVector3f & c, float radius
         r = p1 + u * d;
     }
 
-    // On check la distance du point �l'axe
+    // On check la distance du point êl'axe
     if (distanceSquared(r, c) <= radius*radius)
     {
         // On ajuste notre p2

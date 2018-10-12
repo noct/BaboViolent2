@@ -81,7 +81,7 @@ Client::Client(ClientGame * pGame)
     clientRoot->textShadow = true;
     clientRoot->noFill = true;
 
-    // On cr� nos menu bitch
+    // On créer  nos menu bitch
     btn_autoAssign = new CControl(clientRoot, CVector2i(25, 130), CVector2i(200, 30), "Auto assign team", this, "BUTTON");
     btn_blueTeam = new CControl(clientRoot, CVector2i(25, 130), CVector2i(200, 30), "\x1Join blue team", this, "BUTTON", btn_autoAssign, CONTROL_SNAP_BOTTOM);
     btn_redTeam = new CControl(clientRoot, CVector2i(25, 130), CVector2i(200, 30), "\x4Join red team", this, "BUTTON", btn_blueTeam, CONTROL_SNAP_BOTTOM);
@@ -247,7 +247,7 @@ void Client::update(float delay)
         int result = bb_clientUpdate(uniqueClientID, delay, UPDATE_SEND_RECV);
         if(result == 1)
         {
-            // Une erreur !!! On arr�te tout !!!
+            // Une erreur !!! On arrête tout !!!
             console->add(CString("\x3> Error : %s", bb_clientGetLastError(uniqueClientID)));
             needToShutDown = true;
             //  scene->menu->currentMenu = MENU_CONNECTION_FAILED;
@@ -264,7 +264,7 @@ void Client::update(float delay)
             //      isConnected = true;
         }
 
-        // Si on p�se sur T, on tombe en mode chatting
+        // Si on pêse sur T, on tombe en mode chatting
         /*if(game->roundState != GAME_PLAYING)
         {
             console->unlock();
@@ -377,7 +377,7 @@ void Client::update(float delay)
                 timeSinseLastQMsg = 0.0f;
             }
 
-            // Si on est entrein de chatter et qu'on p�se sur Enter on send le chat
+            // Si on est entrein de chatter et qu'on pêse sur Enter on send le chat
             if(chatting.isActivated())
             {
                 if(isChattingTeam)
@@ -395,7 +395,7 @@ void Client::update(float delay)
         int messageID;
         while(buffer = bb_clientReceive(uniqueClientID, &messageID))
         {
-            // On g�re les messages re�u
+            // On gêre les messages reêu
             recvPacket(buffer, messageID);
         }
 
@@ -428,7 +428,7 @@ void Client::update(float delay)
         }
 #endif
 
-        // On g�re le menu (important, toujours tester si la console est l� ou pas)
+        // On gêre le menu (important, toujours tester si la console est lê ou pas)
         if(showMenu && !cconsole->isActive() && isConnected)
         {
             menuManager.update(delay, clientRoot);
@@ -436,7 +436,7 @@ void Client::update(float delay)
         }
     }
 
-    // On update le jeu (�a c'est autant client que server side)
+    // On update le jeu (êa c'est autant client que server side)
     if(game) game->update(delay);
 
     // On update les chat messages
@@ -466,11 +466,11 @@ void Client::update(float delay)
         }
     }
 
-    // On update le client une derni�re fois
+    // On update le client une derniêre fois
     int result = bb_clientUpdate(uniqueClientID, delay, UPDATE_SEND_RECV);
     if(result == 1)
     {
-        // Une erreur !!! On arr�te tout !!!
+        // Une erreur !!! On arrête tout !!!
         console->add(CString("\x3> Error : %s", bb_clientGetLastError(uniqueClientID)));
         needToShutDown = true;
     }
@@ -529,7 +529,7 @@ void Client::Click(CControl * control)
         if(game->thisPlayer)
         {
             // On le dit au server qu'on change de state!
-            // En fait, on le demannnnde au server, lui va d�cider si t'as le droit ou pas
+            // En fait, on le demannnnde au server, lui va dêcider si t'as le droit ou pas
             net_clsv_svcl_team_request teamRequest;
             teamRequest.playerID = game->thisPlayer->playerID;
             teamRequest.teamRequested = PLAYER_TEAM_AUTO_ASSIGN;
@@ -543,7 +543,7 @@ void Client::Click(CControl * control)
         if(game->thisPlayer)
         {
             // On le dit au server qu'on change de state!
-            // En fait, on le demannnnde au server, lui va d�cider si t'as le droit ou pas
+            // En fait, on le demannnnde au server, lui va dêcider si t'as le droit ou pas
             net_clsv_svcl_team_request teamRequest;
             teamRequest.playerID = game->thisPlayer->playerID;
             teamRequest.teamRequested = PLAYER_TEAM_BLUE;
@@ -557,7 +557,7 @@ void Client::Click(CControl * control)
         if(game->thisPlayer)
         {
             // On le dit au server qu'on change de state!
-            // En fait, on le demannnnde au server, lui va d�cider si t'as le droit ou pas
+            // En fait, on le demannnnde au server, lui va dêcider si t'as le droit ou pas
             net_clsv_svcl_team_request teamRequest;
             teamRequest.playerID = game->thisPlayer->playerID;
             teamRequest.teamRequested = PLAYER_TEAM_RED;
@@ -571,7 +571,7 @@ void Client::Click(CControl * control)
         if(game->thisPlayer)
         {
             // On le dit au server qu'on change de state!
-            // En fait, on le demannnnde au server, lui va d�cider si t'as le droit ou pas
+            // En fait, on le demannnnde au server, lui va dêcider si t'as le droit ou pas
             net_clsv_svcl_team_request teamRequest;
             teamRequest.playerID = game->thisPlayer->playerID;
             teamRequest.teamRequested = PLAYER_TEAM_SPECTATOR;
@@ -704,7 +704,7 @@ int Client::join(CString IPAddress, int port, CString password)
 
 
 //
-// Pour printer un chat message sur l'�cran
+// Pour printer un chat message sur l'êcran
 //
 void Client::printMessage(CString message)
 {
@@ -722,27 +722,27 @@ void Client::sayall(CString message)
     {
         if(game->thisPlayer)
         {
-            // On send �a sur la network oui messieur
+            // On send êa sur la network oui messieur
             net_clsv_svcl_chat chat_message;
 
             //  chat_message.fromID = game->thisPlayer->playerID;
             chat_message.teamID = PLAYER_TEAM_SPECTATOR - 1; // All player!
 
-            // On insert la couleur d�pendament du team
+            // On insert la couleur dêpendament du team
             // (une fois apres le nom du joueur, parce que ce dernier a surement
-            // mis plein de caract�res de couleurs)
+            // mis plein de caractêres de couleurs)
             message.insert(" : \x8", 0);
 
             // On insert le nom du joueur
             message.insert(game->thisPlayer->name.s, 0);
 
-            // On insert son �tat (mort)
+            // On insert son êtat (mort)
             if(game->thisPlayer->status == PLAYER_STATUS_DEAD && game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
             {
                 message.insert(CString("(%s)", clientVar.lang_dead.s).s, 0);
             }
 
-            // On insert la couleur d�pendament du team
+            // On insert la couleur dêpendament du team
             switch(game->thisPlayer->teamID)
             {
             case PLAYER_TEAM_SPECTATOR:
@@ -759,10 +759,10 @@ void Client::sayall(CString message)
             // Si le message est trop grand, on le resize
             if(message.len() > 49 + 80) message.resize(49 + 80);
 
-            // Voil�, on copie le finale
+            // Voilê, on copie le finale
             memcpy(chat_message.message, message.s, sizeof(char) * (message.len() + 1));
 
-            // Voil�, on send �a sur le network!
+            // Voilê, on send êa sur le network!
             bb_clientSend(uniqueClientID, (char*)&chat_message, sizeof(net_clsv_svcl_chat), NET_CLSV_SVCL_CHAT);
         }
     }
@@ -775,15 +775,15 @@ void Client::sayteam(CString message)
     {
         if(game->thisPlayer)
         {
-            // On send �a sur la network oui messieur
+            // On send êa sur la network oui messieur
             net_clsv_svcl_chat chat_message;
 
             //  chat_message.fromID = game->thisPlayer->playerID;
             chat_message.teamID = game->thisPlayer->teamID;
 
-            // On insert la couleur d�pendament du team
+            // On insert la couleur dêpendament du team
             // (une fois apres le nom du joueur, parce que ce dernier a surement
-            // mis plein de caract�res de couleurs)
+            // mis plein de caractêres de couleurs)
             message.insert(" : \x8", 0);
 
             // On insert le nom du joueur
@@ -808,14 +808,14 @@ void Client::sayteam(CString message)
 
             if(game->thisPlayer->teamID != PLAYER_TEAM_SPECTATOR)
             {
-                // On insert son �tat (mort)
+                // On insert son êtat (mort)
                 if(game->thisPlayer->status == PLAYER_STATUS_DEAD)
                 {
                     message.insert(CString("(%s)", clientVar.lang_dead.s).s, 0);
                 }
             }
 
-            // On insert la couleur d�pendament du team
+            // On insert la couleur dêpendament du team
             switch(game->thisPlayer->teamID)
             {
             case PLAYER_TEAM_SPECTATOR:
@@ -832,10 +832,10 @@ void Client::sayteam(CString message)
             // Si le message est trop grand, on le resize
             if(message.len() > 49 + 80) message.resize(49 + 80);
 
-            // Voil�, on copie le finale
+            // Voilê, on copie le finale
             memcpy(chat_message.message, message.s, sizeof(char) * (message.len() + 1));
 
-            // Voil�, on send �a sur le network!
+            // Voilê, on send êa sur le network!
             bb_clientSend(uniqueClientID, (char*)&chat_message, sizeof(net_clsv_svcl_chat), NET_CLSV_SVCL_CHAT);
         }
     }

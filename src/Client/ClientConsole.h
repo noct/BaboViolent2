@@ -38,7 +38,7 @@ private:
     // Le string courrant, qu'on est entrein de taper
     Writting * m_currentText;
 
-    // Pour tenir les 10 premier trouv�dans les var recognition
+    // Pour tenir les 10 premier trouvêdans les var recognition
     char ** recognitionVar;
     bool showRecognitionVar;
     CString lastRecognitionVar;

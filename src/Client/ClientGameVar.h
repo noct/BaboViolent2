@@ -64,7 +64,7 @@ struct ClientGameVar
     FSOUND_SAMPLE * sfx_overHeat;
     FSOUND_SAMPLE * sfx_photonStart;
 
-    // LES STRING DIFF�RENT POUR CHAQUE LANGUE
+    // LES STRING DIFFêRENT POUR CHAQUE LANGUE
     CString lang_gameName;
 
     CString lang_dualMachineGun;

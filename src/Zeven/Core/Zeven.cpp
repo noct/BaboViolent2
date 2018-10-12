@@ -110,7 +110,7 @@ int32_t dkcUpdateTimer(dkContext* ctx)
         ctx->time.oneSecondFrameCound = 0;
     }
 
-    // On retourne le nombre de frame �animer
+    // On retourne le nombre de frame êanimer
     return nbFrameAdded;
 }
 
@@ -565,7 +565,7 @@ CMD_RET         dksvarCommand(char * str_command)
     CString commandName = strCommand.getFirstToken(' ');
 
     // On check maintenant si elle contient une commande en liens avec les system variable
-    return systemVariable.command(commandName, strCommand); // Elle a ��trait�
+    return systemVariable.command(commandName, strCommand); // Elle a êêtraitê
 }
 
 
@@ -577,7 +577,7 @@ void dksvarGetFormatedVar(char * varName, CString * formatedString)
         CSVType * var = systemVariable.variables[i];
         if (strnicmp(var->variableName.s, varName, strlen(varName)) == 0)
         {
-            // On pogne son nom format�avec la valeur apres
+            // On pogne son nom formatêavec la valeur apres
             CString formatedName = CString(varName) + " " + var->getValue();
             systemVariable.stringInterface->updateString(formatedString, formatedName.s);
             return;
@@ -597,7 +597,7 @@ void dksvarGetFilteredVar(char * varName, char ** array, int size)
         CSVType * var = systemVariable.variables[i];
         if (strnicmp(var->variableName.s, varName, len) == 0)
         {
-            // On le place en ordre alphab�ique dans la liste trouv�
+            // On le place en ordre alphabêique dans la liste trouvê
             int j=0;
             for (j=0;j<(int)matchs.size();++j)
             {
@@ -717,7 +717,7 @@ void dksvarRegister(const CString &screenName, CString    *defaultValue, bool mC
 
 
 //
-// Pour d�enregistrer
+// Pour dêenregistrer
 //
 void dksvarUnregister(const CString &screenName)
 {

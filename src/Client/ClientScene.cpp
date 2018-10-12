@@ -40,7 +40,7 @@ ClientScene::ClientScene(dkContext* dk) : Scene(dk)
     glViewport(0, 0, res[0], res[1]);
     dkglSetProjection(60, 1, 50, (float)res[1] * 1.333f, (float)res[1]);
 
-    // Truc par default � enabeler
+    // Truc par default ê enabeler
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -115,7 +115,7 @@ void ClientScene::update(float delay)
     {
         if(mainTab) mainTab->update(delay);
 
-        // On update le server, tr�s important
+        // On update le server, três important
         if(server)
         {
             server->update(delay);
@@ -126,10 +126,10 @@ void ClientScene::update(float delay)
             }
         }
 
-        // On update le client, tr�s important aussi
+        // On update le client, três important aussi
         if(client)
         {
-            // On set le volume avec �a :D:D trop hot
+            // On set le volume avec êa :D:D trop hot
             if(client->game)
             {
                 FSOUND_SetSFXMasterVolume((int)((255.0f - client->game->viewShake*100.0f)*gameVar.s_masterVolume));
@@ -191,7 +191,7 @@ void ClientScene::render()
     glViewport(0, 0, res[0], res[1]);
     dkglSetProjection(60, 1, 50, (float)res[1] * 1.333f, (float)res[1]);
 
-    // Truc par default � enabeler
+    // Truc par default ê enabeler
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -218,14 +218,6 @@ void ClientScene::render()
         }
         menuManager.renderDialogs();
 
-        /*      if (menu->isShowing) menu->render();
-                else if (menu->soundPlayChannel >= 0)
-                {
-                    FSOUND_StopSound(menu->soundPlayChannel);
-                    menu->soundPlayChannel = -1;
-                }*/
-
-                // On afficher le fps
         dkglPushOrtho((float)res[0], (float)res[1]);
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
         glEnable(GL_TEXTURE_2D);
@@ -237,13 +229,6 @@ void ClientScene::render()
         if(gameVar.r_showStats)
         {
             printRightText((float)res[0], 0, 20, CString("FPS : %i", (int)dkcGetFPS(ctx)));
-            //dkfPrint(20,0, 0, 0, CString("FPS : %i", (int)dkcGetFPS()).s);
-           //(size,x-width,y,0,text.s);
-                //printRightText((float)res[0], 32, 32, CString("NB PARTICLE : %i", gameVar.ro_nbParticle));
-            //  unsigned long byteSent = (client)?bb_clientGetBytesSent(client->uniqueClientID) + bb_serverGetBytesSent() + bb_peerGetBytesSent():0;
-            //  unsigned long byteRecv = (client)?bb_clientGetBytesReceived(client->uniqueClientID) + bb_serverGetBytesReceived() + bb_peerGetBytesReceived():0;
-            //  printRightText((float)res[0], 64, 32, CString("NET BYTE SENT : %i Kb", (int)byteSent / 1024));
-            //  printRightText((float)res[0], 96, 32, CString("NET BYTE RECV : %i Kb", (int)byteRecv / 1024));
         }
 
         // On affiche la version du jeu
@@ -257,13 +242,6 @@ void ClientScene::render()
             {
                 printRightText((float)res[0] - 5, (float)res[1] - 32 - 5, 32, CString(clientVar.lang_clientVersion.s, (int)GAME_VERSION_CL / 10000, (int)(GAME_VERSION_CL % 10000) / 100, ((int)GAME_VERSION_CL % 100)));
             }
-
-            //--- Copyrights (replaced by head games logo)
-        //  printRightText((float)res[0]-5, (float)res[1]-100-5, 16, CString("Copyright (c) RndLabs Inc. 2006-2007"));
-        //  printRightText((float)res[0]-5, (float)res[1]-100-5+16, 16, CString("All Rights Reserved"));
-
-        //  printRightText((float)res[0]-5, (float)res[1]-32-5-32, 32, CString("server version %01i.%02i.%02i", (int)GAME_VERSION_SV/10000, (int)(GAME_VERSION_SV%1000)/100, ((int)GAME_VERSION_SV%100)));
-        //  printRightText((float)res[0]-5, (float)res[1]-32-5-64, 32, CString("Babonet version %s", bbNetVersion));
         }
         glPopAttrib();
         dkglPopOrtho();
@@ -311,7 +289,7 @@ void ClientScene::render()
 }
 
 //
-// Pour cr�r, join, disconnecter d'une game
+// Pour créer r, join, disconnecter d'une game
 //
 void ClientScene::host(CString mapName)
 {
@@ -336,7 +314,7 @@ void ClientScene::host(CString mapName)
         console->add(CString("\x3> Server Created on port %i", gameVar.sv_port));
     }
 
-    // Voil� maintenant on le join
+    // Voilê maintenant on le join
     if(!client->join("127.0.0.1", gameVar.sv_port))
     {
         disconnect();
@@ -385,7 +363,7 @@ void ClientScene::join(CString IPAddress, int port, CString password/*, CString 
         client->requestedAdmin = true;
     }*/
 
-    // Voil� maintenant on le join
+    // Voilê maintenant on le join
     if(!client->join(IPAddress, port, password))
     {
         disconnect();

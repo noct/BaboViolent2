@@ -118,24 +118,24 @@ void dkglLookAt(
 void dkglDrawSphere(double radius, int slices, int stacks, unsigned int topology);
 
 
-// Les �tats des touches
-/// \name �tats des touches et boutons possibles
-/// Dans le cas normal, la s�quence d'�tats pour une touche qui est appuy� pendant un certain temps sera :
-/// ..., DKI_NOTHING, DKI_NOTHING,(l'�v�nement d'enfoncement de la touche se produit ici) DKI_DOWN, DKI_HOLD, DKI_HOLD, ..., DKI_HOLD, DKI_HOLD, (l'�v�nement de relachement de la touche se produit ici)DKI_UP, DKI_NOTHING, DKI_NOTHING,...
+// Les êtats des touches
+/// \name êtats des touches et boutons possibles
+/// Dans le cas normal, la sêquence d'êtats pour une touche qui est appuyê pendant un certain temps sera :
+/// ..., DKI_NOTHING, DKI_NOTHING,(l'êvênement d'enfoncement de la touche se produit ici) DKI_DOWN, DKI_HOLD, DKI_HOLD, ..., DKI_HOLD, DKI_HOLD, (l'êvênement de relachement de la touche se produit ici)DKI_UP, DKI_NOTHING, DKI_NOTHING,...
 //@{
-/// utilis�e pour d�signer qu'aucune touche n'a encore �t� pes� (voir dkiGetFirstDown())
+/// utilisêe pour dêsigner qu'aucune touche n'a encore êtê pesê (voir dkiGetFirstDown())
 const int DKI_NOKEY = -1;
-/// utilis�e pour d�signer qu'une touche n'est pas appuy�e
+/// utilisêe pour dêsigner qu'une touche n'est pas appuyêe
 const int DKI_NOTHING = 0;
-/// utilis�e pour d�signer qu'une touche vient d'�tre enfonc�e. Cet �tat est pr�sent seulement une fois pour toute la dur�e de l'enfoncement d'une touche.
+/// utilisêe pour dêsigner qu'une touche vient d'être enfoncêe. Cet êtat est prêsent seulement une fois pour toute la durêe de l'enfoncement d'une touche.
 const int DKI_DOWN = 1;
-/// utilis�e pour d�signer qu'une touche est maintenue enfonc�e. Cet �tat est pr�sent tant que la touche reste enfonc�.
+/// utilisêe pour dêsigner qu'une touche est maintenue enfoncêe. Cet êtat est prêsent tant que la touche reste enfoncê.
 const int DKI_HOLD = 2;
-/// utilis�e pour d�signer qu'une touche vient d'�tre relach�e. Cet �tat est pr�sent seulement une fois d�s que la touche a �t� relach�e.
+/// utilisêe pour dêsigner qu'une touche vient d'être relachêe. Cet êtat est prêsent seulement une fois dês que la touche a êtê relachêe.
 const int DKI_UP = 3;
-/// non utilis�
+/// non utilisê
 const int DKI_CLIC = 3;
-/// non utilis�
+/// non utilisê
 const int DKI_DBL_CLIC = 4;
 //@}
 
@@ -596,7 +596,7 @@ void            dkoPopRenderState();
 void            dkoPushRenderState();
 bool            dkoRayIntersection(unsigned int modelID, float *p1, float *p2, float *intersect, float *normal, int &n);
 void            dkoRender(unsigned int modelID); // Va renderer automatiquement le premier frame
-void            dkoRender(unsigned int modelID, unsigned short frameID); // Sp�ifions un frame
+void            dkoRender(unsigned int modelID, unsigned short frameID); // Spêifions un frame
 void            dkoRender(unsigned int modelID, float frameID); // Avec interpolation (MaLaDe)
 bool            dkoSphereIntersection(unsigned int modelID, float *p1, float *p2, float rayon, float *intersect, float *normal, int &n);
 

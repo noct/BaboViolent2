@@ -21,7 +21,7 @@
 
 #include <Zeven/Core.h>
 
-// Pour utiliser une fonction cubic spline pour pr�enir le lag appearance ;)
+// Pour utiliser une fonction cubic spline pour prêenir le lag appearance ;)
 float cubicSpline(float x0, float x1, float x2, float x3, float t);
 CVector3f cubicSpline(const CVector3f & x0,const CVector3f & x1, const CVector3f & x2, const CVector3f & x3, float t);
 

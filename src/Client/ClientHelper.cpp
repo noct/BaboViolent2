@@ -24,7 +24,7 @@
 bool enableShadow = true;
 
 //
-// Pour �rire du texte centr�
+// Pour êrire du texte centrê
 //
 void printCenterText(float x, float y, float size, const CString & text)
 {

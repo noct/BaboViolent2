@@ -45,7 +45,7 @@ public:
     virtual void Open(CString filename, CString how);
     virtual void Close();
 
-    // Pour �crire normalement dans le fichier
+    // Pour êcrire normalement dans le fichier
     virtual void putLine(CString line);
     virtual CString getLine();
 
@@ -73,7 +73,7 @@ public:
     virtual CVector3f getVector3f();
     virtual CVector4f getVector4f();
 
-    // Les puts, pour �crire en binaire dans le fichier
+    // Les puts, pour êcrire en binaire dans le fichier
     virtual void put(bool data);
     virtual void put(char data);
     virtual void put(char * data, int size);

@@ -97,24 +97,6 @@ void Writting::writeText(unsigned int caracter)
     m_cursorAnim = 0;
     dksPlaySound(m_sfxWrite, -1, 200);
 
-    // Si on fait backspace
-    if (caracter == 8)
-    {
-        if (m_cursorPos > 0)
-        {
-            remove(m_cursorPos-1);
-            m_cursorPos--;
-        }
-        return;
-    }
-
-    // Enter
-    if (caracter == 13)
-    {
-        m_isActivated = true;
-        return;
-    }
-
     // On check pour changer la couleur
     if (caracter >= '1' && caracter <= '9')
     {
@@ -218,13 +200,17 @@ void Writting::updateWritting(float delay)
     {
         dksPlaySound(m_sfxWrite, -1, 200);
         m_cursorAnim = 0;
-        if(m_cursorPos < len())
+        if(m_cursorPos > 0)
         {
-            remove(m_cursorPos);
-            if(m_cursorPos > len()) m_cursorPos = len();
+            remove(m_cursorPos - 1);
+            m_cursorPos--;
         }
-        m_cursorPos--;
-        if(m_cursorPos < 0) m_cursorPos = 0;
+    }
+
+    // Enter
+    if(dkiGetState(KeyEnter) == DKI_DOWN)
+    {
+        m_isActivated = true;
     }
 }
 

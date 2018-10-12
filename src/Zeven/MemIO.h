@@ -90,7 +90,7 @@ public:
     CVector3f getVector3f();
     CVector4f getVector4f();
 
-    // Les puts, pour �crire en binaire dans le fichier
+    // Les puts, pour êcrire en binaire dans le fichier
     void put(unsigned char * data, int size);
 
     unsigned int getPos() { return m_pos; }

@@ -62,7 +62,7 @@ public:
             // On va chercher notre delay
             float delay = dkcGetElapsedf(ctx);
 
-            // On passe le nombre de frame �animer
+            // On passe le nombre de frame êanimer
             while (nbFrameElapsed)
             {
                 // Update la console
@@ -71,11 +71,11 @@ public:
                 // On appel nos fonction pour animer ici
                 scene->update(delay);
 
-                // On d�r�ente pour le prochain frame
+                // On dêrêente pour le prochain frame
                 nbFrameElapsed--;
             }
 
-            //--- On check si on n'est pas lock�avant de continuer
+            //--- On check si on n'est pas lockêavant de continuer
             if (locked)
             {
                 internalLock = true;
@@ -123,7 +123,7 @@ int main(int argc, const char* argv[])
 
     dkContext* ctx = dkInit(config);
 
-    // PREMI�E CHOSE �FAIRE, on load les config
+    // PREMIêE CHOSE êFAIRE, on load les config
     dksvarLoadConfig("main/bv2.cfg");
     dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
 
@@ -150,10 +150,10 @@ int main(int argc, const char* argv[])
     console = new Console();
     console->init();
 
-    //--- On cr�le master
+    //--- On créer le master
     master = new CMaster(nullptr);
 
-    // On cr�notre scene
+    // On créer notre scene
     scene = new Scene(ctx);
 
     // La loop principal

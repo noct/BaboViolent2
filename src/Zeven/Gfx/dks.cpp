@@ -229,7 +229,7 @@ void			dksShutDown()
 
 
 //
-// Pour cr�er un son
+// Pour créer er un son
 //
 #ifdef USE_FMODEX
 FMOD_SOUND
@@ -247,7 +247,7 @@ FSOUND_SAMPLE
         return 0;
 #endif
 
-	// On check si il n'existe pas d�j� en comparant les filename
+	// On check si il n'existe pas dêjê en comparant les filename
 	for (i=0;i<sounds.size();i++)
 	{
 		CSound * sound = sounds.at(i);
@@ -259,7 +259,7 @@ FSOUND_SAMPLE
 		}
 	}
 
-	// Si on ne l'a pas trouv� un le cr�
+	// Si on ne l'a pas trouvê un le créer
 	if (i == sounds.size())
 	{
 		newSound = new CSound();
@@ -307,7 +307,7 @@ void dksDeleteSound(
 		{
 			sound->loadedXTime--;
 
-			// Si on les a toute pogn�, on l'efface
+			// Si on les a toute pognê, on l'efface
 			if (sound->loadedXTime <= 0)
 			{
 				delete sound;
@@ -575,7 +575,7 @@ l_abort:
 
 
 //
-// Arr�ter la music
+// Arrêter la music
 //
 void			dksStopMusic()
 {

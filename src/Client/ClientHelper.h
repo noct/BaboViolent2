@@ -21,7 +21,7 @@
 
 #include <Zeven/Core.h>
 
-// Pour �rire du texte centr�
+// Pour êrire du texte centrê
 void printCenterText(float x, float y, float size, const CString & text);
 void printLeftText(float x, float y, float size, const CString & text);
 void printRightText(float x, float y, float size, const CString & text);

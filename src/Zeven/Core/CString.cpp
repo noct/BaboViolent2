@@ -29,10 +29,10 @@
 //
 
 ////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Constructeur utilis�comme pour un printf
+/// \brief Constructeur utilisêcomme pour un printf
 ///
-/// Ce constructeur fonctionne de la m�e mani�e qu'un printf avec un nombre inconnu
-/// d'arguments. Les arguments sont pass� tour �tour et int�r� �la string...
+/// Ce constructeur fonctionne de la mêe maniêe qu'un printf avec un nombre inconnu
+/// d'arguments. Les arguments sont passê tour êtour et intêrê êla string...
 ///
 ////////////////////////////////////////////////////////////////////////////////////////
 CString::CString(char* fmt, ...)
@@ -47,7 +47,7 @@ CString::CString(char* fmt, ...)
         return;
     }
 
-    // On cr�un char de 512 pour contenir le string (pas besoin de plus que 512 je crois)
+    // On créer un char de 512 pour contenir le string (pas besoin de plus que 512 je crois)
 //  char *mString = new char[MAX_CARAC];
 
     // Ici on passe tout les param (c comme un printf) pour les mettre dans le string
@@ -72,7 +72,7 @@ CString::CString(char* fmt, ...)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Fonction qui permet de modifier la taille de la cha�e de caract�e
+/// \brief Fonction qui permet de modifier la taille de la chaêe de caractêe
 ///
 /// \param newSize : Nouvelle taille.
 ///
@@ -91,7 +91,7 @@ void CString::resize(int newSize)
     }
     else
     {
-        // On le remet �vide
+        // On le remet êvide
         delete [] s;
         s = new char [1];
         s[0] = '\0';
@@ -99,7 +99,7 @@ void CString::resize(int newSize)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Fonction qui permet de modifier la taille de la cha�e de caract�e et qui en
+/// \brief Fonction qui permet de modifier la taille de la chaêe de caractêe et qui en
 /// plus l'inverse
 ///
 /// \param newSize : Nouvelle taille.
@@ -121,7 +121,7 @@ void CString::resizeInverse(int newSize){
     }
     else
     {
-        // On le remet �vide
+        // On le remet êvide
         delete [] s;
         s = new char [1];
         s[0] = '\0';
@@ -131,11 +131,11 @@ void CString::resizeInverse(int newSize){
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Fonction qui permet d'assigner une valeur �une cha�e existante de la m�e fa�n
+/// \brief Fonction qui permet d'assigner une valeur êune chaêe existante de la mêe faên
 /// qu'un printf
 ///
-/// La fonction supprime d'abbord la cha�e existante et en cr� une nouvelle avec la valeur
-/// d�ir�
+/// La fonction supprime d'abbord la chaêe existante et en créer  une nouvelle avec la valeur
+/// dêirê
 ////////////////////////////////////////////////////////////////////////////////////////////
 void CString::set(char* fmt, ...){
 
@@ -147,7 +147,7 @@ void CString::set(char* fmt, ...){
         return;
     }
 
-    // On cr�un char de 256 pour contenir le string (pas besoin de plus que 256 je crois)
+    // On créer un char de 256 pour contenir le string (pas besoin de plus que 256 je crois)
     char *mString = new char[MAX_CARAC];
 
     // Ici on passe tout les param (c comme un printf) pour les mettre dans le string
@@ -167,25 +167,25 @@ void CString::set(char* fmt, ...){
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief V�ifie l'extension d'une cha�e de caract�e
+/// \brief Vêifie l'extension d'une chaêe de caractêe
 ///
-/// Fonction qui permet de d�erminer si la cha�e de caract�e poss�e l'extension
-/// envoy� en param�re
+/// Fonction qui permet de dêerminer si la chaêe de caractêe possêe l'extension
+/// envoyê en paramêre
 ///
-/// \param extension : Extension qu'on veut v�ifier.
+/// \param extension : Extension qu'on veut vêifier.
 ///
-/// \return True : si l'extension est pr�ente\n
-///         False : si l'extension n'est pas pr�ente
+/// \return True : si l'extension est prêente\n
+///         False : si l'extension n'est pas prêente
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::checkExtension(char * extension)
 {
-    // On v�ifie que le string est bon
+    // On vêifie que le string est bon
     if (!extension)
     {
         return false;
     }
 
-    // On check le nb de caract�e de notre extension
+    // On check le nb de caractêe de notre extension
     int extensionLen = (int)strlen(extension);
 
     if (extensionLen > 0 && len() >= extensionLen)
@@ -202,11 +202,11 @@ bool CString::checkExtension(char * extension)
 
 
 /////////////////////////////////////////////////////////////////////////
-///Obtenir le path du fichier (sans le fichier lui-m�e)
+///Obtenir le path du fichier (sans le fichier lui-mêe)
 /////////////////////////////////////////////////////////////////////////
 CString CString::getPath()
 {
-    // On va chercher le dernier '\' ou '/' trouv�
+    // On va chercher le dernier '\' ou '/' trouvê
     for (int i=len()-1;i>=0;i--)
     {
         if (s[i] == '\\' || s[i] == '/')
@@ -228,7 +228,7 @@ CString CString::getPath()
 CString CString::getFilename()
 {
 
-    // On va chercher le dernier '\' ou '/' trouv�
+    // On va chercher le dernier '\' ou '/' trouvê
     for (int i=len()-1;i>=0;i--)
     {
         if (s[i] == '\\' || s[i] == '/')
@@ -245,16 +245,16 @@ CString CString::getFilename()
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Enlever des caract�es au d�ut et �la fin de la cha�e
+/// \brief Enlever des caractêes au dêut et êla fin de la chaêe
 ///
-/// Cette fonction supprime le caract�e recu en param�re au d�ut et �la fin de la string
+/// Cette fonction supprime le caractêe recu en paramêre au dêut et êla fin de la string
 ///
-/// \param caracter : Caract�e �trimmer
+/// \param caracter : Caractêe êtrimmer
 ////////////////////////////////////////////////////////////////////////////////////////////
 void CString::trim(char caracter)
 {
 
-    // En enl�e les caract�es au d�ut
+    // En enlêe les caractêes au dêut
     int len_ = len();
     int i=0;
     for (i=0;i<len_;i++)
@@ -266,7 +266,7 @@ void CString::trim(char caracter)
     }
     CString newString("%s", &(s[i]));
 
-    // les dernier caract�e maintenant
+    // les dernier caractêe maintenant
     for (i=newString.len()-1;i>=0;i--)
     {
         if (newString.s[i] != caracter)
@@ -287,10 +287,10 @@ void CString::trim(char caracter)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Permet de prendre le token suivant
 ///
-/// Cette fonction retourne les caract�es se trouvant �la droite du caract�e de s�aration
-/// re� en param�re
+/// Cette fonction retourne les caractêes se trouvant êla droite du caractêe de sêaration
+/// reê en paramêre
 ///
-/// \param caracter : Caract�e servant de s�aration
+/// \param caracter : Caractêe servant de sêaration
 ////////////////////////////////////////////////////////////////////////////////////////////
 CString CString::getNextToken(int caracter)
 {
@@ -301,7 +301,7 @@ CString CString::getNextToken(int caracter)
     CString result;
 
     // Maintenant on pogne le dernier mot
-    // On va chercher le dernier ' ' trouv�
+    // On va chercher le dernier ' ' trouvê
     for (int i = len()-1; i >= -1; i--)
     {
         if (s[i] == caracter || i == -1)
@@ -320,13 +320,13 @@ CString CString::getNextToken(int caracter)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Permet de prendre le token �partir du d�ut
+/// \brief Permet de prendre le token êpartir du dêut
 ///
-/// Cette fonction retourne les caract�es se trouvant �la gauche du caract�e de s�aration
-/// re� en param�re. Cela peut �re pratique si nous voulons faire un switch sur la command
+/// Cette fonction retourne les caractêes se trouvant êla gauche du caractêe de sêaration
+/// reê en paramêre. Cela peut êre pratique si nous voulons faire un switch sur la command
 /// avant tout et passer le reste du string.
 ///
-/// \param caracter : Caract�e servant de s�aration
+/// \param caracter : Caractêe servant de sêaration
 ////////////////////////////////////////////////////////////////////////////////////////////
 CString CString::getFirstToken(int caracterSeparator)
 {
@@ -337,7 +337,7 @@ CString CString::getFirstToken(int caracterSeparator)
     CString result;
 
     // Maintenant on pogne le dernier mot
-    // On va chercher le dernier ' ' trouv�
+    // On va chercher le dernier ' ' trouvê
     int len_ = len();
     for (int i=0;i<=len_;i++){
         if (s[i] == caracterSeparator || s[i] == '\0'){
@@ -358,27 +358,27 @@ CString CString::getFirstToken(int caracterSeparator)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Recherche de caract�es
+/// \brief Recherche de caractêes
 ///
-/// Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
-/// la trouver dans la cha�e (s). (Seule la premi�e occurence de la cha�e est trouv�)
+/// Cette fonction utilise une chaêe de caractêe reêe en paramêre et essaie de
+/// la trouver dans la chaêe (s). (Seule la premiêe occurence de la chaêe est trouvê)
 ///
-/// \param string : Cha�e de caract�e �trouver.
+/// \param string : Chaêe de caractêe êtrouver.
 ///
-/// \return True : si la cha�e est trouv�
-///         False : si la cha�e n'est pas trouv�
+/// \return True : si la chaêe est trouvê
+///         False : si la chaêe n'est pas trouvê
 ///
-/// \note Algorithmes plus performants existent si n�essaire.
+/// \note Algorithmes plus performants existent si nêessaire.
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::find(CString string)
 {
 
-    //longueur de notre cha�e (s)
+    //longueur de notre chaêe (s)
     int len_1 = len();
-    //longueur de la cha�e qu'on veut trouver
+    //longueur de la chaêe qu'on veut trouver
     int len_2 = string.len();
 
-    //on parcours la cha�e pour essayer de trouver la sub-string
+    //on parcours la chaêe pour essayer de trouver la sub-string
     for (int i=0; i < (len_1 - len_2 + 1); i++)
     {
         if (strnicmp(&(s[i]), string.s, len_2) == 0)
@@ -391,19 +391,19 @@ bool CString::find(CString string)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Recherche de caract�es avec pointeur sur la string trouv�
+/// \brief Recherche de caractêes avec pointeur sur la string trouvê
 ///
-/// Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
-/// la trouver dans la cha�e (s). La fonction recoit aussi un pointeur en param�re qui
-/// va pointer au d�ut de la cha�e trouv�. (Seule la premi�e occurence de la cha�e est trouv�)
+/// Cette fonction utilise une chaêe de caractêe reêe en paramêre et essaie de
+/// la trouver dans la chaêe (s). La fonction recoit aussi un pointeur en paramêre qui
+/// va pointer au dêut de la chaêe trouvê. (Seule la premiêe occurence de la chaêe est trouvê)
 ///
-/// \param  string : Cha�e de caract�e �trouver.
-/// \param  strFound : Pointeur vers le b�ut de la cha�e si elle est trouv�
+/// \param  string : Chaêe de caractêe êtrouver.
+/// \param  strFound : Pointeur vers le bêut de la chaêe si elle est trouvê
 ///
-/// \return True : si la cha�e est trouv�
-///         False : si la cha�e n'est pas trouv�
+/// \return True : si la chaêe est trouvê
+///         False : si la chaêe n'est pas trouvê
 ///
-/// \note Algorithmes plus performants existent si n�essaire.
+/// \note Algorithmes plus performants existent si nêessaire.
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::find(CString string, char* strFound)
 {
@@ -424,19 +424,19 @@ bool CString::find(CString string, char* strFound)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Recherche de caract�es avec position de la string trouv�
+/// \brief Recherche de caractêes avec position de la string trouvê
 ///
-/// Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
-/// la trouver dans la cha�e (s). La position de la cha�e est aussi retourn�
-/// (Seule la premi�e occurence de la cha�e est trouv�.)
+/// Cette fonction utilise une chaêe de caractêe reêe en paramêre et essaie de
+/// la trouver dans la chaêe (s). La position de la chaêe est aussi retournê
+/// (Seule la premiêe occurence de la chaêe est trouvê.)
 ///
-/// \param  string : Cha�e de caract�e �trouver.
-/// \param  index : Position de la cha�e si elle est trouv�.
+/// \param  string : Chaêe de caractêe êtrouver.
+/// \param  index : Position de la chaêe si elle est trouvê.
 ///
-/// \return True : si la cha�e est trouv�
-///         False : si la cha�e n'est pas trouv�
+/// \return True : si la chaêe est trouvê
+///         False : si la chaêe n'est pas trouvê
 ///
-/// \note Algorithmes plus performants existent si n�essaire.
+/// \note Algorithmes plus performants existent si nêessaire.
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::find(CString string, int & index)
 {
@@ -457,20 +457,20 @@ bool CString::find(CString string, int & index)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Recherche de caract�es avec pointeur et position de la string trouv�
+/// \brief Recherche de caractêes avec pointeur et position de la string trouvê
 ///
-/// Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
-/// la trouver dans la cha�e (s). La position de la cha�e est aussi retourn�
-/// (Seule la premi�e occurence de la cha�e est trouv�.)
+/// Cette fonction utilise une chaêe de caractêe reêe en paramêre et essaie de
+/// la trouver dans la chaêe (s). La position de la chaêe est aussi retournê
+/// (Seule la premiêe occurence de la chaêe est trouvê.)
 ///
-/// \param  string : Cha�e de caract�e �trouver.
-/// \param  strFound : Pointeur vers le b�ut de la cha�e si elle est trouv�
-/// \param  index : Position de la cha�e si elle est trouv�.
+/// \param  string : Chaêe de caractêe êtrouver.
+/// \param  strFound : Pointeur vers le bêut de la chaêe si elle est trouvê
+/// \param  index : Position de la chaêe si elle est trouvê.
 ///
-/// \return True : si la cha�e est trouv�
-///         False : si la cha�e n'est pas trouv�
+/// \return True : si la chaêe est trouvê
+///         False : si la chaêe n'est pas trouvê
 ///
-/// \note Algorithmes plus performants existent si n�essaire.
+/// \note Algorithmes plus performants existent si nêessaire.
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::find(CString string, char* strFound, int & index)
 {
@@ -493,17 +493,17 @@ bool CString::find(CString string, char* strFound, int & index)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Recherche de caract�es
+/// \brief Recherche de caractêes
 ///
-/// Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
-/// la trouver dans la cha�e (s). (Seule la premi�e occurence de la cha�e est trouv�)
+/// Cette fonction utilise une chaêe de caractêe reêe en paramêre et essaie de
+/// la trouver dans la chaêe (s). (Seule la premiêe occurence de la chaêe est trouvê)
 ///
-/// \param string_ : Cha�e de caract�e �trouver.
+/// \param string_ : Chaêe de caractêe êtrouver.
 ///
-/// \return True : si la cha�e est trouv�
-///         False : si la cha�e n'est pas trouv�
+/// \return True : si la chaêe est trouvê
+///         False : si la chaêe n'est pas trouvê
 ///
-/// \note Algorithmes plus performants existent si n�essaire.
+/// \note Algorithmes plus performants existent si nêessaire.
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::find(char* string_)
 {
@@ -511,19 +511,19 @@ bool CString::find(char* string_)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Recherche de caract�es avec pointeur sur la string trouv�
+/// \brief Recherche de caractêes avec pointeur sur la string trouvê
 ///
-/// Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
-/// la trouver dans la cha�e (s). La fonction recoit aussi un pointeur en param�re qui
-/// va pointer au d�ut de la cha�e trouv�. (Seule la premi�e occurence de la cha�e est trouv�)
+/// Cette fonction utilise une chaêe de caractêe reêe en paramêre et essaie de
+/// la trouver dans la chaêe (s). La fonction recoit aussi un pointeur en paramêre qui
+/// va pointer au dêut de la chaêe trouvê. (Seule la premiêe occurence de la chaêe est trouvê)
 ///
-/// \param  string_ : Cha�e de caract�e �trouver.
-/// \param  strFound : Pointeur vers le b�ut de la cha�e si elle est trouv�
+/// \param  string_ : Chaêe de caractêe êtrouver.
+/// \param  strFound : Pointeur vers le bêut de la chaêe si elle est trouvê
 ///
-/// \return True : si la cha�e est trouv�
-///         False : si la cha�e n'est pas trouv�
+/// \return True : si la chaêe est trouvê
+///         False : si la chaêe n'est pas trouvê
 ///
-/// \note Algorithmes plus performants existent si n�essaire.
+/// \note Algorithmes plus performants existent si nêessaire.
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::find(char* string_, char* strFound)
 {
@@ -532,19 +532,19 @@ bool CString::find(char* string_, char* strFound)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Recherche de caract�es avec position de la string trouv�
+/// \brief Recherche de caractêes avec position de la string trouvê
 ///
-/// Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
-/// la trouver dans la cha�e (s). La position de la cha�e est aussi retourn�
-/// (Seule la premi�e occurence de la cha�e est trouv�.)
+/// Cette fonction utilise une chaêe de caractêe reêe en paramêre et essaie de
+/// la trouver dans la chaêe (s). La position de la chaêe est aussi retournê
+/// (Seule la premiêe occurence de la chaêe est trouvê.)
 ///
-/// \param  string_ : Cha�e de caract�e �trouver.
-/// \param  index : Position de la cha�e si elle est trouv�.
+/// \param  string_ : Chaêe de caractêe êtrouver.
+/// \param  index : Position de la chaêe si elle est trouvê.
 ///
-/// \return True : si la cha�e est trouv�
-///         False : si la cha�e n'est pas trouv�
+/// \return True : si la chaêe est trouvê
+///         False : si la chaêe n'est pas trouvê
 ///
-/// \note Algorithmes plus performants existent si n�essaire.
+/// \note Algorithmes plus performants existent si nêessaire.
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::find(char* string_, int & index)
 {
@@ -552,20 +552,20 @@ bool CString::find(char* string_, int & index)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Recherche de caract�es avec pointeur et position de la string trouv�
+/// \brief Recherche de caractêes avec pointeur et position de la string trouvê
 ///
-/// Cette fonction utilise une cha�e de caract�e re�e en param�re et essaie de
-/// la trouver dans la cha�e (s). La position de la cha�e est aussi retourn�
-/// (Seule la premi�e occurence de la cha�e est trouv�.)
+/// Cette fonction utilise une chaêe de caractêe reêe en paramêre et essaie de
+/// la trouver dans la chaêe (s). La position de la chaêe est aussi retournê
+/// (Seule la premiêe occurence de la chaêe est trouvê.)
 ///
-/// \param  string_ : Cha�e de caract�e �trouver.
-/// \param  strFound : Pointeur vers le b�ut de la cha�e si elle est trouv�
-/// \param  index : Position de la cha�e si elle est trouv�.
+/// \param  string_ : Chaêe de caractêe êtrouver.
+/// \param  strFound : Pointeur vers le bêut de la chaêe si elle est trouvê
+/// \param  index : Position de la chaêe si elle est trouvê.
 ///
-/// \return True : si la cha�e est trouv�
-///         False : si la cha�e n'est pas trouv�
+/// \return True : si la chaêe est trouvê
+///         False : si la chaêe n'est pas trouvê
 ///
-/// \note Algorithmes plus performants existent si n�essaire.
+/// \note Algorithmes plus performants existent si nêessaire.
 ////////////////////////////////////////////////////////////////////////////////////////////
 bool CString::find(char* string_, char* strFound, int & index)
 {
@@ -577,10 +577,10 @@ bool CString::find(char* string_, char* strFound, int & index)
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Insertion de texte
 ///
-/// Cette fonction insert le texte re� en param�re �la position d�ermin� par le 2e param�re
+/// Cette fonction insert le texte reê en paramêre êla position dêerminê par le 2e paramêre
 ///
-/// \param  string : Cha�e de caract�e �ins�er.
-/// \param  index : Position de l'insertion dans la cha�e de base.
+/// \param  string : Chaêe de caractêe êinsêer.
+/// \param  index : Position de l'insertion dans la chaêe de base.
 ////////////////////////////////////////////////////////////////////////////////////////////
 void CString::insert(CString string, int index){
 
@@ -593,10 +593,10 @@ void CString::insert(CString string, int index){
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Insertion de texte (avec pointeur)
 ///
-/// Cette fonction insert le texte re� en param�re �la position d�ermin� par le 2e param�re
+/// Cette fonction insert le texte reê en paramêre êla position dêerminê par le 2e paramêre
 ///
-/// \param  string : Cha�e de caract�e �ins�er.
-/// \param  index : Position de l'insertion dans la cha�e de base.
+/// \param  string : Chaêe de caractêe êinsêer.
+/// \param  index : Position de l'insertion dans la chaêe de base.
 ////////////////////////////////////////////////////////////////////////////////////////////
 void CString::insert(char *string, int index){
     insert(CString("%s", string), index);
@@ -607,9 +607,9 @@ void CString::insert(char *string, int index){
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Suppression de texte
 ///
-/// Cette fonction supprime le texte de la cha�e de base situ�apr� la position re� en param�re
+/// Cette fonction supprime le texte de la chaêe de base situêaprê la position reê en paramêre
 ///
-/// \param  index : Position de la suppression dans la cha�e de base.
+/// \param  index : Position de la suppression dans la chaêe de base.
 ////////////////////////////////////////////////////////////////////////////////////////////
 void CString::remove(int index){
 
@@ -622,9 +622,9 @@ void CString::remove(int index){
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief Remplis la cha�e de caract�e par le chemin de l'application
+/// \brief Remplis la chaêe de caractêe par le chemin de l'application
 ///
-/// La fonction trouve le chemin (path) de l'application et l'affecte �la cha�e
+/// La fonction trouve le chemin (path) de l'application et l'affecte êla chaêe
 ////////////////////////////////////////////////////////////////////////////////////////////
 void CString::fillWithAppPath()
 {
@@ -643,7 +643,7 @@ void CString::fillWithAppPath()
 ////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Utilisation d'un fichier pour setter le texte
 ///
-/// Cette fonction load le texte �partir du fichier et l'utilise pour setter la cha�e
+/// Cette fonction load le texte êpartir du fichier et l'utilise pour setter la chaêe
 ///
 /// \param  fic : fichier
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -663,7 +663,7 @@ void CString::loadFromFile(FILE *fic)
 
 
 //
-// Op�ateur sur des char*
+// Opêateur sur des char*
 //
 /*
 CString operator+(const char * string, const CString& string2)

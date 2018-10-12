@@ -141,7 +141,7 @@ public:
         // On va chercher notre delay
         float delay = dkcGetElapsedf(ctx);
 
-        // On passe le nombre de frame �animer
+        // On passe le nombre de frame êanimer
         while (nbFrameElapsed)
         {
             // On update nos input
@@ -159,7 +159,7 @@ public:
             // On appel nos fonction pour animer ici
             scene->update(delay);
 
-            // On d�r�ente pour le prochain frame
+            // On dêrêente pour le prochain frame
             nbFrameElapsed--;
         }
 
@@ -170,7 +170,7 @@ public:
 
     void textWrite(unsigned int caracter)
     {
-        // Voil�juste un writting peut avoir le focus �la fois
+        // Voilêjuste un writting peut avoir le focus êla fois
         if (writting) writting->writeText(caracter);
     }
 } mainLoopInterface;
@@ -205,7 +205,7 @@ int main(int argc, const char* argv[])
     dksvarLoadConfig("main/bv2.cfg");
     dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
 
-    // On load tout suite le language utilis�par le joueur
+    // On load tout suite le language utilisêpar le joueur
     if (!clientVar.isLanguageLoaded())
     {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Can not load language file\nTry deleting the config file.", nullptr);
@@ -253,17 +253,17 @@ int main(int argc, const char* argv[])
         return 0;
     }
 
-    // On cr�le lobby
+    // On créer le lobby
     lobby = new CLobby();
 
     // On init la console
     console = new ClientConsole();
     console->init();
 
-    //--- On cr�le master
+    //--- On créer le master
     master = new CMaster(lobby);
 
-    // On cr�notre scene
+    // On créer notre scene
     scene = new ClientScene(ctx);
 
     SDL_ShowCursor(false);

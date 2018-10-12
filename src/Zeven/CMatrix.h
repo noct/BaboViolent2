@@ -84,7 +84,7 @@ public:
         s[8]=Array9Float[8];
     }
 
-    // revenir �la matrice identity
+    // revenir êla matrice identity
     void LoadIdentity(){
         s[0]=1; s[1]=0; s[2]=0;
         s[3]=0; s[4]=1; s[5]=0;
@@ -232,7 +232,7 @@ public:
             s[8]==matrix.s[8]);
     }
 
-    // La matrice transpos�
+    // La matrice transposê
     void Transpose();
 
     // Multiplication de matrice
@@ -245,13 +245,13 @@ public:
     // Pour calculer un mineur
     float Minor(int Row, int Col);
 
-    // Pour trouver le d�erminant de la matrice
+    // Pour trouver le dêerminant de la matrice
     float Determinant();
 
     // Pour trouver la matrice inverse
     CMatrix3x3f Inverse();
 
-    // Pour ac�er aux ��ents
+    // Pour acêer aux êêents
     float& operator[](int i) {return s[i];}
     float operator[](int i) const {return s[i];}
 
@@ -265,10 +265,10 @@ public:
     void setFront(CVector3f & vector) {s[3] = vector[0];s[4] = vector[1];s[5] = vector[2];}
     void setUp(CVector3f & vector) {s[6] = vector[0];s[7] = vector[1];s[8] = vector[2];}
 
-    // Effectuer une rotation autour d'un axe d�ermin�
+    // Effectuer une rotation autour d'un axe dêerminê
     void RotateArbitrary(float Angle, CVector3f& u);
 
-    // Effectuer une rotation autour d'un axe d�ermin�
+    // Effectuer une rotation autour d'un axe dêerminê
     void RotateArbitrary(CVector3f& u);
 
     // Transformation d'un vecteur

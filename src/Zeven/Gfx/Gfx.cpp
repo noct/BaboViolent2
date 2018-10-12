@@ -604,7 +604,7 @@ void dkfPrint(float size, float x, float y, float z, char *text)
 }
 
 //
-// Pour obtenir la premi�re touche press� (utile pour setter les touche dans les options)
+// Pour obtenir la premiêre touche pressê (utile pour setter les touche dans les options)
 //
 int dkiGetFirstDown()
 {
@@ -1035,7 +1035,7 @@ bool loadTextureFromFile(char * filename, int filter, unsigned int* id) {
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(imageData);
-    
+
 
     // On se cré notre nouvelle texture
     CTexture *texture = new CTexture;

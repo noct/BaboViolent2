@@ -49,7 +49,7 @@ public:
     int w, h;
     int bpp;
 
-    // Le scale (nb de fois r���
+    // Le scale (nb de fois rêêê
     float scale;
 
 public:
@@ -165,13 +165,13 @@ public:
     // ses points
     CVector point[3];
 
-    // Normal �chaque point
+    // Normal êchaque point
     CVector normals[9];
 
     // This is to prevent to alocate the memory each time.
     CVector colPoint[9];
 
-    // La d�inition du plan de la face (normal incluse)
+    // La dêinition du plan de la face (normal incluse)
     float a, b, c, d;
 
     // Son ID
@@ -187,7 +187,7 @@ public:
         d = 0;
     }
 
-    // Trouver si un segment intersect le plan (juste oui ou non l�
+    // Trouver si un segment intersect le plan (juste oui ou non lê
     bool segmentToFace(const CVector &p1, const CVector &p2)
     {
         (void)p2;
@@ -218,14 +218,14 @@ public:
         return false;
     }
 
-    // Pour calculer la distance d'un point �ce plan
+    // Pour calculer la distance d'un point êce plan
     float distancePoint(const CVector& mpoint) const
     {
         // Trop rapide :P
         return a * mpoint[0] + b * mpoint[1] + c * mpoint[2] - d;
     }
 
-    // Pour cr�r les normals �chaque point
+    // Pour créer r les normals êchaque point
     void createNormals()
     {
         int i = 0;
@@ -250,20 +250,20 @@ public:
     {
         /*	for (int i=0;i<3;i++)
             {
-                // On cr�deux vecteur avec chaque point
+                // On créer deux vecteur avec chaque point
                 CVector d = CVector::CrossProduct(point[(i+1)%3] - point[i], CVector(a,b,c));
                 d.Normalize();
                 d *= radius;
                 CVector u = (point[i] + d) - mpoint;
                 CVector v = (point[(i+1)%3] + d) - mpoint;
 
-                // On effectu le produit crois�de �
+                // On effectu le produit croisêde ê
                 CVector norm = CVector::CrossProduct(u,v);
 
-                // On calcul la distance du produit crois�au plan
+                // On calcul la distance du produit croisêau plan
                 float dis = distancePoint(mpoint+norm);
 
-                // Si on est derri�e, ha ah!! le point n'est pas dans le plan
+                // Si on est derriêe, ha ah!! le point n'est pas dans le plan
                 if (dis < 0) return false;
             }*/
 
@@ -280,17 +280,17 @@ public:
 
         for(int i = 0; i < 9; ++i)
         {
-            // On cr�deux vecteur avec chaque point
+            // On créer deux vecteur avec chaque point
             CVector u = (colPoint[i]) - mpoint;
             CVector v = (colPoint[(i + 1) % 9]) - mpoint;
 
-            // On effectu le produit crois�de �
+            // On effectu le produit croisêde ê
             CVector norm = cross(u, v);
 
-            // On calcul la distance du produit crois�au plan
+            // On calcul la distance du produit croisêau plan
             float dis = distancePoint(mpoint + norm);
 
-            // Si on est derri�e, ha ah!! le point n'est pas dans le plan
+            // Si on est derriêe, ha ah!! le point n'est pas dans le plan
             if(dis < 0) return false;
         }
 
@@ -302,17 +302,17 @@ public:
     {
         for(int i = 0; i < 3; ++i)
         {
-            // On cr�deux vecteur avec chaque point
+            // On créer deux vecteur avec chaque point
             CVector u = point[i] - mpoint;
             CVector v = point[(i + 1) % 3] - mpoint;
 
-            // On effectu le produit crois�de �
+            // On effectu le produit croisêde ê
             CVector norm = cross(u, v);
 
-            // On calcul la distance du produit crois�au plan
+            // On calcul la distance du produit croisêau plan
             float dis = distancePoint(mpoint + norm);
 
-            // Si on est derri�e, ha ah!! le point n'est pas dans le plan
+            // Si on est derriêe, ha ah!! le point n'est pas dans le plan
             if(dis < 0) return false;
         }
 
@@ -329,7 +329,7 @@ public:
     // Sa grosseur
     float size;
 
-    // La liste des faces quils poc�e
+    // La liste des faces quils pocêe
     int nbFace;
     CFace **faceArray;
 
@@ -353,7 +353,7 @@ public:
     // Pour l'intersection ak une face
     bool faceIntersection(CFace * face);
 
-    // Pour dessiner le octree (sera jamais utilis�sauf pour le premier test)
+    // Pour dessiner le octree (sera jamais utilisêsauf pour le premier test)
     void render();
 
     // Pour trouver un point d'intersection avec un ray casting
@@ -588,7 +588,7 @@ struct _typBitFieldPile
 {
 public:
     unsigned int bitField;
-    // Un pointeur vers le pr��ent dans la pile
+    // Un pointeur vers le prêêent dans la pile
     _typBitFieldPile *previous;
 
     // Constructeur
@@ -605,7 +605,7 @@ struct typChunk
 {
     unsigned short int ID; // Le chunk ID
     unsigned int mlength;  // La grandeur du chunk
-    unsigned int bytesRead;// Le nb de byte lu jusqu'�maintenant
+    unsigned int bytesRead;// Le nb de byte lu jusqu'êmaintenant
 };
 
 
@@ -613,13 +613,13 @@ struct typChunk
 class CDko
 {
 public:
-    // Pour tenir la derni�e erreur
+    // Pour tenir la derniêe erreur
     static char *lastErrorString;
 
     // Le array des models
     static CDkoModel *modelArray[MAX_MODEL];
 
-    // Si il a ��initialis�
+    // Si il a êêinitialisê
     static bool inited;
 
     // Le bitMaskCourant
@@ -628,7 +628,7 @@ public:
     // La pile pour le bitMaskField
     static _typBitFieldPile *bitFieldPile;
 
-    // Le ID global utilis�pour incr�enter exemple pour les octrees
+    // Le ID global utilisêpour incréer enter exemple pour les octrees
     static int32_t globalFrameID;
 
 public:
@@ -768,7 +768,7 @@ _typBitFieldPile *CDko::bitFieldPile = 0;
 int32_t CDko::globalFrameID = 0;
 
 //
-// On update la derni�e erreur
+// On update la derniêe erreur
 //
 void CDko::updateLastError(char *error)
 {
@@ -780,7 +780,7 @@ void CDko::updateLastError(char *error)
 
 
 //
-// Pour ajouter une animation �cet objet �partir d'un fichier 3ds
+// Pour ajouter une animation êcet objet êpartir d'un fichier 3ds
 //
 int         dkoAddAnimationFromFile(unsigned int modelID, char* filename, char* animationName)
 {
@@ -801,7 +801,7 @@ int         dkoAddAnimationFromFile(unsigned int modelID, char* filename, char* 
 
 
 //
-// Pour ajouter une lumi�e �un model
+// Pour ajouter une lumiêe êun model
 //
 void            dkoAddLight(unsigned int modelID, float *position, float *diffuse, float *specular, float range)
 {
@@ -811,7 +811,7 @@ void            dkoAddLight(unsigned int modelID, float *position, float *diffus
 
 
 //
-// Pour construire l'arbre octal pour g�er rapidement les collisions avec ses faces
+// Pour construire l'arbre octal pour gêer rapidement les collisions avec ses faces
 //
 void            dkoBuildOctree(unsigned int modelID)
 {
@@ -856,7 +856,7 @@ void            dkoEnable(unsigned int renderFlags)
 
 
 //
-// Pour �facer un model de la ram
+// Pour êfacer un model de la ram
 //
 void            dkoDeleteModel(unsigned int *modelID)
 {
@@ -1142,7 +1142,7 @@ char*           dkoGetDummyName(unsigned int dummyID, unsigned int modelID)
 
 
 //
-// Obtenir la derni�e �reur
+// Obtenir la derniêe êreur
 //
 char*           dkoGetLastError()
 {
@@ -1226,7 +1226,7 @@ short           dkoGetTotalFrame(unsigned int modelID)
 
 
 //
-// Pour obtenir le mesh interpol��un certain frame
+// Pour obtenir le mesh interpolêêun certain frame
 //
 float*          dkoGetVertexArray(unsigned int modelID, float frameID, int & nbVertex, float *vertexArray)
 {
@@ -1254,7 +1254,7 @@ float*          dkoGetVertexArray(unsigned int modelID, float frameID, int & nbV
         CDko::modelArray[modelID]->buildVertexArray(vertexArray);
     }
 
-    return vertexArray; // L'utilisateur devra penser �l'effacer lui m�e
+    return vertexArray; // L'utilisateur devra penser êl'effacer lui mêe
 }
 
 
@@ -1287,7 +1287,7 @@ void            dkoInit()
 
 
 //
-// Initialiser et effacer la liste des lumi�es d'un objet
+// Initialiser et effacer la liste des lumiêes d'un objet
 //
 void            dkoInitLightList(unsigned int modelID)
 {
@@ -1304,7 +1304,7 @@ unsigned int    dkoLoadFile(char* filename)
 
     FILE *ficIn = fopen(filename, "rb");
 
-    // On check la validit�du fichier
+    // On check la validitêdu fichier
     if (!ficIn)
     {
         CDko::updateLastError("Invalide filename");
@@ -1326,7 +1326,7 @@ unsigned int    dkoLoadFile(char* filename)
         return 0;
     }
 
-    // Parfait, on cr�un nouveau Model dko ici
+    // Parfait, on créer un nouveau Model dko ici
     CDko::modelArray[ID] = new CDkoModel();
 
     // On efface le string jusqu'au /
@@ -1370,7 +1370,7 @@ unsigned int    dkoLoadFile(char* filename)
 
 
 //
-// Instancier un model �partir d'un autre
+// Instancier un model êpartir d'un autre
 //
 unsigned int    dkoLoadFile(unsigned int modelID)
 {
@@ -1437,7 +1437,7 @@ void            dkoPushRenderState()
 
 
 //
-// Pour performer une d�ection d'intersection avec un ray
+// Pour performer une dêection d'intersection avec un ray
 //
 bool            dkoRayIntersection(unsigned int modelID, float *mp1, float *mp2, float *intersect, float *normal, int &n)
 {
@@ -1451,7 +1451,7 @@ bool            dkoRayIntersection(unsigned int modelID, float *mp1, float *mp2,
             CVector p2(mp2[0], mp2[1], mp2[2]);
             float dis = distanceFast(p1, p2);
 
-            // Voil�on est pret, on test � dans le octree
+            // Voilêon est pret, on test ê dans le octree
             CDko::globalFrameID++;
             if (CDko::modelArray[modelID]->octree->findRayIntersection(p1, p2, dis, mintersection, mnormal, n))
             {
@@ -1527,7 +1527,7 @@ void dkoRender(unsigned int modelID)
                     }
                 }
 
-                // � c TELLEMENT temporaire
+                // ê c TELLEMENT temporaire
                 if (CDko::modelArray[modelID]->octree && CDko::renderStateBitField & DKO_RENDER_NODE) CDko::modelArray[modelID]->octree->render();
             }
 
@@ -1615,7 +1615,7 @@ void dkoRender(unsigned int modelID)
 
 
 //
-// Dessiner le model sur un frame sp�ifique
+// Dessiner le model sur un frame spêifique
 //
 void dkoRender(unsigned int modelID, unsigned short frameID)
 {
@@ -1660,7 +1660,7 @@ void dkoRender(unsigned int modelID, unsigned short frameID)
                     }
                 }
 
-                // � c TELLEMENT temporaire
+                // ê c TELLEMENT temporaire
                 if (CDko::modelArray[modelID]->octree && CDko::renderStateBitField & DKO_RENDER_NODE) CDko::modelArray[modelID]->octree->render();
             }
 
@@ -1746,7 +1746,7 @@ void dkoRender(unsigned int modelID, unsigned short frameID)
 }
 
 //
-// Dessiner un frame interpol�
+// Dessiner un frame interpolê
 //
 void dkoRender(unsigned int modelID, float frameID)
 {
@@ -1795,7 +1795,7 @@ void dkoRender(unsigned int modelID, float frameID)
                     }
                 }
 
-                // � c TELLEMENT temporaire
+                // ê c TELLEMENT temporaire
                 if (CDko::modelArray[modelID]->octree && CDko::renderStateBitField & DKO_RENDER_NODE) CDko::modelArray[modelID]->octree->render();
             }
 
@@ -1912,7 +1912,7 @@ bool dkoSphereIntersection(unsigned int modelID, float *mp1, float *mp2, float r
             CVector p2(mp2[0], mp2[1], mp2[2]);
             float dis = distanceFast(p1, p2);
 
-            // Voil�on est pret, on test � dans le octree
+            // Voilêon est pret, on test ê dans le octree
             CDko::globalFrameID++;
             if (CDko::modelArray[modelID]->octree->findSphereIntersection(p1, p2, rayon, dis, mintersection, mnormal, n))
             {
@@ -1970,7 +1970,7 @@ COctreeNode::COctreeNode(CFace **mFaceArray, int mNbFace, CVector mCenter, float
 
     if(nbFace)
     {
-        // On ajoute les faces trouv�
+        // On ajoute les faces trouvê
         int j = 0;
         faceArray = new CFace*[nbFace];
         for(i = 0; i < mNbFace; i++)
@@ -2019,7 +2019,7 @@ COctreeNode::~COctreeNode()
 
     for(int i = 0; i < 8; i++)
     {
-        // On delete r�ursivement
+        // On delete rêursivement
         if(child[i]) delete child[i];
     }
 }
@@ -2041,7 +2041,7 @@ bool COctreeNode::faceIntersection(CFace * face)
         if(SegmentToBox(face->point[i], face->point[(i + 1) % 3], center - CVector(size, size, size), center + CVector(size, size, size))) return true;
     }
 
-    // Ensuite on check pour chaque segment (arr�es) du cube
+    // Ensuite on check pour chaque segment (arrêes) du cube
     CVector p1 = center + CVector(-size, -size, -size);
     CVector p2 = center + CVector(-size, -size, size);
     if(face->segmentToFace(p1, p2))
@@ -2140,7 +2140,7 @@ bool COctreeNode::findRayIntersection(CVector &p1, CVector &p2, float &dis, CVec
                         {
                             if(faceArray[i]->pointInFace(intersect))
                             {
-                                p2 = intersect; // � optimise pour les tests �venir
+                                p2 = intersect; // ê optimise pour les tests êvenir
                                 intersection = intersect;
                                 normal = CVector(faceArray[i]->a, faceArray[i]->b, faceArray[i]->c);
                                 dis = disc;
@@ -2206,7 +2206,7 @@ bool COctreeNode::findSphereIntersection(CVector &p1, CVector &p2, float rayon, 
                         {
                             if(faceArray[i]->pointInFace(intersect, rayon))
                             {
-                                p2 = intersect + faceNormal * rayon; // � optimise pour les tests �venir
+                                p2 = intersect + faceNormal * rayon; // ê optimise pour les tests êvenir
                                 intersection = p2;
                                 normal = faceNormal;
                                 dis = disc;
@@ -2214,7 +2214,7 @@ bool COctreeNode::findSphereIntersection(CVector &p1, CVector &p2, float rayon, 
                             }
                             /*  else
                                 {
-                                    // Il n'y a pas d'intersection avec l'interieur du triangle, alors on check ak ses arr�es
+                                    // Il n'y a pas d'intersection avec l'interieur du triangle, alors on check ak ses arrêes
                                     for (int a=0;a<3;a++)
                                     {
                                         // On trouve la distance entre les deux droite
@@ -2243,7 +2243,7 @@ bool COctreeNode::findSphereIntersection(CVector &p1, CVector &p2, float rayon, 
                                             A *= a;
                                             CVector R = A-D;
 
-                                            // On d�lace notre segment avec R et on trouve le point d'intersection des deux segment
+                                            // On dêlace notre segment avec R et on trouve le point d'intersection des deux segment
                                             CVector d3 = d1 + R;
                                             CVector d3d2 = (d2 - d3);
                                             CVector u2u1 = (u1 - u2);
@@ -2282,7 +2282,7 @@ bool COctreeNode::findSphereIntersection(CVector &p1, CVector &p2, float rayon, 
 
 
 //
-// Pour dessiner le octree (sera jamais utilis�sauf pour le premier test)
+// Pour dessiner le octree (sera jamais utilisêsauf pour le premier test)
 //
 void COctreeNode::render()
 {
@@ -3754,10 +3754,10 @@ eHierarchic::~eHierarchic()
 //
 void eHierarchic::addChild(eHierarchic* child)
 {
-    // On le d�ache d'abords de son parent
+    // On le dêache d'abords de son parent
     if(child->parent) child->detach();
 
-    // Maintenant on l'ajoute �la fin de la liste
+    // Maintenant on l'ajoute êla fin de la liste
     if(!childList)
     {
         child->next = childList;
@@ -3796,7 +3796,7 @@ void eHierarchic::setEnable(bool value)
 
 
 //
-// Pour le d�acher du parent
+// Pour le dêacher du parent
 //
 void eHierarchic::detach()
 {
@@ -3858,7 +3858,7 @@ void eHierarchic::drawAll()
 
         // Ensuite ses childs
         for(eHierarchic* ptrObject = childList; ptrObject; ptrObject = ptrObject->next)
-            ptrObject->drawAll(); // hum pas vraiment d'hierarchi �l'interieur d'un dko mais bon
+            ptrObject->drawAll(); // hum pas vraiment d'hierarchi êl'interieur d'un dko mais bon
         glPopMatrix();
     }
 }

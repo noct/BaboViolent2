@@ -118,47 +118,47 @@ void            dksvarGetFormatedVar(char * varName, CString * formatedString);
 
 
 
-/// \brief retourne le temps allou�pour un cycle d'ex�ution
+/// \brief retourne le temps allouêpour un cycle d'exêution
 ///
-/// Cette fonction retourne en fait simplement : 1.0f / le param�re framePerSecond pass��dkcInit. Cette valeur est constante et repr�ente la dur� d'un cycle d'ex�ution de la mise �jour.
+/// Cette fonction retourne en fait simplement : 1.0f / le paramêre framePerSecond passêêdkcInit. Cette valeur est constante et reprêente la durê d'un cycle d'exêution de la mise êjour.
 ///
-/// \return 1.0f / le nombre d'update d�ir�par seconde
+/// \return 1.0f / le nombre d'update dêirêpar seconde
 float           dkcGetElapsedf(dkContext* ctx);
 
 
 
-/// \brief retourne le nombre d'image dessin�s �l'�ran pas seconde
+/// \brief retourne le nombre d'image dessinês êl'êran pas seconde
 ///
-/// Cette fonction retourne le nombre d'image dessin�s �l'�ran pas seconde. cette valeur peut grandement varier (lors d'un lag par exemple)
+/// Cette fonction retourne le nombre d'image dessinês êl'êran pas seconde. cette valeur peut grandement varier (lors d'un lag par exemple)
 ///
-/// \return le nombre d'image dessin�s �l'�ran pas seconde
+/// \return le nombre d'image dessinês êl'êran pas seconde
 float           dkcGetFPS(dkContext* ctx);
 
 
 
-/// \brief retourne le nombre de cycles d'ex�utions de mise �jour (update) �oul� depuis un certain rep�e
+/// \brief retourne le nombre de cycles d'exêutions de mise êjour (update) êoulê depuis un certain repêe
 ///
-/// Cette fonction retourne le nombre de cycles d'ex�utions de mise �jour (update) �oul� depuis le d�ut de l'ex�ution du programme entier dans le cas o aucun appel �dkcJumpToFrame() n'a ��fait.
-/// Dans le cas o dkcJumpToFrame() a ��appel� l'�uation suivante pr�aut avec le dernier appel fait �dkcJumpToFrame():
-/// nombre de cycles d'ex�utions de mise �jour (update) �oul� depuis le dernier appel de dkcJumpToFrame() = valeur de retour de dkcGetFrame() - param�re pass�au dernier appel de dkcJumpToFrame()
+/// Cette fonction retourne le nombre de cycles d'exêutions de mise êjour (update) êoulê depuis le dêut de l'exêution du programme entier dans le cas o aucun appel êdkcJumpToFrame() n'a êêfait.
+/// Dans le cas o dkcJumpToFrame() a êêappelê l'êuation suivante prêaut avec le dernier appel fait êdkcJumpToFrame():
+/// nombre de cycles d'exêutions de mise êjour (update) êoulê depuis le dernier appel de dkcJumpToFrame() = valeur de retour de dkcGetFrame() - paramêre passêau dernier appel de dkcJumpToFrame()
 ///
-/// \return retourne le nombre de cycles d'ex�utions de mise �jour (update) �oul� depuis un certain rep�e
+/// \return retourne le nombre de cycles d'exêutions de mise êjour (update) êoulê depuis un certain repêe
 int32_t         dkcGetFrame(dkContext* ctx);
 
-/// \brief modifie le num�o du cycle d'ex�ution de mise �jour courant
+/// \brief modifie le numêo du cycle d'exêution de mise êjour courant
 ///
-/// Cette fonction modifie le num�o du cycle d'ex�ution de mise �jour courant.
+/// Cette fonction modifie le numêo du cycle d'exêution de mise êjour courant.
 ///
-/// \param frame nouveau num�o du cycle d'ex�ution de mise �jour courant
+/// \param frame nouveau numêo du cycle d'exêution de mise êjour courant
 void            dkcJumpToFrame(dkContext* ctx, int frame);
 
 
 
-/// \brief met �jour les rep�es de temps et retourne le nombre de cycle d'ex�ution de mise �jour (update) ��re effectu� avant d'effectuer le prochain rendu
+/// \brief met êjour les repêes de temps et retourne le nombre de cycle d'exêution de mise êjour (update) êêre effectuê avant d'effectuer le prochain rendu
 ///
-/// Cette fonction met �jour les rep�es de temps n�essaire au bon fonctionnement du module et retourne le nombre de cycle d'ex�ution de mise �jour (update) ��re effectu� avant d'effectuer le prochain rendu pour rester conforme au nombre de cycle d'ex�ution de mise �jour �abli par le param�re framePerSecond pass��la fonction dkcInit()
+/// Cette fonction met êjour les repêes de temps nêessaire au bon fonctionnement du module et retourne le nombre de cycle d'exêution de mise êjour (update) êêre effectuê avant d'effectuer le prochain rendu pour rester conforme au nombre de cycle d'exêution de mise êjour êabli par le paramêre framePerSecond passêêla fonction dkcInit()
 ///
-/// \return le nombre de cycle d'ex�ution de mise �jour (update) ��re effectu�
+/// \return le nombre de cycle d'exêution de mise êjour (update) êêre effectuê
 int32_t         dkcUpdateTimer(dkContext* ctx);
 
 

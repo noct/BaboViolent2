@@ -37,7 +37,7 @@
 
 
 //
-// Fonction pour cr�r un thread
+// Fonction pour créer r un thread
 //
 
 int createThread(unsigned long (*pFuncter)(void*), void * pParam, unsigned long & pThreadID, int pPriority)

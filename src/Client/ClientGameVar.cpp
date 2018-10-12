@@ -47,7 +47,7 @@ ClientGameVar::~ClientGameVar()
 void ClientGameVar::init()
 {
     languageLoaded = false;
-    // LES STRING DIFF�RENT POUR CHAQUE LANGUE
+    // LES STRING DIFFêRENT POUR CHAQUE LANGUE
     langs.push_back(SLangText("lang_gameName", &lang_gameName));
 
     langs.push_back(SLangText("lang_dualMachineGun", &lang_dualMachineGun));

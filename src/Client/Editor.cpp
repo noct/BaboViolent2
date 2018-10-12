@@ -261,9 +261,6 @@ void Editor2::update(float delay)
     auto cmap = static_cast<ClientMap*>(map);
     if(cmap && !cconsole->isActive())
     {
-        // Weather update
-        if(cmap->m_weather)
-            cmap->m_weather->update(delay, map);
         // Tool update
         if((0 <= this->active) && (this->active < tools.size()) && !mouseInMenu)
         {
@@ -440,8 +437,6 @@ void Editor2::render()
             // Render walls
             cmap->renderWalls();
         }
-
-        if(cmap->m_weather) cmap->m_weather->render();
 
         glPopAttrib();
 

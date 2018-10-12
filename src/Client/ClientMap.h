@@ -20,8 +20,10 @@
 #define CLIENT_MAP_H
 
 #include "Map.h"
-#include "CMeshBuilder.h"
-#include "CWeather.h"
+
+class CMesh;
+class CMeshBuilder;
+struct CWeather;
 
 #define SHADOW_DETAIL 32
 
@@ -175,6 +177,8 @@ struct ClientMap : public Map
 
     void renderMisc();
     void renderFlag(int index);
+
+    void renderWeather();
 
     // Pour seter la position de la cam
     void setCameraPos(const CVector3f & pCamPos);

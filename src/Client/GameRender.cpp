@@ -417,7 +417,7 @@ void ClientGame::render()
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 15)
 #endif
-            if(cmap->m_weather) cmap->m_weather->render();
+            cmap->renderWeather();
 
         //--- Nuke flash!!!!!!
         glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);

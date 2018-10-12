@@ -17,18 +17,11 @@
 */
 
 #include "ClientMap.h"
-#include "Helper.h"
-#include <Zeven/FileIO.h>
-#include "Console.h"
-#include "Game.h"
-#include "Scene.h"
-#include "CRain.h"
-#include "CSnow.h"
-#include "CLava.h"
 #include "ClientHelper.h"
 #include "ClientGame.h"
+#include "Console.h"
+#include "Scene.h"
 #include <direct.h>
-#include <algorithm>
 #include <glad/glad.h>
 
 #ifdef RENDER_LAYER_TOGGLE
@@ -36,6 +29,245 @@ int renderToggle = 0;
 #endif
 
 extern Scene * scene;
+
+struct CWeather
+{
+    //--- Constructor
+    CWeather() {}
+
+    //--- Destructor
+    virtual ~CWeather() {}
+
+    //--- Update
+    virtual void update(float delay, Map* map) {}
+
+    //--- Render
+    virtual void render() {}
+};
+
+struct SSnow
+{
+    CVector3f pos;
+    SSnow();
+    void update(float delay);
+    void render();
+};
+
+struct CSnow : public CWeather
+{
+    //--- Weather sound
+    FSOUND_SAMPLE * m_sfxRain;
+    int channel;
+
+    //--- La rain
+    SSnow rains[100];
+    int nextRain;
+
+    //--- Flocon
+    unsigned int tex_snow;
+
+    int nextIn;
+
+    //--- Constructor
+    CSnow();
+
+    //--- Destructor
+    virtual ~CSnow();
+
+    //--- Update
+    void update(float delay, Map* map);
+
+    //--- Render
+    void render();
+};
+
+struct SRain
+{
+    CVector3f pos;
+    SRain();
+    void update(float delay);
+    void render();
+};
+
+struct CRain : public CWeather
+{
+    //--- Weather sound
+    FSOUND_SAMPLE * m_sfxRain;
+    int channel;
+
+    //--- La rain
+    SRain rains[100];
+    int nextRain;
+
+    //--- Constructor
+    CRain();
+
+    //--- Destructor
+    virtual ~CRain();
+
+    //--- Update
+    void update(float delay, Map* map);
+
+    //--- Render
+    void render();
+};
+
+
+struct CLava : public CWeather
+{
+    //--- Weather sound
+    FSOUND_SAMPLE * m_sfxRain;
+    int channel;
+
+    //--- Constructor
+    CLava();
+
+    //--- Destructor
+    virtual ~CLava();
+
+    //--- Update
+    void update(float delay, Map* map);
+
+    //--- Render
+    void render();
+};
+
+
+//--- SVertex: A single vertex with a normal, single texture, and colour
+struct SVertex
+{
+    float x,y,z;
+    float nx,ny,nz;
+    float u,v;
+    float r,g,b,a;
+};
+
+
+//--- CMaterial: A set of settings used to render a vertex buffer
+class CMaterial
+{
+public:
+    typedef unsigned int texture_t;
+
+    //--- No texture constant
+    static const texture_t no_texture = static_cast<texture_t>(-1);
+
+    //--- Blend modes
+    enum blend_t
+    {
+        BLEND_NONE,
+        BLEND_ALPHA,
+    };
+
+    //--- Constructor/Destructor
+    CMaterial(texture_t tex = no_texture, blend_t blend = BLEND_NONE, bool diffuse = true, bool lit = false);
+    virtual ~CMaterial();
+
+    //--- Enable/Disable (sets OpenGL states)
+    void enable(SVertex* first) const;
+    void disable() const;
+
+    //--- Equality operator
+    bool operator==(const CMaterial &rhs) const;
+
+protected:
+    texture_t   m_tex;
+    blend_t     m_blend;
+    bool        m_lit;
+    bool        m_diffuse;
+};
+
+
+//--- CVertexBuffer: A set of tris rendered using the same texture
+class CVertexBuffer
+{
+public:
+    typedef SVertex                 vertex_t;
+    typedef std::vector<vertex_t>   vertex_buf_t;
+
+    //--- Constructor/Destructor
+    CVertexBuffer(const CMaterial& mat);
+    virtual ~CVertexBuffer();
+
+    //--- Adds a tri
+    void add(const SVertex& a, const SVertex& b, const SVertex& c);
+
+    //--- Gets the material
+    const CMaterial& material() { return m_mat; }
+
+    //--- Gets a pointer to the first vertex
+    SVertex*        first() { return m_vb.size() > 0 ? &m_vb[0] : 0; }
+
+    //--- Size
+    size_t size() { return m_vb.size(); }
+
+protected:
+    vertex_buf_t    m_vb;
+    CMaterial       m_mat;
+};
+
+//--- CMesh: A renderable set of vertex buffers
+class CMesh
+{
+public:
+    typedef std::vector<CVertexBuffer>  vb_list_t;
+
+    //--- Constructor/Destructor
+    CMesh(vb_list_t& vbs);
+    virtual ~CMesh();
+
+    //--- Render
+    void render();
+    void renderSubMesh(size_t index);
+
+    //--- Size
+    size_t size() { return m_vbs.size(); }
+
+protected:
+    vb_list_t   m_vbs;
+};
+
+
+//--- CMeshBuilder: Builds a set of vertex buffers a vertex at a time
+class CMeshBuilder
+{
+public:
+    typedef CVertexBuffer::vertex_buf_t vb_t;
+    typedef CMesh::vb_list_t            vb_list_t;
+
+    //--- Constructor/Destructor
+    CMeshBuilder(const CMaterial& material);
+    virtual ~CMeshBuilder();
+
+    //--- Set current material
+    void bind(const CMaterial& material, bool forceNew = false);
+
+    //--- Adds a vertex
+    void vertex(float x, float y, float z, float u = 0, float v = 0);
+
+    //--- Set current normal
+    void normal(float x, float y, float z);
+
+    //--- Set current colour
+    void colour(float r, float g, float b, float a = 1);
+
+    //--- Compile the mesh (delete when finished)
+    CMesh* compile();
+
+protected:
+    //--- List of vertex buffers
+    vb_list_t   m_vbs;
+
+    //--- Temporary buffer for incomplete tris
+    vb_t        m_tempBuf;
+
+    //--- Current normal & colour
+    CVector3f   m_normal;
+    CVector4f   m_colour;
+
+    //--- Index to current buffer
+    size_t      m_i;
+};
 
 ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool editor, int sizeX, int sizeY)
 : Map(mapFilename, _game, font, editor, sizeX, sizeY), groundMesh(0), shadowMesh(0), wallMesh(0)
@@ -1147,4 +1379,1144 @@ bool GetMapData(CString name, unsigned int & texture, CVector2i & textureSize, C
         return false;
     }
     return true;
+}
+
+
+void ClientMap::buildAll()
+{
+    buildGround();
+    buildShadow();
+    buildWalls();
+}
+
+void ClientMap::buildGround()
+{
+    if(groundMesh) delete groundMesh;
+
+    CMaterial base(tex_dirt);
+    CMaterial base_weather(tex_dirt, CMaterial::BLEND_ALPHA);
+    CMaterial splat(tex_grass, CMaterial::BLEND_ALPHA);
+
+    CMeshBuilder builder(base);
+
+    //--- Reflections on?
+    if(weather == WEATHER_RAIN || theme == THEME_SNOW)
+    {
+        //--- Use a blended version
+        builder.bind(base_weather);
+        builder.colour(1, 1, 1, .6f);
+    }
+
+    //--- Base texture
+    buildGroundLayer(builder);
+
+    //--- Splat
+    builder.bind(splat);
+    buildGroundLayer(builder, true);
+
+    groundMesh = builder.compile();
+}
+
+void ClientMap::buildGroundLayer(CMeshBuilder& builder, bool splat)
+{
+    for(int j = 0; j < size[1]; ++j)
+    {
+        for(int i = 0; i < size[0]; ++i)
+        {
+            float x = static_cast<float>(i);
+            float y = static_cast<float>(j);
+
+            if(splat) builder.colour(1, 1, 1, 1 - cells[j*size[0] + i].splater[0]);
+            builder.vertex(x, y + 1, 0, (float)(x)*.5f, (float)(y + 1)*.5f);
+
+            if(splat) builder.colour(1, 1, 1, 1 - cells[j*size[0] + i].splater[1]);
+            builder.vertex(x, y, 0, (float)(x)*.5f, (float)(y)*.5f);
+
+            if(splat) builder.colour(1, 1, 1, 1 - cells[j*size[0] + i].splater[2]);
+            builder.vertex(x + 1, y, 0, (float)(x + 1)*.5f, (float)(y)*.5f);
+
+            if(splat) builder.colour(1, 1, 1, 1 - cells[j*size[0] + i].splater[2]);
+            builder.vertex(x + 1, y, 0, (float)(x + 1)*.5f, (float)(y)*.5f);
+
+            if(splat) builder.colour(1, 1, 1, 1 - cells[j*size[0] + i].splater[3]);
+            builder.vertex(x + 1, y + 1, 0, (float)(x + 1)*.5f, (float)(y + 1)*.5f);
+
+            if(splat) builder.colour(1, 1, 1, 1 - cells[j*size[0] + i].splater[0]);
+            builder.vertex(x, y + 1, 0, (float)(x)*.5f, (float)(y + 1)*.5f);
+        }
+    }
+}
+
+
+
+void ClientMap::buildShadow()
+{
+    if(shadowMesh) delete shadowMesh;
+
+    CMaterial shadow(CMaterial::no_texture, CMaterial::BLEND_ALPHA, true);
+
+    CMeshBuilder builder(shadow);
+
+    int i, j;
+
+    for(j = 1; j < size[1]; ++j)
+    {
+        for(i = 0; i < size[0] - 1; ++i)
+        {
+            if(!cells[j*size[0] + i].passable)
+            {
+                if(cells[(j - 1)*size[0] + i].passable)
+                {
+                    builder.colour(0, 0, 0, .7f);
+
+                    builder.vertex((float)i + 1, (float)j, 0);
+                    builder.vertex((float)i, (float)j, 0);
+                    builder.colour(0, 0, 0, .0f);
+                    builder.vertex((float)i + 1, (float)j - 1, 0);
+
+                    builder.vertex((float)i + 1, (float)j - 1, 0);
+                    builder.vertex((float)i + 2.0f, (float)j - 1, 0);
+                    builder.colour(0, 0, 0, .7f);
+                    builder.vertex((float)i + 1, (float)j, 0);
+                }
+
+                if(cells[(j)*size[0] + i + 1].passable)
+                {
+                    builder.colour(0, 0, 0, .7f);
+                    builder.vertex((float)i + 1, (float)j + 1, 0);
+                    builder.vertex((float)i + 1, (float)j, 0);
+                    builder.colour(0, 0, 0, .0f);
+                    builder.vertex((float)i + 2.0f, (float)j - 1, 0);
+
+                    builder.vertex((float)i + 2.0f, (float)j - 1, 0);
+                    builder.vertex((float)i + 2.0f, (float)j, 0);
+                    builder.colour(0, 0, 0, .7f);
+                    builder.vertex((float)i + 1, (float)j + 1, 0);
+                }
+            }
+        }
+    }
+
+    shadowMesh = builder.compile();
+}
+
+void ClientMap::buildWalls()
+{
+    if(wallMesh) delete wallMesh;
+
+    CMaterial wall(tex_wall, CMaterial::BLEND_NONE, true);
+    CMeshBuilder builder(wall);
+
+    int i, j, h;
+    for(j = 0; j < size[1]; ++j)
+    {
+        for(i = 0; i < size[0]; ++i)
+        {
+            if(!cells[j*size[0] + i].passable)
+            {
+                h = cells[j*size[0] + i].height;
+                buildWallBlock(builder, i, j, h);
+            }
+        }
+    }
+
+    wallMesh = builder.compile();
+}
+
+
+void ClientMap::buildWallBlock(CMeshBuilder& builder, int x, int y, int h)
+{//since this calls renderWallSide, it would also require that opengl be set to render quads
+    float fx = static_cast<float>(x);
+    float fy = static_cast<float>(y);
+    float fh = static_cast<float>(h);
+
+    //the block's corners...
+    float corner000[3] = { fx,fy,0 };
+    float corner001[3] = { fx,fy,fh };
+    float corner010[3] = { fx,fy + 1,0 };
+    float corner011[3] = { fx,fy + 1,fh };
+    float corner100[3] = { fx + 1,fy,0 };
+    float corner101[3] = { fx + 1,fy,fh };
+    float corner110[3] = { fx + 1,fy + 1,0 };
+    float corner111[3] = { fx + 1,fy + 1,fh };
+
+    float shadowL = 1.0f;
+    float shadowR = 1.0f;
+    float shadowT = 1.0f;
+    float shadowB = 1.0f;
+    if(gameVar.r_shadowQuality > 0)
+    {
+        shadowL = 0.8f;
+        shadowR = 0.4f;
+        shadowT = 0.7f;
+        shadowB = 0.35f;
+    }
+
+    map_cell* cell_top = (y + 1 < size[1] ? &cells[(y + 1)*size[0] + x] : 0);
+    map_cell* cell_left = (x - 1 >= 0 ? &cells[y*size[0] + x - 1] : 0);
+    map_cell* cell_diag = y + 1 < size[1] && x - 1 >= 0 ? &cells[(y + 1)*size[0] + x - 1] : 0;
+    bool bTop = cell_top && !cell_top->passable ? cell_top->height > cells[y*size[0] + x].height : false;
+    bool bLeft = cell_left && !cell_left->passable ? cell_left->height > cells[y*size[0] + x].height : false;
+    bool bDiag = cell_diag && !cell_diag->passable ? cell_diag->height > cells[y*size[0] + x].height : false;
+
+    //top of wall
+    buildWallTop(builder, corner001, corner101, corner111, corner011, bTop, bLeft, bDiag);
+
+    //bottom wall side if visible
+    if(y != 0 && (cells[(y - 1)*size[0] + x].passable || cells[(y - 1)*size[0] + x].height < h))
+        buildWallSide(builder, corner000, corner100, corner101, corner001, shadowB, fh);
+
+    //right wall side if visible
+    if(x < size[0] - 1 && (cells[y*size[0] + (x + 1)].passable || cells[y*size[0] + (x + 1)].height < h))
+        buildWallSide(builder, corner100, corner110, corner111, corner101, shadowR, fh);
+
+    //top wall side if visible
+    if(y < size[1] - 1 && (cells[(y + 1)*size[0] + x].passable || cells[(y + 1)*size[0] + x].height < h))
+        buildWallSide(builder, corner110, corner010, corner011, corner111, shadowT, fh);
+
+    //left wall side if visible
+    if(x != 0 && (cells[y*size[0] + (x - 1)].passable || cells[y*size[0] + (x - 1)].height < h))
+        buildWallSide(builder, corner010, corner000, corner001, corner011, shadowL, fh);
+
+}
+
+void ClientMap::buildWallTop(CMeshBuilder& builder, float* vert1, float* vert2, float* vert3, float* vert4, bool top, bool left, bool diag)
+{//I don't think this will work if opengl isn't set to render quads before it's called
+    float s = 0.4f;
+    builder.colour(1, 1, 1);
+
+    if(left || diag) builder.colour(s, s, s);
+    builder.vertex(vert4[0], vert4[1], vert4[2], 0, 1);
+    if(!left && diag) builder.colour(1, 1, 1);
+    builder.vertex(vert1[0], vert1[1], vert1[2], 0, 0);
+    builder.colour(1, 1, 1);
+    builder.vertex(vert2[0], vert2[1], vert2[2], 1, 0);
+
+    if(top) builder.colour(s, s, s);
+    builder.vertex(vert3[0], vert3[1], vert3[2], 1, 1);
+    if(!top && diag) builder.colour(s, s, s);
+    builder.vertex(vert4[0], vert4[1], vert4[2], 0, 1);
+    builder.colour(1, 1, 1);
+    builder.vertex(vert2[0], vert2[1], vert2[2], 1, 0);
+
+}
+
+void ClientMap::buildWallSide(CMeshBuilder& builder, float* vert1, float* vert2, float* vert3, float* vert4, float brightness, float h)
+{//I don't think this will work if opengl isn't set to render quads before it's called
+    builder.colour(brightness, brightness, brightness);
+
+    builder.vertex(vert4[0], vert4[1], vert4[2], 0, h);
+    builder.vertex(vert1[0], vert1[1], vert1[2], 0, 0);
+    builder.vertex(vert2[0], vert2[1], vert2[2], 1, 0);
+
+    builder.vertex(vert3[0], vert3[1], vert3[2], 1, h);
+    builder.vertex(vert4[0], vert4[1], vert4[2], 0, h);
+    builder.vertex(vert2[0], vert2[1], vert2[2], 1, 0);
+}
+
+void ClientMap::renderGround()
+{
+    glPushAttrib(GL_ENABLE_BIT);
+    glDepthMask(GL_FALSE);
+
+    //--- Render the map
+    groundMesh->render();
+
+    // render the grid for the editor
+    if(isEditor)
+    {
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_LIGHTING);
+        glLineWidth(2);
+        glColor3f(0.0f, 0.0f, 0.0f);
+        for(int j = 0; j < size[1]; ++j)
+        {
+            for(int i = 0; i < size[0]; ++i)
+            {
+                glBegin(GL_LINE_LOOP);
+                glVertex2i(i, j + 1);
+                glVertex2i(i, j);
+                glVertex2i(i + 1, j);
+                glVertex2i(i + 1, j + 1);
+                glEnd();
+            }
+        }
+
+        float currentRedDist = 0;
+        float farthestRedSpawn = 0;
+        float currentBlueDist = 0;
+        float farthestBlueSpawn = 0;
+        for(int i = 0; i < (int)dm_spawns.size(); i++)
+        {//draw projected spawn
+            int dist = 1000000;
+            for(int j = 0; j < (int)blue_spawns.size(); j++)
+            {
+                if(distanceSquared(dm_spawns[i], blue_spawns[j]) < dist)
+                    dist = (int)distanceSquared(dm_spawns[i], blue_spawns[j]);
+            }
+            if(dist > currentRedDist)
+            {
+                currentRedDist = (float)dist;
+                farthestRedSpawn = (float)i;
+            }
+            dist = 1000000;
+            for(int j = 0; j < (int)red_spawns.size(); j++)
+            {
+                if(distanceSquared(dm_spawns[i], red_spawns[j]) < dist)
+                    dist = (int)distanceSquared(dm_spawns[i], red_spawns[j]);
+            }
+            if(dist > currentBlueDist)
+            {
+                currentBlueDist = (float)dist;
+                farthestBlueSpawn = (float)i;
+            }
+        }
+        if(!dm_spawns.empty())
+        {
+            for(int i = 0; i < (int)blue_spawns.size(); i++)
+            {
+                glColor3f(1.0, 0.0, 0.0);
+                glLineWidth(2);
+                glBegin(GL_LINE_LOOP);
+                {
+                    glVertex2f(dm_spawns[(int)farthestRedSpawn][0], dm_spawns[(int)farthestRedSpawn][1]);
+                    glVertex2f(blue_spawns[i][0], blue_spawns[i][1]);
+                }
+                glEnd();
+            }
+            for(int i = 0; i < (int)red_spawns.size(); i++)
+            {
+                glColor3f(0.0, 0.0, 1.0);
+                glLineWidth(2);
+                glBegin(GL_LINE_LOOP);
+                {
+                    glVertex2f(dm_spawns[(int)farthestBlueSpawn][0], dm_spawns[(int)farthestBlueSpawn][1]);
+                    glVertex2f(red_spawns[i][0], red_spawns[i][1]);
+                }
+                glEnd();
+            }
+        }
+    }
+
+    glDepthMask(GL_TRUE);
+    glPopAttrib();
+}
+
+void ClientMap::renderShadow()
+{
+    if(gameVar.r_shadowQuality == 0) return;
+
+    shadowMesh->render();
+}
+
+void ClientMap::renderWalls()
+{
+    wallMesh->render();
+
+    // Tout est fini, on peut maintenant renderer le plancher dans le zbuffer
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glBegin(GL_QUADS);
+    glVertex2i(0, size[1] + 1);
+    glVertex2i(0, 0);
+    glVertex2i(size[0] + 1, 0);
+    glVertex2i(size[0] + 1, size[1] + 1);
+    glEnd();
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+}
+
+void ClientMap::performCollision(CoordFrame & lastCF, CoordFrame & CF, float radius)
+{
+    // Ici c'est super dooper easy
+    if(cells)
+    {
+        int x = (int)CF.position[0];
+        int y = (int)CF.position[1];
+        // On check en Y first of all
+        if(x < 1)
+            x = 1;
+        if(y < 1)
+            y = 1;
+        if(x >= size[0] - 1)
+            x = size[0] - 2;
+        if(y >= size[1] - 1)
+            y = size[1] - 2;
+        //prevents high velocity objects(minibots) from going into outer walls and causing a crash, they should still bounce correctly
+        if(CF.vel[1] < 0)
+        {
+            if(!cells[(y - 1)*size[0] + (x)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(lastCF.position[0] - radius <= (float)(x)+1 &&
+                    lastCF.position[0] + radius >= (float)(x) &&
+                    CF.position[1] - radius <= (float)(y - 1) + 1 &&
+                    CF.position[1] + radius >= (float)(y - 1))
+                {
+                    // On le ramène en Y
+                    CF.position[1] = (float)(y - 1) + 1 + radius + COLLISION_EPSILON;
+                    CF.vel[1] = -CF.vel[1] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+            if(!cells[(y - 1)*size[0] + (x - 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(lastCF.position[0] - radius <= (float)(x - 1) + 1 &&
+                    lastCF.position[0] + radius >= (float)(x - 1) &&
+                    CF.position[1] - radius <= (float)(y - 1) + 1 &&
+                    CF.position[1] + radius >= (float)(y - 1))
+                {
+                    // On le ramène en Y
+                    CF.position[1] = (float)(y - 1) + 1 + radius + COLLISION_EPSILON;
+                    CF.vel[1] = -CF.vel[1] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+            if(!cells[(y - 1)*size[0] + (x + 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(lastCF.position[0] - radius <= (float)(x + 1) + 1 &&
+                    lastCF.position[0] + radius >= (float)(x + 1) &&
+                    CF.position[1] - radius <= (float)(y - 1) + 1 &&
+                    CF.position[1] + radius >= (float)(y - 1))
+                {
+                    // On le ramène en Y
+                    CF.position[1] = (float)(y - 1) + 1 + radius + COLLISION_EPSILON;
+                    CF.vel[1] = -CF.vel[1] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+        }
+        else if(CF.vel[1] > 0)
+        {
+            if(!cells[(y + 1)*size[0] + (x)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(lastCF.position[0] - radius <= (float)(x)+1 &&
+                    lastCF.position[0] + radius >= (float)(x) &&
+                    CF.position[1] - radius <= (float)(y + 1) + 1 &&
+                    CF.position[1] + radius >= (float)(y + 1))
+                {
+                    // On le ramène en Y
+                    CF.position[1] = (float)(y + 1) - radius - COLLISION_EPSILON;
+                    CF.vel[1] = -CF.vel[1] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+            if(!cells[(y + 1)*size[0] + (x - 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(lastCF.position[0] - radius <= (float)(x - 1) + 1 &&
+                    lastCF.position[0] + radius >= (float)(x - 1) &&
+                    CF.position[1] - radius <= (float)(y + 1) + 1 &&
+                    CF.position[1] + radius >= (float)(y + 1))
+                {
+                    // On le ramène en Y
+                    CF.position[1] = (float)(y + 1) - radius - COLLISION_EPSILON;
+                    CF.vel[1] = -CF.vel[1] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+            if(!cells[(y + 1)*size[0] + (x + 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(lastCF.position[0] - radius <= (float)(x + 1) + 1 &&
+                    lastCF.position[0] + radius >= (float)(x + 1) &&
+                    CF.position[1] - radius <= (float)(y + 1) + 1 &&
+                    CF.position[1] + radius >= (float)(y + 1))
+                {
+                    // On le ramène en Y
+                    CF.position[1] = (float)(y + 1) - radius - COLLISION_EPSILON;
+                    CF.vel[1] = -CF.vel[1] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+        }
+
+        // On check en X asteur (sti c sketch comme technique, mais bon, c juste babo là!)
+        if(CF.vel[0] < 0)
+        {
+            if(!cells[(y)*size[0] + (x - 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(CF.position[0] - radius <= (float)(x - 1) + 1 &&
+                    CF.position[0] + radius >= (float)(x - 1) &&
+                    lastCF.position[1] - radius <= (float)(y)+1 &&
+                    lastCF.position[1] + radius >= (float)(y))
+                {
+                    // On le ramène en Y
+                    CF.position[0] = (float)(x - 1) + 1 + radius + COLLISION_EPSILON;
+                    CF.vel[0] = -CF.vel[0] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+            if(!cells[(y - 1)*size[0] + (x - 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(CF.position[0] - radius <= (float)(x - 1) + 1 &&
+                    CF.position[0] + radius >= (float)(x - 1) &&
+                    lastCF.position[1] - radius <= (float)(y - 1) + 1 &&
+                    lastCF.position[1] + radius >= (float)(y - 1))
+                {
+                    // On le ramène en Y
+                    CF.position[0] = (float)(x - 1) + 1 + radius + COLLISION_EPSILON;
+                    CF.vel[0] = -CF.vel[0] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+            if(!cells[(y + 1)*size[0] + (x - 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(CF.position[0] - radius <= (float)(x - 1) + 1 &&
+                    CF.position[0] + radius >= (float)(x - 1) &&
+                    lastCF.position[1] - radius <= (float)(y + 1) + 1 &&
+                    lastCF.position[1] + radius >= (float)(y + 1))
+                {
+                    // On le ramène en Y
+                    CF.position[0] = (float)(x - 1) + 1 + radius + COLLISION_EPSILON;
+                    CF.vel[0] = -CF.vel[0] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+        }
+        else if(CF.vel[0] > 0)
+        {
+            if(!cells[(y)*size[0] + (x + 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(CF.position[0] - radius <= (float)(x + 1) + 1 &&
+                    CF.position[0] + radius >= (float)(x + 1) &&
+                    lastCF.position[1] - radius <= (float)(y)+1 &&
+                    lastCF.position[1] + radius >= (float)(y))
+                {
+                    // On le ramène en Y
+                    CF.position[0] = (float)(x + 1) - radius - COLLISION_EPSILON;
+                    CF.vel[0] = -CF.vel[0] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+            if(!cells[(y - 1)*size[0] + (x + 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(CF.position[0] - radius <= (float)(x + 1) + 1 &&
+                    CF.position[0] + radius >= (float)(x + 1) &&
+                    lastCF.position[1] - radius <= (float)(y - 1) + 1 &&
+                    lastCF.position[1] + radius >= (float)(y - 1))
+                {
+                    // On le ramène en Y
+                    CF.position[0] = (float)(x + 1) - radius - COLLISION_EPSILON;
+                    CF.vel[0] = -CF.vel[0] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+            if(!cells[(y + 1)*size[0] + (x + 1)].passable)
+            {
+                // Est-ce qu'on entre en collision avec
+                if(CF.position[0] - radius <= (float)(x + 1) + 1 &&
+                    CF.position[0] + radius >= (float)(x + 1) &&
+                    lastCF.position[1] - radius <= (float)(y + 1) + 1 &&
+                    lastCF.position[1] + radius >= (float)(y + 1))
+                {
+                    // On le ramène en Y
+                    CF.position[0] = (float)(x + 1) - radius - COLLISION_EPSILON;
+                    CF.vel[0] = -CF.vel[0] * BOUNCE_FACTOR; // On le fait rebondir ! Bedong!
+                }
+            }
+        }
+    }
+
+    lastCF.position = CF.position;
+}
+
+void ClientMap::collisionClip(CoordFrame & CF, float radius)
+{
+    int x = (int)CF.position[0];
+    int y = (int)CF.position[1];
+
+    // Là c simple, on check les 8 cases autour, pis on clip (pour éviter de se faire pousser dans le mur
+    if(cells)
+    {
+        if(CF.position[0] + radius + COLLISION_EPSILON > (float)x + 1 && !cells[(y)*size[0] + (x + 1)].passable)
+        {
+            // On clip
+            CF.position[0] = (float)x + 1 - radius - COLLISION_EPSILON;
+        }
+        if(CF.position[0] - radius - COLLISION_EPSILON < (float)x && !cells[(y)*size[0] + (x - 1)].passable)
+        {
+            // On clip
+            CF.position[0] = (float)x + radius + COLLISION_EPSILON;
+        }
+        if(CF.position[1] + radius + COLLISION_EPSILON > (float)y + 1 && !cells[(y + 1)*size[0] + (x)].passable)
+        {
+            // On clip
+            CF.position[1] = (float)y + 1 - radius - COLLISION_EPSILON;
+        }
+        if(CF.position[1] - radius - COLLISION_EPSILON < (float)y && !cells[(y - 1)*size[0] + (x)].passable)
+        {
+            // On clip
+            CF.position[1] = (float)y + radius + COLLISION_EPSILON;
+        }
+    }
+
+    // Clamp with the universe
+    if(x <= 0) CF.position[0] = 1 + radius + COLLISION_EPSILON;
+    if(x >= size[0] - 1) CF.position[0] = size[0] - 1 - radius - COLLISION_EPSILON;
+    if(y <= 0) CF.position[1] = 1 + radius + COLLISION_EPSILON;
+    if(y >= size[1] - 1) CF.position[1] = size[1] - 1 - radius - COLLISION_EPSILON;
+
+    // check if we are in a cell, move to the next allowed cells
+    if(!cells[y * size[0] + x].passable)
+    {
+        bool possible[4] = { false,false,false,false };
+
+        if(cells[(y)* size[0] + (x - 1)].passable)
+        {
+            possible[0] = true;
+        }
+        if(cells[(y)* size[0] + (x + 1)].passable)
+        {
+            possible[1] = true;
+        }
+        if(cells[(y - 1) * size[0] + (x)].passable)
+        {
+            possible[2] = true;
+        }
+        if(cells[(y + 1) * size[0] + (x)].passable)
+        {
+            possible[3] = true;
+        }
+
+        //--- On essaye de pogner le best choice pareil là
+        float dis[4];
+        dis[0] = CF.position[0] - (float)x;
+        dis[1] = 1 - (CF.position[0] - (float)x);
+        dis[2] = CF.position[1] - (float)y;
+        dis[3] = 1 - (CF.position[1] - (float)y);
+
+        float currentMin = 2;
+        if(possible[0] && dis[0] < currentMin)
+        {
+            CF.position[0] = (float)x - radius - COLLISION_EPSILON;
+            currentMin = dis[0];
+        }
+        if(possible[1] && dis[1] < currentMin)
+        {
+            CF.position[0] = (float)x + 1 + radius + COLLISION_EPSILON;
+            currentMin = dis[1];
+        }
+        if(possible[2] && dis[2] < currentMin)
+        {
+            CF.position[1] = (float)y - radius - COLLISION_EPSILON;
+            currentMin = dis[2];
+        }
+        if(possible[3] && dis[3] < currentMin)
+        {
+            CF.position[1] = (float)y + 1 + radius + COLLISION_EPSILON;
+            currentMin = dis[3];
+        }
+    }
+}
+
+void ClientMap::renderFlag(int i)
+{
+    glPushMatrix();
+    glTranslatef(flagPos[i][0], flagPos[i][1], flagPos[i][2]);
+    glRotatef(flagAngle[i], 0, 0, 1);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(dko_flag[i], flagAnim);
+    glPopMatrix();
+}
+
+void ClientMap::renderMisc()
+{
+    int i;
+    if(game && (game->gameType != GAME_TYPE_CTF))
+        return;
+
+    glPushMatrix();
+    glTranslatef(flagPodPos[0][0], flagPodPos[0][1], flagPodPos[0][2]);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(dko_flagPod[0]);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(flagPodPos[1][0], flagPodPos[1][1], flagPodPos[1][2]);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(dko_flagPod[1]);
+    glPopMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_COLOR_MATERIAL);
+
+    // Les spawn si on est en editor
+    if(isEditor)
+    {
+        for(i = 0; i < (int)dm_spawns.size(); ++i)
+        {
+            glColor3f(1, 0, 1);
+            glPushMatrix();
+            glTranslatef(dm_spawns[i][0], dm_spawns[i][1], dm_spawns[i][2]);
+            //gluSphere(qObj, .25f, 8, 4);
+            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
+            glPopMatrix();
+        }
+        for(i = 0; i < (int)blue_spawns.size(); ++i)
+        {
+            glColor3f(0, 0, 1);
+            glPushMatrix();
+            glTranslatef(blue_spawns[i][0], blue_spawns[i][1], blue_spawns[i][2]);
+            //gluSphere(qObj, .25f, 8, 4);
+            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
+            glPopMatrix();
+        }
+        for(i = 0; i < (int)red_spawns.size(); ++i)
+        {
+            glColor3f(1, 0, 0);
+            glPushMatrix();
+            glTranslatef(red_spawns[i][0], red_spawns[i][1], red_spawns[i][2]);
+            //gluSphere(qObj, .25f, 8, 4);
+            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
+            glPopMatrix();
+        }
+    }
+
+    if(((game) && (game->gameType == GAME_TYPE_CTF)) || isEditor)
+    {
+        float redAnim = flagAnim + 5.0f;
+        while(redAnim >= 10) redAnim -= 10;
+        // Les flags
+        renderFlag(0);
+        renderFlag(1);
+    }
+}
+
+void ClientMap::renderWeather()
+{
+    if(m_weather) m_weather->render();
+}
+
+SSnow::SSnow()
+{
+}
+void SSnow::update(float delay)
+{
+    pos[2] -= 2 * delay;
+    pos += rand(CVector3f(-1,-1,0), CVector3f(1,1,0)) * delay;
+}
+void SSnow::render()
+{
+    glColor4f(1, 1, 1,((pos[2] > 2)?2:pos[2]) / 2.0f);
+    glTexCoord2f(0,1);
+    glVertex3f(pos[0]-.05f,pos[1]+.05f,pos[2]);
+    glTexCoord2f(0,0);
+    glVertex3f(pos[0]-.05f,pos[1]-.05f,pos[2]);
+    glTexCoord2f(1,0);
+    glVertex3f(pos[0]+.05f,pos[1]-.05f,pos[2]);
+    glTexCoord2f(1,1);
+    glVertex3f(pos[0]+.05f,pos[1]+.05f,pos[2]);
+}
+//
+//--- Constructor
+//
+CSnow::CSnow()
+{
+    m_sfxRain = dksCreateSoundFromFile("main/sounds/wind.wav", true);
+    tex_snow = dktCreateTextureFromFile("main/textures/snowflake.png", DKT_FILTER_LINEAR);
+
+    //--- Start the sound
+    channel = dksPlaySound(m_sfxRain, -1, 50);
+
+    nextRain = 0;
+
+    nextIn = 0;
+}
+
+
+
+//
+//--- Destructor
+//
+CSnow::~CSnow()
+{
+    FSOUND_StopSound(channel);
+    dksDeleteSound(m_sfxRain);
+    dktDeleteTexture(&tex_snow);
+}
+
+
+
+//
+//--- Update
+//
+void CSnow::update(float delay, Map* map)
+{
+    auto cmap = static_cast<ClientMap*>(map);
+    --nextIn;
+    //--- On crée la neige yé
+    if (nextIn <= 0)
+    {
+        nextIn = 3;
+        for (int i=0;i<1;++i)
+        {
+            rains[nextRain].pos = rand(cmap->camPos + CVector3f(-3,-3,-2), cmap->camPos + CVector3f(3,3,-2));
+            nextRain++;
+            if (nextRain == 100) nextRain = 0;
+        }
+    }
+
+    //--- On anime la plus
+    for (int i=0;i<100;++i)
+    {
+        if (rains[i].pos[2] > 0)
+        {
+            rains[i].update(delay);
+        }
+    }
+}
+
+
+
+//
+//--- Render
+//
+void CSnow::render()
+{
+    glPushAttrib(GL_ENABLE_BIT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBindTexture(GL_TEXTURE_2D, tex_snow);
+        glEnable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+            for (int i=0;i<100;++i)
+            {
+                if (rains[i].pos[2] > 0)
+                {
+                    rains[i].render();
+                }
+            }
+        glEnd();
+    glPopAttrib();
+}
+
+SRain::SRain() {}
+
+void SRain::update(float delay)
+{
+    pos[2] -= 15 * delay;
+}
+
+void SRain::render()
+{
+    glColor4f(.25f, .7f, .3f,((pos[2] > 2)?2:pos[2]) / 2.0f * .3f);
+    glVertex3fv(pos.s);
+    glVertex3f(pos[0],pos[1],pos[2]-.5f);
+}
+
+//
+//--- Constructor
+//
+CRain::CRain()
+{
+    m_sfxRain = dksCreateSoundFromFile("main/sounds/rain2.wav", true);
+
+    //--- Start the sound
+    channel = dksPlaySound(m_sfxRain, -1, 50);
+
+    nextRain = 0;
+}
+
+
+
+//
+//--- Destructor
+//
+CRain::~CRain()
+{
+    FSOUND_StopSound(channel);
+    dksDeleteSound(m_sfxRain);
+}
+
+
+
+//
+//--- Update
+//
+void CRain::update(float delay, Map* map)
+{
+    auto cmap = static_cast<ClientMap*>(map);
+    int i;
+    //--- On crée la pluit yé
+    for(i = 0; i < 3; ++i)
+    {
+        rains[nextRain].pos = rand(cmap->camPos + CVector3f(-3, -3, 5), cmap->camPos + CVector3f(3, 3, 5));
+        nextRain++;
+        if(nextRain == 100) nextRain = 0;
+    }
+
+    //--- On anime la plus
+    for(i = 0; i < 100; ++i)
+    {
+        if(rains[i].pos[2] > 0)
+        {
+            rains[i].update(delay);
+        }
+    }
+}
+
+
+
+//
+//--- Render
+//
+void CRain::render()
+{
+    glPushAttrib(GL_ENABLE_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glLineWidth(2);
+    glBegin(GL_LINES);
+    for(int i = 0; i < 100; ++i)
+    {
+        if(rains[i].pos[2] > 0)
+        {
+            rains[i].render();
+        }
+    }
+    glEnd();
+    glPopAttrib();
+}
+
+
+//
+//--- Constructor
+//
+CLava::CLava()
+{
+    m_sfxRain = dksCreateSoundFromFile("main/sounds/lava.wav", true);
+
+    //--- Start the sound
+    channel = dksPlaySound(m_sfxRain, -1, 50);
+}
+
+
+
+//
+//--- Destructor
+//
+CLava::~CLava()
+{
+    FSOUND_StopSound(channel);
+    dksDeleteSound(m_sfxRain);
+}
+
+
+
+//
+//--- Update
+//
+void CLava::update(float delay, Map* map)
+{
+}
+
+
+
+//
+//--- Render
+//
+void CLava::render()
+{
+}
+
+CMeshBuilder::CMeshBuilder(const CMaterial& material): m_i(0), m_colour(1,1,1,1)
+{
+    //--- Start the first buffer
+    m_vbs.push_back( CVertexBuffer(material) );
+}
+
+CMeshBuilder::~CMeshBuilder() {}
+
+void CMeshBuilder::bind(const CMaterial& material, bool forceNew)
+{
+    //--- Empty the temporary buffer
+    m_tempBuf.resize(0);
+
+    //--- Check if this texture/mode combo is used already
+    if(!forceNew)
+    {
+        for(size_t i = 0; i < m_vbs.size(); ++i)
+        {
+            if(m_vbs[i].material() == material)
+            {
+                m_i = i;
+                return;
+            }
+        }
+    }
+
+    //--- Start a new buffer
+    m_vbs.push_back( CVertexBuffer(material) );
+    m_i = m_vbs.size() - 1;
+}
+
+void CMeshBuilder::vertex(float x, float y, float z, float u, float v)
+{
+    //--- Create the vertex
+    SVertex vtx = { x, y, z,
+        m_normal[0], m_normal[1], m_normal[2],
+        u, v, m_colour[0], m_colour[1], m_colour[2], m_colour[3]
+    };
+
+    //--- Add to the temporary buffer
+    m_tempBuf.push_back( vtx );
+
+    //--- Do we have enough for a tri?
+    if(m_tempBuf.size() > 2)
+    {
+        m_vbs[m_i].add( m_tempBuf[0], m_tempBuf[1], m_tempBuf[2] );
+
+        //--- Empty the temporary buffer
+        m_tempBuf.resize(0);
+    }
+}
+
+void CMeshBuilder::normal(float x, float y, float z)
+{
+    m_normal.set(x,y,z);
+}
+
+void CMeshBuilder::colour(float r, float g, float b, float a)
+{
+    m_colour.set(r,g,b,a);
+}
+
+CMesh* CMeshBuilder::compile()
+{
+    //--- Empty the temporary buffer
+    m_tempBuf.resize(0);
+
+    //--- Return a CMesh (this will clear m_vbs)
+    return new CMesh( m_vbs );
+}
+
+CMesh::CMesh(vb_list_t& vbs)
+{
+    //--- Steal the vbs
+    m_vbs.swap(vbs);
+}
+
+CMesh::~CMesh() {}
+
+void CMesh::render()
+{
+    for(size_t i = 0; i < m_vbs.size(); ++i)
+        renderSubMesh(i);
+}
+
+void CMesh::renderSubMesh(size_t index)
+{
+    //--- Check for invalid index or empty buffer
+    if(index < 0 || index >= m_vbs.size() || m_vbs[index].size() < 3 )
+        return;
+
+    //--- Get a reference to the vb & material
+    CVertexBuffer&      vb = m_vbs[index];
+    const CMaterial&    mat = vb.material();
+
+    //--- Enable material
+    mat.enable( vb.first() );
+
+    //--- Draw!
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vb.size()) );
+
+    //--- Disable material
+    mat.disable();
+}
+
+CMaterial::CMaterial(texture_t tex, blend_t blend, bool diffuse, bool lit): m_tex(tex), m_blend(blend), m_diffuse(diffuse), m_lit(lit)
+{
+
+}
+
+CMaterial::~CMaterial()
+{
+
+}
+
+void CMaterial::enable(SVertex* first) const
+{
+    //--- Push enable bit, this causes OpenGL to track and revert glEnable states
+    glPushAttrib(GL_ENABLE_BIT);
+
+    //--- Always need verticies
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, sizeof(SVertex), &(first->x) );
+
+    //--- Texturing
+    if(m_tex != no_texture)
+    {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture( GL_TEXTURE_2D, m_tex );
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(SVertex), &(first->u) );
+    }
+    else
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    //--- Lighting
+    if(m_lit)
+    {
+        glEnable(GL_LIGHTING);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, sizeof(SVertex), &(first->nx) );
+    }
+    else
+    {
+        glDisable(GL_LIGHTING);
+    }
+
+    //--- Blending
+    if(m_blend > BLEND_NONE)
+    {
+        glEnable(GL_BLEND);
+
+        if(m_blend == BLEND_ALPHA)
+        {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+    }
+
+    //--- Diffuse
+    if(m_diffuse)
+    {
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(4, GL_FLOAT, sizeof(SVertex), &(first->r) );
+    }
+}
+
+void CMaterial::disable() const
+{
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    if(m_tex != no_texture)
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    if(m_lit)
+        glDisableClientState(GL_NORMAL_ARRAY);
+
+    if(m_diffuse)
+        glDisableClientState(GL_COLOR_ARRAY);
+
+    //--- Return OpenGL to normal
+    glPopAttrib();
+}
+
+bool CMaterial::operator==(const CMaterial &rhs) const
+{
+    return (m_tex == rhs.m_tex && m_blend == rhs.m_blend && m_diffuse == rhs.m_diffuse && m_lit == rhs.m_lit);
+}
+
+CVertexBuffer::CVertexBuffer(const CMaterial& mat): m_mat(mat) {}
+
+CVertexBuffer::~CVertexBuffer() {}
+
+void CVertexBuffer::add(const SVertex& a, const SVertex& b, const SVertex& c)
+{
+    m_vb.push_back(a);
+    m_vb.push_back(b);
+    m_vb.push_back(c);
 }

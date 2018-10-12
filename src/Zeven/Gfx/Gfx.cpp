@@ -30,6 +30,8 @@
 #include <sys/stat.h>
 #include <vector>
 
+#define USE_IMGUI 0
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -1494,7 +1496,9 @@ int dkwMainLoop()
 
     while(SDL_PollEvent(&event))
     {
-        //ImGui_ImplSDL2_ProcessEvent(&event);
+#if USE_IMGUI
+        ImGui_ImplSDL2_ProcessEvent(&event);
+#endif
         if(event.type == SDL_QUIT)
             done = true;
         if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(g_window))
@@ -1510,20 +1514,23 @@ int dkwMainLoop()
         //}
     }
 
-
-    //bool show_demo_window = false;
-    //ImGui_ImplOpenGL3_NewFrame();
-    //ImGui_ImplSDL2_NewFrame(g_window);
-    //ImGui::NewFrame();
-    //if(show_demo_window)
-    //{
-    //    ImGui::ShowDemoWindow(&show_demo_window);
-    //}
-    //ImGui::Render();
+#if USE_IMGUI
+    bool show_demo_window = true;
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL2_NewFrame(g_window);
+    ImGui::NewFrame();
+    if(show_demo_window)
+    {
+       ImGui::ShowDemoWindow(&show_demo_window);
+    }
+#endif
 
     mainLoopObject->paint();
 
-    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+ #if USE_IMGUI
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
 
     // Swap buffers if valid context is found
     if(g_gl_context)
@@ -1588,19 +1595,21 @@ dkGfxContext* dkGfxInit(dkContext* ctx, dkGfxConfig config)
 
     if(!gladLoadGLLoader(SDL_GL_GetProcAddress))
     {
-        last_error = "Failed to initialize BrebisGL\n";
+        last_error = "Failed to initialize OpenGL\n";
         return nullptr;
     }
 
-    //IMGUI_CHECKVERSION();
-    //ImGui::CreateContext();
-    //ImGuiIO& io = ImGui::GetIO();
-    //io.IniFilename = nullptr;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-    //io.MouseDrawCursor = true;
-    //ImGui_ImplSDL2_InitForOpenGL(g_window, g_gl_context);
-    //ImGui_ImplOpenGL3_Init(glsl_version);
-    //ImGui::StyleColorsDark();
+#if USE_IMGUI
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = nullptr;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    io.MouseDrawCursor = true;
+    ImGui_ImplSDL2_InitForOpenGL(g_window, g_gl_context);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    ImGui::StyleColorsDark();
+#endif
 
     done = false;
 

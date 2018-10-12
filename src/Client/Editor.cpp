@@ -61,7 +61,7 @@ Editor2::Editor2(CString mapName, unsigned int font, int sizeX, int sizeY)
     else if(sizeY > 64)
         sizeY = 64;
 
-    map = new Map(mapName, 0, font, true, sizeX, sizeY);
+    map = new ClientMap(mapName, 0, font, true, sizeX, sizeY);
     if(!map->isValid)
     {
         ZEVEN_SAFE_DELETE(map);

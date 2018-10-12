@@ -1525,6 +1525,7 @@ int dkwMainLoop()
     }
 #endif
 
+    SDL_ShowCursor(SDL_DISABLE);
     mainLoopObject->paint();
 
  #if USE_IMGUI
@@ -1535,7 +1536,6 @@ int dkwMainLoop()
     // Swap buffers if valid context is found
     if(g_gl_context)
     {
-        SDL_ShowCursor(false);
         SDL_GL_SwapWindow(g_window);
     }
 
@@ -1605,7 +1605,7 @@ dkGfxContext* dkGfxInit(dkContext* ctx, dkGfxConfig config)
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = nullptr;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-    io.MouseDrawCursor = true;
+    io.MouseDrawCursor = false;
     ImGui_ImplSDL2_InitForOpenGL(g_window, g_gl_context);
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGui::StyleColorsDark();

@@ -23,8 +23,7 @@
 #define MIN_TIME_BETWEEN_QMSG 0.9f
 
 #include "ClientGame.h"
-#include "ControlListener.h"
-#include "Button.h"
+#include "BaboUI.h"
 #include "Writting.h"
 #include "CListener.h"
 

@@ -21,7 +21,6 @@
 
 #include "Scene.h"
 #include "Client.h"
-#include "Editor.h"
 #include "CMainTab.h"
 #include "CMenuManager.h"
 #include "IntroScreen.h"
@@ -30,9 +29,6 @@ struct ClientScene : public Scene
 {
     // Le client
     Client * client;
-
-    // Le Map editor (Ça ne peut pas coexister avec client et server)
-    Editor * editor;
 
     // Le menu
 //  Menu * menu;
@@ -58,7 +54,6 @@ struct ClientScene : public Scene
     void host(CString mapName);
     void dedicate(CString mapName);
     void join(CString IPAddress, int port, CString password = "");
-    void edit(CString command);
     void sayteam(CString message);
     void disconnect();
     void sayall(CString message);

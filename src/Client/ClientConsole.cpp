@@ -1199,13 +1199,6 @@ void ClientConsole::sendCommand(CString commandLine, bool isAdmin, unsigned long
         cscene->sayteam(tokenize);
         return;
     }
-    // Pour modifier ou cr?r une map
-    if(command == "edit")
-    {
-        cscene->edit(tokenize);
-        m_isActive = false;
-        return;
-    }
 
     if(command == "rebuildmap")
     {

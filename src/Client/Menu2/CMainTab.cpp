@@ -45,7 +45,6 @@ CMainTab::CMainTab(CControl * in_parent)
     profile = new CUserLogin(in_parent, btn_profile);
     browser = new CBrowser(in_parent, btn_profile);
     host = new CHost(in_parent, btn_profile);
-    editor = new CEditor(in_parent, btn_profile);
     credit = new CCredit(in_parent, btn_profile);
     option = new COption(in_parent, btn_profile);
 
@@ -54,47 +53,35 @@ CMainTab::CMainTab(CControl * in_parent)
     btn_resume = new CControl(parent, CVector2i(0,0), CVector2i(100,25), "Resume Game", this, "BUTTON");
     btn_resume->enable = false;
 
-    //--- Buttons at the top
-    //delete btn_userLogin;
-    //delete btn_news;
     delete btn_profile;
-    //btn_userLogin = new CControl(parent, CVector2i(32,32),CVector2i(100,25),"Babo Profile",this,"BUTTON");
-    //btn_userLogin->toolTips = "User login information and stats.";
-    //btn_news = new CControl(parent, CVector2i(32,32),CVector2i(100,25),"News",this,"BUTTON");
-    //btn_news->toolTips = "News from Babo World.";
+
     btn_profile = new CControl(parent, CVector2i(32,32),CVector2i(117,25),"Profile",this,"BUTTON");
     btn_profile->toolTips = "User login information and stats.";
+
     btn_browser = new CControl(parent, CVector2i(32,32),CVector2i(123,25),"Game Browser",this,"BUTTON", btn_profile, CONTROL_SNAP_RIGHT);
     btn_browser->toolTips = "Browse games over the Internet or on a local network.";
-    //btn_friends = new CControl(parent, CVector2i(32,32),CVector2i(100,25),"Friends",this,"BUTTON", btn_browser, CONTROL_SNAP_RIGHT);
-    //btn_friends->toolTips = "Find out where your friends are playing.";
+
     btn_create = new CControl(parent, CVector2i(32,32),CVector2i(107,25),"Host",this,"BUTTON", btn_browser, CONTROL_SNAP_RIGHT);
     btn_create->toolTips = "Host a game and play in it.\nSee CTF.cfg for more informations about dedicating a server.";
-    btn_editor = new CControl(parent, CVector2i(32,32),CVector2i(117,25),"Map Editor",this,"BUTTON", btn_create, CONTROL_SNAP_RIGHT);
-    btn_editor->toolTips = "Edit or create a new map.";
-    btn_option = new CControl(parent, CVector2i(32,32),CVector2i(97,25),"Options",this,"BUTTON", btn_editor, CONTROL_SNAP_RIGHT);
+
+    btn_option = new CControl(parent, CVector2i(32,32),CVector2i(97,25),"Options",this,"BUTTON", btn_create, CONTROL_SNAP_RIGHT);
     btn_option->toolTips = "Setup all game options.";
+
     btn_credits = new CControl(parent, CVector2i(32,32),CVector2i(97,25),"Credits",this,"BUTTON", btn_option, CONTROL_SNAP_RIGHT);
     btn_credits->toolTips = "See who are the dudes who created this bloody hell!!";
+
     btn_quit = new CControl(parent, CVector2i(32,32),CVector2i(48,25),"\x4X",this,"BUTTON", btn_credits, CONTROL_SNAP_RIGHT);
     btn_quit->toolTips = "Quit the game. :(";
 
-    //userLogin->setVisible(true);
-    //news->setVisible(true);
-    //btn_userLogin->enable = false;
-    //btn_news->enable = false;
     btn_profile->enable = false;
     profile->setVisible(true);
     browser->setVisible(false);
-    //friends->setVisible(false);
     host->setVisible(false);
-    editor->setVisible(false);
     credit->setVisible(false);
     option->setVisible(false);
 
-    //current = userLogin;
     current = profile;
-    lastButtonPress = btn_profile;//btn_userLogin;
+    lastButtonPress = btn_profile;
 
     timeBrowseDelay = -1;
 }
@@ -133,24 +120,6 @@ void CMainTab::Click(CControl * control)
     {
         dksPlaySound(m_sfxClic, -1, 200);
     }
-    /*if (control == btn_userLogin)
-    {
-        if (current) current->setVisible(false);
-        current = userLogin;
-        lastButtonPress->enable = true;
-        control->enable = false;
-        lastButtonPress = control;
-        current->setVisible(true);
-    }*/
-    //if (control == btn_news)
-    //{
-    //  if (current) current->setVisible(false);
-    //  current = news;
-    //  lastButtonPress->enable = true;
-    //  control->enable = false;
-    //  lastButtonPress = control;
-    //  current->setVisible(true);
-    //}
     if (control == btn_profile)
     {
         if (current) current->setVisible(false);
@@ -181,25 +150,6 @@ void CMainTab::Click(CControl * control)
     {
         if (current) current->setVisible(false);
         current = host;
-        lastButtonPress->enable = true;
-        control->enable = false;
-        lastButtonPress = control;
-        current->setVisible(true);
-    }
-    /*if (control == btn_friends)
-    {
-        if (current) current->setVisible(false);
-        current = friends;
-        friends->updateList();
-        lastButtonPress->enable = true;
-        control->enable = false;
-        lastButtonPress = control;
-        current->setVisible(true);
-    }*/
-    if (control == btn_editor)
-    {
-        if (current) current->setVisible(false);
-        current = editor;
         lastButtonPress->enable = true;
         control->enable = false;
         lastButtonPress = control;

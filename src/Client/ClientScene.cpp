@@ -29,7 +29,6 @@ ClientScene::ClientScene(dkContext* dk) : Scene(dk)
     //tex_miniHeadGames = dktCreateTextureFromFile("main/textures/miniHeadGames.png", DKT_FILTER_LINEAR);
 
     client = 0;
-    editor = 0;
 
     renderLoadingScreen(font);
 
@@ -125,17 +124,6 @@ void ClientScene::update(float delay)
         {
             FSOUND_SetSFXMasterVolume((int)(255.0f*gameVar.s_masterVolume));
             //  FSOUND_SetFrequency(FSOUND_ALL, gameVar.s_mixRate);
-        }
-
-        // On update l'editor
-        if(editor)
-        {
-            editor->update(delay);
-            if(editor->needToShutDown)
-            {
-                disconnect();
-                return;
-            }
         }
 
         // On update les menu
@@ -243,24 +231,6 @@ void ClientScene::join(CString IPAddress, int port, CString password/*, CString 
     }
 }
 
-void ClientScene::edit(CString command)
-{
-    CString mapName = command.getFirstToken(' ');
-    int w, h;
-    CString token = command.getFirstToken(' ');
-    if(token.isNull()) w = 0;
-    else w = token.toInt();
-    token = command.getFirstToken(' ');
-    if(token.isNull()) h = 0;
-    else h = token.toInt();
-    disconnect();
-    console->add("\x3> Creating Editor");
-    //  ZEVEN_SAFE_DELETE(menuManager.root);
-    editor = new Editor(mapName, font, w, h); // On connect notre jeu au client
-//  menu->hide();
-    menuManager.root->visible = false;
-}
-
 void ClientScene::disconnect()
 {
 
@@ -276,8 +246,6 @@ void ClientScene::disconnect()
     if(server) { console->add("\x3> Shutdowning Server"); wasServer = true; }
     ZEVEN_SAFE_DELETE(server);
 
-    if(editor) console->add("\x3> Shutdowning Editor");
-    ZEVEN_SAFE_DELETE(editor);
     auto cconsole = static_cast<ClientConsole*>(console);
     cconsole->unlock(); // Petit bug quand on chattait ;)
 //  menu->show();

@@ -23,7 +23,6 @@
 #include "CBrowser.h"
 #include "CControl.h"
 #include "CHost.h"
-#include "CEditor.h"
 #include "CCredit.h"
 #include "COption.h"
 #include "CMaster.h"
@@ -44,7 +43,6 @@ public:
     CControl * btn_profile;
     CControl * btn_browser;
     CControl * btn_create;
-    CControl * btn_editor;
     CControl * btn_option;
     CControl * btn_credits;
     CControl * btn_quit;
@@ -55,7 +53,6 @@ public:
     CUserLogin * profile;
     CBrowser * browser;
     CHost * host;
-    CEditor * editor;
     CCredit * credit;
     COption * option;
 

@@ -92,9 +92,6 @@ void ClientScene_Render(ClientScene* scene)
         float alphaScope = 0;
         if(scene->client) Client_Render(scene->client, alphaScope);
 
-        // On render l'editor
-        if(scene->editor) scene->editor->render();
-
         // On render les menus
         if((menuManager.root) && (menuManager.root->visible))
         {
@@ -117,7 +114,7 @@ void ClientScene_Render(ClientScene* scene)
         }
 
         // On affiche la version du jeu
-        if(!scene->editor && !scene->client)
+        if(!scene->client)
         {
             if(scene->server)
             {

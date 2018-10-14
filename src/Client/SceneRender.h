@@ -21,39 +21,39 @@
 #include <Zeven/Core.h>
 #include <vector>
 
+struct Client;
 struct ClientConsole;
-struct ClientScene;
+struct ClientGame;
+struct ClientPlayer;
 struct ClientProjectile;
-struct NukeFlash;
+struct ClientScene;
+struct Douille;
 struct Drip;
 struct FloorMark;
-struct Douille;
-struct Trail;
-struct ClientGame;
+struct NukeFlash;
 struct Player;
-struct ClientPlayer;
+struct Trail;
 
+void Client_Render(Client* client, float & alphaScope);
 void ClientConsole_Render(ClientConsole* console);
-void ClientScene_Render(ClientScene* scene);
-
-void ClientProjectile_Render(ClientProjectile* proj);
-void ClientProjectile_RenderShadow(ClientProjectile* proj);
-void NukeFlash_Render(NukeFlash* nuke);
-void Drip_Render(Drip* drip);
-void FloorMark_Render(FloorMark* mark);
-void Douille_Render(Douille* douille);
-void Trail_Render(Trail* trail);
-void Trail_RenderBullet(Trail* trail);
 void ClientGame_Render(ClientGame* game);
-void ClientGame_RenderStats(ClientGame* game);
 void ClientGame_RenderBlueTeam(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
-void ClientGame_RenderRedTeam(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
 void ClientGame_RenderFFA(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
-void ClientGame_RenderSpectator(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
 void ClientGame_RenderMiniMap(ClientGame* game);
-
+void ClientGame_RenderRedTeam(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
+void ClientGame_RenderSpectator(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
+void ClientGame_RenderStats(ClientGame* game);
 void ClientPlayer_Render(ClientPlayer* player);
 void ClientPlayer_RenderName(ClientPlayer* player);
+void ClientProjectile_Render(ClientProjectile* proj);
+void ClientProjectile_RenderShadow(ClientProjectile* proj);
+void ClientScene_Render(ClientScene* scene);
+void Douille_Render(Douille* douille);
+void Drip_Render(Drip* drip);
+void FloorMark_Render(FloorMark* mark);
+void NukeFlash_Render(NukeFlash* nuke);
+void Trail_Render(Trail* trail);
+void Trail_RenderBullet(Trail* trail);
 
 // Pour êrire du texte centrê
 void printCenterText(float x, float y, float size, bool enableShadow, const CString & text);

@@ -28,7 +28,6 @@
 #include "Writting.h"
 #include "CListener.h"
 
-
 // Nos message qu'on affiche à l'écran
 struct TimedMessage
 {
@@ -41,10 +40,8 @@ struct TimedMessage
 	}
 };
 
-
-class Client :/* public ControlListener, */public CListener
+struct Client : public CListener
 {
-public:
 	// Le son pour quand on clic
 	FSOUND_SAMPLE * m_sfxClic;
 
@@ -143,7 +140,6 @@ public:
 	//--- Le client ID
 	unsigned long uniqueClientID;
 
-public:
 	// Constructeur
 	Client(ClientGame * pGame);
 
@@ -152,9 +148,6 @@ public:
 
 	// Pour l'updater
 	void update(float delay);
-
-	// Pour l'afficher
-	void render(float & alphaScope);
 
 	// Pour rejoindre un server
 	int join(CString IPAddress, int port, CString password = "");
@@ -171,8 +164,6 @@ public:
 
 	void MouseEnter(CControl * control);
 };
-
-
 
 #endif
 

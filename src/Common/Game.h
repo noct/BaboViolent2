@@ -26,7 +26,7 @@
 #include "netPacket.h"
 #include <Zeven/MemIO.h>
 
-class Client;
+struct Client;
 
 #define MAX_PLAYER 32
 #define GAME_TYPE_COUNT 4

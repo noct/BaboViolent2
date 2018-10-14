@@ -19,6 +19,7 @@
 #include "ClientScene.h"
 #include "ClientConsole.h"
 #include "ClientMap.h"
+#include "KeyManager.h"
 #include <Zeven/Gfx.h>
 #include <glad/glad.h>
 
@@ -54,7 +55,7 @@ void ClientScene_Render(ClientScene* scene)
     {
         // On render le client
         float alphaScope = 0;
-        if(scene->client) scene->client->render(alphaScope);
+        if(scene->client) Client_Render(scene->client, alphaScope);
 
         // On render l'editor
         if(scene->editor) scene->editor->render();
@@ -2044,5 +2045,727 @@ void ClientPlayer_RenderName(ClientPlayer* player)
                 renderTexturedQuad(player->onScreenPos[0] - 14, player->onScreenPos[1] - 7, (int)(player->life*28.0f), 5, 0);
             }
         }
+    }
+}
+
+void Client_Render(Client* client, float & alphaScope)
+{
+    auto game = client->game;
+    int i;
+    CVector2i res = dkwGetResolution();
+
+    if(game->thisPlayer)
+    {
+        if(game->thisPlayer->status == PLAYER_STATUS_ALIVE)
+        {
+            if(game->map)
+            {
+                auto cmap = static_cast<ClientMap*>(game->map);
+                cmap->camLookAt = (
+                    game->thisPlayer->currentCF.position * 5 +
+                    game->thisPlayer->currentCF.mousePosOnMap * 4) / 9.0f;
+                if(cmap->camLookAt[0] < 0) cmap->camLookAt[0] = 0;
+                if(cmap->camLookAt[1] < -1) cmap->camLookAt[1] = -1;
+                if(cmap->camLookAt[0] > (float)game->map->size[0]) cmap->camLookAt[0] = (float)game->map->size[0];
+                if(cmap->camLookAt[1] > (float)game->map->size[1] + 1) cmap->camLookAt[1] = (float)game->map->size[1] + 1;
+            }
+        }
+    }
+
+    // C'est côté client qu'on fait ça ;)
+    if(client->isConnected) ClientGame_Render(game);
+
+    // LE SNIPER SCOPE
+    CVector2i cursor = dkwGetCursorPos_main();
+    int xM = (int)(((float)cursor[0] / (float)res[0])*800.0f);
+    int yM = (int)(((float)cursor[1] / (float)res[1])*600.0f);
+    dkglPushOrtho(800, 600);
+    glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //--- Sniper scope!!
+    if(game->thisPlayer && game->thisPlayer->status == PLAYER_STATUS_ALIVE)
+    {
+        if(game->thisPlayer->weapon && game->thisPlayer->weapon->weaponID == WEAPON_SNIPER)
+        {
+            auto cmap = static_cast<ClientMap*>(game->map);
+            if(cmap && cmap->camPos[2] > 8)
+            {
+                alphaScope = 10 - (cmap->camPos[2] - 2);
+                alphaScope = (alphaScope > 0) ? 1 - (alphaScope / 2) : 1;
+                glColor4f(0, 0, 0, alphaScope);
+                if(!(menuManager.root && menuManager.root->visible) && !client->showMenu)
+                {
+                    // render the scope view
+                    renderTexturedQuad(xM - 128, yM - 128, 256, 256, clientVar.tex_sniperScope);
+                    renderTexturedQuad(0, 0, 800, yM - 128, 0);
+                    renderTexturedQuad(0, yM + 128, 800, 600 - (yM + 128), 0);
+                    renderTexturedQuad(0, yM - 128, xM - 128, 256, 0);
+                    renderTexturedQuad(xM + 128, yM - 128, 800 - (xM + 128), 256, 0);
+                }
+                else
+                {
+                    // render black background in the menu
+                    renderTexturedQuad(0, 0, 800, 600, 0);
+                }
+            }
+        }
+    }
+
+    glPopAttrib();
+    dkglPopOrtho();
+
+    // Si on doit spawner on marque dans combient de temps
+    if(game->thisPlayer)
+    {
+        dkglPushOrtho(1280, 720);
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // Si on c faite tirer dessus
+        if(game->thisPlayer->screenHit > 0)
+        {
+            glColor4f(1, 1, 1, game->thisPlayer->screenHit * 3);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, client->tex_screenHit);
+            glBegin(GL_QUADS);
+            glTexCoord2i(0, 1);
+            glVertex2i(0, 0);
+            glTexCoord2i(0, 0);
+            glVertex2i(0, 600);
+            glTexCoord2i(1, 0);
+            glVertex2i(800, 600);
+            glTexCoord2i(1, 1);
+            glVertex2i(800, 0);
+            glEnd();
+        }
+
+#ifdef RENDER_LAYER_TOGGLE
+        if(renderToggle >= 16)
+#endif
+            if(game->thisPlayer->status == PLAYER_STATUS_ALIVE)
+            {
+                // Quand on reload le gun il faut le marquer
+                if(game->thisPlayer->weapon)
+                {
+                    if(game->thisPlayer->weapon->currentFireDelay > 0 && game->thisPlayer->weapon->fireDelay >= 1.0f)
+                    {
+                        glDisable(GL_TEXTURE_2D);
+                        glColor4f(1, 1, 1, .5f);
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100 - 5, 440 - 5);
+                        glVertex2f(400 - 100 - 5, 454 + 5);
+                        glVertex2f(400 - 100 + 200 + 10, 454 + 5);
+                        glVertex2f(400 - 100 + 200 + 10, 440 - 5);
+                        glEnd();
+                        glColor4f(0, 0, 0, .5f);
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100 - 1, 440 - 1);
+                        glVertex2f(400 - 100 - 1, 454 + 1);
+                        glVertex2f(400 - 100 + 200 + 2, 454 + 1);
+                        glVertex2f(400 - 100 + 200 + 2, 440 - 1);
+                        glEnd();
+                        glEnable(GL_TEXTURE_2D);
+                        glColor4f(.5f, 1, .5f, game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay*.75f + .25f);
+                        if(client->blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
+                        glDisable(GL_TEXTURE_2D);
+                        // La progress bar
+                        // La progress bar
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100, 440);
+                        glVertex2f(400 - 100, 454);
+                        glVertex2f(400 - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay) * 200, 454);
+                        glVertex2f(400 - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay) * 200, 440);
+                        glEnd();
+                    }
+                    else if(game->thisPlayer->grenadeDelay > 0)
+                    {
+                        glDisable(GL_TEXTURE_2D);
+                        glColor4f(1, 1, 1, .5f);
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100 - 5, 440 - 5);
+                        glVertex2f(400 - 100 - 5, 454 + 5);
+                        glVertex2f(400 - 100 + 200 + 10, 454 + 5);
+                        glVertex2f(400 - 100 + 200 + 10, 440 - 5);
+                        glEnd();
+                        glColor4f(0, 0, 0, .5f);
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100 - 1, 440 - 1);
+                        glVertex2f(400 - 100 - 1, 454 + 1);
+                        glVertex2f(400 - 100 + 200 + 2, 454 + 1);
+                        glVertex2f(400 - 100 + 200 + 2, 440 - 1);
+                        glEnd();
+                        glEnable(GL_TEXTURE_2D);
+                        glColor4f(.5f, 1, .5f, game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay*.75f + .25f);
+                        if(client->blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
+                        glDisable(GL_TEXTURE_2D);
+                        // La progress bar
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100, 440);
+                        glVertex2f(400 - 100, 454);
+                        glVertex2f(400 - 100 + (1 - game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay) * 200, 454);
+                        glVertex2f(400 - 100 + (1 - game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay) * 200, 440);
+                        glEnd();
+                    }
+                    else if(game->thisPlayer->weapon->weaponID == WEAPON_SHOTGUN && game->thisPlayer->weapon->currentFireDelay > 0)
+                    {
+                        glDisable(GL_TEXTURE_2D);
+                        glColor4f(1, 1, 1, .5f);
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100 - 5, 440 - 5);
+                        glVertex2f(400 - 100 - 5, 454 + 5);
+                        glVertex2f(400 - 100 + 200 + 10, 454 + 5);
+                        glVertex2f(400 - 100 + 200 + 10, 440 - 5);
+                        glEnd();
+                        glColor4f(0, 0, 0, .5f);
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100 - 1, 440 - 1);
+                        glVertex2f(400 - 100 - 1, 454 + 1);
+                        glVertex2f(400 - 100 + 200 + 2, 454 + 1);
+                        glVertex2f(400 - 100 + 200 + 2, 440 - 1);
+                        glEnd();
+                        glEnable(GL_TEXTURE_2D);
+                        glColor4f(.5f, 1, .5f, game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay*.75f + .25f);
+                        if(client->blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
+                        glDisable(GL_TEXTURE_2D);
+                        // La progress bar
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100, 440);
+                        glVertex2f(400 - 100, 454);
+                        glVertex2f(400 - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / 3) * 200, 454);
+                        glVertex2f(400 - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / 3) * 200, 440);
+                        glEnd();
+                    }
+                    else if(game->thisPlayer->meleeDelay > 0)
+                    {
+                        glDisable(GL_TEXTURE_2D);
+                        glColor4f(1, 1, 1, .5f);
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100 - 5, 440 - 5);
+                        glVertex2f(400 - 100 - 5, 454 + 5);
+                        glVertex2f(400 - 100 + 200 + 10, 454 + 5);
+                        glVertex2f(400 - 100 + 200 + 10, 440 - 5);
+                        glEnd();
+                        glColor4f(0, 0, 0, .5f);
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100 - 1, 440 - 1);
+                        glVertex2f(400 - 100 - 1, 454 + 1);
+                        glVertex2f(400 - 100 + 200 + 2, 454 + 1);
+                        glVertex2f(400 - 100 + 200 + 2, 440 - 1);
+                        glEnd();
+                        glEnable(GL_TEXTURE_2D);
+                        glColor4f(.5f, 1, .5f, game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay*.75f + .25f);
+                        if(client->blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
+                        glDisable(GL_TEXTURE_2D);
+                        // La progress bar
+                        glBegin(GL_QUADS);
+                        glVertex2f(400 - 100, 440);
+                        glVertex2f(400 - 100, 454);
+                        glVertex2f(400 - 100 + (1 - game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay) * 200, 454);
+                        glVertex2f(400 - 100 + (1 - game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay) * 200, 440);
+                        glEnd();
+                    }
+                }
+
+                glDisable(GL_TEXTURE_2D);
+
+                // On affiche sa vie à droite
+                glBegin(GL_QUADS);
+                glColor3f(1, 1, 1);
+                glVertex2f(760, 390);
+                glVertex2f(760, 589);
+                glVertex2f(789, 589);
+                glVertex2f(789, 390);
+                glColor3f(0, 0, 0);
+                glVertex2f(762, 392);
+                glVertex2f(762, 587);
+                glVertex2f(787, 587);
+                glVertex2f(787, 392);
+                // La couleur celon sa vie
+                if(game->thisPlayer->life > .25f || client->blink < .25f)
+                {
+                    glColor3f(1 - game->thisPlayer->life, game->thisPlayer->life, 0);
+                    glVertex2f(764, 585 - game->thisPlayer->life * 191);
+                    glVertex2f(764, 585);
+                    glVertex2f(785, 585);
+                    glVertex2f(785, 585 - game->thisPlayer->life * 191);
+                }
+                glEnd();
+
+                // Le heat du gun (ChainGun | FlameThrower)
+                if(game->thisPlayer->weapon)
+                {
+                    if(game->thisPlayer->weapon->weaponID == WEAPON_CHAIN_GUN)
+                    {
+                        glBegin(GL_QUADS);
+                        glColor4f(1, 1, 1, 1 - game->thisPlayer->weapon->chainOverHeat*.5f);
+                        glVertex2f(760, 390 - 200);
+                        glVertex2f(760, 589 - 200);
+                        glVertex2f(789, 589 - 200);
+                        glVertex2f(789, 390 - 200);
+                        glColor4f(0, 0, 0, 1 - game->thisPlayer->weapon->chainOverHeat*.5f);
+                        glVertex2f(762, 392 - 200);
+                        glVertex2f(762, 587 - 200);
+                        glVertex2f(787, 587 - 200);
+                        glVertex2f(787, 392 - 200);
+                        // La couleur celon sa vie
+                        if((game->thisPlayer->weapon->overHeated && client->blink < .25f) || !game->thisPlayer->weapon->overHeated)
+                        {
+                            glColor4f(1 - game->thisPlayer->weapon->chainOverHeat, game->thisPlayer->weapon->chainOverHeat, game->thisPlayer->weapon->chainOverHeat, 1 - game->thisPlayer->weapon->chainOverHeat*.5f);
+                            glVertex2f(764, 585 - 200 - game->thisPlayer->weapon->chainOverHeat * 191);
+                            glVertex2f(764, 585 - 200);
+                            glVertex2f(785, 585 - 200);
+                            glVertex2f(785, 585 - 200 - game->thisPlayer->weapon->chainOverHeat * 191);
+                        }
+                        glEnd();
+                    }
+                }
+
+                // Le nb de grenade quil lui reste
+                if(game->thisPlayer->nbGrenadeLeft > 0)
+                {
+                    glEnable(GL_TEXTURE_2D);
+                    glBindTexture(GL_TEXTURE_2D, client->tex_grenadeLeft);
+                    glPushMatrix();
+                    glTranslatef(686 + 32, 526 + 32, 0);
+                    if(game->thisPlayer->lastShootWasNade)
+                    {
+                        glScalef(32 + game->thisPlayer->grenadeDelay * 16, 32 + game->thisPlayer->grenadeDelay * 16, 0);
+                    }
+                    else
+                    {
+                        glScalef(32, 32, 0);
+                    }
+                    glBegin(GL_QUADS);
+                    glColor3f(1, 1, 1);
+                    glTexCoord2f(0, 1);
+                    glVertex2f(-1, -1);
+                    glTexCoord2f(0, 0);
+                    glVertex2f(-1, 1);
+                    glTexCoord2f(1, 0);
+                    glVertex2f(1, 1);
+                    glTexCoord2f(1, 1);
+                    glVertex2f(1, -1);
+                    glEnd();
+                    glPopMatrix();
+                    printCenterText(686 + 32, 526 + 32 - 16, 32, true, CString("%i", game->thisPlayer->nbGrenadeLeft));
+                }
+
+                // Le nb de molotov quil lui reste
+                if(game->thisPlayer->nbMolotovLeft > 0 && gameVar.sv_enableMolotov)
+                {
+                    glEnable(GL_TEXTURE_2D);
+                    glBindTexture(GL_TEXTURE_2D, client->tex_molotovLeft);
+                    glPushMatrix();
+                    glTranslatef(686 + 32, 474 + 32, 0);
+                    if(!game->thisPlayer->lastShootWasNade)
+                    {
+                        glScalef(32 + game->thisPlayer->grenadeDelay * 16, 32 + game->thisPlayer->grenadeDelay * 16, 0);
+                    }
+                    else
+                    {
+                        glScalef(32, 32, 0);
+                    }
+                    glBegin(GL_QUADS);
+                    glColor3f(1, 1, 1);
+                    glTexCoord2f(0, 1);
+                    glVertex2f(-1, -1);
+                    glTexCoord2f(0, 0);
+                    glVertex2f(-1, 1);
+                    glTexCoord2f(1, 0);
+                    glVertex2f(1, 1);
+                    glTexCoord2f(1, 1);
+                    glVertex2f(1, -1);
+                    glEnd();
+                    glPopMatrix();
+                    printCenterText(686 + 32, 474 + 32 - 16, 32, true, CString("%i", game->thisPlayer->nbMolotovLeft));
+                }
+
+                // Le nb de balle de shotgun quil lui reste
+                if((game->thisPlayer->weapon->weaponID == WEAPON_SHOTGUN) &&
+                    (gameVar.sv_enableShotgunReload == true))
+                {
+                    glEnable(GL_TEXTURE_2D);
+                    glBindTexture(GL_TEXTURE_2D, client->tex_shotgunLeft);
+                    glPushMatrix();
+                    glTranslatef(686 + 32, 422 + 32, 0);
+                    glScalef(32 + game->thisPlayer->weapon->currentFireDelay * 16, 32 + game->thisPlayer->weapon->currentFireDelay * 16, 0);
+                    glBegin(GL_QUADS);
+                    glColor3f(1, 1, 1);
+                    glTexCoord2f(0, 1);
+                    glVertex2f(-1, -1);
+                    glTexCoord2f(0, 0);
+                    glVertex2f(-1, 1);
+                    glTexCoord2f(1, 0);
+                    glVertex2f(1, 1);
+                    glTexCoord2f(1, 1);
+                    glVertex2f(1, -1);
+                    glEnd();
+                    glPopMatrix();
+                    printCenterText(686 + 32, 422 + 32 - 16, 32, true, CString("%i", 6 - game->thisPlayer->weapon->shotInc));
+                }
+            }
+            else if((
+                game->thisPlayer->teamID == PLAYER_TEAM_BLUE ||
+                game->thisPlayer->teamID == PLAYER_TEAM_RED) &&
+                game->thisPlayer->status == PLAYER_STATUS_DEAD && !game->thisPlayer->spawnRequested)
+            {
+                glColor3f(1, 1, 1);
+                if(game->thisPlayer->timeToSpawn > 0) printCenterText(400, 200, 64, true, CString(clientVar.lang_spawnIn.s, ((int)game->thisPlayer->timeToSpawn + 1) / 60, ((int)(game->thisPlayer->timeToSpawn + 1) % 60)));
+                else if(!gameVar.sv_forceRespawn) printCenterText(400, 200, 64, true, CString("Press shoot key [%s] to respawn", keyManager.getKeyName(clientVar.k_shoot).s));
+            }
+
+        //--- Auto balance
+        if(gameVar.sv_autoBalance && client->autoBalanceTimer > 0 && client->blink < .25f)
+        {
+            glColor3f(1, 1, 1);
+            printCenterText(400, 0, 64, true, CString("Autobalance in %i seconds", (int)client->autoBalanceTimer));
+        }
+
+        /*printCenterText(200,100,20,CString("Time played: %.2f", game->thisPlayer->timePlayedCurGame));
+        printCenterText(200,124,20,CString("Flag attempts: %d", game->thisPlayer->flagAttempts));*/
+
+        glPopAttrib();
+        dkglPopOrtho();
+
+        if(gameVar.r_showLatency)
+        {
+            dkglPushOrtho((float)res[0], (float)res[1]);
+            glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_CURRENT_BIT);
+            glEnable(GL_BLEND);
+            float left = res[0] - (float)(PING_LOG_SIZE)-15;
+            float bottom = 65;
+            float height = 40;
+            float scaledHeight = height / 1000.0f;
+            glDisable(GL_TEXTURE_2D);
+            glBegin(GL_QUADS);
+            glColor4f(0.7f, 0.7f, 0.7f, 0.4f);
+            glVertex2f(left, bottom - height);
+            glVertex2f(left, bottom);
+            glVertex2f(left + PING_LOG_SIZE, bottom);
+            glVertex2f(left + PING_LOG_SIZE, bottom - height);
+            glEnd();
+
+            glLineWidth(1.0f);
+            glBegin(GL_LINES);
+
+            glColor4f(1.0f, 0.0f, 0.0f, 0.6f);
+            glVertex3f(left - 1, bottom, 0.0f);
+            glVertex3f(left - 1, bottom - height, 0.0f);
+
+            glColor4f(1.0f, 1.0f, 0.0f, 0.6f);
+            glVertex3f(left - 1, bottom, 0.0f);
+            glVertex3f(left - 1, bottom - 200 * scaledHeight, 0.0f);
+
+            glColor4f(0.0f, 1.0f, 0.0f, 0.6f);
+            glVertex3f(left - 1, bottom, 0.0f);
+            glVertex3f(left - 1, bottom - 100 * scaledHeight, 0.0f);
+
+            int j = game->thisPlayer->pingLogID;//, k = 0;
+            int ping;
+            for(int i = 0; i < PING_LOG_SIZE; i++, j++)//, k += 2)
+            {
+                if(j >= PING_LOG_SIZE)
+                    j = 0;
+                ping = game->thisPlayer->pingLog[j] * 33;
+                if(ping > 1000 || ping < 0)
+                    ping = 1000;
+                if(ping <= 100)
+                    glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
+                else if(ping <= 200)
+                    glColor4f(1.0f, 1.0f, 0.0f, 0.5f);
+                else
+                    glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+                glVertex3f(left + i, bottom, 0.0f);
+                glVertex3f(left + i, bottom - 1 - ping * scaledHeight, 0.0f);
+            }
+            glEnd();
+            /*glColor4f(0.0f, 0.0f, 0.0f, 0.8f);
+            glBegin(GL_LINES);
+                glVertex3f(left, bottom-game->thisPlayer->avgPing*(height/1000.0f), 0.0f);
+                glVertex3f(left+PING_LOG_SIZE, bottom-game->thisPlayer->avgPing*(height/1000.0f), 0.0f);
+            glEnd();
+            glColor4f(1.0f, 1.0f, 1.0f, 0.7f);
+            printLeftText(left, bottom + 5, 20, CString("Ang. ping: %d", game->thisPlayer->avgPing));*/
+            glPopAttrib();
+            dkglPopOrtho();
+        }
+
+        // On render les chat message par dessus le jeu
+        dkglPushOrtho((float)res[0], (float)res[1]);
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Afficher les win des team ou les score si en TDM ou CTF ou SND
+        glColor3f(1, 1, 1);
+        switch(game->gameType)
+        {
+        case GAME_TYPE_DM:
+            // Total Time left
+            printLeftText(5, 5, 64, true, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
+            break;
+        case GAME_TYPE_TDM:
+            // Total Time left
+            printLeftText(5, 5, 64, true, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
+            // Score left
+            if(game->blueScore >= game->redScore)
+            {
+                renderTexturedQuad(5, 5 + 64, 64, 64, client->tex_blueFlag);
+                printLeftText(5 + 64 + 5, 5 + 64, 64, true, CString("%i/%i", game->blueScore, gameVar.sv_scoreLimit));
+                renderTexturedQuad(5, 5 + 64 + 64, 64, 64, client->tex_redFlag);
+                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, true, CString("%i/%i", game->redScore, gameVar.sv_scoreLimit));
+            }
+            else
+            {
+                renderTexturedQuad(5, 5 + 64, 64, 64, client->tex_redFlag);
+                printLeftText(5 + 64 + 5, 5 + 64, 64, true, CString("%i/%i", game->redScore, gameVar.sv_scoreLimit));
+                renderTexturedQuad(5, 5 + 64 + 64, 64, 64, client->tex_blueFlag);
+                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, true, CString("%i/%i", game->blueScore, gameVar.sv_scoreLimit));
+            }
+            break;
+        case GAME_TYPE_CTF:
+            // Total Time left
+            printLeftText(5, 5, 64, true, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
+            // win left
+            if(game->blueWin >= game->redWin)
+            {
+                renderTexturedQuad(5, 5 + 64, 64, 64, client->tex_blueFlag);
+                printLeftText(5 + 64 + 5, 5 + 64, 64, true, CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
+                renderTexturedQuad(5, 5 + 64 + 64, 64, 64, client->tex_redFlag);
+                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, true, CString("%i/%i", game->redWin, gameVar.sv_winLimit));
+            }
+            else
+            {
+                renderTexturedQuad(5, 5 + 64, 64, 64, client->tex_redFlag);
+                printLeftText(5 + 64 + 5, 5 + 64, 64, true, CString("%i/%i", game->redWin, gameVar.sv_winLimit));
+                renderTexturedQuad(5, 5 + 64 + 64, 64, 64, client->tex_blueFlag);
+                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, true, CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
+            }
+            break;
+        }
+
+        float textSize = (float)gameVar.r_chatTextSize;
+        float xPos = ((float)res[0] / 800.0f) * 128 + 40;
+        float yPos = res[1] - (((float)res[1] / 600.0f) * 128 + 40) - 60;
+
+        for(i = 0; i < (int)client->chatMessages.size(); ++i)
+        {
+            if(client->chatMessages[i].duration > 1)
+            {
+                glColor4f(0, 0, 0, .5f);
+            }
+            else
+            {
+                glColor4f(0, 0, 0, client->chatMessages[i].duration*.5f);
+            }
+            glDisable(GL_TEXTURE_2D);
+            glBegin(GL_QUADS);
+
+            float chatWidth = dkfGetStringWidth(textSize, client->chatMessages[i].message.s);
+
+            glVertex2f(8, yPos - (float)((client->chatMessages.size() - i - 1) * textSize) + 1);
+            glVertex2f(8, yPos - (float)((client->chatMessages.size() - i - 1) * textSize) + textSize - 1);
+            glColor4f(0, 0, 0, 0);
+            glVertex2f(8 + chatWidth, yPos - (float)((client->chatMessages.size() - i - 1) * textSize) + textSize - 1);
+            glVertex2f(8 + chatWidth, yPos - (float)((client->chatMessages.size() - i - 1) * textSize) + 1);
+
+            glEnd();
+            if(client->chatMessages[i].duration > 1)
+            {
+                glColor3f(1, 1, 1);
+            }
+            else
+            {
+                glColor4f(1, 1, 1, client->chatMessages[i].duration);
+            }
+            // On l'écris à peut pret au tier de l'écran à gauche
+            glEnable(GL_TEXTURE_2D);
+
+            printLeftText(10, yPos - (float)(client->chatMessages.size() - i - 1) * textSize, textSize, true, client->chatMessages[i].message);
+        }
+
+        // Si on est apres chatter
+        if(client->chatting.haveFocus())
+        {
+            glDisable(GL_TEXTURE_2D);
+            glBegin(GL_QUADS);
+            glColor4f(0, 0, 0, .5f);
+            glVertex2f(8, yPos + 32 + 1);
+            glVertex2f(8, yPos + 32 + 27);
+            glColor4f(0, 0, 0, 0);
+            glVertex2f(500, yPos + 32 + 27);
+            glVertex2f(500, yPos + 32 + 1);
+            glEnd();
+            glEnable(GL_TEXTURE_2D);
+            glColor3f(1, 1, 1);
+            CString chattingTo;
+            if(client->isChattingTeam)
+                chattingTo = "sayteam : ";
+            else
+                chattingTo = "say : ";
+
+
+            float chattingToWidth = dkfGetStringWidth(28, chattingTo.s);
+            printLeftText(10, yPos + 32, 28, true, chattingTo);
+            client->chatting.print(28, 10 + chattingToWidth, yPos + 32, 0);
+        }
+
+
+        // Les events
+        for(i = 0; i < (int)client->eventMessages.size(); ++i)
+        {
+            if(client->eventMessages[i].duration > 1)
+            {
+                glColor3f(1, 1, 1);
+            }
+            else
+            {
+                glColor4f(1, 1, 1, client->eventMessages[i].duration);
+            }
+            // On l'écris à peut pret au 2 tier de l'écran à gauche
+
+            float eventTextSize = (float)gameVar.r_eventTextSize;
+
+            if(gameVar.r_showEventText)
+            {
+                printLeftText(xPos, (float)res[1] - (float)(client->eventMessages.size() - i - 1) * eventTextSize - 20 - eventTextSize, eventTextSize, true, client->eventMessages[i].message);
+            }
+        }
+
+        glPopAttrib();
+        dkglPopOrtho();
+
+        // Les stats
+        if(game->showStats)
+        {
+            ClientGame_RenderStats(game);
+
+            if(client->blink < .25f)
+            {
+                dkglPushOrtho(800, 600);
+                glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+                glEnable(GL_BLEND);
+                glColor3f(1, 1, 1);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                switch(game->roundState)
+                {
+                case GAME_PLAYING: break;
+                case GAME_BLUE_WIN:
+                    printCenterText(475, 5, 64, true, clientVar.lang_blueTeamWin);
+                    break;
+                case GAME_RED_WIN:
+                    printCenterText(475, 5, 64, true, clientVar.lang_redTeamWin);
+                    break;
+                case GAME_DRAW:
+                    printCenterText(475, 5, 64, true, clientVar.lang_roundDraw);
+                    break;
+                case GAME_MAP_CHANGE:
+                    printCenterText(475, 5, 64, true, clientVar.lang_changingMap);
+                    break;
+                }
+                glPopAttrib();
+                dkglPopOrtho();
+            }
+        }
+    }
+
+    // On render le menu si c'est le cas
+    if(client->showMenu && client->isConnected)
+    {
+        dkwClipMouse(false);
+        menuManager.render(client->clientRoot);
+        //  if (clientRoot) clientRoot->render();
+
+        //  renderMenu();
+        dkglPushOrtho(800, 600);
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+        glEnable(GL_BLEND);
+        glColor3f(1, 1, 1);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        //--- Square around the choosen gun
+        glPolygonMode(GL_FRONT, GL_LINE);
+        glLineWidth(2);
+        glColor3f(0, 1, 0);
+        glBegin(GL_QUADS);
+        glVertex2i(client->currentGun->pos[0] - 5, client->currentGun->pos[1] - 5);
+        glVertex2i(client->currentGun->pos[0] - 5, client->currentGun->pos[1] + client->currentGun->size[1] + 5);
+        glVertex2i(client->currentGun->pos[0] + client->currentGun->size[0] + 5, client->currentGun->pos[1] + client->currentGun->size[1] + 5);
+        glVertex2i(client->currentGun->pos[0] + client->currentGun->size[0] + 5, client->currentGun->pos[1] - 5);
+        glEnd();
+        glBegin(GL_QUADS);
+        glVertex2i(client->currentMelee->pos[0] - 5, client->currentMelee->pos[1] - 5);
+        glVertex2i(client->currentMelee->pos[0] - 5, client->currentMelee->pos[1] + client->currentMelee->size[1] + 5);
+        glVertex2i(client->currentMelee->pos[0] + client->currentMelee->size[0] + 5, client->currentMelee->pos[1] + client->currentMelee->size[1] + 5);
+        glVertex2i(client->currentMelee->pos[0] + client->currentMelee->size[0] + 5, client->currentMelee->pos[1] - 5);
+        glEnd();
+        glPolygonMode(GL_FRONT, GL_FILL);
+        glColor3f(1, 1, 1);
+
+        printCenterText(400, 5 + 48, 32, true, gameVar.sv_gameName);
+        switch(game->gameType)
+        {
+        case GAME_TYPE_DM:
+            printCenterText(400, 5, 64, true, clientVar.lang_deathmatchC);
+            printCenterText(400, 5 + 88, 32, true, clientVar.lang_deathmatchD);
+            break;
+        case GAME_TYPE_TDM:
+            printCenterText(400, 5, 64, true, clientVar.lang_teamDeathmatchC);
+            printCenterText(400, 5 + 88, 32, true, clientVar.lang_teamDeathmatchD);
+            break;
+        case GAME_TYPE_CTF:
+            printCenterText(400, 5, 64, true, clientVar.lang_captureTheFlagC);
+            printCenterText(400, 5 + 88, 32, true, clientVar.lang_captureTheFlagD);
+            break;
+        }
+        CString mapInfo(game->map->mapName);
+        auto cmap = static_cast<ClientMap*>(game->map);
+        if(cmap->author_name.len() > 0)
+            mapInfo.set("%s created by %s", game->map->mapName.s, cmap->author_name.s);
+        printCenterText(400, 5 + 64, 32, true, mapInfo);
+        glPopAttrib();
+        dkglPopOrtho();
+    }
+    else
+    {
+        if((menuManager.root) && (menuManager.root->visible))
+        {
+            dkwClipMouse(false);
+        }
+        else
+        {
+            dkwClipMouse(true);
+        }
+    }
+
+    // Finalement, par dessus tout, le crosshair
+//  CVector2i cursor = dkwGetCursorPos_main();
+//  int xM = (int)(((float)cursor[0]/(float)res[0])*800.0f);
+//  int yM = (int)(((float)cursor[1]/(float)res[1])*600.0f);
+    dkglPushOrtho(800, 600);
+    glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(1, .2f, .2f, client->hitIndicator);
+    renderTexturedQuad(xM - 16, yM - 16, 32, 32, client->tex_crossHit);
+    glPopAttrib();
+    dkglPopOrtho();
+
+    // On se connecte
+    if(!client->isConnected)
+    {
+        dkglPushOrtho(800, 600);
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+        glEnable(GL_BLEND);
+        glColor3f(1, 1, 1);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        if(client->blink > .25f) printCenterText(400, 300 - 32, 64, true, clientVar.lang_connectingC);
+        printCenterText(400, 332, 48, true, clientVar.lang_pressF10ToCancel);
+        if(dkiGetState(KeyF10) == DKI_DOWN) console->sendCommand("disconnect");
+        glPopAttrib();
+        dkglPopOrtho();
     }
 }

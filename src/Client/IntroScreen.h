@@ -19,13 +19,10 @@
 #ifndef INTROSCREEN_H
 #define INTROSCREEN_H
 
-
 #include <Zeven/Gfx.h>
 
-
-class IntroScreen
+struct IntroScreen
 {
-public:
     // Le delay qui reste à l'afficher
     float showDelay;
 
@@ -37,7 +34,6 @@ public:
     // Le super son mistic du logo
     FSOUND_SAMPLE * sfx_intro;
 
-public:
     // Constructeur
     IntroScreen();
 
@@ -46,11 +42,6 @@ public:
 
     // Update
     void update(float delay);
-
-    // Render
-    void render();
 };
 
-
 #endif
-

@@ -27,10 +27,13 @@ struct ClientGame;
 struct ClientPlayer;
 struct ClientProjectile;
 struct ClientScene;
+struct ClientWeapon;
 struct Douille;
 struct Drip;
 struct FloorMark;
+struct IntroScreen;
 struct NukeFlash;
+struct NuzzleFlash;
 struct Player;
 struct Trail;
 
@@ -48,10 +51,13 @@ void ClientPlayer_RenderName(ClientPlayer* player);
 void ClientProjectile_Render(ClientProjectile* proj);
 void ClientProjectile_RenderShadow(ClientProjectile* proj);
 void ClientScene_Render(ClientScene* scene);
+void ClientWeapon_Render(ClientWeapon* weapon);
 void Douille_Render(Douille* douille);
 void Drip_Render(Drip* drip);
 void FloorMark_Render(FloorMark* mark);
+void IntroScreen_Render(IntroScreen* intro);
 void NukeFlash_Render(NukeFlash* nuke);
+void NuzzleFlash_Render(NuzzleFlash* nf);
 void Trail_Render(Trail* trail);
 void Trail_RenderBullet(Trail* trail);
 

@@ -54,7 +54,6 @@ struct NuzzleFlash
         delay = NUZZLE_DELAY;
         angle = rand(0.0f, 360.0f);
     }
-    void render();
 };
 
 struct ClientWeapon : public Weapon
@@ -89,8 +88,6 @@ struct ClientWeapon : public Weapon
     void shoot(Player * owner);
     void shoot(net_svcl_player_shoot & playerShoot, Player * owner);
     void shootMelee(Player * owner);
-
-    // On l'affiche
-    void render();
 };
+
 #endif

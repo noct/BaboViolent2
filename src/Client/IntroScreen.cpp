@@ -17,7 +17,6 @@
 */
 #include "IntroScreen.h"
 #include "GameVar.h"
-#include <glad/glad.h>
 
 //
 // Constructeur
@@ -37,8 +36,6 @@ IntroScreen::IntroScreen()
     }*/
 }
 
-
-
 //
 // Destructeur
 //
@@ -48,8 +45,6 @@ IntroScreen::~IntroScreen()
     dktDeleteTexture(&tex_hgLogo);
 //  dksDeleteSound(sfx_intro);
 }
-
-
 
 //
 // Update
@@ -62,44 +57,4 @@ void IntroScreen::update(float delay)
     //  dksPlaySound(sfx_intro, -1, 255);
     }
     showDelay -= delay;
-}
-
-
-
-//
-// Render
-//
-void IntroScreen::render()
-{
-    dkglPushOrtho(1,1);
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-            glEnable(GL_TEXTURE_2D);
-
-            if (showDelay > 2)
-            {
-                glBindTexture(GL_TEXTURE_2D, tex_rndLogo);
-                glColor3f(1-(showDelay-2),1-(showDelay-2),1-(showDelay-2));
-            }
-            else if (showDelay > 1)
-            {
-                glBindTexture(GL_TEXTURE_2D, tex_rndLogo);
-                glColor3f(1,1,1);
-            }
-            else
-            {
-                glBindTexture(GL_TEXTURE_2D, tex_rndLogo);
-                glColor3f(showDelay, showDelay, showDelay);
-            }
-            glBegin(GL_QUADS);
-                glTexCoord2i(0,1);
-                glVertex2i(0,0);
-                glTexCoord2i(0,0);
-                glVertex2i(0,1);
-                glTexCoord2i(1,0);
-                glVertex2i(1,1);
-                glTexCoord2i(1,1);
-                glVertex2i(1,0);
-            glEnd();
-        glPopAttrib();
-    dkglPopOrtho();
 }

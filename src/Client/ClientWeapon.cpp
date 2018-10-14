@@ -22,8 +22,6 @@
 #include "Map.h"
 #include "ClientGame.h"
 #include "ClientScene.h"
-#include <glad/glad.h>
-
 extern Scene * scene;
 
 ClientWeapon::ClientWeapon(CString dkoFilename, CString soundFilename, float pFireDelay, CString pWeaponName, float pDamage, float pImp, int pNbShot, float pReculVel, float pStartImp, int pWeaponID, int pProjectileType)
@@ -117,70 +115,6 @@ void ClientWeapon::loadModels()
             ejectingBrass.push_back(new NuzzleFlash(mat, pos));
         }
     } while (flashID);
-}
-
-
-void NuzzleFlash::render()
-{
-    if (delay > 0)
-    {
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
-            glDisable(GL_FOG);
-            glDisable(GL_LIGHTING);
-            glDepthMask(GL_FALSE);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            glPushMatrix();
-                // Shot glow
-                glTranslatef(position[0], position[1], position[2]-(.5f/.005f));
-                glEnable(GL_TEXTURE_2D);
-                glDisable(GL_DEPTH_TEST);
-                glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
-                glColor4f(1,1,1,(delay/NUZZLE_DELAY)*(delay/NUZZLE_DELAY) * .25f);
-                glBegin(GL_QUADS);
-                    glTexCoord2f(0,1);
-                    glVertex3f(-500,500,0);
-                    glTexCoord2f(0,0);
-                    glVertex3f(-500,-500,0);
-                    glTexCoord2f(1,0);
-                    glVertex3f(500,-500,0);
-                    glTexCoord2f(1,1);
-                    glVertex3f(500,500,0);
-                glEnd();
-                glEnable(GL_DEPTH_TEST);
-            glPopMatrix();
-            glPushMatrix();
-                glTranslatef(position[0], position[1], position[2]);
-                glScalef((1-delay/NUZZLE_DELAY)*2+.5f, (1-delay/NUZZLE_DELAY)*2+.5f, (1-delay/NUZZLE_DELAY)*2+.5f);
-                glRotatef(angle, 0, 1, 0);
-                glEnable(GL_BLEND);
-                glEnable(GL_TEXTURE_2D);
-                glBindTexture(GL_TEXTURE_2D, clientVar.tex_nuzzleFlash);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-                glDisable(GL_CULL_FACE);
-                glColor4f(1,1,1,delay/NUZZLE_DELAY);
-                glBegin(GL_QUADS);
-                    glTexCoord2f(0,1);
-                    glVertex3f(-50,100,0);
-                    glTexCoord2f(0,0);
-                    glVertex3f(-50,0,0);
-                    glTexCoord2f(1,0);
-                    glVertex3f(50,0,0);
-                    glTexCoord2f(1,1);
-                    glVertex3f(50,100,0);
-
-                    glTexCoord2f(0,1);
-                    glVertex3f(0,100,50);
-                    glTexCoord2f(0,0);
-                    glVertex3f(0,0,50);
-                    glTexCoord2f(1,0);
-                    glVertex3f(0,0,-50);
-                    glTexCoord2f(1,1);
-                    glVertex3f(0,100,-50);
-                glEnd();
-            glPopMatrix();
-        glPopAttrib();
-    }
 }
 
 //
@@ -466,76 +400,5 @@ void ClientWeapon::update(float delay)
     for (int i=0;i<(int)nuzzleFlashes.size();++i)
     {
         nuzzleFlashes[i]->update(delay);
-    }
-}
-
-
-//
-// On l'affiche
-//
-void ClientWeapon::render()
-{
-    if (weaponID == WEAPON_KNIVES)
-    {
-        glPushAttrib(GL_ENABLE_BIT);
-            glEnable(GL_ALPHA_TEST);
-            glAlphaFunc(GL_GREATER, 0.3f);
-            dkoRender(dkoModel, modelAnim);
-        glPopAttrib();
-    }
-    else if (weaponID == WEAPON_SHIELD)
-    {
-        dkoRender(dkoAlternative, modelAnim);
-        glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
-            glPushMatrix();
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-                dkoRender(dkoModel, modelAnim);
-                glDepthMask(GL_FALSE);
-                for (float i=0;i<10;++i)
-                {
-                //  glScalef(1.05f,1.05f,1.05f);
-                    glRotatef(36,0,0,1);
-                    dkoRender(dkoModel, modelAnim);
-                }
-            glPopMatrix();
-        glPopAttrib();
-
-        if (modelAnim < 10)
-        {
-            glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
-                glDisable(GL_FOG);
-                glDisable(GL_LIGHTING);
-                glDepthMask(GL_FALSE);
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-                glPushMatrix();
-                    // Shot glow
-                    glEnable(GL_TEXTURE_2D);
-                    glDisable(GL_DEPTH_TEST);
-                    glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
-                    glColor4f(0,.9f,1,1 - (modelAnim/10.0f));
-                    glBegin(GL_QUADS);
-                        glTexCoord2f(0,1);
-                        glVertex3f(-25,25,0);
-                        glTexCoord2f(0,0);
-                        glVertex3f(-25,-25,0);
-                        glTexCoord2f(1,0);
-                        glVertex3f(25,-25,0);
-                        glTexCoord2f(1,1);
-                        glVertex3f(25,25,0);
-                    glEnd();
-                    glEnable(GL_DEPTH_TEST);
-                glPopMatrix();
-            glPopAttrib();
-        }
-    }
-    else
-    {
-        dkoRender(dkoModel);
-        for(int i = 0; i < (int)nuzzleFlashes.size(); ++i)
-        {
-            nuzzleFlashes[i]->render();
-        }
     }
 }

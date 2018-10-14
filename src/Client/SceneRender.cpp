@@ -31,6 +31,41 @@ extern Scene * scene;
 extern int renderToggle;
 #endif
 
+void IntroScreen_Render(IntroScreen* intro)
+{
+    dkglPushOrtho(1,1);
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+            glEnable(GL_TEXTURE_2D);
+
+            if (intro->showDelay > 2)
+            {
+                glBindTexture(GL_TEXTURE_2D, intro->tex_rndLogo);
+                glColor3f(1-(intro->showDelay-2),1-(intro->showDelay-2),1-(intro->showDelay-2));
+            }
+            else if (intro->showDelay > 1)
+            {
+                glBindTexture(GL_TEXTURE_2D, intro->tex_rndLogo);
+                glColor3f(1,1,1);
+            }
+            else
+            {
+                glBindTexture(GL_TEXTURE_2D, intro->tex_rndLogo);
+                glColor3f(intro->showDelay, intro->showDelay, intro->showDelay);
+            }
+            glBegin(GL_QUADS);
+                glTexCoord2i(0,1);
+                glVertex2i(0,0);
+                glTexCoord2i(0,0);
+                glVertex2i(0,1);
+                glTexCoord2i(1,0);
+                glVertex2i(1,1);
+                glTexCoord2i(1,1);
+                glVertex2i(1,0);
+            glEnd();
+        glPopAttrib();
+    dkglPopOrtho();
+}
+
 
 void ClientScene_Render(ClientScene* scene)
 {
@@ -49,7 +84,7 @@ void ClientScene_Render(ClientScene* scene)
 
     if(scene->introScreen)
     {
-        scene->introScreen->render();
+        IntroScreen_Render(scene->introScreen);
     }
     else
     {
@@ -1962,10 +1997,13 @@ void ClientPlayer_Render(ClientPlayer* player)
         glScalef(0.005f, 0.005f, 0.005f);
         auto cweapon = static_cast<ClientWeapon*>(player->weapon);
         auto cmeleeWeapon = static_cast<ClientWeapon*>(player->meleeWeapon);
-        if(cweapon) cweapon->render();
+        if(cweapon)
+        {
+            ClientWeapon_Render(cweapon);
+        }
         if(cmeleeWeapon)
         {
-            cmeleeWeapon->render();
+            ClientWeapon_Render(cmeleeWeapon);
         }
         glRotatef(-90, 0, 0, 1);
 
@@ -2767,5 +2805,135 @@ void Client_Render(Client* client, float & alphaScope)
         if(dkiGetState(KeyF10) == DKI_DOWN) console->sendCommand("disconnect");
         glPopAttrib();
         dkglPopOrtho();
+    }
+}
+
+void ClientWeapon_Render(ClientWeapon* weapon)
+{
+    if (weapon->weaponID == WEAPON_KNIVES)
+    {
+        glPushAttrib(GL_ENABLE_BIT);
+            glEnable(GL_ALPHA_TEST);
+            glAlphaFunc(GL_GREATER, 0.3f);
+            dkoRender(weapon->dkoModel, weapon->modelAnim);
+        glPopAttrib();
+    }
+    else if (weapon->weaponID == WEAPON_SHIELD)
+    {
+        dkoRender(weapon->dkoAlternative, weapon->modelAnim);
+        glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
+            glPushMatrix();
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                dkoRender(weapon->dkoModel, weapon->modelAnim);
+                glDepthMask(GL_FALSE);
+                for (float i=0;i<10;++i)
+                {
+                //  glScalef(1.05f,1.05f,1.05f);
+                    glRotatef(36,0,0,1);
+                    dkoRender(weapon->dkoModel, weapon->modelAnim);
+                }
+            glPopMatrix();
+        glPopAttrib();
+
+        if (weapon->modelAnim < 10)
+        {
+            glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
+                glDisable(GL_FOG);
+                glDisable(GL_LIGHTING);
+                glDepthMask(GL_FALSE);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                glPushMatrix();
+                    // Shot glow
+                    glEnable(GL_TEXTURE_2D);
+                    glDisable(GL_DEPTH_TEST);
+                    glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
+                    glColor4f(0,.9f,1,1 - (weapon->modelAnim/10.0f));
+                    glBegin(GL_QUADS);
+                        glTexCoord2f(0,1);
+                        glVertex3f(-25,25,0);
+                        glTexCoord2f(0,0);
+                        glVertex3f(-25,-25,0);
+                        glTexCoord2f(1,0);
+                        glVertex3f(25,-25,0);
+                        glTexCoord2f(1,1);
+                        glVertex3f(25,25,0);
+                    glEnd();
+                    glEnable(GL_DEPTH_TEST);
+                glPopMatrix();
+            glPopAttrib();
+        }
+    }
+    else
+    {
+        dkoRender(weapon->dkoModel);
+        for(int i = 0; i < (int)weapon->nuzzleFlashes.size(); ++i)
+        {
+            NuzzleFlash_Render(weapon->nuzzleFlashes[i]);
+        }
+    }
+}
+
+void NuzzleFlash_Render(NuzzleFlash* nf)
+{
+    if (nf->delay > 0)
+    {
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
+            glDisable(GL_FOG);
+            glDisable(GL_LIGHTING);
+            glDepthMask(GL_FALSE);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glPushMatrix();
+                // Shot glow
+                glTranslatef(nf->position[0], nf->position[1], nf->position[2]-(.5f/.005f));
+                glEnable(GL_TEXTURE_2D);
+                glDisable(GL_DEPTH_TEST);
+                glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
+                glColor4f(1,1,1,(nf->delay/NUZZLE_DELAY)*(nf->delay/NUZZLE_DELAY) * .25f);
+                glBegin(GL_QUADS);
+                    glTexCoord2f(0,1);
+                    glVertex3f(-500,500,0);
+                    glTexCoord2f(0,0);
+                    glVertex3f(-500,-500,0);
+                    glTexCoord2f(1,0);
+                    glVertex3f(500,-500,0);
+                    glTexCoord2f(1,1);
+                    glVertex3f(500,500,0);
+                glEnd();
+                glEnable(GL_DEPTH_TEST);
+            glPopMatrix();
+            glPushMatrix();
+                glTranslatef(nf->position[0], nf->position[1], nf->position[2]);
+                glScalef((1-nf->delay/NUZZLE_DELAY)*2+.5f, (1-nf->delay/NUZZLE_DELAY)*2+.5f, (1-nf->delay/NUZZLE_DELAY)*2+.5f);
+                glRotatef(nf->angle, 0, 1, 0);
+                glEnable(GL_BLEND);
+                glEnable(GL_TEXTURE_2D);
+                glBindTexture(GL_TEXTURE_2D, clientVar.tex_nuzzleFlash);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                glDisable(GL_CULL_FACE);
+                glColor4f(1,1,1,nf->delay/NUZZLE_DELAY);
+                glBegin(GL_QUADS);
+                    glTexCoord2f(0,1);
+                    glVertex3f(-50,100,0);
+                    glTexCoord2f(0,0);
+                    glVertex3f(-50,0,0);
+                    glTexCoord2f(1,0);
+                    glVertex3f(50,0,0);
+                    glTexCoord2f(1,1);
+                    glVertex3f(50,100,0);
+
+                    glTexCoord2f(0,1);
+                    glVertex3f(0,100,50);
+                    glTexCoord2f(0,0);
+                    glVertex3f(0,0,50);
+                    glTexCoord2f(1,0);
+                    glVertex3f(0,0,-50);
+                    glTexCoord2f(1,1);
+                    glVertex3f(0,100,-50);
+                glEnd();
+            glPopMatrix();
+        glPopAttrib();
     }
 }

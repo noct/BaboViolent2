@@ -23,7 +23,6 @@
 #include "Client.h"
 #include "CMainTab.h"
 #include "CMenuManager.h"
-#include "IntroScreen.h"
 
 struct ClientScene : public Scene
 {
@@ -31,11 +30,12 @@ struct ClientScene : public Scene
     Client * client;
 
     // Le menu
-//  Menu * menu;
     CMainTab * mainTab;
 
     // Notre intro screen (quand que lui n'est pas fini, on update ni affiche rien d'autre)
-    IntroScreen * introScreen;
+    float introDelay;
+    unsigned int tex_rndLogo;
+    unsigned int tex_hgLogo;
 
     // Notre curseur
     unsigned int tex_crosshair;

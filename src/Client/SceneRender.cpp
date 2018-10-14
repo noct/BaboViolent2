@@ -31,26 +31,26 @@ extern Scene * scene;
 extern int renderToggle;
 #endif
 
-void IntroScreen_Render(IntroScreen* intro)
+static void IntroScreen_Render(float t, unsigned int tex)
 {
     dkglPushOrtho(1,1);
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
             glEnable(GL_TEXTURE_2D);
 
-            if (intro->showDelay > 2)
+            if (t > 2)
             {
-                glBindTexture(GL_TEXTURE_2D, intro->tex_rndLogo);
-                glColor3f(1-(intro->showDelay-2),1-(intro->showDelay-2),1-(intro->showDelay-2));
+                glBindTexture(GL_TEXTURE_2D, tex);
+                glColor3f(1-(t-2),1-(t-2),1-(t -2));
             }
-            else if (intro->showDelay > 1)
+            else if (t > 1)
             {
-                glBindTexture(GL_TEXTURE_2D, intro->tex_rndLogo);
+                glBindTexture(GL_TEXTURE_2D, tex);
                 glColor3f(1,1,1);
             }
             else
             {
-                glBindTexture(GL_TEXTURE_2D, intro->tex_rndLogo);
-                glColor3f(intro->showDelay, intro->showDelay, intro->showDelay);
+                glBindTexture(GL_TEXTURE_2D, tex);
+                glColor3f(t, t, t);
             }
             glBegin(GL_QUADS);
                 glTexCoord2i(0,1);
@@ -82,9 +82,9 @@ void ClientScene_Render(ClientScene* scene)
     glDisable(GL_TEXTURE_2D);
     glColor3f(1, 1, 1);
 
-    if(scene->introScreen)
+    if(scene->introDelay > 0)
     {
-        IntroScreen_Render(scene->introScreen);
+        IntroScreen_Render(scene->introDelay, scene->tex_rndLogo);
     }
     else
     {

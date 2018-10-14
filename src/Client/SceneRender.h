@@ -55,7 +55,6 @@ void ClientWeapon_Render(ClientWeapon* weapon);
 void Douille_Render(Douille* douille);
 void Drip_Render(Drip* drip);
 void FloorMark_Render(FloorMark* mark);
-void IntroScreen_Render(IntroScreen* intro);
 void NukeFlash_Render(NukeFlash* nuke);
 void NuzzleFlash_Render(NuzzleFlash* nf);
 void Trail_Render(Trail* trail);

@@ -32,10 +32,11 @@ ClientScene::ClientScene(dkContext* dk) : Scene(dk)
 
     renderLoadingScreen(font);
 
-    introScreen = new IntroScreen();
-
     FSOUND_SetSFXMasterVolume((int)(255.0f*gameVar.s_masterVolume));
-    //  dksPlayMusic("main/sounds/menu.ogg", -1);
+
+    introDelay = 3;
+    tex_rndLogo = dktCreateTextureFromFile("main/textures/RnDLabs.png", DKT_FILTER_LINEAR);
+    tex_hgLogo = dktCreateTextureFromFile("main/textures/HeadGames.png", DKT_FILTER_LINEAR);
 }
 
 //
@@ -47,7 +48,8 @@ ClientScene::~ClientScene()
     dkfDeleteFont(&font);
     dktDeleteTexture(&tex_crosshair);
     dktDeleteTexture(&tex_menuCursor);
-    ZEVEN_SAFE_DELETE(introScreen);
+    dktDeleteTexture(&tex_rndLogo);
+    dktDeleteTexture(&tex_hgLogo);
     ZEVEN_SAFE_DELETE(mainTab);
 }
 
@@ -72,12 +74,12 @@ void ClientScene::update(float delay)
             mainTab->browser->btn_refresh->enable = true;
         }
     }
-    if(introScreen)
+
+    if(introDelay > 0)
     {
-        introScreen->update(delay);
-        if(introScreen->showDelay <= 0)
+        introDelay -= delay;
+        if(introDelay <= 0)
         {
-            ZEVEN_SAFE_DELETE(introScreen);
             if(gameVar.s_inGameMusic) dksPlayMusic("main/sounds/Menu.ogg", -1);
             createMenu();
             menuManager.root->visible = true;

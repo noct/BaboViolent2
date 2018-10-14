@@ -348,13 +348,10 @@ void ClientConsole::sendCommand(CString commandLine, bool isAdmin, unsigned long
     auto client = cscene ? cscene->client : nullptr;
     if(scene)
     {
-        if(cscene->introScreen)
+        if(cscene->introDelay > 0)
         {
-            if(cscene->introScreen->showDelay > 0)
-            {
-                cscene->introScreen->showDelay = -1;
-                scene->update(0.033f);
-            }
+            cscene->introDelay = -1;
+            scene->update(0.033f);
         }
     }
 

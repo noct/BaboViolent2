@@ -37,42 +37,16 @@ struct NuzzleFlash;
 struct Player;
 struct Trail;
 
-void Client_Render(Client* client, float & alphaScope);
-void ClientConsole_Render(ClientConsole* console);
-void ClientGame_Render(ClientGame* game);
-void ClientGame_RenderBlueTeam(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
-void ClientGame_RenderFFA(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
-void ClientGame_RenderMiniMap(ClientGame* game);
-void ClientGame_RenderRedTeam(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
-void ClientGame_RenderSpectator(ClientGame* game, std::vector<Player*> & teamOrder, int & vPos);
-void ClientGame_RenderStats(ClientGame* game);
-void ClientPlayer_Render(ClientPlayer* player);
-void ClientPlayer_RenderName(ClientPlayer* player);
-void ClientProjectile_Render(ClientProjectile* proj);
-void ClientProjectile_RenderShadow(ClientProjectile* proj);
 void ClientScene_Render(ClientScene* scene);
-void ClientWeapon_Render(ClientWeapon* weapon);
-void Douille_Render(Douille* douille);
-void Drip_Render(Drip* drip);
-void FloorMark_Render(FloorMark* mark);
-void NukeFlash_Render(NukeFlash* nuke);
-void NuzzleFlash_Render(NuzzleFlash* nf);
-void Trail_Render(Trail* trail);
-void Trail_RenderBullet(Trail* trail);
 
-// Pour êrire du texte centrê
 void printCenterText(float x, float y, float size, bool enableShadow, const CString & text);
 void printLeftText(float x, float y, float size, bool enableShadow, const CString & text);
 void printRightText(float x, float y, float size, bool enableShadow, const CString & text);
 
-// Pour afficher un quad truc simple de meme
 void renderTexturedQuad(int x, int y, int w, int h, unsigned int texture);
 void renderTexturedQuadSmooth(int x, int y, int w, int h, unsigned int texture);
-//void renderMenuQuad(int x, int y, int w, int h);
 void renderMenuQuad(int x, int y, int w, int h);
-
 void renderLoadingScreen(unsigned int font);
-
 void renderBabo(int rect[4], float angle, uint32_t texSkin, uint32_t texShadow);
 
 #endif

@@ -16,72 +16,10 @@
   BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 #include "screengrab.h"
-#include <Zeven/Gfx.h>
-#include "GameVar.h"
-#include "Game.h"
-#include "Player.h"
 #include "ClientScene.h"
-#include <glad/glad.h>
-#include <time.h>
-#include <stdio.h>
-
+#include <ctime>
 
 extern Scene* scene;
-
-void SaveBitmapToFile(BYTE* pBitmapBits, LONG lWidth, LONG lHeight, WORD wBitsPerPixel, LPCTSTR lpszFileName)
-{
-    BITMAPINFOHEADER bmpInfoHeader = { 0 };
-    // Set the size
-    bmpInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
-    // Bit count
-    bmpInfoHeader.biBitCount = wBitsPerPixel;
-    // Use all colors
-    bmpInfoHeader.biClrImportant = 0;
-    // Use as many colors according to bits per pixel
-    bmpInfoHeader.biClrUsed = 0;
-    // Store as un Compressed
-    bmpInfoHeader.biCompression = BI_RGB;
-    // Set the height in pixels
-    bmpInfoHeader.biHeight = lHeight;
-    // Width of the Image in pixels
-    bmpInfoHeader.biWidth = lWidth;
-    // Default number of planes
-    bmpInfoHeader.biPlanes = 1;
-    // Calculate the image size in bytes
-    bmpInfoHeader.biSizeImage = lWidth * lHeight * (wBitsPerPixel / 8);
-
-    BITMAPFILEHEADER bfh = { 0 };
-    // This value should be values of BM letters i.e 0×4D42
-    // 0×4D = M 0×42 = B storing in reverse order to match with endian
-    bfh.bfType = 0x4D42;
-    /* or
-    bfh.bfType = ‘B’+(’M’ << 8);
-    // <<8 used to shift ‘M’ to end
-    */
-    // Offset to the RGBQUAD
-    bfh.bfOffBits = sizeof(BITMAPINFOHEADER) + sizeof(BITMAPFILEHEADER);
-    // Total size of image including size of headers
-    bfh.bfSize = bfh.bfOffBits + bmpInfoHeader.biSizeImage;
-    // Create the file in disk to write
-    HANDLE hFile = CreateFile(lpszFileName, GENERIC_WRITE, 0, NULL,
-
-        CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    if(!hFile) // return if error opening file
-    {
-        return;
-    }
-
-    DWORD dwWritten = 0;
-    // Write the File header
-    WriteFile(hFile, &bfh, sizeof(bfh), &dwWritten, NULL);
-    // Write the bitmap info header
-    WriteFile(hFile, &bmpInfoHeader, sizeof(bmpInfoHeader), &dwWritten, NULL);
-    // Write the RGB Data
-    WriteFile(hFile, pBitmapBits, bmpInfoHeader.biSizeImage, &dwWritten, NULL);
-    // Close the file handle
-    CloseHandle(hFile);
-}
 
 bool SaveScreenGrabAuto()
 {
@@ -135,30 +73,7 @@ bool SaveStatsAuto()
 
 
 
-bool SaveScreenGrab(const char* filename) {
-    // get some info about the screen size
-    CVector2i res = dkwGetResolution();
-
-    int sw = res.x();
-    int sh = res.y();
-    int bitdepth = 32;
-    GLenum   format = GL_BGRA;
-    int bpp = 4;
-
-    // allocate memory to store image data
-    unsigned char* pdata = new unsigned char[sw*sh*bpp];
-    // read from front buffer
-    glReadBuffer(GL_FRONT);
-
-    // read pixel data
-    glReadPixels(0, 0, sw, sh, format, GL_UNSIGNED_BYTE, pdata);
-
-    // write data as a tga file
-    SaveBitmapToFile(pdata, sw, sh, bitdepth, filename);
-
-    // clean up
-    delete[] pdata;
-
-    // done
+bool SaveScreenGrab(const char* filename)
+{
     return true;
 }

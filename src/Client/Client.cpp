@@ -416,7 +416,6 @@ void Client::update(float delay)
         }
 
         // Screenshot
-#ifdef WIN32
         if(dkiGetState(clientVar.k_screenShot) == DKI_DOWN && !cconsole->isActive() && !chatting.haveFocus() && isConnected && !(menuManager.root && menuManager.root->visible))
         {
             SaveScreenGrabAuto();
@@ -426,7 +425,6 @@ void Client::update(float delay)
         {
             SaveStatsAuto();
         }
-#endif
 
         // On gêre le menu (important, toujours tester si la console est lê ou pas)
         if(showMenu && !cconsole->isActive() && isConnected)

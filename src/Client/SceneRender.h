@@ -74,4 +74,6 @@ void renderMenuQuad(int x, int y, int w, int h);
 
 void renderLoadingScreen(unsigned int font);
 
+void renderBabo(int rect[4], float angle, uint32_t texSkin, uint32_t texShadow);
+
 #endif

@@ -20,7 +20,6 @@
 #include "GameVar.h"
 #include "Console.h"
 #include "SceneRender.h"
-#include <glad/glad.h>
 
 
 CUserLogin::CUserLogin(CControl * in_parent, CControl * in_alignTo)
@@ -253,71 +252,11 @@ void CUserLogin::Validate(CControl * control)
         }
     }
 }
+
 void CUserLogin::Paint(CControl * control)
 {
     if (control == pic_babo)
     {
-        //--- We render the babo in 3D
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-            glMatrixMode(GL_MODELVIEW);
-            glPushMatrix();
-            //  glPushAttrib(GL_ALL_ATTRIB_BITS);
-                glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT | GL_VIEWPORT_BIT);
-
-                    glDepthMask(GL_TRUE);
-                    CVector2i   res = dkwGetResolution();
-                    float       offset = 0;
-
-                    glViewport(
-                        (GLint)((((float)control->Rect[0]/800.0f) * (float)res[0]) + offset),
-                        res[1] - (int)(((float)(control->Rect[1])/600.0f) * (float)res[1]) - (int)(((float)control->Rect[3]/600.0f) * (float)res[1] + 1),
-                        (int)(((float)control->Rect[2]/800.0f) * (float)res[0]),
-                        (int)(((float)control->Rect[3]/600.0f) * (float)res[1] + 1));
-
-                    dkglSetProjection(70, 1, 1000, (float)control->size[0], (float)control->size[1]);
-
-                    // Truc par default à enabeler
-                    glEnable(GL_DEPTH_TEST);
-                    glEnable(GL_CULL_FACE);
-                    glDisable(GL_TEXTURE_2D);
-                    glColor3f(1,1,1);
-
-                    //--- Camera
-                    dkglLookAt(-4, -12, 7, 0, 0, 5, 0, 0, 1);
-
-                    //--- Shadow
-                    glColor4f(1,1,1,.75f);
-                    renderTexturedQuad(-8, 8, 16, -16, tex_baboShadow);
-
-                    glColor3f(1,1,1);
-
-                    //--- La boule
-                    glDisable(GL_BLEND);
-                    glEnable(GL_CULL_FACE);
-                    glEnable(GL_LIGHTING);
-                    glDepthFunc(GL_LEQUAL);
-
-                    dkglSetPointLight(1, -1000, -500, 2000, 1, 1, 1);
-                    glPushMatrix();
-                        glTranslatef(0, 0, 5);
-                        glRotatef(90, 0, 1, 0);
-                        glRotatef(rollingAngle, 0, 0, 1);
-
-
-                        glEnable(GL_COLOR_MATERIAL);
-                        glEnable(GL_TEXTURE_2D);
-                        glBindTexture(GL_TEXTURE_2D, tex_skin);
-
-                        glColor3f(1,1,1);
-                        glPolygonMode(GL_FRONT, GL_FILL);
-                        dkglDrawSphere(5, 24, 24, GL_TRIANGLES);
-                    glPopMatrix();
-
-                glPopAttrib();
-            glPopMatrix();
-            glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
+        renderBabo(control->Rect, rollingAngle, tex_skin, tex_baboShadow);
     }
 }

@@ -16,9 +16,8 @@
     BaboViolent 2 source code. If not, see http://www.gnu.org/licenses/.
 */
 #include "ClientScene.h"
-#include "ClientHelper.h"
+#include "SceneRender.h"
 #include "ClientConsole.h"
-#include <glad/glad.h>
 
 ClientScene::ClientScene(dkContext* dk) : Scene(dk)
 {
@@ -32,33 +31,7 @@ ClientScene::ClientScene(dkContext* dk) : Scene(dk)
     client = 0;
     editor = 0;
 
-    //-- On print le loading screen! (new)
-        // On clear les buffers, on init la camera, etc
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    CVector2i res = dkwGetResolution();
-
-    glViewport(0, 0, res[0], res[1]);
-    dkglSetProjection(60, 1, 50, (float)res[1] * 1.333f, (float)res[1]);
-
-    // Truc par default ê enabeler
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glDisable(GL_TEXTURE_2D);
-    glColor3f(1, 1, 1);
-
-    dkglPushOrtho(800, 600);
-
-    // Print au millieu
-    glColor3f(1, 1, 1);
-    dkfBindFont(font);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    printCenterText(400, 268, 64, CString("LOADING"));
-
-    dkglPopOrtho();
-
-    // On swap les buffers
-    dkwSwap();
+    renderLoadingScreen(font);
 
     introScreen = new IntroScreen();
 
@@ -177,115 +150,6 @@ void ClientScene::update(float delay)
     }
 
     clientVar.ro_nbParticle = dkpUpdate(delay);
-}
-
-//
-// Renderer
-//
-void ClientScene::render()
-{
-    // On clear les buffers, on init la camera, etc
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    CVector2i res = dkwGetResolution();
-
-    glViewport(0, 0, res[0], res[1]);
-    dkglSetProjection(60, 1, 50, (float)res[1] * 1.333f, (float)res[1]);
-
-    // Truc par default ê enabeler
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glDisable(GL_TEXTURE_2D);
-    glColor3f(1, 1, 1);
-
-    if(introScreen)
-    {
-        introScreen->render();
-    }
-    else
-    {
-        // On render le client
-        float alphaScope = 0;
-        if(client) client->render(alphaScope);
-
-        // On render l'editor
-        if(editor) editor->render();
-
-        // On render les menus
-        if((menuManager.root) && (menuManager.root->visible))
-        {
-            menuManager.render();
-            dkwClipMouse(false);
-        }
-        menuManager.renderDialogs();
-
-        dkglPushOrtho((float)res[0], (float)res[1]);
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-        glEnable(GL_TEXTURE_2D);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        dkfBindFont(font);
-
-        glColor3f(1, 1, 1);
-        if(gameVar.r_showStats)
-        {
-            printRightText((float)res[0], 0, 20, CString("FPS : %i", (int)dkcGetFPS(ctx)));
-        }
-
-        // On affiche la version du jeu
-        if(!editor && !client)
-        {
-            if(server)
-            {
-                printRightText((float)res[0] - 5, (float)res[1] - 32 - 5, 32, CString(clientVar.lang_serverVersion.s, (int)GAME_VERSION_SV / 10000, (int)(GAME_VERSION_SV % 10000) / 100, ((int)GAME_VERSION_SV % 100)));
-            }
-            else
-            {
-                printRightText((float)res[0] - 5, (float)res[1] - 32 - 5, 32, CString(clientVar.lang_clientVersion.s, (int)GAME_VERSION_CL / 10000, (int)(GAME_VERSION_CL % 10000) / 100, ((int)GAME_VERSION_CL % 100)));
-            }
-        }
-        glPopAttrib();
-        dkglPopOrtho();
-
-        // Render la console sur toute
-        auto cconsole = static_cast<ClientConsole*>(console);
-        cconsole->render();
-
-        // Non, le curseur sur TOUUTEEE
-        CVector2i cursor = dkwGetCursorPos_main();
-        int xM = (int)(((float)cursor[0] / (float)res[0])*800.0f);
-        int yM = (int)(((float)cursor[1] / (float)res[1])*600.0f);
-        dkglPushOrtho(800, 600);
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        if(menuManager.root)
-            if(!menuManager.root->visible && client)
-            {
-                if(client->showMenu)
-                {
-                    glColor3f(1, 1, 1);
-                    //  glColor3f(1,1,.6f);
-                    renderTexturedQuad(xM, yM, 32, 32, tex_menuCursor);
-                }
-                else
-                {
-                    glColor4f(0, 0, 0, 1 - alphaScope);
-                    renderTexturedQuad(xM - 15, yM - 15, 32, 32, tex_crosshair);
-                    //  glColor4f(1,1,.6f,1-alphaScope);
-                    glColor4f(1, 1, 1, 1 - alphaScope);
-                    renderTexturedQuad(xM - 16, yM - 16, 32, 32, tex_crosshair);
-                }
-            }
-            else
-            {
-                glColor3f(1, 1, 1);
-                //  glColor3f(1,1,.6f);
-                renderTexturedQuad(xM, yM, 32, 32, tex_menuCursor);
-            }
-        glPopAttrib();
-        dkglPopOrtho();
-    }
 }
 
 //

@@ -22,9 +22,8 @@
 #include <Zeven/Core.h>
 #include <vector>
 
-class Console
+struct Console
 {
-protected:
     // Le fichier pour le output automatique
     CString m_outputFilename;
 
@@ -54,7 +53,7 @@ protected:
     std::vector<CString> m_excludeFromLog;
 
     const std::vector<CString>& GetActiveMessages();
-public:
+
     // Constructeurs
     Console();
     Console(CString outputFilename);

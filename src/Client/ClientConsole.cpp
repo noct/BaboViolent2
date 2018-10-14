@@ -23,7 +23,6 @@
 #include "ClientMap.h"
 #include <algorithm>
 #include <string>
-#include <glad/glad.h>
 
 #include "KeyManager.h"
 #define CONSOLE_MAX_RECOGNITION_VAR 10
@@ -127,122 +126,6 @@ void ClientConsole::add(CString message, bool fromServer, bool isEvent)
         }
     }
 }
-
-//
-// Pour afficher la console
-//
-void ClientConsole::render()
-{
-    int i;
-    if(m_vPos > 0)
-    {
-        CVector2i res = dkwGetResolution();
-
-        // on print ?l'?ran les 10 dernier messages encouru
-        dkglPushOrtho((float)res[0], (float)res[1]);
-        glTranslatef(0, m_vPos, 0);
-        dkfBindFont(m_font);
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBegin(GL_QUADS);
-        glColor4f(0, 0, 0, .75f);
-        glVertex2i(0, -((gameVar.c_huge) ? 510 : 310));
-        glColor4f(.3f, .3f, .3f, .75f);
-        glVertex2i(0, 0);
-        glVertex2i(res[0], 0);
-        glColor4f(0, 0, 0, .75f);
-        glVertex2i(res[0], -((gameVar.c_huge) ? 510 : 310));
-        glEnd();
-        glColor4f(.7f, .8f, 1, .75f);
-        glBegin(GL_QUADS);
-        glVertex2i(0, 0);
-        glVertex2i(0, 5);
-        glVertex2i(res[0], 5);
-        glVertex2i(res[0], 0);
-        glEnd();
-        glColor4f(.3f, .3f, .3f, .75f);
-        glBegin(GL_QUADS);
-        glVertex2i(0, 5);
-        glVertex2i(0, 35);
-        glVertex2i(res[0], 35);
-        glVertex2i(res[0], 5);
-        glEnd();
-        glColor4f(.7f, .8f, 1, .75f);
-        glBegin(GL_QUADS);
-        glVertex2i(0, 35);
-        glVertex2i(0, 40);
-        glVertex2i(res[0], 40);
-        glVertex2i(res[0], 35);
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
-        glColor3f(1, 1, 0);
-        dkfPrint(30, res[0] - 190.0f, 5, 0, "F1 - events, F2 - chat");
-        glColor3f(1, 1, 1);
-        m_currentText->print(30, 20, 5, 0);
-        glPushMatrix();
-        const std::vector<CString>& displayMessages = GetActiveMessages();
-
-        int linesPerPage;
-        if(displayMessages.size() > 0)
-            linesPerPage = (int)ceil(((gameVar.c_huge) ? 510 : 310) /
-                dkfGetStringHeight(24, displayMessages[0].s));
-        else
-            linesPerPage = 0;
-        for(i = m_visibleMsgOffset;
-            i < std::min<int>(m_visibleMsgOffset + linesPerPage, (int)displayMessages.size());
-            ++i)
-        {
-            if((int)(displayMessages.size()) - 1 - i < 0) break;
-            float height = dkfGetStringHeight(24, displayMessages[displayMessages.size() - i - 1].s);
-            glTranslatef(0, -height, 0);
-            dkfPrint(24, 20, 0, 0, displayMessages[displayMessages.size() - i - 1].s);
-        }
-        glPopMatrix();
-        if(showRecognitionVar)
-        {
-            glDisable(GL_TEXTURE_2D);
-            glBegin(GL_QUADS);
-            glColor4f(0, 0, 0, .75f);
-            glVertex2i(0, 45);
-            glColor4f(.3f, .3f, .3f, .75f);
-            glVertex2i(0, 45 + 30 * CONSOLE_MAX_RECOGNITION_VAR + 5);
-            glVertex2i(res[0], 45 + 30 * CONSOLE_MAX_RECOGNITION_VAR + 5);
-            glColor4f(0, 0, 0, .75f);
-            glVertex2i(res[0], 45);
-            glEnd();
-            glEnable(GL_TEXTURE_2D);
-            glColor3f(1, 1, 1);
-            glPushMatrix();
-
-            // Render first normally
-            dkfPrint(30, 40, 45, 0, recognitionVar[0]);
-            glTranslatef(0, dkfGetStringHeight(30, recognitionVar[0]), 0);
-
-            // If we are cycling, get the other matches
-            CString temp = CString(recognitionVar[0]).getFirstToken(' ');
-            if(lastRecognitionVar != "")
-                dksvarGetFilteredVar(lastRecognitionVar.s, recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
-
-            // Render the rest
-            for(i = curRecognitionVar + 1; i < CONSOLE_MAX_RECOGNITION_VAR; ++i)
-            {
-                dkfPrint(30, 40, 45, 0, recognitionVar[i]);
-                float height = dkfGetStringHeight(30, recognitionVar[i]);
-                glTranslatef(0, height, 0);
-            }
-
-            // Restore the recognition vars
-            if(lastRecognitionVar != "")
-                dksvarGetFilteredVar(temp.s, recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
-
-            glPopMatrix();
-        }
-        glPopAttrib();
-        dkglPopOrtho();
-    }
-}
-
 
 //
 // Pour updater la console (meton taper dedans, etc)

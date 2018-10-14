@@ -23,9 +23,8 @@
 #include "Writting.h"
 #define CONSOLE_MAX_RECOGNITION_VAR 10
 
-class ClientConsole: public Console
+struct ClientConsole: public Console
 {
-private:
     // Sa font
     unsigned int m_font;
 
@@ -48,7 +47,6 @@ private:
     // Pour pas qu'on utilise la console (meton qu'on est apres chatter
     bool locked;
 
-public:
     ClientConsole();
     virtual ~ClientConsole();
 
@@ -63,9 +61,6 @@ public:
 
     // Pour envoyer une commande ala console
     void sendCommand(CString commandLine, bool admin=false, unsigned long bbnetID = -1);
-
-    // Pour afficher la console
-    void render();
 
     // Pour savoir si la console est active ou non, si cest le cas, on block les inputs ailleur
     bool isActive() {return m_isActive;}

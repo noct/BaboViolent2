@@ -24,7 +24,7 @@
 #include "EditorTools.h"
 #include "EditorDialogs.h"
 #include "ClientScene.h"
-#include "ClientHelper.h"
+#include "SceneRender.h"
 #include "ClientConsole.h"
 #include "ClientMap.h"
 #include <glad/glad.h>
@@ -456,7 +456,7 @@ void Editor2::render()
             glDisable(GL_DEPTH_TEST);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            printRightText(796, 564, 32, CString("(%d; %d)", cellCursor[0], cellCursor[1]));
+            printRightText(796, 564, 32, true, CString("(%d; %d)", cellCursor[0], cellCursor[1]));
             glPopAttrib();
             dkglPopOrtho();
         }

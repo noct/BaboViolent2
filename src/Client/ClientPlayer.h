@@ -59,10 +59,6 @@ struct ClientPlayer : public Player
     // Pour le controller
     void controlIt(float delay);
 
-    // Pour l'afficher
-    void render();
-    void renderName();
-
     void hit(ClientWeapon * fromWeapon, ClientPlayer * from, float damage=-1);
 
     // Pour updater la skin texture

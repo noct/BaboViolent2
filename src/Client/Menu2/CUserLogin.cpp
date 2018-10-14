@@ -19,7 +19,7 @@
 #include "Helper.h"
 #include "GameVar.h"
 #include "Console.h"
-#include "ClientHelper.h"
+#include "SceneRender.h"
 #include <glad/glad.h>
 
 

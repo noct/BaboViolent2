@@ -17,7 +17,7 @@
 */
 #include "Writting.h"
 #include "Helper.h"
-#include "ClientHelper.h"
+#include "SceneRender.h"
 
 // Le pointeur sur le writting qui a présentemnt le focus
 Writting * writting;
@@ -247,7 +247,7 @@ void Writting::loseFocus()
 void Writting::print(float size, float x, float y, float z)
 {
     // On écris le text normalement
-    printLeftText(x,y,size,CString("%s", s));
+    printLeftText(x,y,size, true,CString("%s", s));
 //  dkfPrint(size, x, y, z, s);
 
     // On dessine le curseur

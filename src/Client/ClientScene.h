@@ -45,16 +45,12 @@ struct ClientScene : public Scene
     unsigned int tex_crosshair;
     unsigned int tex_menuCursor;
 
-
     ClientScene(dkContext* ctx);
 
     // Destructeur
     virtual ~ClientScene();
 
     void update(float delay);
-
-    // Renderer
-    void render();
 
     // Creating menu
     void createMenu();

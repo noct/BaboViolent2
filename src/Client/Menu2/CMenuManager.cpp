@@ -19,7 +19,7 @@
 #include "CMenuManager.h"
 #include "Helper.h"
 #include "Scene.h"
-#include "ClientHelper.h"
+#include "SceneRender.h"
 #include <glad/glad.h>
 
 CMenuManager menuManager;
@@ -127,8 +127,6 @@ void CMenuManager::updateDialogs(float delay)
     removeTop = 0;
 }
 
-extern bool enableShadow;
-
 void CMenuManager::render(CControl * toRender)
 {
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -202,7 +200,7 @@ void CMenuManager::renderTooltip(CControl * control, const CVector2i& res)
 
                 //  enableShadow = false;
                     glColor3f(1,1,1);
-                    printLeftText((float)x+5,(float)y+5,25,control->toolTips);
+                    printLeftText((float)x+5,(float)y+5,25, true, control->toolTips);
                 //  enableShadow = true;
                 }
             }

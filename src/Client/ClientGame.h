@@ -39,15 +39,10 @@ struct ClientProjectile : public Projectile
     void update(float delay, Map * map);
 
     void onGrenadeRebound(CVector3f p);
-
-    // Pour l'afficher (client Only)
-    void render();
-    void renderShadow();
 };
 
 struct NukeFlash
 {
-public:
     CVector3f position;
     float life;
     float fadeSpeed;
@@ -55,7 +50,6 @@ public:
     float radius;
     NukeFlash();
     void update(float pdelay);
-    void render();
 };
 
 struct Drip
@@ -66,7 +60,6 @@ struct Drip
     float fadeSpeed;
     Drip();
     void update(float pdelay);
-    void render();
 };
 
 struct FloorMark
@@ -81,7 +74,6 @@ struct FloorMark
     FloorMark();
     void set(CVector3f & pposition, float pangle, float psize, float pdelay, float pstartDelay, unsigned int ptexture, CVector4f pcolor);
     void update(float pdelay);
-    void render();
 };
 
 #define DOUILLE_TYPE_DOUILLE 0
@@ -97,7 +89,6 @@ struct Douille
     int type;
     Douille(CVector3f pPosition, CVector3f pDirection, CVector3f right, int in_type = DOUILLE_TYPE_DOUILLE);
     void update(float pDelay, Map * map);
-    void render();
 };
 
 // Pour nos trail (smoke, rocket, etc)
@@ -114,8 +105,6 @@ struct Trail
     CVector4f color;
     CVector3f right;
     Trail(CVector3f & pP1, CVector3f & pP2, float pSize, CVector4f & pColor, float duration, int in_trailType = 0);
-    void render();
-    void renderBullet();
     void update(float pDelay);
 };
 
@@ -185,16 +174,6 @@ struct ClientGame : public Game
     bool spawnProjectile(net_clsv_svcl_player_projectile & playerProjectile, bool imServer);
     void spawnProjectileSpecific(CVector3f & position, CVector3f & vel, char pFromID, int pProjectileType, bool pRemoteEntity, long pUniqueProjectileID);
 
-    // Pour l'afficher
-    void render();
-
-    // Afficher les stats
-    void renderStats();
-    void renderBlueTeam(std::vector<Player*> & teamOrder, int & vPos);
-    void renderRedTeam(std::vector<Player*> & teamOrder, int & vPos);
-    void renderFFA(std::vector<Player*> & teamOrder, int & vPos);
-    void renderSpectator(std::vector<Player*> & teamOrder, int & vPos);
-
     void createNewPlayerCL(int playerID, long babonetID); // Ça c'est côté client
 
     // Pour quand un client shot
@@ -205,8 +184,6 @@ struct ClientGame : public Game
     void spawnBlood(CVector3f & position, float damage);
     void spawnExplosion(CVector3f & position, CVector3f & normal, float size);
 
-    // Pour afficher la minimap (ouff, je mélange pomal les affaires, tk)
-    void renderMiniMap();
 
     // Pour pogner le prochain markFloor
     long getNextFloorMark() {nextWriteFloorMark++;if(nextWriteFloorMark>=MAX_FLOOR_MARK)nextWriteFloorMark=0;return nextWriteFloorMark;}

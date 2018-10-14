@@ -20,7 +20,7 @@
 #include "Console.h"
 #include "CControl.h"
 #include "CMenuManager.h"
-#include "ClientHelper.h"
+#include "SceneRender.h"
 #include "ClientMap.h"
 #include <glad/glad.h>
 
@@ -55,7 +55,7 @@ void Client::render(float & alphaScope)
     }
 
     // C'est côté client qu'on fait ça ;)
-    if(isConnected) game->render();
+    if(isConnected) ClientGame_Render(game);
 
     // LE SNIPER SCOPE
     CVector2i cursor = dkwGetCursorPos_main();
@@ -151,7 +151,7 @@ void Client::render(float & alphaScope)
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay*.75f + .25f);
-                        if(blink < .25f) printCenterText(400, 400, 32, clientVar.lang_reloading);
+                        if(blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         // La progress bar
@@ -181,7 +181,7 @@ void Client::render(float & alphaScope)
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay*.75f + .25f);
-                        if(blink < .25f) printCenterText(400, 400, 32, clientVar.lang_reloading);
+                        if(blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
@@ -210,7 +210,7 @@ void Client::render(float & alphaScope)
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay*.75f + .25f);
-                        if(blink < .25f) printCenterText(400, 400, 32, clientVar.lang_reloading);
+                        if(blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
@@ -239,7 +239,7 @@ void Client::render(float & alphaScope)
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay*.75f + .25f);
-                        if(blink < .25f) printCenterText(400, 400, 32, clientVar.lang_reloading);
+                        if(blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
@@ -332,7 +332,7 @@ void Client::render(float & alphaScope)
                     glVertex2f(1, -1);
                     glEnd();
                     glPopMatrix();
-                    printCenterText(686 + 32, 526 + 32 - 16, 32, CString("%i", game->thisPlayer->nbGrenadeLeft));
+                    printCenterText(686 + 32, 526 + 32 - 16, 32, true, CString("%i", game->thisPlayer->nbGrenadeLeft));
                 }
 
                 // Le nb de molotov quil lui reste
@@ -362,7 +362,7 @@ void Client::render(float & alphaScope)
                     glVertex2f(1, -1);
                     glEnd();
                     glPopMatrix();
-                    printCenterText(686 + 32, 474 + 32 - 16, 32, CString("%i", game->thisPlayer->nbMolotovLeft));
+                    printCenterText(686 + 32, 474 + 32 - 16, 32, true, CString("%i", game->thisPlayer->nbMolotovLeft));
                 }
 
                 // Le nb de balle de shotgun quil lui reste
@@ -386,7 +386,7 @@ void Client::render(float & alphaScope)
                     glVertex2f(1, -1);
                     glEnd();
                     glPopMatrix();
-                    printCenterText(686 + 32, 422 + 32 - 16, 32, CString("%i", 6 - game->thisPlayer->weapon->shotInc));
+                    printCenterText(686 + 32, 422 + 32 - 16, 32, true, CString("%i", 6 - game->thisPlayer->weapon->shotInc));
                 }
             }
             else if((
@@ -395,15 +395,15 @@ void Client::render(float & alphaScope)
                 game->thisPlayer->status == PLAYER_STATUS_DEAD && !game->thisPlayer->spawnRequested)
             {
                 glColor3f(1, 1, 1);
-                if(game->thisPlayer->timeToSpawn > 0) printCenterText(400, 200, 64, CString(clientVar.lang_spawnIn.s, ((int)game->thisPlayer->timeToSpawn + 1) / 60, ((int)(game->thisPlayer->timeToSpawn + 1) % 60)));
-                else if(!gameVar.sv_forceRespawn) printCenterText(400, 200, 64, CString("Press shoot key [%s] to respawn", keyManager.getKeyName(clientVar.k_shoot).s));
+                if(game->thisPlayer->timeToSpawn > 0) printCenterText(400, 200, 64, true, CString(clientVar.lang_spawnIn.s, ((int)game->thisPlayer->timeToSpawn + 1) / 60, ((int)(game->thisPlayer->timeToSpawn + 1) % 60)));
+                else if(!gameVar.sv_forceRespawn) printCenterText(400, 200, 64, true, CString("Press shoot key [%s] to respawn", keyManager.getKeyName(clientVar.k_shoot).s));
             }
 
         //--- Auto balance
         if(gameVar.sv_autoBalance && autoBalanceTimer > 0 && blink < .25f)
         {
             glColor3f(1, 1, 1);
-            printCenterText(400, 0, 64, CString("Autobalance in %i seconds", (int)autoBalanceTimer));
+            printCenterText(400, 0, 64, true, CString("Autobalance in %i seconds", (int)autoBalanceTimer));
         }
 
         /*printCenterText(200,100,20,CString("Time played: %.2f", game->thisPlayer->timePlayedCurGame));
@@ -487,44 +487,44 @@ void Client::render(float & alphaScope)
         {
         case GAME_TYPE_DM:
             // Total Time left
-            printLeftText(5, 5, 64, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
+            printLeftText(5, 5, 64, true, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
             break;
         case GAME_TYPE_TDM:
             // Total Time left
-            printLeftText(5, 5, 64, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
+            printLeftText(5, 5, 64, true, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
             // Score left
             if(game->blueScore >= game->redScore)
             {
                 renderTexturedQuad(5, 5 + 64, 64, 64, tex_blueFlag);
-                printLeftText(5 + 64 + 5, 5 + 64, 64, CString("%i/%i", game->blueScore, gameVar.sv_scoreLimit));
+                printLeftText(5 + 64 + 5, 5 + 64, 64, true, CString("%i/%i", game->blueScore, gameVar.sv_scoreLimit));
                 renderTexturedQuad(5, 5 + 64 + 64, 64, 64, tex_redFlag);
-                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, CString("%i/%i", game->redScore, gameVar.sv_scoreLimit));
+                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, true, CString("%i/%i", game->redScore, gameVar.sv_scoreLimit));
             }
             else
             {
                 renderTexturedQuad(5, 5 + 64, 64, 64, tex_redFlag);
-                printLeftText(5 + 64 + 5, 5 + 64, 64, CString("%i/%i", game->redScore, gameVar.sv_scoreLimit));
+                printLeftText(5 + 64 + 5, 5 + 64, 64, true, CString("%i/%i", game->redScore, gameVar.sv_scoreLimit));
                 renderTexturedQuad(5, 5 + 64 + 64, 64, 64, tex_blueFlag);
-                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, CString("%i/%i", game->blueScore, gameVar.sv_scoreLimit));
+                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, true, CString("%i/%i", game->blueScore, gameVar.sv_scoreLimit));
             }
             break;
         case GAME_TYPE_CTF:
             // Total Time left
-            printLeftText(5, 5, 64, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
+            printLeftText(5, 5, 64, true, CString("%01i:%02i", (int)((game->gameTimeLeft + 1) / 60), (int)(game->gameTimeLeft + 1) % 60));
             // win left
             if(game->blueWin >= game->redWin)
             {
                 renderTexturedQuad(5, 5 + 64, 64, 64, tex_blueFlag);
-                printLeftText(5 + 64 + 5, 5 + 64, 64, CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
+                printLeftText(5 + 64 + 5, 5 + 64, 64, true, CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
                 renderTexturedQuad(5, 5 + 64 + 64, 64, 64, tex_redFlag);
-                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, CString("%i/%i", game->redWin, gameVar.sv_winLimit));
+                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, true, CString("%i/%i", game->redWin, gameVar.sv_winLimit));
             }
             else
             {
                 renderTexturedQuad(5, 5 + 64, 64, 64, tex_redFlag);
-                printLeftText(5 + 64 + 5, 5 + 64, 64, CString("%i/%i", game->redWin, gameVar.sv_winLimit));
+                printLeftText(5 + 64 + 5, 5 + 64, 64, true, CString("%i/%i", game->redWin, gameVar.sv_winLimit));
                 renderTexturedQuad(5, 5 + 64 + 64, 64, 64, tex_blueFlag);
-                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
+                printLeftText(5 + 64 + 5, 5 + 64 + 64, 64, true, CString("%i/%i", game->blueWin, gameVar.sv_winLimit));
             }
             break;
         }
@@ -566,7 +566,7 @@ void Client::render(float & alphaScope)
             // On l'écris à peut pret au tier de l'écran à gauche
             glEnable(GL_TEXTURE_2D);
 
-            printLeftText(10, yPos - (float)(chatMessages.size() - i - 1) * textSize, textSize, chatMessages[i].message);
+            printLeftText(10, yPos - (float)(chatMessages.size() - i - 1) * textSize, textSize, true, chatMessages[i].message);
         }
 
         // Si on est apres chatter
@@ -591,7 +591,7 @@ void Client::render(float & alphaScope)
 
 
             float chattingToWidth = dkfGetStringWidth(28, chattingTo.s);
-            printLeftText(10, yPos + 32, 28, chattingTo);
+            printLeftText(10, yPos + 32, 28, true, chattingTo);
             chatting.print(28, 10 + chattingToWidth, yPos + 32, 0);
         }
 
@@ -613,7 +613,7 @@ void Client::render(float & alphaScope)
 
             if(gameVar.r_showEventText)
             {
-                printLeftText(xPos, (float)res[1] - (float)(eventMessages.size() - i - 1) * eventTextSize - 20 - eventTextSize, eventTextSize, eventMessages[i].message);
+                printLeftText(xPos, (float)res[1] - (float)(eventMessages.size() - i - 1) * eventTextSize - 20 - eventTextSize, eventTextSize, true, eventMessages[i].message);
             }
         }
 
@@ -623,7 +623,7 @@ void Client::render(float & alphaScope)
         // Les stats
         if(game->showStats)
         {
-            game->renderStats();
+            ClientGame_RenderStats(game);
 
             if(blink < .25f)
             {
@@ -636,16 +636,16 @@ void Client::render(float & alphaScope)
                 {
                 case GAME_PLAYING: break;
                 case GAME_BLUE_WIN:
-                    printCenterText(475, 5, 64, clientVar.lang_blueTeamWin);
+                    printCenterText(475, 5, 64, true, clientVar.lang_blueTeamWin);
                     break;
                 case GAME_RED_WIN:
-                    printCenterText(475, 5, 64, clientVar.lang_redTeamWin);
+                    printCenterText(475, 5, 64, true, clientVar.lang_redTeamWin);
                     break;
                 case GAME_DRAW:
-                    printCenterText(475, 5, 64, clientVar.lang_roundDraw);
+                    printCenterText(475, 5, 64, true, clientVar.lang_roundDraw);
                     break;
                 case GAME_MAP_CHANGE:
-                    printCenterText(475, 5, 64, clientVar.lang_changingMap);
+                    printCenterText(475, 5, 64, true, clientVar.lang_changingMap);
                     break;
                 }
                 glPopAttrib();
@@ -687,27 +687,27 @@ void Client::render(float & alphaScope)
         glPolygonMode(GL_FRONT, GL_FILL);
         glColor3f(1, 1, 1);
 
-        printCenterText(400, 5 + 48, 32, gameVar.sv_gameName);
+        printCenterText(400, 5 + 48, 32, true, gameVar.sv_gameName);
         switch(game->gameType)
         {
         case GAME_TYPE_DM:
-            printCenterText(400, 5, 64, clientVar.lang_deathmatchC);
-            printCenterText(400, 5 + 88, 32, clientVar.lang_deathmatchD);
+            printCenterText(400, 5, 64, true, clientVar.lang_deathmatchC);
+            printCenterText(400, 5 + 88, 32, true, clientVar.lang_deathmatchD);
             break;
         case GAME_TYPE_TDM:
-            printCenterText(400, 5, 64, clientVar.lang_teamDeathmatchC);
-            printCenterText(400, 5 + 88, 32, clientVar.lang_teamDeathmatchD);
+            printCenterText(400, 5, 64, true, clientVar.lang_teamDeathmatchC);
+            printCenterText(400, 5 + 88, 32, true, clientVar.lang_teamDeathmatchD);
             break;
         case GAME_TYPE_CTF:
-            printCenterText(400, 5, 64, clientVar.lang_captureTheFlagC);
-            printCenterText(400, 5 + 88, 32, clientVar.lang_captureTheFlagD);
+            printCenterText(400, 5, 64, true, clientVar.lang_captureTheFlagC);
+            printCenterText(400, 5 + 88, 32, true, clientVar.lang_captureTheFlagD);
             break;
         }
         CString mapInfo(game->map->mapName);
         auto cmap = static_cast<ClientMap*>(game->map);
         if(cmap->author_name.len() > 0)
             mapInfo.set("%s created by %s", game->map->mapName.s, cmap->author_name.s);
-        printCenterText(400, 5 + 64, 32, mapInfo);
+        printCenterText(400, 5 + 64, 32, true, mapInfo);
         glPopAttrib();
         dkglPopOrtho();
     }
@@ -744,8 +744,8 @@ void Client::render(float & alphaScope)
         glEnable(GL_BLEND);
         glColor3f(1, 1, 1);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        if(blink > .25f) printCenterText(400, 300 - 32, 64, clientVar.lang_connectingC);
-        printCenterText(400, 332, 48, clientVar.lang_pressF10ToCancel);
+        if(blink > .25f) printCenterText(400, 300 - 32, 64, true, clientVar.lang_connectingC);
+        printCenterText(400, 332, 48, true, clientVar.lang_pressF10ToCancel);
         if(dkiGetState(KeyF10) == DKI_DOWN) console->sendCommand("disconnect");
         glPopAttrib();
         dkglPopOrtho();

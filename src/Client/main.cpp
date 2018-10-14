@@ -22,6 +22,7 @@
 #include "ClientConsole.h"
 #include "CMaster.h"
 #include "CLobby.h"
+#include "SceneRender.h"
 #include <exception>
 #include <SDL2/SDL.h>
 
@@ -165,7 +166,7 @@ public:
 
         // On render le tout
         auto cscene = static_cast<ClientScene*>(scene);
-        cscene->render();
+        ClientScene_Render(cscene);
     }
 
     void textWrite(unsigned int caracter)

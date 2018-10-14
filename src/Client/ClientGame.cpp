@@ -28,8 +28,6 @@
 #include <algorithm>
 #include "Client.h"
 #include "ClientMap.h"
-#include <glad/glad.h>
-
 
 NukeFlash::NukeFlash()
 {
@@ -42,24 +40,6 @@ void NukeFlash::update(float pdelay)
 {
     life -= pdelay * fadeSpeed;
 }
-void NukeFlash::render()
-{
-    glPushMatrix();
-        glTranslatef(position[0], position[1], position[2]);
-        glScalef(radius, radius, radius);
-        glColor4f(1, 1, 1, density*life);
-        glBegin(GL_QUADS);
-            glTexCoord2i(0,1);
-            glVertex2i(-1,1);
-            glTexCoord2i(0,0);
-            glVertex2i(-1,-1);
-            glTexCoord2i(1,0);
-            glVertex2i(1,-1);
-            glTexCoord2i(1,1);
-            glVertex2i(1,1);
-        glEnd();
-    glPopMatrix();
-}
 
 Drip::Drip()
 {
@@ -71,26 +51,6 @@ void Drip::update(float pdelay)
 {
     life -= pdelay * fadeSpeed;
 }
-void Drip::render()
-{
-    glPushMatrix();
-        glTranslatef(position[0], position[1], position[2]);
-        float _size = (1 - life) * size;
-        glScalef(_size, _size, _size);
-        glColor4f(.25f, .7f, .3f, life*2);
-        glBegin(GL_QUADS);
-            glTexCoord2i(0,1);
-            glVertex2i(-1,1);
-            glTexCoord2i(0,0);
-            glVertex2i(-1,-1);
-            glTexCoord2i(1,0);
-            glVertex2i(1,-1);
-            glTexCoord2i(1,1);
-            glVertex2i(1,1);
-        glEnd();
-    glPopMatrix();
-}
-
 FloorMark::FloorMark()
 {
     delay = 0;
@@ -119,33 +79,6 @@ void FloorMark::update(float pdelay)
     }
 }
 
-void FloorMark::render()
-{
-    if (startDelay <= 0)
-    {
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glPushMatrix();
-            glTranslatef(position[0], position[1], position[2] + .025f);
-            glRotatef(angle, 0, 0, 1);
-            glScalef(size, size, size);
-            if (delay < 10)
-                glColor4f(color[0], color[1], color[2], color[3] * ((delay)*0.1f));
-            else
-                glColor4fv(color.s);
-            glBegin(GL_QUADS);
-                glTexCoord2i(0,1);
-                glVertex2i(-1,1);
-                glTexCoord2i(0,0);
-                glVertex2i(-1,-1);
-                glTexCoord2i(1,0);
-                glVertex2i(1,-1);
-                glTexCoord2i(1,1);
-                glVertex2i(1,1);
-            glEnd();
-        glPopMatrix();
-    }
-}
-
 Douille::Douille(CVector3f pPosition, CVector3f pDirection, CVector3f right, int in_type)
 {
     type = in_type;
@@ -164,17 +97,6 @@ Douille::Douille(CVector3f pPosition, CVector3f pDirection, CVector3f right, int
     soundPlayed = false;
 }
 
-void Douille::render()
-{
-    glPushMatrix();
-        glTranslatef(position[0], position[1], position[2]);
-        glRotatef(delay*90,vel[0], vel[1],0);
-        glScalef(.005f,.005f,.005f);
-        if (type == DOUILLE_TYPE_DOUILLE) dkoRender(clientVar.dko_douille);
-        else if (type == DOUILLE_TYPE_GIB) dkoRender(clientVar.dko_gib);
-    glPopMatrix();
-}
-
 Trail::Trail(CVector3f & pP1, CVector3f & pP2, float pSize, CVector4f & pColor, float duration, int in_trailType)
 {
     trailType = in_trailType;
@@ -188,56 +110,6 @@ Trail::Trail(CVector3f & pP1, CVector3f & pP2, float pSize, CVector4f & pColor, 
     right = cross(p2 - p1, CVector3f(0,0,1));
     normalize(right);
     offset = rand(0.0f, 1.0f);
-}
-
-void Trail::render()
-{
-    glColor4f(.7f, .7f, .7f, (1-delay)*.5f);
-    if (trailType == 1) glColor4f(color[0], color[1], color[2],(1-delay));
-    glBegin(GL_QUADS);
-        glTexCoord2f(0,dis);
-        glVertex3fv((p2-right*delay*size).s);
-        glTexCoord2f(0,0);
-        glVertex3fv((p1-right*delay*size).s);
-        glTexCoord2f(1,0);
-        glVertex3fv((p1+right*delay*size).s);
-        glTexCoord2f(1,dis);
-        glVertex3fv((p2+right*delay*size).s);
-    glEnd();
-}
-void Trail::renderBullet()
-{
-    float progress = ((delay/delaySpeed)*40 + offset*1) / dis;
-    if (progress < 1)
-    {
-        CVector3f dir = p2 - p1;
-        float x = p1[0]+dir[0]*progress;
-        float y = p1[1]+dir[1]*progress;
-
-        glColor4f(color[0], color[1], color[2],.1f);
-        glBegin(GL_QUADS);
-            glTexCoord2f(0,1);
-            glVertex3f(x-1.0f,y+1.0f,0);
-            glTexCoord2f(0,0);
-            glVertex3f(x-1.0f,y-1.0f,0);
-            glTexCoord2f(1,0);
-            glVertex3f(x+1.0f,y-1.0f,0);
-            glTexCoord2f(1,1);
-            glVertex3f(x+1.0f,y+1.0f,0);
-        glEnd();
-
-        glColor4f(color[0], color[1], color[2], 1);
-        glBegin(GL_QUADS);
-            glTexCoord2f(0,1);
-            glVertex3fv((p1+dir*progress+dir/dis-right*.05f).s);
-            glTexCoord2f(0,0);
-            glVertex3fv((p1+dir*progress-right*.05f).s);
-            glTexCoord2f(1,0);
-            glVertex3fv((p1+dir*progress+right*.05f).s);
-            glTexCoord2f(1,1);
-            glVertex3fv((p1+dir*progress+dir/dis+right*.05f).s);
-        glEnd();
-    }
 }
 
 void Trail::update(float pDelay)
@@ -1358,200 +1230,6 @@ ClientProjectile::ClientProjectile(CVector3f & position, CVector3f & vel, char p
         break;
     }
     }
-}
-
-//
-// Pour l'afficher (client Only)
-//
-void ClientProjectile::render()
-{
-    // Les effects de la rocket
-    if(projectileType == PROJECTILE_ROCKET)
-    {
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
-        glDisable(GL_LIGHTING);
-        glDepthMask(GL_FALSE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        glPushMatrix();
-        // Shot glow
-        glTranslatef(currentCF.position[0], currentCF.position[1], 0);
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_DEPTH_TEST);
-        glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
-        glColor4f(1, 1, 1, rand(.05f, .25f));
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex3f(-2.5f, 2.5f, 0);
-        glTexCoord2f(0, 0);
-        glVertex3f(-2.5f, -2.5f, 0);
-        glTexCoord2f(1, 0);
-        glVertex3f(2.5f, -2.5f, 0);
-        glTexCoord2f(1, 1);
-        glVertex3f(2.5f, 2.5f, 0);
-        glEnd();
-        glEnable(GL_DEPTH_TEST);
-        glPopMatrix();
-        glPushMatrix();
-        glTranslatef(currentCF.position[0], currentCF.position[1], currentCF.position[2]);
-        glRotatef(currentCF.angle, 0, 0, 1);
-        glRotatef(rand(.0f, 360.0f), 0, 1, 0);
-        glScalef(.5f, .5f, .5f);
-        glEnable(GL_BLEND);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, clientVar.tex_nuzzleFlash);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        glDisable(GL_CULL_FACE);
-        glDisable(GL_FOG);
-        glColor4f(1, 1, 1, 1.0f);
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 0);
-        glVertex3f(-.25f, 0, 0);
-        glTexCoord2f(0, 1);
-        glVertex3f(-.25f, -1, 0);
-        glTexCoord2f(1, 1);
-        glVertex3f(.25f, -1, 0);
-        glTexCoord2f(1, 0);
-        glVertex3f(.25f, 0, 0);
-
-        glTexCoord2f(0, 0);
-        glVertex3f(0, 0, .25f);
-        glTexCoord2f(0, 1);
-        glVertex3f(0, -1, .25f);
-        glTexCoord2f(1, 1);
-        glVertex3f(0, -1, -.25f);
-        glTexCoord2f(1, 0);
-        glVertex3f(0, 0, -.25f);
-        glEnd();
-        glPopMatrix();
-        glPopAttrib();
-    }
-
-    // Les effects du molotov
-    if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
-    {
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
-        glDisable(GL_LIGHTING);
-        glDepthMask(GL_FALSE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        glPushMatrix();
-        // Le glow lumineux
-        glTranslatef(currentCF.position[0], currentCF.position[1], 0);
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_DEPTH_TEST);
-        glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
-        glColor4f(1, 1, 1, rand(.05f, .25f));
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex3f(-2.5f, 2.5f, 0);
-        glTexCoord2f(0, 0);
-        glVertex3f(-2.5f, -2.5f, 0);
-        glTexCoord2f(1, 0);
-        glVertex3f(2.5f, -2.5f, 0);
-        glTexCoord2f(1, 1);
-        glVertex3f(2.5f, 2.5f, 0);
-        glEnd();
-        glEnable(GL_DEPTH_TEST);
-        glPopMatrix();
-        glPopAttrib();
-    }
-
-    if(projectileType != PROJECTILE_FLAME)
-    {
-        glPushAttrib(GL_ENABLE_BIT);
-        glEnable(GL_LIGHTING);
-        glPushMatrix();
-        glTranslatef(currentCF.position[0], currentCF.position[1], currentCF.position[2]);
-        if(projectileType == PROJECTILE_ROCKET)
-        {
-            glRotatef(currentCF.angle, 0, 0, 1);
-            glScalef(.0025f, .0025f, .0025f);
-            dkoRender(clientVar.dko_rocket); // Voilà!
-        }
-        if(projectileType == PROJECTILE_GRENADE)
-        {
-            glRotatef(rotation, currentCF.vel[0], currentCF.vel[1], 0);
-            glScalef(.0025f, .0025f, .0025f);
-            dkoRender(clientVar.dko_grenade); // Voilà!
-        }
-        if(projectileType == PROJECTILE_COCKTAIL_MOLOTOV)
-        {
-            glRotatef(rotation, currentCF.vel[0], currentCF.vel[1], 0);
-            glScalef(.0025f, .0025f, .0025f);
-            dkoRender(clientVar.dko_cocktailMolotov); // Voilà!
-        }
-        if(projectileType == PROJECTILE_DROPED_GRENADE)
-        {
-            //  glTranslatef(0,0,.30f);
-            glScalef(.0025f, .0025f, .0025f);
-            dkoRender(clientVar.dko_grenade); // Voilà!
-        }
-        if(projectileType == PROJECTILE_LIFE_PACK)
-        {
-            glTranslatef(0, 0, -.20f);
-            glScalef(.0025f, .0025f, .0025f);
-            dkoRender(clientVar.dko_lifePack); // Voilà!
-        }
-        if(projectileType == PROJECTILE_DROPED_WEAPON)
-        {
-            glTranslatef(0, 0, -.30f);
-            glRotatef(rotation, 0, 0, 1);
-            glScalef(.005f, .005f, .005f);
-            if(fromID >= 0)
-            {
-                if(clientVar.weapons[fromID]) dkoRender(clientVar.weapons[fromID]->dkoModel); // Voilà!
-            }
-        }
-        glPopMatrix();
-        glPopAttrib();
-    }
-    else
-    {
-        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT);
-        glDisable(GL_LIGHTING);
-        glDepthMask(GL_FALSE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        glPushMatrix();
-        // Shot glow
-        glTranslatef(currentCF.position[0], currentCF.position[1], 0);
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_DEPTH_TEST);
-        glBindTexture(GL_TEXTURE_2D, clientVar.tex_shotGlow);
-        glColor4f(1, .75f, 0, rand(.10f, .15f)*(1 - currentCF.position[2]));
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex3f(-1.0f, 1.0f, 0);
-        glTexCoord2f(0, 0);
-        glVertex3f(-1.0f, -1.0f, 0);
-        glTexCoord2f(1, 0);
-        glVertex3f(1.0f, -1.0f, 0);
-        glTexCoord2f(1, 1);
-        glVertex3f(1.0f, 1.0f, 0);
-        glEnd();
-        glEnable(GL_DEPTH_TEST);
-        glPopMatrix();
-        glPopAttrib();
-    }
-}
-
-void ClientProjectile::renderShadow()
-{
-    // On render son shadow :)
-    glPushMatrix();
-    glTranslatef(currentCF.position[0] + .1f, currentCF.position[1] - .1f, 0.025f);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 1);
-    glVertex2f(-.25f, .25f);
-    glTexCoord2f(0, 0);
-    glVertex2f(-.25f, -.25f);
-    glTexCoord2f(1, 0);
-    glVertex2f(.25f, -.25f);
-    glTexCoord2f(1, 1);
-    glVertex2f(.25f, .25f);
-    glEnd();
-    glPopMatrix();
 }
 
 void ClientProjectile::onGrenadeRebound(CVector3f p)

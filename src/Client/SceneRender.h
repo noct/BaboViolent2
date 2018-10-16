@@ -21,23 +21,16 @@
 #include <Zeven/Core.h>
 #include <vector>
 
-struct Client;
-struct ClientConsole;
-struct ClientGame;
-struct ClientPlayer;
-struct ClientProjectile;
 struct ClientScene;
-struct ClientWeapon;
-struct Douille;
-struct Drip;
-struct FloorMark;
-struct IntroScreen;
-struct NukeFlash;
-struct NuzzleFlash;
-struct Player;
-struct Trail;
+struct ClientMap;
 
 void ClientScene_Render(ClientScene* scene);
+void ClientMap_RenderGround(ClientMap* map);
+void ClientMap_RenderShadow(ClientMap* map);
+void ClientMap_RenderWalls(ClientMap* map);
+void ClientMap_RenderMisc(ClientMap* map);
+void ClientMap_RenderFlag(ClientMap* map, int index);
+void ClientMap_RenderWeather(ClientMap* map);
 
 void printCenterText(float x, float y, float size, bool enableShadow, const CString & text);
 void printLeftText(float x, float y, float size, bool enableShadow, const CString & text);

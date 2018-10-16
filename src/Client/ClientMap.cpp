@@ -22,7 +22,7 @@
 #include "Console.h"
 #include "Scene.h"
 #include <direct.h>
-#include <glad/glad.h>
+#include <Windows.h>
 
 #ifdef RENDER_LAYER_TOGGLE
 int renderToggle = 0;
@@ -30,233 +30,176 @@ int renderToggle = 0;
 
 extern Scene * scene;
 
-struct CWeather
+void CSnow_Init(CSnow* snow)
 {
-    //--- Constructor
-    CWeather() {}
+    snow->pos = new CVector3f[100];
+    snow->m_sfxRain = dksCreateSoundFromFile("main/sounds/wind.wav", true);
+    snow->tex_snow = dktCreateTextureFromFile("main/textures/snowflake.png", DKT_FILTER_LINEAR);
+    snow->channel = dksPlaySound(snow->m_sfxRain, -1, 50);
+    snow->nextRain = 0;
+    snow->nextIn = 0;
+}
 
-    //--- Destructor
-    virtual ~CWeather() {}
-
-    //--- Update
-    virtual void update(float delay, Map* map) {}
-
-    //--- Render
-    virtual void render() {}
-};
-
-struct SSnow
+void CSnow_Release(CSnow* snow)
 {
-    CVector3f pos;
-    SSnow();
-    void update(float delay);
-    void render();
-};
+    delete[] snow->pos;
+    FSOUND_StopSound(snow->channel);
+    dksDeleteSound(snow->m_sfxRain);
+    dktDeleteTexture(&snow->tex_snow);
+}
 
-struct CSnow : public CWeather
+void CSnow_Update(CSnow* snow, float delay, Map* map)
 {
-    //--- Weather sound
-    FSOUND_SAMPLE * m_sfxRain;
-    int channel;
-
-    //--- La rain
-    SSnow rains[100];
-    int nextRain;
-
-    //--- Flocon
-    unsigned int tex_snow;
-
-    int nextIn;
-
-    //--- Constructor
-    CSnow();
-
-    //--- Destructor
-    virtual ~CSnow();
-
-    //--- Update
-    void update(float delay, Map* map);
-
-    //--- Render
-    void render();
-};
-
-struct SRain
-{
-    CVector3f pos;
-    SRain();
-    void update(float delay);
-    void render();
-};
-
-struct CRain : public CWeather
-{
-    //--- Weather sound
-    FSOUND_SAMPLE * m_sfxRain;
-    int channel;
-
-    //--- La rain
-    SRain rains[100];
-    int nextRain;
-
-    //--- Constructor
-    CRain();
-
-    //--- Destructor
-    virtual ~CRain();
-
-    //--- Update
-    void update(float delay, Map* map);
-
-    //--- Render
-    void render();
-};
-
-
-struct CLava : public CWeather
-{
-    //--- Weather sound
-    FSOUND_SAMPLE * m_sfxRain;
-    int channel;
-
-    //--- Constructor
-    CLava();
-
-    //--- Destructor
-    virtual ~CLava();
-
-    //--- Update
-    void update(float delay, Map* map);
-
-    //--- Render
-    void render();
-};
-
-
-//--- SVertex: A single vertex with a normal, single texture, and colour
-struct SVertex
-{
-    float x,y,z;
-    float nx,ny,nz;
-    float u,v;
-    float r,g,b,a;
-};
-
-
-//--- CMaterial: A set of settings used to render a vertex buffer
-class CMaterial
-{
-public:
-    typedef unsigned int texture_t;
-
-    //--- No texture constant
-    static const texture_t no_texture = static_cast<texture_t>(-1);
-
-    //--- Blend modes
-    enum blend_t
+    auto cmap = static_cast<ClientMap*>(map);
+    --snow->nextIn;
+    //--- On crée la neige yé
+    if (snow->nextIn <= 0)
     {
-        BLEND_NONE,
-        BLEND_ALPHA,
-    };
+        snow->nextIn = 3;
+        for (int i=0;i<1;++i)
+        {
+            snow->pos[snow->nextRain] = rand(cmap->camPos + CVector3f(-3,-3,-2), cmap->camPos + CVector3f(3,3,-2));
+            snow->nextRain++;
+            if (snow->nextRain == 100) snow->nextRain = 0;
+        }
+    }
 
-    //--- Constructor/Destructor
-    CMaterial(texture_t tex = no_texture, blend_t blend = BLEND_NONE, bool diffuse = true, bool lit = false);
-    virtual ~CMaterial();
+    //--- On anime la plus
+    for (int i=0;i<100;++i)
+    {
+        if (snow->pos[i][2] > 0)
+        {
+            snow->pos[i][2] -= 2 * delay;
+            snow->pos[i] += rand(CVector3f(-1, -1, 0), CVector3f(1, 1, 0)) * delay;
+        }
+    }
+}
 
-    //--- Enable/Disable (sets OpenGL states)
-    void enable(SVertex* first) const;
-    void disable() const;
-
-    //--- Equality operator
-    bool operator==(const CMaterial &rhs) const;
-
-protected:
-    texture_t   m_tex;
-    blend_t     m_blend;
-    bool        m_lit;
-    bool        m_diffuse;
-};
-
-
-//--- CVertexBuffer: A set of tris rendered using the same texture
-class CVertexBuffer
+void CRain_Init(CRain* rain)
 {
-public:
-    typedef SVertex                 vertex_t;
-    typedef std::vector<vertex_t>   vertex_buf_t;
+    rain->pos = new CVector3f[100];
+    rain->m_sfxRain = dksCreateSoundFromFile("main/sounds/rain2.wav", true);
 
-    //--- Constructor/Destructor
-    CVertexBuffer(const CMaterial& mat);
-    virtual ~CVertexBuffer();
+    //--- Start the sound
+    rain->channel = dksPlaySound(rain->m_sfxRain, -1, 50);
 
-    //--- Adds a tri
-    void add(const SVertex& a, const SVertex& b, const SVertex& c);
+    rain->nextRain = 0;
+}
 
-    //--- Gets the material
-    const CMaterial& material() { return m_mat; }
-
-    //--- Gets a pointer to the first vertex
-    SVertex*        first() { return m_vb.size() > 0 ? &m_vb[0] : 0; }
-
-    //--- Size
-    size_t size() { return m_vb.size(); }
-
-protected:
-    vertex_buf_t    m_vb;
-    CMaterial       m_mat;
-};
-
-//--- CMesh: A renderable set of vertex buffers
-class CMesh
+void CRain_Release(CRain* rain)
 {
-public:
-    typedef std::vector<CVertexBuffer>  vb_list_t;
+    delete[] rain->pos;
+    FSOUND_StopSound(rain->channel);
+    dksDeleteSound(rain->m_sfxRain);
+}
 
-    //--- Constructor/Destructor
-    CMesh(vb_list_t& vbs);
-    virtual ~CMesh();
+void CRain_Update(CRain* rain, float delay, Map* map)
+{
+    auto cmap = static_cast<ClientMap*>(map);
+    int i;
+    //--- On crée la pluit yé
+    for(i = 0; i < 3; ++i)
+    {
+        rain->pos[rain->nextRain] = rand(cmap->camPos + CVector3f(-3, -3, 5), cmap->camPos + CVector3f(3, 3, 5));
+        rain->nextRain++;
+        if(rain->nextRain == 100) rain->nextRain = 0;
+    }
 
-    //--- Render
-    void render();
-    void renderSubMesh(size_t index);
+    //--- On anime la plus
+    for(i = 0; i < 100; ++i)
+    {
+        if(rain->pos[i][2] > 0)
+        {
+            rain->pos[i][2] -= 15 * delay;
+        }
+    }
+}
 
-    //--- Size
-    size_t size() { return m_vbs.size(); }
+void CLava_Init(CLava* lava)
+{
+    lava->m_sfxRain = dksCreateSoundFromFile("main/sounds/lava.wav", true);
 
-protected:
-    vb_list_t   m_vbs;
-};
+    //--- Start the sound
+    lava->channel = dksPlaySound(lava->m_sfxRain, -1, 50);
+}
 
+void CLava_Release(CLava* lava)
+{
+    FSOUND_StopSound(lava->channel);
+    dksDeleteSound(lava->m_sfxRain);
+}
+
+void CWeather_Init(CWeather* weather, int type)
+{
+    weather->type = type;
+    switch(weather->type)
+    {
+    case WEATHER_NONE:      break;
+    case WEATHER_FOG:       break;
+    case WEATHER_SNOW:      CSnow_Init(&weather->data.snow); break;
+    case WEATHER_RAIN:      CRain_Init(&weather->data.rain); break;
+    case WEATHER_SANDSTORM: break;
+    case WEATHER_LAVA:      CLava_Init(&weather->data.lava); break;
+    }
+}
+
+void CWeather_Release(CWeather* weather)
+{
+    switch(weather->type)
+    {
+    case WEATHER_NONE:      break;
+    case WEATHER_FOG:       break;
+    case WEATHER_SNOW:      CSnow_Release(&weather->data.snow); break;
+    case WEATHER_RAIN:      CRain_Release(&weather->data.rain); break;
+    case WEATHER_SANDSTORM: break;
+    case WEATHER_LAVA:      CLava_Release(&weather->data.lava); break;
+    }
+    weather->type = WEATHER_NONE;
+}
+
+void CWeather_Update(CWeather* weather, float delay, ClientMap* map)
+{
+    switch(weather->type)
+    {
+    case WEATHER_NONE:      break;
+    case WEATHER_FOG:       break;
+    case WEATHER_SNOW:      CSnow_Update(&weather->data.snow, delay, map); break;
+    case WEATHER_RAIN:      CRain_Update(&weather->data.rain, delay, map); break;
+    case WEATHER_SANDSTORM: break;
+    case WEATHER_LAVA:      break;
+    }
+}
+
+CMaterial CMaterial_Create(CMaterial::texture_t tex = CMaterial::no_texture, CMaterial::blend_t blend = CMaterial::BLEND_NONE, bool diffuse = true, bool lit = false)
+{
+    CMaterial material;
+    material.m_tex = tex;
+    material.m_blend = blend;
+    material.m_diffuse = diffuse;
+    material.m_lit = lit;
+    return material;
+}
+
+bool CMaterial_Equal(CMaterial a, CMaterial b)
+{
+    return (a.m_tex == b.m_tex && a.m_blend == b.m_blend && a.m_diffuse == b.m_diffuse && a.m_lit == b.m_lit);
+}
+
+void MeshPart_Add(MeshPart* part, const SVertex& a, const SVertex& b, const SVertex& c)
+{
+    part->buffer.push_back(a);
+    part->buffer.push_back(b);
+    part->buffer.push_back(c);
+}
 
 //--- CMeshBuilder: Builds a set of vertex buffers a vertex at a time
-class CMeshBuilder
+struct CMeshBuilder
 {
-public:
-    typedef CVertexBuffer::vertex_buf_t vb_t;
+    typedef MeshPart::vertex_buf_t vb_t;
     typedef CMesh::vb_list_t            vb_list_t;
 
-    //--- Constructor/Destructor
-    CMeshBuilder(const CMaterial& material);
-    virtual ~CMeshBuilder();
-
-    //--- Set current material
-    void bind(const CMaterial& material, bool forceNew = false);
-
-    //--- Adds a vertex
-    void vertex(float x, float y, float z, float u = 0, float v = 0);
-
-    //--- Set current normal
-    void normal(float x, float y, float z);
-
-    //--- Set current colour
-    void colour(float r, float g, float b, float a = 1);
-
-    //--- Compile the mesh (delete when finished)
-    CMesh* compile();
-
-protected:
     //--- List of vertex buffers
-    vb_list_t   m_vbs;
+    vb_list_t   parts;
 
     //--- Temporary buffer for incomplete tris
     vb_t        m_tempBuf;
@@ -267,6 +210,83 @@ protected:
 
     //--- Index to current buffer
     size_t      m_i;
+
+    CMeshBuilder(const CMaterial& material): m_i(0), m_colour(1,1,1,1)
+    {
+        //--- Start the first buffer
+        MeshPart part;
+        part.material = material;
+        parts.push_back( part );
+    }
+
+    ~CMeshBuilder() {}
+
+    void bind(CMaterial material, bool forceNew = false)
+    {
+        //--- Empty the temporary buffer
+        m_tempBuf.resize(0);
+
+        //--- Check if this texture/mode combo is used already
+        if(!forceNew)
+        {
+            for(size_t i = 0; i < parts.size(); ++i)
+            {
+                if(CMaterial_Equal(parts[i].material, material))
+                {
+                    m_i = i;
+                    return;
+                }
+            }
+        }
+
+        //--- Start a new buffer
+        MeshPart part;
+        part.material = material;
+        parts.push_back( part );
+        m_i = parts.size() - 1;
+    }
+
+    void vertex(float x, float y, float z, float u = 0.f, float v = 0.f)
+    {
+        //--- Create the vertex
+        SVertex vtx = { x, y, z,
+            m_normal[0], m_normal[1], m_normal[2],
+            u, v, m_colour[0], m_colour[1], m_colour[2], m_colour[3]
+        };
+
+        //--- Add to the temporary buffer
+        m_tempBuf.push_back( vtx );
+
+        //--- Do we have enough for a tri?
+        if(m_tempBuf.size() > 2)
+        {
+            MeshPart_Add(&parts[m_i], m_tempBuf[0], m_tempBuf[1], m_tempBuf[2] );
+
+            //--- Empty the temporary buffer
+            m_tempBuf.resize(0);
+        }
+    }
+
+    void normal(float x, float y, float z)
+    {
+        m_normal.set(x,y,z);
+    }
+
+    void colour(float r, float g, float b, float a = 1.f)
+    {
+        m_colour.set(r,g,b,a);
+    }
+
+    CMesh* compile()
+    {
+        //--- Empty the temporary buffer
+        m_tempBuf.resize(0);
+
+        //--- Return a CMesh (this will clear parts)
+        CMesh* mesh = new CMesh;
+        mesh->parts.swap(parts);
+        return mesh;
+    }
 };
 
 ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool editor, int sizeX, int sizeY)
@@ -276,7 +296,6 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
     int i, j, gtnum;
     //-- On print le loading screen! (new)
     // On clear les buffers, on init la camera, etc
-    cell_dl = nullptr;
 
     renderLoadingScreen(font);
 
@@ -295,10 +314,9 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
     if(mapFilename.len() > 15) mapFilename.resize(15);
 
     isValid = true;
-    isEditor = editor;
     mapName = mapFilename;
     flagAnim = 0;
-    m_weather = 0;
+    CWeather_Init(&m_weather, WEATHER_NONE);
 
     if(!isServer)
     {
@@ -335,7 +353,7 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
     // Ugly code was required to avoid modification of the remaining code
     FileIO  fileObj(fullName, "rb");
     FileIO* fptr = 0;
-    if(scene->server || isEditor)
+    if(scene->server)
         fptr = &fileObj;
     else
     {
@@ -580,8 +598,6 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
         return;
     }
 
-    cell_dl = new unsigned int[size[0] * size[1]];
-
     //--- We load now the minimap thumbnail
     {
         // On cré l'espace pour la texture
@@ -628,11 +644,10 @@ void ClientMap::update(float delay, Player * thisPlayer)
     }
 #endif
 
-    if(m_weather) m_weather->update(delay, this);
-
+    CWeather_Update(&m_weather, delay, this);
 
     // Snipers should be able to scope at map edges
-    if(isEditor || (thisPlayer && thisPlayer->weapon && thisPlayer->weapon->weaponID != WEAPON_SNIPER) || (thisPlayer && thisPlayer->teamID == PLAYER_TEAM_SPECTATOR))
+    if((thisPlayer && thisPlayer->weapon && thisPlayer->weapon->weaponID != WEAPON_SNIPER) || (thisPlayer && thisPlayer->teamID == PLAYER_TEAM_SPECTATOR))
     {
         if(camLookAt[0] < 5) camLookAt[0] = 5;
         if(camLookAt[0] > (float)size[0] - 5) camLookAt[0] = (float)size[0] - 5;
@@ -673,17 +688,6 @@ void ClientMap::update(float delay, Player * thisPlayer)
             camDest = camLookAt + CVector3f(0, 0, 14 + zoom); // On voit de plus loin pour mieux bombarder lol (joke)
         }
     }
-    else if(isEditor)
-    {
-        // Update zoom
-        int longestSide = (size[0] > size[1]) ? size[0] : size[1];;
-        zoom += -dkiGetMouseWheelVel()*0.01f;
-        zoom = (zoom < -8) ? -8 : zoom;
-        zoom = (zoom > longestSide / 2) ? longestSide / 2 : zoom;
-
-        // Set camera
-        camDest = camLookAt + CVector3f(0, 0, 14 + zoom); // On voit de plus loin pour mieux bombarder lol (joke)
-    }
     else
     {
         // Hum, on est dans l'editeur
@@ -704,7 +708,7 @@ void ClientMap::update(float delay, Player * thisPlayer)
 
 void ClientMap::reloadWeather()
 {
-    ZEVEN_SAFE_DELETE(m_weather);
+    CWeather_Release(&m_weather);
 
     fogDensity = 1;
     fogStart = -3;
@@ -732,12 +736,13 @@ void ClientMap::reloadWeather()
         weather = WEATHER_LAVA;
     else weather = WEATHER_NONE;
 
+    CWeather_Init(&m_weather, weather);
+
     if(weather == WEATHER_RAIN)
     {
         fogStart = 4;
         fogEnd = -3;
         fogColor.set(.15f, .25f, .25f, 1);
-        m_weather = new CRain();
     }
     if(weather == WEATHER_FOG)
     {
@@ -748,311 +753,13 @@ void ClientMap::reloadWeather()
     if(weather == WEATHER_SNOW)
     {
         fogDensity = 0;
-        m_weather = new CSnow();
     }
     if(weather == WEATHER_LAVA)
     {
         fogDensity = 0;
-        m_weather = new CLava();
     }
 }
 
-void ClientMap::regenCell(int i, int j)
-{
-    if(i < 0 || j < 0 || i >= size[0] || j >= size[1]) return;
-    int pos = j * size[0] + i;
-    if(cell_dl[pos]) glDeleteLists(cell_dl[pos], 1);
-    cell_dl[pos] = 0;
-    if(!cells[pos].passable)
-    {
-        cell_dl[pos] = glGenLists(1);
-        glNewList(cell_dl[pos], GL_COMPILE);
-        if(cells[pos].height == 1)
-        {
-            glBindTexture(GL_TEXTURE_2D, tex_wall_both);
-        }
-        else
-        {
-            glBindTexture(GL_TEXTURE_2D, tex_wall_bottom);
-        }
-
-        if(j > 0)
-        {
-            if(cells[(j - 1)*size[0] + (i)].passable)
-            {
-                glColor3f(.3f, .3f, .3f);
-                glBegin(GL_QUADS);
-                glTexCoord2i(0, 1);
-                glVertex3i(i, j, 1);
-                glTexCoord2i(0, 0);
-                glVertex3i(i, j, 0);
-                glTexCoord2i(1, 0);
-                glVertex3i(i + 1, j, 0);
-                glTexCoord2i(1, 1);
-                glVertex3i(i + 1, j, 1);
-                glEnd();
-            }
-        }
-
-        if(i < size[0] - 1)
-        {
-            if(cells[(j)*size[0] + (i + 1)].passable)
-            {
-                glColor3f(.4f, .4f, .4f);
-                glBegin(GL_QUADS);
-                glTexCoord2i(0, 1);
-                glVertex3i(i + 1, j, 1);
-                glTexCoord2i(0, 0);
-                glVertex3i(i + 1, j, 0);
-                glTexCoord2i(1, 0);
-                glVertex3i(i + 1, j + 1, 0);
-                glTexCoord2i(1, 1);
-                glVertex3i(i + 1, j + 1, 1);
-                glEnd();
-            }
-        }
-
-        if(j < size[1] - 1)
-        {
-            if(cells[(j + 1)*size[0] + (i)].passable)
-            {
-                glColor3f(.7f, .7f, .7f);
-                glBegin(GL_QUADS);
-                glTexCoord2i(0, 1);
-                glVertex3i(i + 1, j + 1, 1);
-                glTexCoord2i(0, 0);
-                glVertex3i(i + 1, j + 1, 0);
-                glTexCoord2i(1, 0);
-                glVertex3i(i, j + 1, 0);
-                glTexCoord2i(1, 1);
-                glVertex3i(i, j + 1, 1);
-                glEnd();
-            }
-        }
-
-        if(i > 0)
-        {
-            if(cells[(j)*size[0] + (i - 1)].passable)
-            {
-                glColor3f(.8f, .8f, .8f);
-                glBegin(GL_QUADS);
-                glTexCoord2i(0, 1);
-                glVertex3i(i, j + 1, 1);
-                glTexCoord2i(0, 0);
-                glVertex3i(i, j + 1, 0);
-                glTexCoord2i(1, 0);
-                glVertex3i(i, j, 0);
-                glTexCoord2i(1, 1);
-                glVertex3i(i, j, 1);
-                glEnd();
-            }
-        }
-
-        //--- Les partie central
-        if(cells[pos].height > 2)
-        {
-            int h = 1;
-            glBindTexture(GL_TEXTURE_2D, tex_wall_center);
-            if(j > 0)
-            {
-                if(cells[(j - 1)*size[0] + (i)].passable || cells[pos].height - 1 > cells[(j - 1)*size[0] + (i)].height)
-                {
-                    if(!cells[(j - 1)*size[0] + (i)].passable)
-                    {
-                        h = cells[(j - 1)*size[0] + (i)].height;
-                    }
-                    glColor3f(.3f, .3f, .3f);
-                    glBegin(GL_QUADS);
-                    glTexCoord2i(0, cells[pos].height - 1 - h);
-                    glVertex3i(i, j, cells[pos].height - 1);
-                    glTexCoord2i(0, 0);
-                    glVertex3i(i, j, h);
-                    glTexCoord2i(1, 0);
-                    glVertex3i(i + 1, j, h);
-                    glTexCoord2i(1, cells[pos].height - 1 - h);
-                    glVertex3i(i + 1, j, cells[pos].height - 1);
-                    glEnd();
-                }
-            }
-
-            if(i < size[0] - 1)
-            {
-                if(cells[(j)*size[0] + (i + 1)].passable || cells[pos].height > cells[(j)*size[0] + (i + 1)].height)
-                {
-                    if(!cells[(j)*size[0] + (i + 1)].passable)
-                    {
-                        h = cells[(j)*size[0] + (i + 1)].height;
-                    }
-                    glColor3f(.4f, .4f, .4f);
-                    glBegin(GL_QUADS);
-                    glTexCoord2i(0, cells[pos].height - 1 - h);
-                    glVertex3i(i + 1, j, cells[pos].height - 1);
-                    glTexCoord2i(0, 0);
-                    glVertex3i(i + 1, j, h);
-                    glTexCoord2i(1, 0);
-                    glVertex3i(i + 1, j + 1, h);
-                    glTexCoord2i(1, cells[pos].height - 1 - h);
-                    glVertex3i(i + 1, j + 1, cells[pos].height - 1);
-                    glEnd();
-                }
-            }
-
-            if(j < size[1] - 1)
-            {
-                if(cells[(j + 1)*size[0] + (i)].passable || cells[pos].height > cells[(j + 1)*size[0] + (i)].height)
-                {
-                    if(!cells[(j + 1)*size[0] + (i)].passable)
-                    {
-                        h = cells[(j + 1)*size[0] + (i)].height;
-                    }
-                    glColor3f(.7f, .7f, .7f);
-                    glBegin(GL_QUADS);
-                    glTexCoord2i(0, cells[pos].height - 1 - h);
-                    glVertex3i(i + 1, j + 1, cells[pos].height - 1);
-                    glTexCoord2i(0, 0);
-                    glVertex3i(i + 1, j + 1, h);
-                    glTexCoord2i(1, 0);
-                    glVertex3i(i, j + 1, h);
-                    glTexCoord2i(1, cells[pos].height - 1 - h);
-                    glVertex3i(i, j + 1, cells[pos].height - 1);
-                    glEnd();
-                }
-            }
-
-            if(i > 0)
-            {
-                if(cells[(j)*size[0] + (i - 1)].passable || cells[pos].height > cells[(j)*size[0] + (i - 1)].height)
-                {
-                    if(!cells[(j)*size[0] + (i - 1)].passable)
-                    {
-                        h = cells[(j)*size[0] + (i - 1)].height;
-                    }
-                    glColor3f(.8f, .8f, .8f);
-                    glBegin(GL_QUADS);
-                    glTexCoord2i(0, cells[pos].height - 1 - h);
-                    glVertex3i(i, j + 1, cells[pos].height - 1);
-                    glTexCoord2i(0, 0);
-                    glVertex3i(i, j + 1, h);
-                    glTexCoord2i(1, 0);
-                    glVertex3i(i, j, h);
-                    glTexCoord2i(1, cells[pos].height - 1 - h);
-                    glVertex3i(i, j, cells[pos].height - 1);
-                    glEnd();
-                }
-            }
-        }
-
-        //--- La partie du haut
-        if(cells[pos].height > 1)
-        {
-            glBindTexture(GL_TEXTURE_2D, tex_wall_up);
-            if(j > 0)
-            {
-                if(cells[(j - 1)*size[0] + (i)].passable || cells[pos].height > cells[(j - 1)*size[0] + (i)].height)
-                {
-                    glColor3f(.3f, .3f, .3f);
-                    glBegin(GL_QUADS);
-                    glTexCoord2i(0, 1);
-                    glVertex3i(i, j, cells[pos].height);
-                    glTexCoord2i(0, 0);
-                    glVertex3i(i, j, cells[pos].height - 1);
-                    glTexCoord2i(1, 0);
-                    glVertex3i(i + 1, j, cells[pos].height - 1);
-                    glTexCoord2i(1, 1);
-                    glVertex3i(i + 1, j, cells[pos].height);
-                    glEnd();
-                }
-            }
-
-            if(i < size[0] - 1)
-            {
-                if(cells[(j)*size[0] + (i + 1)].passable || cells[pos].height > cells[(j)*size[0] + (i + 1)].height)
-                {
-                    glColor3f(.4f, .4f, .4f);
-                    glBegin(GL_QUADS);
-                    glTexCoord2i(0, 1);
-                    glVertex3i(i + 1, j, cells[pos].height);
-                    glTexCoord2i(0, 0);
-                    glVertex3i(i + 1, j, cells[pos].height - 1);
-                    glTexCoord2i(1, 0);
-                    glVertex3i(i + 1, j + 1, cells[pos].height - 1);
-                    glTexCoord2i(1, 1);
-                    glVertex3i(i + 1, j + 1, cells[pos].height);
-                    glEnd();
-                }
-            }
-
-            if(j < size[1] - 1)
-            {
-                if(cells[(j + 1)*size[0] + (i)].passable || cells[pos].height > cells[(j + 1)*size[0] + (i)].height)
-                {
-                    glColor3f(.7f, .7f, .7f);
-                    glBegin(GL_QUADS);
-                    glTexCoord2i(0, 1);
-                    glVertex3i(i + 1, j + 1, cells[pos].height);
-                    glTexCoord2i(0, 0);
-                    glVertex3i(i + 1, j + 1, cells[pos].height - 1);
-                    glTexCoord2i(1, 0);
-                    glVertex3i(i, j + 1, cells[pos].height - 1);
-                    glTexCoord2i(1, 1);
-                    glVertex3i(i, j + 1, cells[pos].height);
-                    glEnd();
-                }
-            }
-
-            if(i > 0)
-            {
-                if(cells[(j)*size[0] + (i - 1)].passable || cells[pos].height > cells[(j)*size[0] + (i - 1)].height)
-                {
-                    glColor3f(.8f, .8f, .8f);
-                    glBegin(GL_QUADS);
-                    glTexCoord2i(0, 1);
-                    glVertex3i(i, j + 1, cells[pos].height);
-                    glTexCoord2i(0, 0);
-                    glVertex3i(i, j + 1, cells[pos].height - 1);
-                    glTexCoord2i(1, 0);
-                    glVertex3i(i, j, cells[pos].height - 1);
-                    glTexCoord2i(1, 1);
-                    glVertex3i(i, j, cells[pos].height);
-                    glEnd();
-                }
-            }
-        }
-
-        //--- Le top
-        glBindTexture(GL_TEXTURE_2D, tex_wall_top);
-        glColor3f(1, 1, 1);
-        glBegin(GL_QUADS);
-        glTexCoord2i(0, 1);
-        glVertex3i(i, j + 1, cells[pos].height);
-        glTexCoord2i(0, 0);
-        glVertex3i(i, j, cells[pos].height);
-        glTexCoord2i(1, 0);
-        glVertex3i(i + 1, j, cells[pos].height);
-        glTexCoord2i(1, 1);
-        glVertex3i(i + 1, j + 1, cells[pos].height);
-        glEnd();
-        glEndList();
-    }
-}
-
-
-void ClientMap::regenDL()
-{
-    //---We create now all the wall's display list (HEaDShOt)
-    int i, j;
-    for(j = 0; j < size[1]; ++j)
-    {
-        for(i = 0; i < size[0]; ++i)
-        {
-            regenCell(i, j);
-        }
-    }
-
-}
-
-
-//--- To reload the theme
 void ClientMap::reloadTheme()
 {
     if(tex_grass) dktDeleteTexture(&tex_grass);
@@ -1112,28 +819,14 @@ void ClientMap::reloadTheme()
 //
 ClientMap::~ClientMap()
 {
-    if(isValid && cell_dl)
-    {
-        for(int i = 0; i < size[0] * size[1]; ++i) {
-            if (cell_dl[i]) glDeleteLists(cell_dl[i], 1);
-        }
-        ZEVEN_SAFE_DELETE_ARRAY(cell_dl);
-    }
     if(!isServer)
     {
-        ZEVEN_SAFE_DELETE(m_weather);
+        CWeather_Release(&m_weather);
 
         dktDeleteTexture(&texMap);
         dktDeleteTexture(&tex_grass);
         dktDeleteTexture(&tex_dirt);
         dktDeleteTexture(&tex_wall);
-
-        //  dktDeleteTexture(&tex_floor);
-        //  dktDeleteTexture(&tex_floor_dirt);
-        //  dktDeleteTexture(&tex_wall_bottom);
-        //  dktDeleteTexture(&tex_wall_center);
-        //  dktDeleteTexture(&tex_wall_up);
-        //  dktDeleteTexture(&tex_wall_top);
 
         dkoDeleteModel(&dko_flag[0]);
         dkoDeleteModel(&dko_flagPod[0]);
@@ -1370,9 +1063,9 @@ void ClientMap::buildGround()
 {
     if(groundMesh) delete groundMesh;
 
-    CMaterial base(tex_dirt);
-    CMaterial base_weather(tex_dirt, CMaterial::BLEND_ALPHA);
-    CMaterial splat(tex_grass, CMaterial::BLEND_ALPHA);
+    CMaterial base = CMaterial_Create(tex_dirt);
+    CMaterial base_weather = CMaterial_Create(tex_dirt, CMaterial::BLEND_ALPHA);
+    CMaterial splat = CMaterial_Create(tex_grass, CMaterial::BLEND_ALPHA);
 
     CMeshBuilder builder(base);
 
@@ -1430,7 +1123,7 @@ void ClientMap::buildShadow()
 {
     if(shadowMesh) delete shadowMesh;
 
-    CMaterial shadow(CMaterial::no_texture, CMaterial::BLEND_ALPHA, true);
+    CMaterial shadow = CMaterial_Create(CMaterial::no_texture, CMaterial::BLEND_ALPHA, true);
 
     CMeshBuilder builder(shadow);
 
@@ -1481,7 +1174,7 @@ void ClientMap::buildWalls()
 {
     if(wallMesh) delete wallMesh;
 
-    CMaterial wall(tex_wall, CMaterial::BLEND_NONE, true);
+    CMaterial wall = CMaterial_Create(tex_wall, CMaterial::BLEND_NONE, true);
     CMeshBuilder builder(wall);
 
     int i, j, h;
@@ -1589,118 +1282,6 @@ void ClientMap::buildWallSide(CMeshBuilder& builder, float* vert1, float* vert2,
     builder.vertex(vert3[0], vert3[1], vert3[2], 1, h);
     builder.vertex(vert4[0], vert4[1], vert4[2], 0, h);
     builder.vertex(vert2[0], vert2[1], vert2[2], 1, 0);
-}
-
-void ClientMap::renderGround()
-{
-    glPushAttrib(GL_ENABLE_BIT);
-    glDepthMask(GL_FALSE);
-
-    //--- Render the map
-    groundMesh->render();
-
-    // render the grid for the editor
-    if(isEditor)
-    {
-        glDisable(GL_BLEND);
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_LIGHTING);
-        glLineWidth(2);
-        glColor3f(0.0f, 0.0f, 0.0f);
-        for(int j = 0; j < size[1]; ++j)
-        {
-            for(int i = 0; i < size[0]; ++i)
-            {
-                glBegin(GL_LINE_LOOP);
-                glVertex2i(i, j + 1);
-                glVertex2i(i, j);
-                glVertex2i(i + 1, j);
-                glVertex2i(i + 1, j + 1);
-                glEnd();
-            }
-        }
-
-        float currentRedDist = 0;
-        float farthestRedSpawn = 0;
-        float currentBlueDist = 0;
-        float farthestBlueSpawn = 0;
-        for(int i = 0; i < (int)dm_spawns.size(); i++)
-        {//draw projected spawn
-            int dist = 1000000;
-            for(int j = 0; j < (int)blue_spawns.size(); j++)
-            {
-                if(distanceSquared(dm_spawns[i], blue_spawns[j]) < dist)
-                    dist = (int)distanceSquared(dm_spawns[i], blue_spawns[j]);
-            }
-            if(dist > currentRedDist)
-            {
-                currentRedDist = (float)dist;
-                farthestRedSpawn = (float)i;
-            }
-            dist = 1000000;
-            for(int j = 0; j < (int)red_spawns.size(); j++)
-            {
-                if(distanceSquared(dm_spawns[i], red_spawns[j]) < dist)
-                    dist = (int)distanceSquared(dm_spawns[i], red_spawns[j]);
-            }
-            if(dist > currentBlueDist)
-            {
-                currentBlueDist = (float)dist;
-                farthestBlueSpawn = (float)i;
-            }
-        }
-        if(!dm_spawns.empty())
-        {
-            for(int i = 0; i < (int)blue_spawns.size(); i++)
-            {
-                glColor3f(1.0, 0.0, 0.0);
-                glLineWidth(2);
-                glBegin(GL_LINE_LOOP);
-                {
-                    glVertex2f(dm_spawns[(int)farthestRedSpawn][0], dm_spawns[(int)farthestRedSpawn][1]);
-                    glVertex2f(blue_spawns[i][0], blue_spawns[i][1]);
-                }
-                glEnd();
-            }
-            for(int i = 0; i < (int)red_spawns.size(); i++)
-            {
-                glColor3f(0.0, 0.0, 1.0);
-                glLineWidth(2);
-                glBegin(GL_LINE_LOOP);
-                {
-                    glVertex2f(dm_spawns[(int)farthestBlueSpawn][0], dm_spawns[(int)farthestBlueSpawn][1]);
-                    glVertex2f(red_spawns[i][0], red_spawns[i][1]);
-                }
-                glEnd();
-            }
-        }
-    }
-
-    glDepthMask(GL_TRUE);
-    glPopAttrib();
-}
-
-void ClientMap::renderShadow()
-{
-    if(gameVar.r_shadowQuality == 0) return;
-
-    shadowMesh->render();
-}
-
-void ClientMap::renderWalls()
-{
-    wallMesh->render();
-
-    // Tout est fini, on peut maintenant renderer le plancher dans le zbuffer
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glBegin(GL_QUADS);
-    glVertex2i(0, size[1] + 1);
-    glVertex2i(0, 0);
-    glVertex2i(size[0] + 1, 0);
-    glVertex2i(size[0] + 1, size[1] + 1);
-    glEnd();
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 void ClientMap::performCollision(CoordFrame & lastCF, CoordFrame & CF, float radius)
@@ -1982,518 +1563,4 @@ void ClientMap::collisionClip(CoordFrame & CF, float radius)
             currentMin = dis[3];
         }
     }
-}
-
-void ClientMap::renderFlag(int i)
-{
-    glPushMatrix();
-    glTranslatef(flagPos[i][0], flagPos[i][1], flagPos[i][2]);
-    glRotatef(flagAngle[i], 0, 0, 1);
-    glScalef(.005f, .005f, .005f);
-    dkoRender(dko_flag[i], flagAnim);
-    glPopMatrix();
-}
-
-void ClientMap::renderMisc()
-{
-    int i;
-    if(game && (game->gameType != GAME_TYPE_CTF))
-        return;
-
-    glPushMatrix();
-    glTranslatef(flagPodPos[0][0], flagPodPos[0][1], flagPodPos[0][2]);
-    glScalef(.005f, .005f, .005f);
-    dkoRender(dko_flagPod[0]);
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(flagPodPos[1][0], flagPodPos[1][1], flagPodPos[1][2]);
-    glScalef(.005f, .005f, .005f);
-    dkoRender(dko_flagPod[1]);
-    glPopMatrix();
-
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_COLOR_MATERIAL);
-
-    // Les spawn si on est en editor
-    if(isEditor)
-    {
-        for(i = 0; i < (int)dm_spawns.size(); ++i)
-        {
-            glColor3f(1, 0, 1);
-            glPushMatrix();
-            glTranslatef(dm_spawns[i][0], dm_spawns[i][1], dm_spawns[i][2]);
-            //gluSphere(qObj, .25f, 8, 4);
-            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
-            glPopMatrix();
-        }
-        for(i = 0; i < (int)blue_spawns.size(); ++i)
-        {
-            glColor3f(0, 0, 1);
-            glPushMatrix();
-            glTranslatef(blue_spawns[i][0], blue_spawns[i][1], blue_spawns[i][2]);
-            //gluSphere(qObj, .25f, 8, 4);
-            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
-            glPopMatrix();
-        }
-        for(i = 0; i < (int)red_spawns.size(); ++i)
-        {
-            glColor3f(1, 0, 0);
-            glPushMatrix();
-            glTranslatef(red_spawns[i][0], red_spawns[i][1], red_spawns[i][2]);
-            //gluSphere(qObj, .25f, 8, 4);
-            dkglDrawSphere(0.25f, 8, 4, GL_TRIANGLES);
-            glPopMatrix();
-        }
-    }
-
-    if(((game) && (game->gameType == GAME_TYPE_CTF)) || isEditor)
-    {
-        float redAnim = flagAnim + 5.0f;
-        while(redAnim >= 10) redAnim -= 10;
-        // Les flags
-        renderFlag(0);
-        renderFlag(1);
-    }
-}
-
-void ClientMap::renderWeather()
-{
-    if(m_weather) m_weather->render();
-}
-
-SSnow::SSnow()
-{
-}
-void SSnow::update(float delay)
-{
-    pos[2] -= 2 * delay;
-    pos += rand(CVector3f(-1,-1,0), CVector3f(1,1,0)) * delay;
-}
-void SSnow::render()
-{
-    glColor4f(1, 1, 1,((pos[2] > 2)?2:pos[2]) / 2.0f);
-    glTexCoord2f(0,1);
-    glVertex3f(pos[0]-.05f,pos[1]+.05f,pos[2]);
-    glTexCoord2f(0,0);
-    glVertex3f(pos[0]-.05f,pos[1]-.05f,pos[2]);
-    glTexCoord2f(1,0);
-    glVertex3f(pos[0]+.05f,pos[1]-.05f,pos[2]);
-    glTexCoord2f(1,1);
-    glVertex3f(pos[0]+.05f,pos[1]+.05f,pos[2]);
-}
-//
-//--- Constructor
-//
-CSnow::CSnow()
-{
-    m_sfxRain = dksCreateSoundFromFile("main/sounds/wind.wav", true);
-    tex_snow = dktCreateTextureFromFile("main/textures/snowflake.png", DKT_FILTER_LINEAR);
-
-    //--- Start the sound
-    channel = dksPlaySound(m_sfxRain, -1, 50);
-
-    nextRain = 0;
-
-    nextIn = 0;
-}
-
-
-
-//
-//--- Destructor
-//
-CSnow::~CSnow()
-{
-    FSOUND_StopSound(channel);
-    dksDeleteSound(m_sfxRain);
-    dktDeleteTexture(&tex_snow);
-}
-
-
-
-//
-//--- Update
-//
-void CSnow::update(float delay, Map* map)
-{
-    auto cmap = static_cast<ClientMap*>(map);
-    --nextIn;
-    //--- On crée la neige yé
-    if (nextIn <= 0)
-    {
-        nextIn = 3;
-        for (int i=0;i<1;++i)
-        {
-            rains[nextRain].pos = rand(cmap->camPos + CVector3f(-3,-3,-2), cmap->camPos + CVector3f(3,3,-2));
-            nextRain++;
-            if (nextRain == 100) nextRain = 0;
-        }
-    }
-
-    //--- On anime la plus
-    for (int i=0;i<100;++i)
-    {
-        if (rains[i].pos[2] > 0)
-        {
-            rains[i].update(delay);
-        }
-    }
-}
-
-
-
-//
-//--- Render
-//
-void CSnow::render()
-{
-    glPushAttrib(GL_ENABLE_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBindTexture(GL_TEXTURE_2D, tex_snow);
-        glEnable(GL_TEXTURE_2D);
-        glBegin(GL_QUADS);
-            for (int i=0;i<100;++i)
-            {
-                if (rains[i].pos[2] > 0)
-                {
-                    rains[i].render();
-                }
-            }
-        glEnd();
-    glPopAttrib();
-}
-
-SRain::SRain() {}
-
-void SRain::update(float delay)
-{
-    pos[2] -= 15 * delay;
-}
-
-void SRain::render()
-{
-    glColor4f(.25f, .7f, .3f,((pos[2] > 2)?2:pos[2]) / 2.0f * .3f);
-    glVertex3fv(pos.s);
-    glVertex3f(pos[0],pos[1],pos[2]-.5f);
-}
-
-//
-//--- Constructor
-//
-CRain::CRain()
-{
-    m_sfxRain = dksCreateSoundFromFile("main/sounds/rain2.wav", true);
-
-    //--- Start the sound
-    channel = dksPlaySound(m_sfxRain, -1, 50);
-
-    nextRain = 0;
-}
-
-
-
-//
-//--- Destructor
-//
-CRain::~CRain()
-{
-    FSOUND_StopSound(channel);
-    dksDeleteSound(m_sfxRain);
-}
-
-
-
-//
-//--- Update
-//
-void CRain::update(float delay, Map* map)
-{
-    auto cmap = static_cast<ClientMap*>(map);
-    int i;
-    //--- On crée la pluit yé
-    for(i = 0; i < 3; ++i)
-    {
-        rains[nextRain].pos = rand(cmap->camPos + CVector3f(-3, -3, 5), cmap->camPos + CVector3f(3, 3, 5));
-        nextRain++;
-        if(nextRain == 100) nextRain = 0;
-    }
-
-    //--- On anime la plus
-    for(i = 0; i < 100; ++i)
-    {
-        if(rains[i].pos[2] > 0)
-        {
-            rains[i].update(delay);
-        }
-    }
-}
-
-
-
-//
-//--- Render
-//
-void CRain::render()
-{
-    glPushAttrib(GL_ENABLE_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glLineWidth(2);
-    glBegin(GL_LINES);
-    for(int i = 0; i < 100; ++i)
-    {
-        if(rains[i].pos[2] > 0)
-        {
-            rains[i].render();
-        }
-    }
-    glEnd();
-    glPopAttrib();
-}
-
-
-//
-//--- Constructor
-//
-CLava::CLava()
-{
-    m_sfxRain = dksCreateSoundFromFile("main/sounds/lava.wav", true);
-
-    //--- Start the sound
-    channel = dksPlaySound(m_sfxRain, -1, 50);
-}
-
-
-
-//
-//--- Destructor
-//
-CLava::~CLava()
-{
-    FSOUND_StopSound(channel);
-    dksDeleteSound(m_sfxRain);
-}
-
-
-
-//
-//--- Update
-//
-void CLava::update(float delay, Map* map)
-{
-}
-
-
-
-//
-//--- Render
-//
-void CLava::render()
-{
-}
-
-CMeshBuilder::CMeshBuilder(const CMaterial& material): m_i(0), m_colour(1,1,1,1)
-{
-    //--- Start the first buffer
-    m_vbs.push_back( CVertexBuffer(material) );
-}
-
-CMeshBuilder::~CMeshBuilder() {}
-
-void CMeshBuilder::bind(const CMaterial& material, bool forceNew)
-{
-    //--- Empty the temporary buffer
-    m_tempBuf.resize(0);
-
-    //--- Check if this texture/mode combo is used already
-    if(!forceNew)
-    {
-        for(size_t i = 0; i < m_vbs.size(); ++i)
-        {
-            if(m_vbs[i].material() == material)
-            {
-                m_i = i;
-                return;
-            }
-        }
-    }
-
-    //--- Start a new buffer
-    m_vbs.push_back( CVertexBuffer(material) );
-    m_i = m_vbs.size() - 1;
-}
-
-void CMeshBuilder::vertex(float x, float y, float z, float u, float v)
-{
-    //--- Create the vertex
-    SVertex vtx = { x, y, z,
-        m_normal[0], m_normal[1], m_normal[2],
-        u, v, m_colour[0], m_colour[1], m_colour[2], m_colour[3]
-    };
-
-    //--- Add to the temporary buffer
-    m_tempBuf.push_back( vtx );
-
-    //--- Do we have enough for a tri?
-    if(m_tempBuf.size() > 2)
-    {
-        m_vbs[m_i].add( m_tempBuf[0], m_tempBuf[1], m_tempBuf[2] );
-
-        //--- Empty the temporary buffer
-        m_tempBuf.resize(0);
-    }
-}
-
-void CMeshBuilder::normal(float x, float y, float z)
-{
-    m_normal.set(x,y,z);
-}
-
-void CMeshBuilder::colour(float r, float g, float b, float a)
-{
-    m_colour.set(r,g,b,a);
-}
-
-CMesh* CMeshBuilder::compile()
-{
-    //--- Empty the temporary buffer
-    m_tempBuf.resize(0);
-
-    //--- Return a CMesh (this will clear m_vbs)
-    return new CMesh( m_vbs );
-}
-
-CMesh::CMesh(vb_list_t& vbs)
-{
-    //--- Steal the vbs
-    m_vbs.swap(vbs);
-}
-
-CMesh::~CMesh() {}
-
-void CMesh::render()
-{
-    for(size_t i = 0; i < m_vbs.size(); ++i)
-        renderSubMesh(i);
-}
-
-void CMesh::renderSubMesh(size_t index)
-{
-    //--- Check for invalid index or empty buffer
-    if(index < 0 || index >= m_vbs.size() || m_vbs[index].size() < 3 )
-        return;
-
-    //--- Get a reference to the vb & material
-    CVertexBuffer&      vb = m_vbs[index];
-    const CMaterial&    mat = vb.material();
-
-    //--- Enable material
-    mat.enable( vb.first() );
-
-    //--- Draw!
-    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vb.size()) );
-
-    //--- Disable material
-    mat.disable();
-}
-
-CMaterial::CMaterial(texture_t tex, blend_t blend, bool diffuse, bool lit): m_tex(tex), m_blend(blend), m_diffuse(diffuse), m_lit(lit)
-{
-
-}
-
-CMaterial::~CMaterial()
-{
-
-}
-
-void CMaterial::enable(SVertex* first) const
-{
-    //--- Push enable bit, this causes OpenGL to track and revert glEnable states
-    glPushAttrib(GL_ENABLE_BIT);
-
-    //--- Always need verticies
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, sizeof(SVertex), &(first->x) );
-
-    //--- Texturing
-    if(m_tex != no_texture)
-    {
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, m_tex );
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(SVertex), &(first->u) );
-    }
-    else
-    {
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    //--- Lighting
-    if(m_lit)
-    {
-        glEnable(GL_LIGHTING);
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, sizeof(SVertex), &(first->nx) );
-    }
-    else
-    {
-        glDisable(GL_LIGHTING);
-    }
-
-    //--- Blending
-    if(m_blend > BLEND_NONE)
-    {
-        glEnable(GL_BLEND);
-
-        if(m_blend == BLEND_ALPHA)
-        {
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
-    }
-    else
-    {
-        glDisable(GL_BLEND);
-    }
-
-    //--- Diffuse
-    if(m_diffuse)
-    {
-        glEnableClientState(GL_COLOR_ARRAY);
-        glColorPointer(4, GL_FLOAT, sizeof(SVertex), &(first->r) );
-    }
-}
-
-void CMaterial::disable() const
-{
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-    if(m_tex != no_texture)
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    if(m_lit)
-        glDisableClientState(GL_NORMAL_ARRAY);
-
-    if(m_diffuse)
-        glDisableClientState(GL_COLOR_ARRAY);
-
-    //--- Return OpenGL to normal
-    glPopAttrib();
-}
-
-bool CMaterial::operator==(const CMaterial &rhs) const
-{
-    return (m_tex == rhs.m_tex && m_blend == rhs.m_blend && m_diffuse == rhs.m_diffuse && m_lit == rhs.m_lit);
-}
-
-CVertexBuffer::CVertexBuffer(const CMaterial& mat): m_mat(mat) {}
-
-CVertexBuffer::~CVertexBuffer() {}
-
-void CVertexBuffer::add(const SVertex& a, const SVertex& b, const SVertex& c)
-{
-    m_vb.push_back(a);
-    m_vb.push_back(b);
-    m_vb.push_back(c);
 }

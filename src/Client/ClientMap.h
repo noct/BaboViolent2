@@ -20,10 +20,87 @@
 #define CLIENT_MAP_H
 
 #include "Map.h"
+#include <Zeven/Gfx.h>
 
-class CMesh;
-class CMeshBuilder;
-struct CWeather;
+struct CSnow
+{
+    CVector3f * pos;
+    FSOUND_SAMPLE * m_sfxRain;
+    int channel;
+    int nextRain;
+    unsigned int tex_snow;
+    int nextIn;
+};
+
+struct CRain
+{
+    CVector3f * pos;
+    FSOUND_SAMPLE * m_sfxRain;
+    int channel;
+    int nextRain;
+};
+
+struct CLava
+{
+    FSOUND_SAMPLE * m_sfxRain;
+    int channel;
+};
+
+struct CWeather
+{
+    int type;
+    union Data
+    {
+        CRain rain;
+        CLava lava;
+        CSnow snow;
+    } data;
+    CWeather() {}
+};
+
+struct SVertex
+{
+    float x,y,z;
+    float nx,ny,nz;
+    float u,v;
+    float r,g,b,a;
+};
+
+struct CMaterial
+{
+    typedef unsigned int texture_t;
+
+    //--- No texture constant
+    static const texture_t no_texture = static_cast<texture_t>(-1);
+
+    //--- Blend modes
+    enum blend_t
+    {
+        BLEND_NONE,
+        BLEND_ALPHA,
+    };
+
+    texture_t   m_tex;
+    blend_t     m_blend;
+    bool        m_lit;
+    bool        m_diffuse;
+};
+
+struct MeshPart
+{
+    typedef SVertex                 vertex_t;
+    typedef std::vector<vertex_t>   vertex_buf_t;
+    vertex_buf_t    buffer;
+    CMaterial       material;
+};
+
+struct CMesh
+{
+    typedef std::vector<MeshPart>  vb_list_t;
+    vb_list_t parts;
+};
+
+struct CMeshBuilder;
 
 #define SHADOW_DETAIL 32
 
@@ -89,9 +166,6 @@ struct CWeather;
 
 struct ClientMap : public Map
 {
-    unsigned int * cell_dl;
-
-    bool isEditor;
     float flagAnim;
     unsigned int dko_flag[2];
     unsigned int dko_flagPod[2];
@@ -141,11 +215,7 @@ struct ClientMap : public Map
     //--- Son thème
     int theme;
     int weather;
-    CWeather * m_weather;
-
-    // [NUV] Display Lists
-    bool listCreated[3];
-    unsigned int displayList[3];
+    CWeather m_weather;
 
     // Spec Cam Controls
     float       zoom;
@@ -171,23 +241,13 @@ struct ClientMap : public Map
     //given 4 vertices, a brightness indicator, and the height of the wall side, builds the quad
     void buildWallSide(CMeshBuilder& builder,float*,float*,float*,float*,float brightness,float h);
 
-    void renderGround();
-    void renderShadow();
-    void renderWalls();
-
-    void renderMisc();
-    void renderFlag(int index);
-
-    void renderWeather();
-
     // Pour seter la position de la cam
     void setCameraPos(const CVector3f & pCamPos);
     void regenTex();
     void reloadTheme();
-    void regenDL();
-    void regenCell(int i, int j);
     void reloadWeather();
 };
+
 // Returns the names of all existing maps
 void GetMapList(std::vector< CString > & maps);
 

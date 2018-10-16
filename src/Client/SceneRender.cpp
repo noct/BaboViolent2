@@ -29,6 +29,114 @@ extern Scene * scene;
 extern int renderToggle;
 #endif
 
+SVertex* MeshPart_First(MeshPart* part)
+{
+    return part->buffer.size() > 0 ? &part->buffer[0] : 0;
+}
+
+void CMaterial_Enable(CMaterial material, SVertex* first)
+{
+    //--- Push enable bit, this causes OpenGL to track and revert glEnable states
+    glPushAttrib(GL_ENABLE_BIT);
+
+    //--- Always need verticies
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, sizeof(SVertex), &(first->x));
+
+    //--- Texturing
+    if(material.m_tex != CMaterial::no_texture)
+    {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, material.m_tex);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(SVertex), &(first->u));
+    }
+    else
+    {
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    //--- Lighting
+    if(material.m_lit)
+    {
+        glEnable(GL_LIGHTING);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, sizeof(SVertex), &(first->nx));
+    }
+    else
+    {
+        glDisable(GL_LIGHTING);
+    }
+
+    //--- Blending
+    if(material.m_blend > CMaterial::BLEND_NONE)
+    {
+        glEnable(GL_BLEND);
+
+        if(material.m_blend == CMaterial::BLEND_ALPHA)
+        {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+    }
+
+    //--- Diffuse
+    if(material.m_diffuse)
+    {
+        glEnableClientState(GL_COLOR_ARRAY);
+        glColorPointer(4, GL_FLOAT, sizeof(SVertex), &(first->r));
+    }
+}
+
+
+void CMaterial_Disable(CMaterial material)
+{
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    if(material.m_tex != CMaterial::no_texture)
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    if(material.m_lit)
+        glDisableClientState(GL_NORMAL_ARRAY);
+
+    if(material.m_diffuse)
+        glDisableClientState(GL_COLOR_ARRAY);
+
+    //--- Return OpenGL to normal
+    glPopAttrib();
+}
+
+
+void CMesh_RenderMeshPart(CMesh* mesh, size_t index)
+{
+    //--- Check for invalid index or empty buffer
+    if(index < 0 || index >= mesh->parts.size() || mesh->parts[index].buffer.size() < 3)
+        return;
+
+    //--- Get a reference to the parts & material
+    MeshPart& part = mesh->parts[index];
+
+    //--- Enable material
+    CMaterial_Enable(part.material, MeshPart_First(&part));
+
+    //--- Draw!
+    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(part.buffer.size()));
+
+    //--- Disable material
+    CMaterial_Disable(part.material);
+}
+
+void CMesh_Render(CMesh* mesh)
+{
+    for(size_t i = 0; i < mesh->parts.size(); ++i)
+    {
+        CMesh_RenderMeshPart(mesh, i);
+    }
+}
+
 static void MultOglMatrix(CMatrix3x3f m)
 {
     float Matrix[16] = {
@@ -1152,7 +1260,7 @@ static void SceneRender_ClientGame(ClientGame* game)
                     dkglSetPointLight(1, -1000, 1000, 2000, 1, 1, 1);
 
                     // On render les trucs genre flag pod, flag, canon
-                    cmap->renderMisc();
+                    ClientMap_RenderMisc(cmap);
 
                     // On render les players
                     for(i = 0; i < MAX_PLAYER; ++i)
@@ -1183,7 +1291,7 @@ static void SceneRender_ClientGame(ClientGame* game)
                     }
 
                     // On render les murs
-                    cmap->renderWalls();
+                    ClientMap_RenderWalls(cmap);
                 }
 
                 glPopAttrib();
@@ -1282,7 +1390,7 @@ static void SceneRender_ClientGame(ClientGame* game)
             }
 
         // Render la map
-        cmap->renderGround();
+        ClientMap_RenderGround(cmap);
 
         // On render les floor mark et projectile shadows
         glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);
@@ -1340,7 +1448,7 @@ static void SceneRender_ClientGame(ClientGame* game)
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 6)
 #endif
-            cmap->renderMisc();
+            ClientMap_RenderMisc(cmap);
 
         // On render les players
 #ifdef RENDER_LAYER_TOGGLE
@@ -1388,13 +1496,13 @@ static void SceneRender_ClientGame(ClientGame* game)
 #ifdef RENDER_LAYER_TOGGLE
             if(renderToggle >= 10)
 #endif
-                cmap->renderShadow();
+                ClientMap_RenderShadow(cmap);
 
             // On render les murs
 #ifdef RENDER_LAYER_TOGGLE
             if(renderToggle >= 11)
 #endif
-                cmap->renderWalls();
+                ClientMap_RenderWalls(cmap);
         }
         glPopAttrib();
 
@@ -1452,7 +1560,7 @@ static void SceneRender_ClientGame(ClientGame* game)
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 15)
 #endif
-            cmap->renderWeather();
+            ClientMap_RenderWeather(cmap);
 
         //--- Nuke flash!!!!!!
         glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);
@@ -3002,4 +3110,146 @@ void renderBabo(int rect[4], float angle, uint32_t texSkin, uint32_t texShadow)
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
+}
+
+void ClientMap_RenderGround(ClientMap* map)
+{
+
+    glPushAttrib(GL_ENABLE_BIT);
+    glDepthMask(GL_FALSE);
+
+    //--- Render the map
+    CMesh_Render(map->groundMesh);
+
+    glDepthMask(GL_TRUE);
+    glPopAttrib();
+}
+
+void ClientMap_RenderShadow(ClientMap* map)
+{
+    if(gameVar.r_shadowQuality == 0) return;
+
+    CMesh_Render(map->shadowMesh);
+}
+
+void ClientMap_RenderWalls(ClientMap* map)
+{
+    CMesh_Render(map->wallMesh);
+
+    // Tout est fini, on peut maintenant renderer le plancher dans le zbuffer
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glBegin(GL_QUADS);
+    glVertex2i(0, map->size[1] + 1);
+    glVertex2i(0, 0);
+    glVertex2i(map->size[0] + 1, 0);
+    glVertex2i(map->size[0] + 1, map->size[1] + 1);
+    glEnd();
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+}
+
+void ClientMap_RenderMisc(ClientMap* map)
+{
+    int i;
+    if(map->game && map->game->gameType != GAME_TYPE_CTF)
+    {
+        return;
+    }
+
+    glPushMatrix();
+    glTranslatef(map->flagPodPos[0][0], map->flagPodPos[0][1], map->flagPodPos[0][2]);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(map->dko_flagPod[0]);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(map->flagPodPos[1][0], map->flagPodPos[1][1], map->flagPodPos[1][2]);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(map->dko_flagPod[1]);
+    glPopMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_COLOR_MATERIAL);
+
+    if(map->game && map->game->gameType == GAME_TYPE_CTF)
+    {
+        float redAnim = map->flagAnim + 5.0f;
+        while(redAnim >= 10) redAnim -= 10;
+        // Les flags
+        ClientMap_RenderFlag(map, 0);
+        ClientMap_RenderFlag(map, 1);
+    }
+}
+
+void ClientMap_RenderFlag(ClientMap* map, int index)
+{
+    glPushMatrix();
+    glTranslatef(map->flagPos[index][0], map->flagPos[index][1], map->flagPos[index][2]);
+    glRotatef(map->flagAngle[index], 0, 0, 1);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(map->dko_flag[index], map->flagAnim);
+    glPopMatrix();
+}
+
+void CSnow_Render(CSnow* snow)
+{
+    glPushAttrib(GL_ENABLE_BIT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBindTexture(GL_TEXTURE_2D, snow->tex_snow);
+        glEnable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+            for (int i=0;i<100;++i)
+            {
+                if (snow->pos[i][2] > 0)
+                {
+                    glColor4f(1, 1, 1, ((snow->pos[i][2] > 2) ? 2 : snow->pos[i][2]) / 2.0f);
+                    glTexCoord2f(0, 1);
+                    glVertex3f(snow->pos[i][0] - .05f, snow->pos[i][1] + .05f, snow->pos[i][2]);
+                    glTexCoord2f(0, 0);
+                    glVertex3f(snow->pos[i][0] - .05f, snow->pos[i][1] - .05f, snow->pos[i][2]);
+                    glTexCoord2f(1, 0);
+                    glVertex3f(snow->pos[i][0] + .05f, snow->pos[i][1] - .05f, snow->pos[i][2]);
+                    glTexCoord2f(1, 1);
+                    glVertex3f(snow->pos[i][0] + .05f, snow->pos[i][1] + .05f, snow->pos[i][2]);
+                }
+            }
+        glEnd();
+    glPopAttrib();
+}
+
+void CRain_Render(CRain* rain)
+{
+    glPushAttrib(GL_ENABLE_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glLineWidth(2);
+    glBegin(GL_LINES);
+    for(int i = 0; i < 100; ++i)
+    {
+        if(rain->pos[i][2] > 0)
+        {
+            glColor4f(.25f, .7f, .3f, ((rain->pos[i][2] > 2) ? 2 : rain->pos[i][2]) / 2.0f * .3f);
+            glVertex3fv(rain->pos[i].s);
+            glVertex3f(rain->pos[i][0], rain->pos[i][1], rain->pos[i][2] - .5f);
+        }
+    }
+    glEnd();
+    glPopAttrib();
+}
+
+void CWeather_Render(CWeather* weather)
+{
+    switch(weather->type)
+    {
+    case WEATHER_NONE:      break;
+    case WEATHER_FOG:       break;
+    case WEATHER_SNOW:      CSnow_Render(&weather->data.snow); break;
+    case WEATHER_RAIN:      CRain_Render(&weather->data.rain); break;
+    case WEATHER_SANDSTORM: break;
+    case WEATHER_LAVA:      break;
+    }
+}
+
+void ClientMap_RenderWeather(ClientMap* map)
+{
+    CWeather_Render(&map->m_weather);
 }

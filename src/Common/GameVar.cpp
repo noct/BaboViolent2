@@ -58,8 +58,8 @@ void GameVar::init()
     languageFile = "main/languages/en.lang";
     dksvarRegister(CString("languageFile [string : \"\"]"), &languageFile, true);
 
-    weapons[WEAPON_DUAL_MACHINE_GUN] = new Weapon(.1f, "Dual Machine Gun",
-        .13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
+    weapons[WEAPON_DUAL_MACHINE_GUN] = new Weapon(.2f, "Dual Machine Gun",
+        .2f, 5, 1, .5f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SMG] = new Weapon(.1f, "SMG",
         .1f, 8, 1, .5f, 1, WEAPON_SMG, PROJECTILE_DIRECT);
     weapons[WEAPON_CHAIN_GUN] = new Weapon(.05f, "ChainGun",

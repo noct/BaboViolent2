@@ -241,8 +241,8 @@ void ClientGameVar::init()
     langs.push_back(SLangText("lang_incorrectName", &lang_incorrectName));
 
     loadLanguage(gameVar.languageFile.s);
-    weapons[WEAPON_DUAL_MACHINE_GUN] = new ClientWeapon("main/models/DualMachineGun.DKO", "main/sounds/DualMachineGun.wav", .1f, lang_dualMachineGun.s,
-        .13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
+    weapons[WEAPON_DUAL_MACHINE_GUN] = new ClientWeapon("main/models/DualMachineGun.DKO", "main/sounds/DualMachineGun.wav", .2f, lang_dualMachineGun.s,
+        .2f, 5, 1, .5f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SMG] = new ClientWeapon("main/models/SMG.DKO", "main/sounds/SMG.wav", .1f, lang_subMachineGun.s,
         .1f, 8, 1, .5f, 1, WEAPON_SMG, PROJECTILE_DIRECT);
     weapons[WEAPON_CHAIN_GUN] = new ClientWeapon("main/models/ChainGun.DKO", "main/sounds/ChainGun.wav", .05f, lang_changGun.s,

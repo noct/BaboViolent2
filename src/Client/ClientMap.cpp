@@ -20,15 +20,8 @@
 #include "SceneRender.h"
 #include "ClientGame.h"
 #include "Console.h"
-#include "Scene.h"
 #include <direct.h>
 #include <Windows.h>
-
-#ifdef RENDER_LAYER_TOGGLE
-int renderToggle = 0;
-#endif
-
-extern Scene * scene;
 
 void CSnow_Init(CSnow* snow)
 {
@@ -289,10 +282,9 @@ struct CMeshBuilder
     }
 };
 
-ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool editor, int sizeX, int sizeY)
-: Map(mapFilename, _game, font, editor, sizeX, sizeY), groundMesh(0), shadowMesh(0), wallMesh(0)
+ClientMap::ClientMap(CString mapName, FileIO* mapData, bool isServerGame, unsigned int font, int sizeX, int sizeY)
+: Map(), groundMesh(0), shadowMesh(0), wallMesh(0)
 {
-
     int i, j, gtnum;
     //-- On print le loading screen! (new)
     // On clear les buffers, on init la camera, etc
@@ -300,21 +292,12 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
     renderLoadingScreen(font);
 
     zoom = 0;
-    game = _game;
+    isServer = isServerGame;
 
-    if(game)
-    {
-        isServer = game->isServerGame;
-    }
-    else
-    {
-        isServer = false;
-    }
-
-    if(mapFilename.len() > 15) mapFilename.resize(15);
+    if(mapName.len() > 15) mapName.resize(15);
 
     isValid = true;
-    mapName = mapFilename;
+    this->mapName = mapName;
     flagAnim = 0;
     CWeather_Init(&m_weather, WEATHER_NONE);
 
@@ -346,58 +329,11 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
     flagState[0] = -2;
     flagState[1] = -2;
 
-    // On essaye d'abords de lire la map
-    CString fullName = CString("main/maps/") + mapName + ".bvm";
-
-    // Hosts will load from file since they are also the server
-    // Ugly code was required to avoid modification of the remaining code
-    FileIO  fileObj(fullName, "rb");
-    FileIO* fptr = 0;
-    if(scene->server)
-        fptr = &fileObj;
-    else
-    {
-        auto cgame = static_cast<ClientGame*>(_game);
-        fptr = &cgame->mapBuffer;
-    }
-    FileIO& file = *fptr;
-
-    if(!file.isValid())
+    if(!mapData->isValid())
     {
         console->add("\x4> Map doesnt exist");
-        if(editor)
-        {
-            isValid = true;
-            mapName = mapFilename;
-            author_name = gameVar.cl_mapAuthorName;
-
-            // On init ici
-            size[0] = sizeX;
-            size[1] = sizeY;
-
-            cells = new map_cell[size[0] * size[1]];
-
-            // On cré tout suite les contours de la map
-            for(j = 0; j < size[1]; ++j)
-            {
-                cells[j*size[0] + 0].passable = false;
-                cells[j*size[0] + 0].height = 3; // Les bords sont plus haut
-                cells[j*size[0] + size[0] - 1].passable = false;
-                cells[j*size[0] + size[0] - 1].height = 3;
-            }
-            for(i = 0; i < size[0]; ++i)
-            {
-                cells[i].passable = false;
-                cells[i].height = 3;
-                cells[(size[1] - 1)*size[0] + i].passable = false;
-                cells[(size[1] - 1)*size[0] + i].height = 3;
-            }
-        }
-        else
-        {
-            isValid = false;
-            return;
-        }
+        isValid = false;
+        return;
     }
     else
     {
@@ -405,28 +341,23 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
         mapStr += mapName;
         console->add(mapStr);
         // On le load ici
-        unsigned long mapVersion = file.getULong();
+        unsigned long mapVersion = mapData->getULong();
 
         switch(mapVersion)
         {
         case 10010:
         {
-            // if opening older map file in editor - fill in the author field
-            if(editor)
-            {
-                author_name = gameVar.cl_mapAuthorName;
-            }
-            size[0] = file.getInt();
-            size[1] = file.getInt();
+            size[0] = mapData->getInt();
+            size[1] = mapData->getInt();
             cells = new map_cell[size[0] * size[1]];
             for(j = 0; j < size[1]; ++j)
             {
                 for(i = 0; i < size[0]; ++i)
                 {
-                    unsigned char data = file.getUByte();
+                    unsigned char data = mapData->getUByte();
                     cells[j*size[0] + i].passable = (data & 128) ? true : false;
                     cells[j*size[0] + i].height = (data & 127);
-                    data = file.getUByte();
+                    data = mapData->getUByte();
                     setTileDirt(i, j, ((float)data) / 255.0f);
                 }
             }
@@ -434,111 +365,101 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
         }
         case 10011:
         {
-            // if opening older map file in editor - fill in the author field
-            if(editor)
-            {
-                author_name = gameVar.cl_mapAuthorName;
-            }
-            size[0] = file.getInt();
-            size[1] = file.getInt();
+            size[0] = mapData->getInt();
+            size[1] = mapData->getInt();
             cells = new map_cell[size[0] * size[1]];
             for(j = 0; j < size[1]; ++j)
             {
                 for(i = 0; i < size[0]; ++i)
                 {
-                    unsigned char data = file.getUByte();
+                    unsigned char data = mapData->getUByte();
                     cells[j*size[0] + i].passable = (data & 128) ? true : false;
                     cells[j*size[0] + i].height = (data & 127);
-                    data = file.getUByte();
+                    data = mapData->getUByte();
                     setTileDirt(i, j, ((float)data) / 255.0f);
                 }
             }
 
             // Les flag
-            flagPodPos[0] = file.getVector3f();
-            flagPodPos[1] = file.getVector3f();
+            flagPodPos[0] = mapData->getVector3f();
+            flagPodPos[1] = mapData->getVector3f();
 
             // Les ojectifs
-            file.getVector3f();
-            file.getVector3f();
+            mapData->getVector3f();
+            mapData->getVector3f();
 
             // Les spawn point
-            int nbSpawn = file.getInt();
+            int nbSpawn = mapData->getInt();
             for(i = 0; i < nbSpawn; ++i)
             {
-                dm_spawns.push_back(file.getVector3f());
+                dm_spawns.push_back(mapData->getVector3f());
             }
-            nbSpawn = file.getInt();
+            nbSpawn = mapData->getInt();
             for(i = 0; i < nbSpawn; ++i)
             {
-                blue_spawns.push_back(file.getVector3f());
+                blue_spawns.push_back(mapData->getVector3f());
             }
-            nbSpawn = file.getInt();
+            nbSpawn = mapData->getInt();
             for(i = 0; i < nbSpawn; ++i)
             {
-                red_spawns.push_back(file.getVector3f());
+                red_spawns.push_back(mapData->getVector3f());
             }
             break;
         }
         case 20201:
         {
-            // if opening older map file in editor - fill in the author field
-            if(editor)
-            {
-                author_name = gameVar.cl_mapAuthorName;
-            }
-            theme = file.getInt();
-            weather = file.getInt();
-            size[0] = file.getInt();
-            size[1] = file.getInt();
+            theme = mapData->getInt();
+            weather = mapData->getInt();
+            size[0] = mapData->getInt();
+            size[1] = mapData->getInt();
             cells = new map_cell[size[0] * size[1]];
             for(j = 0; j < size[1]; ++j)
             {
                 for(i = 0; i < size[0]; ++i)
                 {
-                    unsigned char data = file.getUByte();
+                    unsigned char data = mapData->getUByte();
                     cells[j*size[0] + i].passable = (data & 128) ? true : false;
                     cells[j*size[0] + i].height = (data & 127);
-                    data = file.getUByte();
+                    data = mapData->getUByte();
                     setTileDirt(i, j, ((float)data) / 255.0f);
                 }
             }
 
             // Les flag
-            flagPodPos[0] = file.getVector3f();
-            flagPodPos[1] = file.getVector3f();
+            flagPodPos[0] = mapData->getVector3f();
+            flagPodPos[1] = mapData->getVector3f();
 
             // Les ojectifs
-            file.getVector3f();
-            file.getVector3f();
+            mapData->getVector3f();
+            mapData->getVector3f();
 
             // Les spawn point
-            int nbSpawn = file.getInt();
+            int nbSpawn = mapData->getInt();
             for(i = 0; i < nbSpawn; ++i)
             {
-                dm_spawns.push_back(file.getVector3f());
+                dm_spawns.push_back(mapData->getVector3f());
             }
-            nbSpawn = file.getInt();
+            nbSpawn = mapData->getInt();
             for(i = 0; i < nbSpawn; ++i)
             {
-                blue_spawns.push_back(file.getVector3f());
+                blue_spawns.push_back(mapData->getVector3f());
             }
-            nbSpawn = file.getInt();
+            nbSpawn = mapData->getInt();
             for(i = 0; i < nbSpawn; ++i)
             {
-                red_spawns.push_back(file.getVector3f());
+                red_spawns.push_back(mapData->getVector3f());
             }
             break;
         }
         case 20202:
         {
             // Common map data
-            char * author_name_buffer = file.getByteArray(25);
+            char * author_name_buffer = mapData->getByteArray(25);
             author_name_buffer[24] = '\0';
             author_name.set("%.24s", author_name_buffer);
             // Note: we DO NOT want to overwrite the author field if it's being edited
-            theme = file.getInt();
-            weather = file.getInt();
+            theme = mapData->getInt();
+            weather = mapData->getInt();
             delete[] author_name_buffer;
             author_name_buffer = 0;
 
@@ -546,32 +467,32 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
 
             int i = 0;
 
-            size[0] = file.getInt();
-            size[1] = file.getInt();
+            size[0] = mapData->getInt();
+            size[1] = mapData->getInt();
             cells = new map_cell[size[0] * size[1]];
             for(j = 0; j < size[1]; ++j)
             {
                 for(i = 0; i < size[0]; ++i)
                 {
-                    unsigned char data = file.getUByte();
+                    unsigned char data = mapData->getUByte();
                     cells[j*size[0] + i].passable = (data & 128) ? true : false;
                     cells[j*size[0] + i].height = (data & 127);
-                    data = file.getUByte();
+                    data = mapData->getUByte();
                     setTileDirt(i, j, ((float)data) / 255.0f);
                 }
             }
             // common spawns
-            int nbSpawn = file.getInt();
+            int nbSpawn = mapData->getInt();
             for(i = 0; i < nbSpawn; ++i)
             {
-                dm_spawns.push_back(file.getVector3f());
+                dm_spawns.push_back(mapData->getVector3f());
             }
 
             // read game-type specific data
             // there must always be one game-type specific section per one supported game type
             for(gtnum = 0; gtnum < GAME_TYPE_COUNT; ++gtnum)
             {
-                int id = file.getInt();
+                int id = mapData->getInt();
                 switch(id)
                 {
                 case GAME_TYPE_DM:
@@ -580,8 +501,8 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
                 case GAME_TYPE_CTF:
                 {
                     // flags
-                    flagPodPos[0] = file.getVector3f();
-                    flagPodPos[1] = file.getVector3f();
+                    flagPodPos[0] = mapData->getVector3f();
+                    flagPodPos[1] = mapData->getVector3f();
                 }
                 break;
                 default:
@@ -621,29 +542,11 @@ ClientMap::ClientMap(CString mapFilename, Game * _game, unsigned int font, bool 
 
     //--- Position the camera at the center
     setCameraPos(CVector3f((float)size[0] / 2, (float)size[1] / 2, 0));
-
-    //--- Reset timer
-    dkcJumpToFrame(scene->ctx, 0);
 }
 
 
-void ClientMap::update(float delay, Player * thisPlayer)
+void ClientMap::update(float delay, Player * thisPlayer, Player * flagPlayer0, Player * flagPlayer1)
 {
-#ifdef RENDER_LAYER_TOGGLE
-    if(dkiGetState(DIK_F5) == 1)
-    {
-        renderToggle++;
-        if(renderToggle > 16)
-        {
-            renderToggle = 0;
-        }
-    }
-    if(dkiGetState(DIK_F6) == 1)
-    {
-        renderToggle = 16;
-    }
-#endif
-
     CWeather_Update(&m_weather, delay, this);
 
     // Snipers should be able to scope at map edges
@@ -700,10 +603,28 @@ void ClientMap::update(float delay, Player * thisPlayer)
     flagAnim += delay * 10;
     while(flagAnim >= 10) flagAnim -= 10;
 
-    if(flagState[0] == -2) flagPos[0] = flagPodPos[0];
-    if(flagState[1] == -2) flagPos[1] = flagPodPos[1];
-    if(flagState[0] >= 0) if(game->players[flagState[0]]) flagPos[0] = game->players[flagState[0]]->currentCF.position;
-    if(flagState[1] >= 0) if(game->players[flagState[1]]) flagPos[1] = game->players[flagState[1]]->currentCF.position;
+    if(flagState[0] == -2)
+    {
+        flagPos[0] = flagPodPos[0];
+    }
+    if(flagState[1] == -2)
+    {
+        flagPos[1] = flagPodPos[1];
+    }
+    if(flagState[0] >= 0)
+    {
+        if(flagPlayer0)
+        {
+            flagPos[0] = flagPlayer0->currentCF.position;
+        }
+    }
+    if(flagState[1] >= 0)
+    {
+        if(flagPlayer1)
+        {
+            flagPos[1] = flagPlayer1->currentCF.position;
+        }
+    }
 }
 
 void ClientMap::reloadWeather()

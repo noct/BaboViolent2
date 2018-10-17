@@ -28,7 +28,6 @@ void ClientScene_Render(ClientScene* scene);
 void ClientMap_RenderGround(ClientMap* map);
 void ClientMap_RenderShadow(ClientMap* map);
 void ClientMap_RenderWalls(ClientMap* map);
-void ClientMap_RenderMisc(ClientMap* map);
 void ClientMap_RenderFlag(ClientMap* map, int index);
 void ClientMap_RenderWeather(ClientMap* map);
 

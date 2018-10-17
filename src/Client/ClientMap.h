@@ -21,6 +21,7 @@
 
 #include "Map.h"
 #include <Zeven/Gfx.h>
+#include <Zeven/FileIO.h>
 
 struct CSnow
 {
@@ -220,10 +221,10 @@ struct ClientMap : public Map
     // Spec Cam Controls
     float       zoom;
 
-    ClientMap(CString mapFilename, Game * game, unsigned int font, bool editor=false, int sizeX=32, int sizeY=32);
+    ClientMap(CString mapName, FileIO* mapData, bool isServerGame, unsigned int font, int sizeX=32, int sizeY=32);
     virtual ~ClientMap();
 
-    void update(float delay, Player * thisPlayer);
+    void update(float delay, Player * thisPlayer, Player * flagPlayer0, Player * flagPlayer1);
     void performCollision(CoordFrame & lastCF, CoordFrame & coordFrame, float radius);
     void collisionClip(CoordFrame & coordFrame, float radius);
 

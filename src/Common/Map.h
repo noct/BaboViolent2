@@ -88,10 +88,9 @@ struct Map
     std::vector<CVector3f> blue_spawns;
     std::vector<CVector3f> red_spawns;
 
-    Game * game;
-
     // Constructeur
-    Map(CString mapFilename, Game * game, unsigned int font, bool editor=false, int sizeX=32, int sizeY=32);
+    Map() {}
+    Map(CString mapFilename, bool isServerGame, unsigned int font, bool editor=false, int sizeX=32, int sizeY=32);
 
     // Destructeur
     virtual ~Map();

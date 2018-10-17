@@ -243,7 +243,7 @@ void Game::createMap()
         }
     }
 
-    map = new Map(mapName, this, 0);
+    map = new Map(mapName, isServerGame, 0);
 
     if(!map->isValid)
     {

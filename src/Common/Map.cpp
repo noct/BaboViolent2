@@ -21,28 +21,14 @@
 #include <Zeven/FileIO.h>
 #include "Console.h"
 #include "Game.h"
-#include "Scene.h"
 
-extern Scene * scene;
-
-//
-// Constructeur
-//
-Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int sizeX, int sizeY)
+Map::Map(CString mapFilename, bool isServerGame, unsigned int font, bool editor, int sizeX, int sizeY)
 {
     int i, j, gtnum;
     //-- On print le loading screen! (new)
     // On clear les buffers, on init la camera, etc
-    game = _game;
 
-    if(game)
-    {
-        isServer = game->isServerGame;
-    }
-    else
-    {
-        isServer = false;
-    }
+    isServer = isServerGame;
 
     if(mapFilename.len() > 15) mapFilename.resize(15);
 
@@ -244,9 +230,6 @@ Map::Map(CString mapFilename, Game * _game, unsigned int font, bool editor, int 
     {
         return;
     }
-
-    //--- Reset timer
-    dkcJumpToFrame(scene->ctx, 0);
 }
 
 //

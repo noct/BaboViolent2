@@ -1162,6 +1162,39 @@ static void SceneRender_BulletTrail(Trail* trail)
     }
 }
 
+void SceneRender_MapMisc(ClientMap* map, int gameType)
+{
+    int i;
+    if(gameType != GAME_TYPE_CTF)
+    {
+        return;
+    }
+
+    glPushMatrix();
+    glTranslatef(map->flagPodPos[0][0], map->flagPodPos[0][1], map->flagPodPos[0][2]);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(map->dko_flagPod[0]);
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(map->flagPodPos[1][0], map->flagPodPos[1][1], map->flagPodPos[1][2]);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(map->dko_flagPod[1]);
+    glPopMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_COLOR_MATERIAL);
+
+    if(gameType == GAME_TYPE_CTF)
+    {
+        float redAnim = map->flagAnim + 5.0f;
+        while(redAnim >= 10) redAnim -= 10;
+        // Les flags
+        ClientMap_RenderFlag(map, 0);
+        ClientMap_RenderFlag(map, 1);
+    }
+}
+
+
 static void SceneRender_ClientGame(ClientGame* game)
 {
     auto cscene = static_cast<ClientScene*>(scene);
@@ -1260,7 +1293,7 @@ static void SceneRender_ClientGame(ClientGame* game)
                     dkglSetPointLight(1, -1000, 1000, 2000, 1, 1, 1);
 
                     // On render les trucs genre flag pod, flag, canon
-                    ClientMap_RenderMisc(cmap);
+                    SceneRender_MapMisc(cmap, game->gameType);
 
                     // On render les players
                     for(i = 0; i < MAX_PLAYER; ++i)
@@ -1448,7 +1481,7 @@ static void SceneRender_ClientGame(ClientGame* game)
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 6)
 #endif
-            ClientMap_RenderMisc(cmap);
+            SceneRender_MapMisc(cmap, game->gameType);
 
         // On render les players
 #ifdef RENDER_LAYER_TOGGLE
@@ -3145,38 +3178,6 @@ void ClientMap_RenderWalls(ClientMap* map)
     glVertex2i(map->size[0] + 1, map->size[1] + 1);
     glEnd();
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-}
-
-void ClientMap_RenderMisc(ClientMap* map)
-{
-    int i;
-    if(map->game && map->game->gameType != GAME_TYPE_CTF)
-    {
-        return;
-    }
-
-    glPushMatrix();
-    glTranslatef(map->flagPodPos[0][0], map->flagPodPos[0][1], map->flagPodPos[0][2]);
-    glScalef(.005f, .005f, .005f);
-    dkoRender(map->dko_flagPod[0]);
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(map->flagPodPos[1][0], map->flagPodPos[1][1], map->flagPodPos[1][2]);
-    glScalef(.005f, .005f, .005f);
-    dkoRender(map->dko_flagPod[1]);
-    glPopMatrix();
-
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_COLOR_MATERIAL);
-
-    if(map->game && map->game->gameType == GAME_TYPE_CTF)
-    {
-        float redAnim = map->flagAnim + 5.0f;
-        while(redAnim >= 10) redAnim -= 10;
-        // Les flags
-        ClientMap_RenderFlag(map, 0);
-        ClientMap_RenderFlag(map, 1);
-    }
 }
 
 void ClientMap_RenderFlag(ClientMap* map, int index)

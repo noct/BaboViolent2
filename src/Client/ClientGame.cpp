@@ -262,7 +262,17 @@ void ClientGame::createMap()
         }
     }
 
-    map = new ClientMap(mapName, this, font);
+    CString mapFilename = CString("main/maps/") + mapName + ".bvm";
+
+    if(scene->server)
+    {
+        FileIO file(mapFilename, "rb");
+        map = new ClientMap(mapName, &file, isServerGame, font);
+    }
+    else
+    {
+        map = new ClientMap(mapName, &mapBuffer, isServerGame, font);
+    }
 
     if(!map->isValid)
     {
@@ -293,6 +303,8 @@ void ClientGame::createMap()
             }
         }
     }
+
+    //--- Reset timer
     dkcJumpToFrame(scene->ctx, 0);
 }
 
@@ -418,7 +430,9 @@ void ClientGame::update(float delay)
     // On update la map
     if(cmap && thisPlayer)
     {
-        cmap->update(delay, thisPlayer);
+        Player* flagPlayer0 = players[map->flagState[0]];
+        Player* flagPlayer1 = players[map->flagState[1]];
+        cmap->update(delay, thisPlayer, flagPlayer0, flagPlayer1);
 
         //--- Est-ce qu'il pleut?
         if(cmap->weather == WEATHER_RAIN)

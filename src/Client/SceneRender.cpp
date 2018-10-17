@@ -1162,7 +1162,17 @@ static void SceneRender_BulletTrail(Trail* trail)
     }
 }
 
-void SceneRender_MapMisc(ClientMap* map, int gameType)
+static void SceneRender_MapFlag(ClientMap* map, int index)
+{
+    glPushMatrix();
+    glTranslatef(map->flagPos[index][0], map->flagPos[index][1], map->flagPos[index][2]);
+    glRotatef(map->flagAngle[index], 0, 0, 1);
+    glScalef(.005f, .005f, .005f);
+    dkoRender(map->dko_flag[index], map->flagAnim);
+    glPopMatrix();
+}
+
+static void SceneRender_MapMisc(ClientMap* map, int gameType)
 {
     int i;
     if(gameType != GAME_TYPE_CTF)
@@ -1189,11 +1199,85 @@ void SceneRender_MapMisc(ClientMap* map, int gameType)
         float redAnim = map->flagAnim + 5.0f;
         while(redAnim >= 10) redAnim -= 10;
         // Les flags
-        ClientMap_RenderFlag(map, 0);
-        ClientMap_RenderFlag(map, 1);
+        SceneRender_MapFlag(map, 0);
+        SceneRender_MapFlag(map, 1);
     }
 }
 
+static void SceneRender_MapWalls(ClientMap* map)
+{
+    CMesh_Render(map->wallMesh);
+
+    // Tout est fini, on peut maintenant renderer le plancher dans le zbuffer
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glBegin(GL_QUADS);
+    glVertex2i(0, map->size[1] + 1);
+    glVertex2i(0, 0);
+    glVertex2i(map->size[0] + 1, 0);
+    glVertex2i(map->size[0] + 1, map->size[1] + 1);
+    glEnd();
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+}
+
+void SceneRender_Snow(CSnow* snow)
+{
+    glPushAttrib(GL_ENABLE_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBindTexture(GL_TEXTURE_2D, snow->tex_snow);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+    for(int i = 0; i < 100; ++i)
+    {
+        if(snow->pos[i][2] > 0)
+        {
+            glColor4f(1, 1, 1, ((snow->pos[i][2] > 2) ? 2 : snow->pos[i][2]) / 2.0f);
+            glTexCoord2f(0, 1);
+            glVertex3f(snow->pos[i][0] - .05f, snow->pos[i][1] + .05f, snow->pos[i][2]);
+            glTexCoord2f(0, 0);
+            glVertex3f(snow->pos[i][0] - .05f, snow->pos[i][1] - .05f, snow->pos[i][2]);
+            glTexCoord2f(1, 0);
+            glVertex3f(snow->pos[i][0] + .05f, snow->pos[i][1] - .05f, snow->pos[i][2]);
+            glTexCoord2f(1, 1);
+            glVertex3f(snow->pos[i][0] + .05f, snow->pos[i][1] + .05f, snow->pos[i][2]);
+        }
+    }
+    glEnd();
+    glPopAttrib();
+}
+
+static void SceneRender_Rain(CRain* rain)
+{
+    glPushAttrib(GL_ENABLE_BIT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glLineWidth(2);
+    glBegin(GL_LINES);
+    for(int i = 0; i < 100; ++i)
+    {
+        if(rain->pos[i][2] > 0)
+        {
+            glColor4f(.25f, .7f, .3f, ((rain->pos[i][2] > 2) ? 2 : rain->pos[i][2]) / 2.0f * .3f);
+            glVertex3fv(rain->pos[i].s);
+            glVertex3f(rain->pos[i][0], rain->pos[i][1], rain->pos[i][2] - .5f);
+        }
+    }
+    glEnd();
+    glPopAttrib();
+}
+
+static void SceneRender_Weather(CWeather* weather)
+{
+    switch(weather->type)
+    {
+    case WEATHER_NONE:      break;
+    case WEATHER_FOG:       break;
+    case WEATHER_SNOW:      SceneRender_Snow(&weather->data.snow); break;
+    case WEATHER_RAIN:      SceneRender_Rain(&weather->data.rain); break;
+    case WEATHER_SANDSTORM: break;
+    case WEATHER_LAVA:      break;
+    }
+}
 
 static void SceneRender_ClientGame(ClientGame* game)
 {
@@ -1324,7 +1408,7 @@ static void SceneRender_ClientGame(ClientGame* game)
                     }
 
                     // On render les murs
-                    ClientMap_RenderWalls(cmap);
+                    SceneRender_MapWalls(cmap);
                 }
 
                 glPopAttrib();
@@ -1423,7 +1507,16 @@ static void SceneRender_ClientGame(ClientGame* game)
             }
 
         // Render la map
-        ClientMap_RenderGround(cmap);
+        {
+            glPushAttrib(GL_ENABLE_BIT);
+            glDepthMask(GL_FALSE);
+
+            //--- Render the map
+            CMesh_Render(cmap->groundMesh);
+
+            glDepthMask(GL_TRUE);
+            glPopAttrib();
+        }
 
         // On render les floor mark et projectile shadows
         glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);
@@ -1529,13 +1622,16 @@ static void SceneRender_ClientGame(ClientGame* game)
 #ifdef RENDER_LAYER_TOGGLE
             if(renderToggle >= 10)
 #endif
-                ClientMap_RenderShadow(cmap);
+            {
+                if(gameVar.r_shadowQuality == 0) return;
+                CMesh_Render(cmap->shadowMesh);
+            }
 
             // On render les murs
 #ifdef RENDER_LAYER_TOGGLE
             if(renderToggle >= 11)
 #endif
-                ClientMap_RenderWalls(cmap);
+                SceneRender_MapWalls(cmap);
         }
         glPopAttrib();
 
@@ -1593,7 +1689,8 @@ static void SceneRender_ClientGame(ClientGame* game)
 #ifdef RENDER_LAYER_TOGGLE
         if(renderToggle >= 15)
 #endif
-            ClientMap_RenderWeather(cmap);
+
+        SceneRender_Weather(&cmap->m_weather);
 
         //--- Nuke flash!!!!!!
         glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_CURRENT_BIT);
@@ -2078,6 +2175,11 @@ static void SceneRender_Client(Client* client, float & alphaScope)
     // Si on doit spawner on marque dans combient de temps
     if(game->thisPlayer)
     {
+        const float centerX = 640.f;
+        const float centerY = 360.f;
+        const float maxX = 1280.f;
+        const float maxY = 720.f;
+
         dkglPushOrtho(1280, 720);
         glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
         glEnable(GL_TEXTURE_2D);
@@ -2093,11 +2195,11 @@ static void SceneRender_Client(Client* client, float & alphaScope)
             glTexCoord2i(0, 1);
             glVertex2i(0, 0);
             glTexCoord2i(0, 0);
-            glVertex2i(0, 600);
+            glVertex2i(0, 720);
             glTexCoord2i(1, 0);
-            glVertex2i(800, 600);
+            glVertex2i(1280, 720);
             glTexCoord2i(1, 1);
-            glVertex2i(800, 0);
+            glVertex2i(1280, 0);
             glEnd();
         }
 
@@ -2114,29 +2216,29 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                         glDisable(GL_TEXTURE_2D);
                         glColor4f(1, 1, 1, .5f);
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100 - 5, 440 - 5);
-                        glVertex2f(400 - 100 - 5, 454 + 5);
-                        glVertex2f(400 - 100 + 200 + 10, 454 + 5);
-                        glVertex2f(400 - 100 + 200 + 10, 440 - 5);
+                        glVertex2f(centerX - 100 - 5, maxY - 160 - 5);
+                        glVertex2f(centerX - 100 - 5, maxY - 146 + 5);
+                        glVertex2f(centerX - 100 + 200 + 10, maxY - 146 + 5);
+                        glVertex2f(centerX - 100 + 200 + 10, maxY - 160 - 5);
                         glEnd();
                         glColor4f(0, 0, 0, .5f);
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100 - 1, 440 - 1);
-                        glVertex2f(400 - 100 - 1, 454 + 1);
-                        glVertex2f(400 - 100 + 200 + 2, 454 + 1);
-                        glVertex2f(400 - 100 + 200 + 2, 440 - 1);
+                        glVertex2f(centerX - 100 - 1, maxY - 160 - 1);
+                        glVertex2f(centerX - 100 - 1, maxY - 146 + 1);
+                        glVertex2f(centerX - 100 + 200 + 2, maxY - 146 + 1);
+                        glVertex2f(centerX - 100 + 200 + 2, maxY - 160 - 1);
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay*.75f + .25f);
-                        if(client->blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
+                        if(client->blink < .25f) printCenterText(centerX, maxY - 200, 32, true, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         // La progress bar
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100, 440);
-                        glVertex2f(400 - 100, 454);
-                        glVertex2f(400 - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay) * 200, 454);
-                        glVertex2f(400 - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay) * 200, 440);
+                        glVertex2f(centerX - 100, maxY - 160);
+                        glVertex2f(centerX - 100, maxY - 146);
+                        glVertex2f(centerX - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay) * 200, maxY - 146);
+                        glVertex2f(centerX - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay) * 200, maxY - 160);
                         glEnd();
                     }
                     else if(game->thisPlayer->grenadeDelay > 0)
@@ -2144,28 +2246,28 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                         glDisable(GL_TEXTURE_2D);
                         glColor4f(1, 1, 1, .5f);
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100 - 5, 440 - 5);
-                        glVertex2f(400 - 100 - 5, 454 + 5);
-                        glVertex2f(400 - 100 + 200 + 10, 454 + 5);
-                        glVertex2f(400 - 100 + 200 + 10, 440 - 5);
+                        glVertex2f(centerX - 100 - 5, maxY - 160 - 5);
+                        glVertex2f(centerX - 100 - 5, maxY - 146 + 5);
+                        glVertex2f(centerX - 100 + 200 + 10, maxY - 146 + 5);
+                        glVertex2f(centerX - 100 + 200 + 10, maxY - 160 - 5);
                         glEnd();
                         glColor4f(0, 0, 0, .5f);
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100 - 1, 440 - 1);
-                        glVertex2f(400 - 100 - 1, 454 + 1);
-                        glVertex2f(400 - 100 + 200 + 2, 454 + 1);
-                        glVertex2f(400 - 100 + 200 + 2, 440 - 1);
+                        glVertex2f(centerX - 100 - 1, maxY - 160 - 1);
+                        glVertex2f(centerX - 100 - 1, maxY - 146 + 1);
+                        glVertex2f(centerX - 100 + 200 + 2, maxY - 146 + 1);
+                        glVertex2f(centerX - 100 + 200 + 2, maxY - 160 - 1);
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay*.75f + .25f);
-                        if(client->blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
+                        if(client->blink < .25f) printCenterText(centerX, maxY - 200, 32, true, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100, 440);
-                        glVertex2f(400 - 100, 454);
-                        glVertex2f(400 - 100 + (1 - game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay) * 200, 454);
-                        glVertex2f(400 - 100 + (1 - game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay) * 200, 440);
+                        glVertex2f(centerX - 100, maxY - 160);
+                        glVertex2f(centerX - 100, maxY - 146);
+                        glVertex2f(centerX - 100 + (1 - game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay) * 200, maxY - 146);
+                        glVertex2f(centerX - 100 + (1 - game->thisPlayer->grenadeDelay / gameVar.weapons[WEAPON_GRENADE]->fireDelay) * 200, maxY - 160);
                         glEnd();
                     }
                     else if(game->thisPlayer->weapon->weaponID == WEAPON_SHOTGUN && game->thisPlayer->weapon->currentFireDelay > 0)
@@ -2173,28 +2275,28 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                         glDisable(GL_TEXTURE_2D);
                         glColor4f(1, 1, 1, .5f);
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100 - 5, 440 - 5);
-                        glVertex2f(400 - 100 - 5, 454 + 5);
-                        glVertex2f(400 - 100 + 200 + 10, 454 + 5);
-                        glVertex2f(400 - 100 + 200 + 10, 440 - 5);
+                        glVertex2f(centerX - 100 - 5, maxY - 160 - 5);
+                        glVertex2f(centerX - 100 - 5, maxY - 146 + 5);
+                        glVertex2f(centerX - 100 + 200 + 10, maxY - 146 + 5);
+                        glVertex2f(centerX - 100 + 200 + 10, maxY - 160 - 5);
                         glEnd();
                         glColor4f(0, 0, 0, .5f);
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100 - 1, 440 - 1);
-                        glVertex2f(400 - 100 - 1, 454 + 1);
-                        glVertex2f(400 - 100 + 200 + 2, 454 + 1);
-                        glVertex2f(400 - 100 + 200 + 2, 440 - 1);
+                        glVertex2f(centerX - 100 - 1, maxY - 160 - 1);
+                        glVertex2f(centerX - 100 - 1, maxY - 146 + 1);
+                        glVertex2f(centerX - 100 + 200 + 2, maxY - 146 + 1);
+                        glVertex2f(centerX - 100 + 200 + 2, maxY - 160 - 1);
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->weapon->currentFireDelay / game->thisPlayer->weapon->fireDelay*.75f + .25f);
-                        if(client->blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
+                        if(client->blink < .25f) printCenterText(centerX, maxY - 200, 32, true, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100, 440);
-                        glVertex2f(400 - 100, 454);
-                        glVertex2f(400 - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / 3) * 200, 454);
-                        glVertex2f(400 - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / 3) * 200, 440);
+                        glVertex2f(centerX - 100, maxY - 160);
+                        glVertex2f(centerX - 100, maxY - 146);
+                        glVertex2f(centerX - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / 3) * 200, maxY - 146);
+                        glVertex2f(centerX - 100 + (1 - game->thisPlayer->weapon->currentFireDelay / 3) * 200, maxY - 160);
                         glEnd();
                     }
                     else if(game->thisPlayer->meleeDelay > 0)
@@ -2202,28 +2304,28 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                         glDisable(GL_TEXTURE_2D);
                         glColor4f(1, 1, 1, .5f);
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100 - 5, 440 - 5);
-                        glVertex2f(400 - 100 - 5, 454 + 5);
-                        glVertex2f(400 - 100 + 200 + 10, 454 + 5);
-                        glVertex2f(400 - 100 + 200 + 10, 440 - 5);
+                        glVertex2f(centerX - 100 - 5, maxY - 160 - 5);
+                        glVertex2f(centerX - 100 - 5, maxY - 146 + 5);
+                        glVertex2f(centerX - 100 + 200 + 10, maxY - 146 + 5);
+                        glVertex2f(centerX - 100 + 200 + 10, maxY - 160 - 5);
                         glEnd();
                         glColor4f(0, 0, 0, .5f);
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100 - 1, 440 - 1);
-                        glVertex2f(400 - 100 - 1, 454 + 1);
-                        glVertex2f(400 - 100 + 200 + 2, 454 + 1);
-                        glVertex2f(400 - 100 + 200 + 2, 440 - 1);
+                        glVertex2f(centerX - 100 - 1, maxY - 160 - 1);
+                        glVertex2f(centerX - 100 - 1, maxY - 146 + 1);
+                        glVertex2f(centerX - 100 + 200 + 2, maxY - 146 + 1);
+                        glVertex2f(centerX - 100 + 200 + 2, maxY - 160 - 1);
                         glEnd();
                         glEnable(GL_TEXTURE_2D);
                         glColor4f(.5f, 1, .5f, game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay*.75f + .25f);
-                        if(client->blink < .25f) printCenterText(400, 400, 32, true, clientVar.lang_reloading);
+                        if(client->blink < .25f) printCenterText(centerX, maxY - 200, 32, true, clientVar.lang_reloading);
                         glDisable(GL_TEXTURE_2D);
                         // La progress bar
                         glBegin(GL_QUADS);
-                        glVertex2f(400 - 100, 440);
-                        glVertex2f(400 - 100, 454);
-                        glVertex2f(400 - 100 + (1 - game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay) * 200, 454);
-                        glVertex2f(400 - 100 + (1 - game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay) * 200, 440);
+                        glVertex2f(centerX - 100, maxY - 160);
+                        glVertex2f(centerX - 100, maxY - 146);
+                        glVertex2f(centerX - 100 + (1 - game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay) * 200, maxY - 146);
+                        glVertex2f(centerX - 100 + (1 - game->thisPlayer->meleeDelay / game->thisPlayer->meleeWeapon->fireDelay) * 200, maxY - 160);
                         glEnd();
                     }
                 }
@@ -2233,23 +2335,23 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                 // On affiche sa vie à droite
                 glBegin(GL_QUADS);
                 glColor3f(1, 1, 1);
-                glVertex2f(760, 390);
-                glVertex2f(760, 589);
-                glVertex2f(789, 589);
-                glVertex2f(789, 390);
+                glVertex2f(maxX - 40, maxY - 210);
+                glVertex2f(maxX - 40, maxY - 11);
+                glVertex2f(maxX - 11, maxY - 11);
+                glVertex2f(maxX - 11, maxY - 210);
                 glColor3f(0, 0, 0);
-                glVertex2f(762, 392);
-                glVertex2f(762, 587);
-                glVertex2f(787, 587);
-                glVertex2f(787, 392);
+                glVertex2f(maxX - 38, maxY - 208);
+                glVertex2f(maxX - 38, maxY - 13);
+                glVertex2f(maxX - 13, maxY - 13);
+                glVertex2f(maxX - 13, maxY - 208);
                 // La couleur celon sa vie
                 if(game->thisPlayer->life > .25f || client->blink < .25f)
                 {
                     glColor3f(1 - game->thisPlayer->life, game->thisPlayer->life, 0);
-                    glVertex2f(764, 585 - game->thisPlayer->life * 191);
-                    glVertex2f(764, 585);
-                    glVertex2f(785, 585);
-                    glVertex2f(785, 585 - game->thisPlayer->life * 191);
+                    glVertex2f(maxX - 36, maxY - 15 - game->thisPlayer->life * 191);
+                    glVertex2f(maxX - 36, maxY - 15);
+                    glVertex2f(maxX - 15, maxY - 15);
+                    glVertex2f(maxX - 15, maxY - 15 - game->thisPlayer->life * 191);
                 }
                 glEnd();
 
@@ -2260,23 +2362,23 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                     {
                         glBegin(GL_QUADS);
                         glColor4f(1, 1, 1, 1 - game->thisPlayer->weapon->chainOverHeat*.5f);
-                        glVertex2f(760, 390 - 200);
-                        glVertex2f(760, 589 - 200);
-                        glVertex2f(789, 589 - 200);
-                        glVertex2f(789, 390 - 200);
+                        glVertex2f(maxX - 40, maxY - 210 - 200);
+                        glVertex2f(maxX - 40, maxY - 11 - 200);
+                        glVertex2f(maxX - 11, maxY - 11 - 200);
+                        glVertex2f(maxX - 11, maxY - 210 - 200);
                         glColor4f(0, 0, 0, 1 - game->thisPlayer->weapon->chainOverHeat*.5f);
-                        glVertex2f(762, 392 - 200);
-                        glVertex2f(762, 587 - 200);
-                        glVertex2f(787, 587 - 200);
-                        glVertex2f(787, 392 - 200);
+                        glVertex2f(maxX - 38, maxY - 208 - 200);
+                        glVertex2f(maxX - 38, maxY - 13 - 200);
+                        glVertex2f(maxX - 13, maxY - 13 - 200);
+                        glVertex2f(maxX - 13, maxY - 208 - 200);
                         // La couleur celon sa vie
                         if((game->thisPlayer->weapon->overHeated && client->blink < .25f) || !game->thisPlayer->weapon->overHeated)
                         {
                             glColor4f(1 - game->thisPlayer->weapon->chainOverHeat, game->thisPlayer->weapon->chainOverHeat, game->thisPlayer->weapon->chainOverHeat, 1 - game->thisPlayer->weapon->chainOverHeat*.5f);
-                            glVertex2f(764, 585 - 200 - game->thisPlayer->weapon->chainOverHeat * 191);
-                            glVertex2f(764, 585 - 200);
-                            glVertex2f(785, 585 - 200);
-                            glVertex2f(785, 585 - 200 - game->thisPlayer->weapon->chainOverHeat * 191);
+                            glVertex2f(maxX - 36, maxY - 15 - 200 - game->thisPlayer->weapon->chainOverHeat * 191);
+                            glVertex2f(maxX - 36, maxY - 15 - 200);
+                            glVertex2f(maxX - 15, maxY - 15 - 200);
+                            glVertex2f(maxX - 15, maxY - 15 - 200 - game->thisPlayer->weapon->chainOverHeat * 191);
                         }
                         glEnd();
                     }
@@ -2288,7 +2390,7 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                     glEnable(GL_TEXTURE_2D);
                     glBindTexture(GL_TEXTURE_2D, client->tex_grenadeLeft);
                     glPushMatrix();
-                    glTranslatef(686 + 32, 526 + 32, 0);
+                    glTranslatef(1166 + 32, 720 - 74 + 32, 0);
                     if(game->thisPlayer->lastShootWasNade)
                     {
                         glScalef(32 + game->thisPlayer->grenadeDelay * 16, 32 + game->thisPlayer->grenadeDelay * 16, 0);
@@ -2309,7 +2411,7 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                     glVertex2f(1, -1);
                     glEnd();
                     glPopMatrix();
-                    printCenterText(686 + 32, 526 + 32 - 16, 32, true, CString("%i", game->thisPlayer->nbGrenadeLeft));
+                    printCenterText(1166 + 32, 720 - 74 + 32 - 16, 32, true, CString("%i", game->thisPlayer->nbGrenadeLeft));
                 }
 
                 // Le nb de molotov quil lui reste
@@ -2318,7 +2420,7 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                     glEnable(GL_TEXTURE_2D);
                     glBindTexture(GL_TEXTURE_2D, client->tex_molotovLeft);
                     glPushMatrix();
-                    glTranslatef(686 + 32, 474 + 32, 0);
+                    glTranslatef(1166 + 32, 720 - 126 + 32, 0);
                     if(!game->thisPlayer->lastShootWasNade)
                     {
                         glScalef(32 + game->thisPlayer->grenadeDelay * 16, 32 + game->thisPlayer->grenadeDelay * 16, 0);
@@ -2339,7 +2441,7 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                     glVertex2f(1, -1);
                     glEnd();
                     glPopMatrix();
-                    printCenterText(686 + 32, 474 + 32 - 16, 32, true, CString("%i", game->thisPlayer->nbMolotovLeft));
+                    printCenterText(1166 + 32, 720 - 126 + 32 - 16, 32, true, CString("%i", game->thisPlayer->nbMolotovLeft));
                 }
 
                 // Le nb de balle de shotgun quil lui reste
@@ -2349,7 +2451,7 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                     glEnable(GL_TEXTURE_2D);
                     glBindTexture(GL_TEXTURE_2D, client->tex_shotgunLeft);
                     glPushMatrix();
-                    glTranslatef(686 + 32, 422 + 32, 0);
+                    glTranslatef(1166 + 32, 720 - 178 + 32, 0);
                     glScalef(32 + game->thisPlayer->weapon->currentFireDelay * 16, 32 + game->thisPlayer->weapon->currentFireDelay * 16, 0);
                     glBegin(GL_QUADS);
                     glColor3f(1, 1, 1);
@@ -2363,7 +2465,7 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                     glVertex2f(1, -1);
                     glEnd();
                     glPopMatrix();
-                    printCenterText(686 + 32, 422 + 32 - 16, 32, true, CString("%i", 6 - game->thisPlayer->weapon->shotInc));
+                    printCenterText(1166 + 32, 720 - 178 + 32 - 16, 32, true, CString("%i", 6 - game->thisPlayer->weapon->shotInc));
                 }
             }
             else if((
@@ -2372,15 +2474,15 @@ static void SceneRender_Client(Client* client, float & alphaScope)
                 game->thisPlayer->status == PLAYER_STATUS_DEAD && !game->thisPlayer->spawnRequested)
             {
                 glColor3f(1, 1, 1);
-                if(game->thisPlayer->timeToSpawn > 0) printCenterText(400, 200, 64, true, CString(clientVar.lang_spawnIn.s, ((int)game->thisPlayer->timeToSpawn + 1) / 60, ((int)(game->thisPlayer->timeToSpawn + 1) % 60)));
-                else if(!gameVar.sv_forceRespawn) printCenterText(400, 200, 64, true, CString("Press shoot key [%s] to respawn", keyManager.getKeyName(clientVar.k_shoot).s));
+                if(game->thisPlayer->timeToSpawn > 0) printCenterText(640, 360, 64, true, CString(clientVar.lang_spawnIn.s, ((int)game->thisPlayer->timeToSpawn + 1) / 60, ((int)(game->thisPlayer->timeToSpawn + 1) % 60)));
+                else if(!gameVar.sv_forceRespawn) printCenterText(640, 360, 64, true, CString("Press shoot key [%s] to respawn", keyManager.getKeyName(clientVar.k_shoot).s));
             }
 
         //--- Auto balance
         if(gameVar.sv_autoBalance && client->autoBalanceTimer > 0 && client->blink < .25f)
         {
             glColor3f(1, 1, 1);
-            printCenterText(400, 0, 64, true, CString("Autobalance in %i seconds", (int)client->autoBalanceTimer));
+            printCenterText(640, 0, 64, true, CString("Autobalance in %i seconds", (int)client->autoBalanceTimer));
         }
 
         /*printCenterText(200,100,20,CString("Time played: %.2f", game->thisPlayer->timePlayedCurGame));
@@ -3145,112 +3247,3 @@ void renderBabo(int rect[4], float angle, uint32_t texSkin, uint32_t texShadow)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void ClientMap_RenderGround(ClientMap* map)
-{
-
-    glPushAttrib(GL_ENABLE_BIT);
-    glDepthMask(GL_FALSE);
-
-    //--- Render the map
-    CMesh_Render(map->groundMesh);
-
-    glDepthMask(GL_TRUE);
-    glPopAttrib();
-}
-
-void ClientMap_RenderShadow(ClientMap* map)
-{
-    if(gameVar.r_shadowQuality == 0) return;
-
-    CMesh_Render(map->shadowMesh);
-}
-
-void ClientMap_RenderWalls(ClientMap* map)
-{
-    CMesh_Render(map->wallMesh);
-
-    // Tout est fini, on peut maintenant renderer le plancher dans le zbuffer
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glBegin(GL_QUADS);
-    glVertex2i(0, map->size[1] + 1);
-    glVertex2i(0, 0);
-    glVertex2i(map->size[0] + 1, 0);
-    glVertex2i(map->size[0] + 1, map->size[1] + 1);
-    glEnd();
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-}
-
-void ClientMap_RenderFlag(ClientMap* map, int index)
-{
-    glPushMatrix();
-    glTranslatef(map->flagPos[index][0], map->flagPos[index][1], map->flagPos[index][2]);
-    glRotatef(map->flagAngle[index], 0, 0, 1);
-    glScalef(.005f, .005f, .005f);
-    dkoRender(map->dko_flag[index], map->flagAnim);
-    glPopMatrix();
-}
-
-void CSnow_Render(CSnow* snow)
-{
-    glPushAttrib(GL_ENABLE_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBindTexture(GL_TEXTURE_2D, snow->tex_snow);
-        glEnable(GL_TEXTURE_2D);
-        glBegin(GL_QUADS);
-            for (int i=0;i<100;++i)
-            {
-                if (snow->pos[i][2] > 0)
-                {
-                    glColor4f(1, 1, 1, ((snow->pos[i][2] > 2) ? 2 : snow->pos[i][2]) / 2.0f);
-                    glTexCoord2f(0, 1);
-                    glVertex3f(snow->pos[i][0] - .05f, snow->pos[i][1] + .05f, snow->pos[i][2]);
-                    glTexCoord2f(0, 0);
-                    glVertex3f(snow->pos[i][0] - .05f, snow->pos[i][1] - .05f, snow->pos[i][2]);
-                    glTexCoord2f(1, 0);
-                    glVertex3f(snow->pos[i][0] + .05f, snow->pos[i][1] - .05f, snow->pos[i][2]);
-                    glTexCoord2f(1, 1);
-                    glVertex3f(snow->pos[i][0] + .05f, snow->pos[i][1] + .05f, snow->pos[i][2]);
-                }
-            }
-        glEnd();
-    glPopAttrib();
-}
-
-void CRain_Render(CRain* rain)
-{
-    glPushAttrib(GL_ENABLE_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glLineWidth(2);
-    glBegin(GL_LINES);
-    for(int i = 0; i < 100; ++i)
-    {
-        if(rain->pos[i][2] > 0)
-        {
-            glColor4f(.25f, .7f, .3f, ((rain->pos[i][2] > 2) ? 2 : rain->pos[i][2]) / 2.0f * .3f);
-            glVertex3fv(rain->pos[i].s);
-            glVertex3f(rain->pos[i][0], rain->pos[i][1], rain->pos[i][2] - .5f);
-        }
-    }
-    glEnd();
-    glPopAttrib();
-}
-
-void CWeather_Render(CWeather* weather)
-{
-    switch(weather->type)
-    {
-    case WEATHER_NONE:      break;
-    case WEATHER_FOG:       break;
-    case WEATHER_SNOW:      CSnow_Render(&weather->data.snow); break;
-    case WEATHER_RAIN:      CRain_Render(&weather->data.rain); break;
-    case WEATHER_SANDSTORM: break;
-    case WEATHER_LAVA:      break;
-    }
-}
-
-void ClientMap_RenderWeather(ClientMap* map)
-{
-    CWeather_Render(&map->m_weather);
-}

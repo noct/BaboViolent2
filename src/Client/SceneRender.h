@@ -25,11 +25,6 @@ struct ClientScene;
 struct ClientMap;
 
 void ClientScene_Render(ClientScene* scene);
-void ClientMap_RenderGround(ClientMap* map);
-void ClientMap_RenderShadow(ClientMap* map);
-void ClientMap_RenderWalls(ClientMap* map);
-void ClientMap_RenderFlag(ClientMap* map, int index);
-void ClientMap_RenderWeather(ClientMap* map);
 
 void printCenterText(float x, float y, float size, bool enableShadow, const CString & text);
 void printLeftText(float x, float y, float size, bool enableShadow, const CString & text);

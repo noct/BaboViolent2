@@ -62,7 +62,7 @@ void GameVar::init()
         .13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SMG] = new Weapon(.1f, "SMG",
         .1f, 8, 1, .5f, 1, WEAPON_SMG, PROJECTILE_DIRECT);
-    weapons[WEAPON_CHAIN_GUN] = new Weapon(.1f, "ChainGun",
+    weapons[WEAPON_CHAIN_GUN] = new Weapon(.05f, "ChainGun",
         .19f, 15, 1, 2.00f, 5, WEAPON_CHAIN_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SHOTGUN] = new Weapon(0.85f, "Shotgun",
         .21f, 20, 5, 3.0f, 12, WEAPON_SHOTGUN, PROJECTILE_DIRECT);

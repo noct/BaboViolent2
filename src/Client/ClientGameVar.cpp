@@ -245,7 +245,7 @@ void ClientGameVar::init()
         .13f, 10, 1, .8f, 2, WEAPON_DUAL_MACHINE_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SMG] = new ClientWeapon("main/models/SMG.DKO", "main/sounds/SMG.wav", .1f, lang_subMachineGun.s,
         .1f, 8, 1, .5f, 1, WEAPON_SMG, PROJECTILE_DIRECT);
-    weapons[WEAPON_CHAIN_GUN] = new ClientWeapon("main/models/ChainGun.DKO", "main/sounds/ChainGun.wav", .1f, lang_changGun.s,
+    weapons[WEAPON_CHAIN_GUN] = new ClientWeapon("main/models/ChainGun.DKO", "main/sounds/ChainGun.wav", .05f, lang_changGun.s,
         .19f, 15, 1, 2.00f, 5, WEAPON_CHAIN_GUN, PROJECTILE_DIRECT);
     weapons[WEAPON_SHOTGUN] = new ClientWeapon("main/models/ShotGun.DKO", "main/sounds/Shotgun.wav", 0.85f, lang_shotgun.s,
         .21f, 20, 5, 3.0f, 12, WEAPON_SHOTGUN, PROJECTILE_DIRECT);

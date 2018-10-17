@@ -167,7 +167,7 @@ void ClientWeapon::shoot(Player * owner)
         }
         charge = 0;
         modelAnim = 0;
-        chainOverHeat -= .052f;
+        chainOverHeat -= .052f * 2.f;
         if (chainOverHeat < 0)
         {
             chainOverHeat = 0;

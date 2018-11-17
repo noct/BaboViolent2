@@ -55,114 +55,30 @@ public:
         }
 };
 
-// Les fonction du DKSVAR
+CMD_RET dksvarCommand(dkContext* ctx, char * command);
+void    dksvarLoadConfig(dkContext* ctx, char * filename);
+void    dksvarLoadConfigSVOnly(dkContext* ctx, char * filename);
+void    dksvarSaveConfig(dkContext* ctx, char * filename);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, bool *defaultValue, bool mConfigBypass);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, int *defaultValue, int minValue, int maxValue, int flags, bool mConfigBypass);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, float *defaultValue, float minValue, float maxValue, int flags, bool mConfigBypass);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, CVector2i *defaultValue, bool mConfigBypass);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, CVector2f *defaultValue, bool mConfigBypass);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, CVector3i *defaultValue, bool mConfigBypass);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, CVector3f *defaultValue, bool mConfigBypass);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, CVector4f *defaultValue, bool mConfigBypass);
+void    dksvarRegister(dkContext* ctx, const CString &screenName, CString *defaultValue, bool mConfigBypass);
+void    dksvarUnregister(dkContext* ctx, const CString &screenName);
+void    dksvarInit(dkContext* ctx, CStringInterface * stringInterface);
+void    dksvarGetFilteredVar(dkContext* ctx, char * varName, char ** array, int size);
+void    dksvarGetFormatedVar(dkContext* ctx, char * varName, CString * formatedString);
 
-
-/// \brief exécute une commande
-///
-/// Cette fonction permet d'exécuter une commande passée sous forme d'une chaine de caractères. Présentement, la seul commande valide est 'set' et sa syntaxe est la suivante:
-/// set nomDeLaVariable param1 [param2 param3 ...]
-/// L'exécution de cette commande tente de remplir les champs de la variable enregistrée nomDeLaVariable avec les paramètres param1 param2 ... fournis.
-///
-/// \param command chaine de caractères représentant une commande valide
-CMD_RET         dksvarCommand(char * command);
-
-
-
-/// \brief exécution d'un fichier de configuration
-///
-/// Cette fonction permet d'exécuter toutes les commandes contenues dans un fichier de configuration.
-///
-/// \param filename chemin menant au fichier de configuration à exécuter depuis l'endroit où se situe le fichier EXE du programme.
-void            dksvarLoadConfig(char * filename);
-void            dksvarLoadConfigSVOnly(char * filename);
-void            dksvarSaveConfig(char * filename);
-
-
-
-/// \name VariableRegistering
-///
-/// \brief enregistre une variable d'un certain type
-/// Ce groupe de fonctions permet d'enregistrer une variable d'un certain type (bool,int,float,CVector2i,CVector2f,CVector3i,CVector3f,CVector4f,CString) en spécifiant si cette variable permet d'être modifiée par l'exécution d'un fichier de configuration.
-///
-/// \param screenName nom de la variable qui sera associé à la variable elle-même
-/// \param defaultValue valeur par défaut de la variable
-/// \param true si cette variable permet d'être modifiée par l'exécution d'un fichier de configuration, false sinon
-//@{
-void            dksvarRegister(const CString &screenName, bool       *defaultValue, bool mConfigBypass);
-void            dksvarRegister(const CString &screenName, int        *defaultValue, int minValue,
-                                             int maxValue, int flags, bool mConfigBypass);
-void            dksvarRegister(const CString &screenName, float     *defaultValue, float minValue,
-                                             float maxValue, int flags, bool mConfigBypass);
-void            dksvarRegister(const CString &screenName, CVector2i *defaultValue, bool mConfigBypass);
-void            dksvarRegister(const CString &screenName, CVector2f *defaultValue, bool mConfigBypass);
-void            dksvarRegister(const CString &screenName, CVector3i *defaultValue, bool mConfigBypass);
-void            dksvarRegister(const CString &screenName, CVector3f *defaultValue, bool mConfigBypass);
-void            dksvarRegister(const CString &screenName, CVector4f *defaultValue, bool mConfigBypass);
-void            dksvarRegister(const CString &screenName, CString    *defaultValue, bool mConfigBypass);
-//@}
-
-
-/// \brief désenregistre une variable enregistrée
-///
-/// Cette fonction permet de désenregistrer une variable enregistrée. La variable correspondant au nom fournis ne sera plus assujettie à des modifications provenant de l'exécution de commandes.
-///
-/// \param screenName nom de la variable associé à la variable elle-même
-void            dksvarUnregister(const CString &screenName);
-
-
-
-void            dksvarInit(CStringInterface * stringInterface);
-void            dksvarGetFilteredVar(char * varName, char ** array, int size);
-void            dksvarGetFormatedVar(char * varName, CString * formatedString);
-
-
-
-/// \brief retourne le temps allouêpour un cycle d'exêution
-///
-/// Cette fonction retourne en fait simplement : 1.0f / le paramêre framePerSecond passêêdkcInit. Cette valeur est constante et reprêente la durê d'un cycle d'exêution de la mise êjour.
-///
-/// \return 1.0f / le nombre d'update dêirêpar seconde
-float           dkcGetElapsedf(dkContext* ctx);
-
-
-
-/// \brief retourne le nombre d'image dessinês êl'êran pas seconde
-///
-/// Cette fonction retourne le nombre d'image dessinês êl'êran pas seconde. cette valeur peut grandement varier (lors d'un lag par exemple)
-///
-/// \return le nombre d'image dessinês êl'êran pas seconde
-float           dkcGetFPS(dkContext* ctx);
-
-
-
-/// \brief retourne le nombre de cycles d'exêutions de mise êjour (update) êoulê depuis un certain repêe
-///
-/// Cette fonction retourne le nombre de cycles d'exêutions de mise êjour (update) êoulê depuis le dêut de l'exêution du programme entier dans le cas o aucun appel êdkcJumpToFrame() n'a êêfait.
-/// Dans le cas o dkcJumpToFrame() a êêappelê l'êuation suivante prêaut avec le dernier appel fait êdkcJumpToFrame():
-/// nombre de cycles d'exêutions de mise êjour (update) êoulê depuis le dernier appel de dkcJumpToFrame() = valeur de retour de dkcGetFrame() - paramêre passêau dernier appel de dkcJumpToFrame()
-///
-/// \return retourne le nombre de cycles d'exêutions de mise êjour (update) êoulê depuis un certain repêe
-int32_t         dkcGetFrame(dkContext* ctx);
-
-/// \brief modifie le numêo du cycle d'exêution de mise êjour courant
-///
-/// Cette fonction modifie le numêo du cycle d'exêution de mise êjour courant.
-///
-/// \param frame nouveau numêo du cycle d'exêution de mise êjour courant
-void            dkcJumpToFrame(dkContext* ctx, int frame);
-
-
-
-/// \brief met êjour les repêes de temps et retourne le nombre de cycle d'exêution de mise êjour (update) êêre effectuê avant d'effectuer le prochain rendu
-///
-/// Cette fonction met êjour les repêes de temps nêessaire au bon fonctionnement du module et retourne le nombre de cycle d'exêution de mise êjour (update) êêre effectuê avant d'effectuer le prochain rendu pour rester conforme au nombre de cycle d'exêution de mise êjour êabli par le paramêre framePerSecond passêêla fonction dkcInit()
-///
-/// \return le nombre de cycle d'exêution de mise êjour (update) êêre effectuê
-int32_t         dkcUpdateTimer(dkContext* ctx);
-
-
-void            dkcSleep(dkContext* ctx, int32_t ms);
+float   dkcGetElapsedf(dkContext* ctx);
+float   dkcGetFPS(dkContext* ctx);
+int32_t dkcGetFrame(dkContext* ctx);
+void    dkcJumpToFrame(dkContext* ctx, int frame);
+int32_t dkcUpdateTimer(dkContext* ctx);
+void    dkcSleep(dkContext* ctx, int32_t ms);
 
 #define ZEVEN_SAFE_DELETE(a) if (a) {delete a; a = 0;}
 #define ZEVEN_SAFE_DELETE_ARRAY(a) if (a) {delete [] a; a = 0;}

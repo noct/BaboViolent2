@@ -32,7 +32,7 @@
 // La scene, par o nos messages consoles passent
 extern Scene * scene;
 
-ClientConsole::ClientConsole()
+ClientConsole::ClientConsole(dkContext * ctx): Console(ctx)
 {
     m_font = 0;
     m_isActive = false;
@@ -198,7 +198,7 @@ void ClientConsole::update(float delay)
                 prefix = "set ";
             }
 
-            dksvarGetFilteredVar(token.s, recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
+            dksvarGetFilteredVar(dk, token.s, recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
 
             if(recognitionVar[0][0])
             {
@@ -229,7 +229,7 @@ void ClientConsole::update(float delay)
                 else if((CString("%s", recognitionVar[0]).getFirstToken(' ') == token) == 1)
                 {
                     curRecognitionVar++;
-                    dksvarGetFilteredVar(lastRecognitionVar.s, recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
+                    dksvarGetFilteredVar(dk, lastRecognitionVar.s, recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
 
                     // Restart cycle if end is reached
                     if(curRecognitionVar == CONSOLE_MAX_RECOGNITION_VAR || CString("%s", recognitionVar[curRecognitionVar]) == "")
@@ -580,13 +580,13 @@ void ClientConsole::sendCommand(CString commandLine, bool isAdmin, unsigned long
             // Si console on ignore ?
             CString keyName = tokenize;
             CString keyCommand = CString("set ") + command + " " + keyManager.getKeyByName(keyName);
-            dksvarCommand(keyCommand.s);
+            dksvarCommand(dk, keyCommand.s);
             add(CString("\x3> %s", keyCommand.s));
             return;
         }
 
         // On donne la job ?dksvar pour ?
-        CMD_RET cr = dksvarCommand(commandLine.s);
+        CMD_RET cr = dksvarCommand(dk, commandLine.s);
         if(cr == CR_NOSUCHVAR)
             add(CString("\x4> Unknown variable"));
         else if(cr == CR_INVALIDARGS)
@@ -1209,7 +1209,7 @@ void ClientConsole::sendCommand(CString commandLine, bool isAdmin, unsigned long
     // Pour carr?ent restarter toute la patente
     if(command == "restart")
     {
-        dkContext* ctx = scene->ctx;
+        dkContext* ctx = scene->dk;
         ZEVEN_SAFE_DELETE(scene);
         scene = new ClientScene(ctx);
         return;

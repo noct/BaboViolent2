@@ -124,8 +124,8 @@ int main(int argc, const char* argv[])
     dkContext* ctx = dkInit(config);
 
     // PREMIêE CHOSE êFAIRE, on load les config
-    dksvarLoadConfig("main/bv2.cfg");
-    dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
+    dksvarLoadConfig(ctx, "main/bv2.cfg");
+    dksvarSaveConfig(ctx, "main/bv2.cfg"); // On cre8 le config file aussi
 
 
     // On init la network
@@ -147,7 +147,7 @@ int main(int argc, const char* argv[])
     }
 
     // On init la console
-    console = new Console();
+    console = new Console(ctx);
     console->init();
 
     //--- On créer le master
@@ -194,7 +194,7 @@ int main(int argc, const char* argv[])
     master = 0;
     scene = 0;
 
-    dksvarSaveConfig("main/bv2.cfg");
+    dksvarSaveConfig(ctx, "main/bv2.cfg");
 
     // On shutdown le tout (L'ordre est assez important ici)
     bb_peerShutdown();

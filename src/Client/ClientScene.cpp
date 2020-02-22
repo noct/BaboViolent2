@@ -19,7 +19,7 @@
 #include "SceneRender.h"
 #include "ClientConsole.h"
 
-ClientScene::ClientScene(dkContext* dk) : Scene(dk)
+ClientScene::ClientScene(dkContext* ctx) : Scene(ctx)
 {
     clientVar.loadModels();
     mainTab = 0;
@@ -236,7 +236,7 @@ void ClientScene::join(CString IPAddress, int port, CString password/*, CString 
 void ClientScene::disconnect()
 {
 
-    if(client && !server) dksvarLoadConfigSVOnly("main/bv2.cfg");
+    if(client && !server) dksvarLoadConfigSVOnly(dk, "main/bv2.cfg");
 
     bool wrongVersion = false;
     if(client) wrongVersion = client->wrongVersionReason;

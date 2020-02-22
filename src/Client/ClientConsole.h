@@ -47,7 +47,7 @@ struct ClientConsole: public Console
     // Pour pas qu'on utilise la console (meton qu'on est apres chatter
     bool locked;
 
-    ClientConsole();
+    ClientConsole(dkContext* ctx);
     virtual ~ClientConsole();
 
     // Pour ajouter une ligne

@@ -44,8 +44,9 @@ ClientGameVar::~ClientGameVar()
 }
 
 
-void ClientGameVar::init()
+void ClientGameVar::init(dkContext* ctx)
 {
+    dk = ctx;
     languageLoaded = false;
     // LES STRING DIFFêRENT POUR CHAQUE LANGUE
     langs.push_back(SLangText("lang_gameName", &lang_gameName));
@@ -268,57 +269,57 @@ void ClientGameVar::init()
 
 
     k_moveUp = keyManager.getKeyByName("W");
-    dksvarRegister(CString("k_moveUp [int]"), &k_moveUp, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_moveUp [int]"), &k_moveUp, 0, 0, 0, true);
     k_moveDown = keyManager.getKeyByName("S");
-    dksvarRegister(CString("k_moveDown [int]"), &k_moveDown, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_moveDown [int]"), &k_moveDown, 0, 0, 0, true);
     k_moveRight = keyManager.getKeyByName("D");
-    dksvarRegister(CString("k_moveRight [int]"), &k_moveRight, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_moveRight [int]"), &k_moveRight, 0, 0, 0, true);
     k_moveLeft = keyManager.getKeyByName("A");
-    dksvarRegister(CString("k_moveLeft [int]"), &k_moveLeft, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_moveLeft [int]"), &k_moveLeft, 0, 0, 0, true);
     k_shoot = keyManager.getKeyByName("Mouse1");
-    dksvarRegister(CString("k_shoot [int]"), &k_shoot, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_shoot [int]"), &k_shoot, 0, 0, 0, true);
     k_throwGrenade = keyManager.getKeyByName("Mouse2");
-    dksvarRegister(CString("k_throwGrenade [int]"), &k_throwGrenade, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_throwGrenade [int]"), &k_throwGrenade, 0, 0, 0, true);
     k_throwMolotov = keyManager.getKeyByName("Mouse3");
-    dksvarRegister(CString("k_throwMolotov [int]"), &k_throwMolotov, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_throwMolotov [int]"), &k_throwMolotov, 0, 0, 0, true);
     k_pickUp = keyManager.getKeyByName("F");
-    dksvarRegister(CString("k_pickUp [int]"), &k_pickUp, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_pickUp [int]"), &k_pickUp, 0, 0, 0, true);
     k_chatAll = keyManager.getKeyByName("T");
-    dksvarRegister(CString("k_chatAll [int]"), &k_chatAll, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_chatAll [int]"), &k_chatAll, 0, 0, 0, true);
     k_chatTeam = keyManager.getKeyByName("Y");
-    dksvarRegister(CString("k_chatTeam [int]"), &k_chatTeam, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_chatTeam [int]"), &k_chatTeam, 0, 0, 0, true);
     k_showScore = keyManager.getKeyByName("TAB");
-    dksvarRegister(CString("k_showScore [int]"), &k_showScore, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_showScore [int]"), &k_showScore, 0, 0, 0, true);
     k_menuAccess = keyManager.getKeyByName("Escape");
-    dksvarRegister(CString("k_menuAccess [int]"), &k_menuAccess, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_menuAccess [int]"), &k_menuAccess, 0, 0, 0, true);
     k_melee = keyManager.getKeyByName("Space");
-    dksvarRegister(CString("k_melee [int]"), &k_melee, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_melee [int]"), &k_melee, 0, 0, 0, true);
     k_screenShot = keyManager.getKeyByName("P");
-    dksvarRegister(CString("k_screenShot [int]"), &k_screenShot, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_screenShot [int]"), &k_screenShot, 0, 0, 0, true);
 
     k_stats = keyManager.getKeyByName("L");
-    dksvarRegister(CString("k_stats [int]"), &k_stats, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_stats [int]"), &k_stats, 0, 0, 0, true);
 
     k_qMsg01 = keyManager.getKeyByName("1");
-    dksvarRegister(CString("k_qMsg01 [int]"), &k_qMsg01, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg01 [int]"), &k_qMsg01, 0, 0, 0, true);
     k_qMsg02 = keyManager.getKeyByName("2");
-    dksvarRegister(CString("k_qMsg02 [int]"), &k_qMsg02, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg02 [int]"), &k_qMsg02, 0, 0, 0, true);
     k_qMsg03 = keyManager.getKeyByName("3");
-    dksvarRegister(CString("k_qMsg03 [int]"), &k_qMsg03, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg03 [int]"), &k_qMsg03, 0, 0, 0, true);
     k_qMsg04 = keyManager.getKeyByName("4");
-    dksvarRegister(CString("k_qMsg04 [int]"), &k_qMsg04, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg04 [int]"), &k_qMsg04, 0, 0, 0, true);
     k_qMsg05 = keyManager.getKeyByName("5");
-    dksvarRegister(CString("k_qMsg05 [int]"), &k_qMsg05, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg05 [int]"), &k_qMsg05, 0, 0, 0, true);
     k_qMsg06 = keyManager.getKeyByName("6");
-    dksvarRegister(CString("k_qMsg06 [int]"), &k_qMsg06, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg06 [int]"), &k_qMsg06, 0, 0, 0, true);
     k_qMsg07 = keyManager.getKeyByName("7");
-    dksvarRegister(CString("k_qMsg07 [int]"), &k_qMsg07, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg07 [int]"), &k_qMsg07, 0, 0, 0, true);
     k_qMsg08 = keyManager.getKeyByName("8");
-    dksvarRegister(CString("k_qMsg08 [int]"), &k_qMsg08, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg08 [int]"), &k_qMsg08, 0, 0, 0, true);
     k_qMsg09 = keyManager.getKeyByName("9");
-    dksvarRegister(CString("k_qMsg09 [int]"), &k_qMsg09, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg09 [int]"), &k_qMsg09, 0, 0, 0, true);
     k_qMsg10 = keyManager.getKeyByName("0");
-    dksvarRegister(CString("k_qMsg10 [int]"), &k_qMsg10, 0, 0, 0, true);
+    dksvarRegister(dk, CString("k_qMsg10 [int]"), &k_qMsg10, 0, 0, 0, true);
 
     ro_nbParticle = 0;
     ro_hitPoint.set(0, 0, 0);

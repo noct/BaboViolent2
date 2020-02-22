@@ -305,7 +305,7 @@ void ClientGame::createMap()
     }
 
     //--- Reset timer
-    dkcJumpToFrame(scene->ctx, 0);
+    dkcJumpToFrame(scene->dk, 0);
 }
 
 

@@ -34,7 +34,7 @@ extern Scene * scene;
 //
 // Constructeurs
 //
-Console::Console(): m_maxCmdHistorySize(20), m_maxMsgHistorySize(300), m_historyMod(3)
+Console::Console(dkContext* ctx): dk(ctx), m_maxCmdHistorySize(20), m_maxMsgHistorySize(300), m_historyMod(3)
 {
     m_outputFilename = "main/console.log";
     FileIO *fileIO = new FileIO(m_outputFilename, "wb");
@@ -44,7 +44,7 @@ Console::Console(): m_maxCmdHistorySize(20), m_maxMsgHistorySize(300), m_history
     m_excludeFromLog.push_back("cacheunban");
 }
 
-Console::Console(CString outputFilename): m_maxCmdHistorySize(20), m_maxMsgHistorySize(300), m_historyMod(3)
+Console::Console(dkContext* ctx, CString outputFilename): dk(ctx), m_maxCmdHistorySize(20), m_maxMsgHistorySize(300), m_historyMod(3)
 {
     m_outputFilename = outputFilename;
     SetDisplayEvents(true);
@@ -146,7 +146,7 @@ void Console::init()
 void Console::svChange(CString command)
 {
     // On donne la job ?dksvar pour ?
-    CMD_RET cr = dksvarCommand(command.s);
+    CMD_RET cr = dksvarCommand(dk, command.s);
     if (gameVar.c_debug) // We do not output that in non-debug
     {
         if (cr == CR_NOSUCHVAR)
@@ -301,7 +301,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
         }
 
         // On donne la job ?dksvar pour ?
-        CMD_RET cr = dksvarCommand(commandLine.s);
+        CMD_RET cr = dksvarCommand(dk, commandLine.s);
         if (cr == CR_NOSUCHVAR)
             add(CString("\x4> Unknown variable"));
         else if (cr == CR_INVALIDARGS)
@@ -1083,7 +1083,7 @@ void Console::sendCommand(CString commandLine, bool isAdmin, unsigned long bbnet
     // Pour carr?ent restarter toute la patente
     if (command == "restart")
     {
-        dkContext* ctx = scene->ctx;
+        dkContext* ctx = scene->dk;
         ZEVEN_SAFE_DELETE(scene);
         scene = new Scene(ctx);
         return;

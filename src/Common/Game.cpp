@@ -256,7 +256,7 @@ void Game::createMap()
         }
         return;
     }
-    dkcJumpToFrame(scene->ctx, 0);
+    dkcJumpToFrame(scene->dk, 0);
 }
 
 //--- He oui, une fonction GLOBAL !!!!!!!!!!!!

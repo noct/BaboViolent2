@@ -301,7 +301,8 @@ struct ClientGameVar
     // pour effacer les models du jeu
     void deleteModels();
 
-    void init();
+    dkContext* dk;
+    void init(dkContext* ctx);
 
     bool languageLoaded;
     // Pour loader les lang_ var

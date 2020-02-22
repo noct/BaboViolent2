@@ -200,11 +200,11 @@ int main(int argc, const char* argv[])
 
     dkContext* ctx = dkInit(config);
 
-    gameVar.init();
-    clientVar.init();
+    gameVar.init(ctx);
+    clientVar.init(ctx);
 
-    dksvarLoadConfig("main/bv2.cfg");
-    dksvarSaveConfig("main/bv2.cfg"); // On cre8 le config file aussi
+    dksvarLoadConfig(ctx, "main/bv2.cfg");
+    dksvarSaveConfig(ctx,"main/bv2.cfg"); // On cre8 le config file aussi
 
     // On load tout suite le language utilisêpar le joueur
     if (!clientVar.isLanguageLoaded())
@@ -258,7 +258,7 @@ int main(int argc, const char* argv[])
     lobby = new CLobby();
 
     // On init la console
-    console = new ClientConsole();
+    console = new ClientConsole(ctx);
     console->init();
 
     //--- On créer le master
@@ -295,7 +295,7 @@ int main(int argc, const char* argv[])
     delete lobby;
     lobby = 0;
 
-    dksvarSaveConfig("main/bv2.cfg");
+    dksvarSaveConfig(ctx, "main/bv2.cfg");
 
     // On shutdown le tout (L'ordre est assez important ici)
     bb_peerShutdown();

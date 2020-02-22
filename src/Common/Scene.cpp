@@ -27,9 +27,9 @@ extern char* bbNetVersion;
 //
 // Constructeur
 //
-Scene::Scene(dkContext* dk)
+Scene::Scene(dkContext* ctx)
 {
-    ctx = dk;
+    dk = ctx;
     frameID = 0;
     server = 0;
     serverInfoDelay = GAME_UPDATE_DELAY;

@@ -24,6 +24,8 @@
 
 struct Console
 {
+    dkContext * dk;
+
     // Le fichier pour le output automatique
     CString m_outputFilename;
 
@@ -55,8 +57,8 @@ struct Console
     const std::vector<CString>& GetActiveMessages();
 
     // Constructeurs
-    Console();
-    Console(CString outputFilename);
+    Console(dkContext * ctx);
+    Console(dkContext * ctx, CString outputFilename);
 
     // Destructeur
     virtual ~Console();

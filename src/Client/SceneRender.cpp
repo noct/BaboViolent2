@@ -274,7 +274,7 @@ static void SceneRender_Console(ClientConsole* console)
             // If we are cycling, get the other matches
             CString temp = CString(console->recognitionVar[0]).getFirstToken(' ');
             if(console->lastRecognitionVar != "")
-                dksvarGetFilteredVar(console->lastRecognitionVar.s, console->recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
+                dksvarGetFilteredVar(console->dk, console->lastRecognitionVar.s, console->recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
 
             // Render the rest
             for(i = console->curRecognitionVar + 1; i < CONSOLE_MAX_RECOGNITION_VAR; ++i)
@@ -286,7 +286,7 @@ static void SceneRender_Console(ClientConsole* console)
 
             // Restore the recognition vars
             if(console->lastRecognitionVar != "")
-                dksvarGetFilteredVar(temp.s, console->recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
+                dksvarGetFilteredVar(console->dk, temp.s, console->recognitionVar, CONSOLE_MAX_RECOGNITION_VAR);
 
             glPopMatrix();
         }
@@ -2875,7 +2875,7 @@ void ClientScene_Render(ClientScene* scene)
         glColor3f(1, 1, 1);
         if(gameVar.r_showStats)
         {
-            printRightText((float)res[0], 0, 20, true, CString("FPS : %i", (int)dkcGetFPS(scene->ctx)));
+            printRightText((float)res[0], 0, 20, true, CString("FPS : %i", (int)dkcGetFPS(scene->dk)));
         }
 
         // On affiche la version du jeu

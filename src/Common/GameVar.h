@@ -219,12 +219,13 @@ struct GameVar
     Weapon * weapons[20];
 
     // Constructeur
+    dkContext* dk;
     GameVar();
 
     // Destructeur
     virtual ~GameVar();
 
-    void init();
+    void init(dkContext* ctx);
 
     // Pour envoyer les variables servers au autres tayouin
     void sendSVVar(uint32_t babonetID);

@@ -48,7 +48,7 @@ public:
     long frameID;
 
 public:
-    dkContext* ctx;
+    dkContext* dk;
 
     // Constructeur
     Scene(dkContext* ctx);
